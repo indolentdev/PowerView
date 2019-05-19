@@ -21,4 +21,4 @@ Primary deployment on a Raspberry Pi running Raspbian.
 
 
 ## License
-This product is licensed under the GNU Affero General Public License v3.0 License - see the [LICENSE.md](LICENSE.md) file for details
+This product is licensed under the GNU Affero General Public License v3.0 License - see the [LICENSE.md](LICENSE) file for details
