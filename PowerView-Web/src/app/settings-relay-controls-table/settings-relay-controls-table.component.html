@@ -1,0 +1,32 @@
+<div>
+  <h3>{{ 'headings.relayControlsTable' | translate }}</h3>
+</div>
+
+<table mat-table [dataSource]="dataSource" matSort class="center">
+  <ng-container matColumnDef="nameSerie">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'columns.relayUnit' | translate }}</th>
+    <td mat-cell *matCellDef="let v">{{ v.nameSerie }}</td>
+  </ng-container>
+  <ng-container matColumnDef="evaluationSerie">
+    <th mat-header-cell *matHeaderCellDef>{{ 'columns.monitorSerie' | translate }}</th>
+    <td mat-cell *matCellDef="let v">{{ v.evaluationSerie }}</td>
+  </ng-container>
+  <ng-container matColumnDef="durationMinutes">
+    <th mat-header-cell *matHeaderCellDef>{{ 'columns.maxAvgDuration' | translate }}</th>
+    <td mat-cell *matCellDef="let v">{{ v.durationMinutes }} {{ 'forms.settings.relayControls.minutes' | translate }}</td>
+  </ng-container>
+  <ng-container matColumnDef="disconnectToConnectValue">
+    <th mat-header-cell *matHeaderCellDef>{{ 'columns.minAvgDisconnectToConnect' | translate }}</th>
+    <td mat-cell *matCellDef="let v">{{ v.disconnectToConnectValue }} {{ v.unit }}</td>
+  </ng-container>
+  <ng-container matColumnDef="connectToDisconnectValue">
+    <th mat-header-cell *matHeaderCellDef>{{ 'columns.minAvgConnectToDisconnect' | translate }}</th>
+    <td mat-cell *matCellDef="let v">{{ v.connectToDisconnectValue }} {{ v.unit }}</td>
+  </ng-container>
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef>{{ 'columns.actions' | translate }}</th>
+    <td mat-cell *matCellDef="let v"><button mat-raised-button type="button" (click)="deleteClick(v)">{{ 'forms.settings.relayControls.buttonActionDelete' | translate }}</button></td>
+  </ng-container>
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+</table>

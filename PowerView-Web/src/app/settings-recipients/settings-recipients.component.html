@@ -1,0 +1,47 @@
+<div>
+  <h2>{{ 'headings.emailRecipients' | translate }}</h2>
+</div>
+
+<div class="divCenterOuter">
+  {{ 'headings.emailRecipientsInfo' | translate }}
+</div>
+
+<br/>
+<br/>
+
+<div>
+  <h3>{{ 'headings.emailRecipientsAdd' | translate }}</h3>
+</div>
+
+<div class="divCenterOuter">
+  <form #form="ngForm" [formGroup]="formGroup" (ngSubmit)="submitForm(formGroup.value)">
+    <mat-form-field style="width:17em">
+      <input matInput type="text" placeholder="{{ 'forms.settings.emailRecipients.placeholderName' | translate }}" formControlName="name" id="name" required>
+      <mat-hint align="end">{{ 'forms.settings.emailRecipients.hintName' | translate }}</mat-hint>
+      <mat-error *ngIf="hasError('name', 'required')">{{ 'forms.settings.emailRecipients.valErrors.required' | translate }}</mat-error>
+      <mat-error *ngIf="hasError('name', 'minlength')">{{ 'forms.settings.emailRecipients.valErrors.minLength_3' | translate }}</mat-error>
+      <mat-error *ngIf="hasError('name', 'maxlength')">{{ 'forms.settings.emailRecipients.valErrors.maxLength_39' | translate }}</mat-error>
+    </mat-form-field>
+
+    <br/>
+
+    <mat-form-field style="width:17em">
+        <input matInput type="text" placeholder="{{ 'forms.settings.emailRecipients.placeholderEmail' | translate }}" formControlName="emailAddress" id="emailAddress" required>
+        <mat-hint align="end">{{ 'forms.settings.emailRecipients.hintEmail' | translate }}</mat-hint>
+        <mat-error *ngIf="hasError('emailAddress', 'required')">{{ 'forms.settings.emailRecipients.valErrors.required' | translate }}</mat-error>
+        <mat-error *ngIf="hasError('emailAddress', 'minlength')">{{ 'forms.settings.emailRecipients.valErrors.minLength_3' | translate }}</mat-error>
+        <mat-error *ngIf="hasError('emailAddress', 'maxlength')">{{ 'forms.settings.emailRecipients.valErrors.maxLength_39' | translate }}</mat-error>
+      </mat-form-field>
+  
+    <br/>
+
+    <button mat-raised-button style="margin:5px;" type="submit" [disabled]="!formGroup.valid">{{ 'forms.settings.emailRecipients.buttonAdd' | translate }}</button>
+  </form>
+</div>
+
+<br/>
+<br/>
+
+<div *ngIf="emailRecipientSet !== undefined && emailRecipientSet.items.length > 0">
+  <app-settings-recipients-table [emailRecipientSet]="emailRecipientSet" (deleteEmailRecipient)="deleteEmailRecipient($event)" (testEmailRecipient)="testEmailRecipient($event)"></app-settings-recipients-table>
+</div>

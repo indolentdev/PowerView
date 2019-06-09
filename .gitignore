@@ -1,0 +1,10 @@
+*/bin
+*/obj
+TestResult.xml
+packages
+*.userprefs
+*.html~
+*.csproj.user
+PowerView-*.zip
+PowerView-*-md5.txt
+.vs

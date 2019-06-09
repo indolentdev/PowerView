@@ -1,0 +1,30 @@
+export let settingsDisconnectrulesOptions = {
+   "disconnectControlItems":[
+      {
+         "label":"Relay",
+         "obisCode":"0.2.96.3.10.255"
+      },
+      {
+         "label":"Relay",
+         "obisCode":"0.3.96.3.10.255"
+      }
+   ],
+   "evaluationItems":[
+      {
+         "label":"Main",
+         "obisCode":"1.1.22.7.0.255",
+         "unit":"W"
+      },
+      {
+         "label":"Main",
+         "obisCode":"1.1.42.7.0.255",
+         "unit":"W"
+      },
+      {
+         "label":"Main",
+         "obisCode":"1.1.62.7.0.255",
+         "unit":"W"
+      }
+   ]
+}
+;

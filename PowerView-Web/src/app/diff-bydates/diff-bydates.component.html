@@ -1,0 +1,30 @@
+<div>
+  <h2>{{ 'headings.diffByDates' | translate }}</h2>
+</div>
+
+<div class="divCenterOuter">
+  <div class="divCenterInner">
+    <mat-form-field>
+      <input matInput [min]="minDateFrom" [max]="maxDateFrom" [matDatepicker]="dpFrom" placeholder="{{ 'common.chooseDateFrom' | translate }}" 
+        (dateChange)="fromDateChangeEvent($event)" [formControl]="fcFromDate" />
+      <mat-datepicker-toggle matSuffix [for]="dpFrom"></mat-datepicker-toggle>
+      <mat-datepicker #dpFrom startView="month"></mat-datepicker>
+    </mat-form-field>
+    <br/>
+    <mat-form-field>
+      <input matInput [min]="minDateTo" [max]="maxDateTo" [matDatepicker]="dpTo" placeholder="{{ 'common.chooseDateTo' | translate }}" 
+        (dateChange)="toDateChangeEvent($event)" [formControl]="fcToDate" />
+      <mat-datepicker-toggle matSuffix [for]="dpTo"></mat-datepicker-toggle>
+      <mat-datepicker #dpTo startView="month"></mat-datepicker>
+    </mat-form-field>
+  </div>
+</div>
+
+<div *ngIf="diffValueSet !== undefined && diffValueSet.registers.length == 0">
+  <h3>{{ 'common.noDataFound' | translate }}</h3>  
+</div>
+
+<div *ngIf="diffValueSet !== undefined && diffValueSet.registers.length > 0">
+  <br/>
+  <app-diff-table [diffValueSet]="diffValueSet"></app-diff-table>
+</div>

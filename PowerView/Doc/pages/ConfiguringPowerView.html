@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
+  <title>Configuring PowerView</title>
+  <meta name="generator" content="Bluefish 2.2.7" />
+</head>
+
+<body>
+<h1>Configuring PowerView</h1>
+
+<p>If PowerView is to be deployed on a Raspberry Pi consider configuring PowerView
+before installation. It might be easier.</p>
+
+<p>PowerView is configured through the file: PowerView.exe.config (XML format).
+Therefore to configure PowerView open the PowerView.exe.config file in a text
+editor.</p>
+
+<p></p>
+
+<h2>Default Configuration</h2>
+
+<p>The PowerView default configuration assumes execution on a Raspberry Pi Linux
+environment. The default configuration assumes deploymet in Denmark.</p>
+
+<p></p>
+
+<h2>Configuring Services</h2>
+
+<p>The PowerView services are configured in the following section of the configuration file:</p>
+<pre>	&lt;Service&gt;
+		&lt;BaseUrl value="http://localhost:47362" /&gt;
+	&lt;/Service&gt;</pre>
+
+<p>The BaseUrl element defines the URL at which PowerView provides its web (HTTP) services.
+Visualizing readings in a browser can be initiated by navigating to this base URL.</p> 
+
+<h2>Configuring Database</h2>
+
+<p>Aspects of the PowerView reading database is configured in the following section of the configuration file:</p>
+<pre>	&lt;Database&gt;
+		&lt;Name value="/var/lib/PowerView/PowerView.sqlite3" /&gt;
+		&lt;Backup&gt;
+			&lt;MinimumIntervalDays value="14" /&gt;
+			&lt;MaximumCount value="5" /&gt;
+		&lt;/Backup&gt;
+	&lt;/Database&gt;</pre>
+
+<p>The Name element defines the path and file name for the PowerView database. The 
+Backup element defines database backup parameters. Whenever PowerView starts a database
+backup is performed depending the values of these parameters. Database backups are placed
+in a DbBackup sub-directory inside the directory declared in the Name element.</p>
+
+</body>
+</html>

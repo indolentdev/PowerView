@@ -1,0 +1,1 @@
+export let settingsSmtp = {"server":"smtp.gmail.com","port":"587","user":"theThing@gmail.com","auth":"theSecret"};

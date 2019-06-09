@@ -1,0 +1,67 @@
+PowerView version 0.0.28 - Xxxx 2019
+- Perform database integrity checks daily and at application start to reduce 
+  loss of readings in case of database file corruption.
+- Minor stability improvements.
+
+PowerView version 0.0.27 - May 2019
+- Rewritten web interface.
+- Notification emails sent through a user defined SMTP server.
+- More day profile intervals.
+- Improved obis code standard use.
+- Minor stability improvements.
+
+PowerView version 0.0.26 - October 2018
+- Added Relay Control ability related to per electricity export power phase, 
+  and ability to depict relay connect status in the day profile graphs.
+- Readings sent to PowerView can be published to an MQTT broker
+- PvOutput facade interface supports generated power per phase.
+- Upgraded to .NET Framework 4.5.2
+
+PowerView version 0.0.25 - April 2018
+- Allow alpha numeric serial numbers
+  (causes regeneration of month and year data)
+
+PowerView version 0.0.24 - February 2018
+- Customize graphs for day/month/year profiles
+  Accommodate 2/5/20 min reading intevals for day profile.
+- Selectable date for gauge display
+- Minor stability improvements.
+
+PowerView version 0.0.22 - November 2017
+- Added Diff view
+- Added Latest Year readings to the guages view
+
+PowerView version 0.0.21 - September 2017
+- Added ability to configure email recipients
+- Added ability to send emails regarding meter events (leak)
+- Minor stability improvements.
+
+PowerView version 0.0.20 - March 2017
+- Added event view and water leak detection.
+  Leak defined as consumption every hour from 00:00 to 06:00.
+- Added gauge view showing meter gauge readings.
+- Added Danish translation for web pages (doc and configuration still English).
+- Changed date & time display to apply format from browser/box locale settings.
+- Simplified configuration a little.
+- Minor stability improvements.
+
+PowerView version 0.0.19 - November 2016
+- Added ability to pick serie colors in the browser user interface.
+- Minor stability improvements.
+
+PowerView version 0.0.18 - September 2016
+- Added ability to graph heat energy consumption.
+- Added ability to graph room relative humidity.
+- Added tracking of anonymized statistical application usage.
+- Minor stability improvements.
+PowerView 0.0.18 requires
+- PowerLog 0.0.14
+- Optionally SunLog 0.5.0
+
+PowerView version 0.0.17 - July 2016
+- Added Year Profile.
+- Added ability to graph cold water consumption and room temperature.
+- Improved Month Profile to ignore superfluous readings in the data stream.
+
+PowerView version 0.0.15 - April 2016
+- Initial version.

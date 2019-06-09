@@ -1,0 +1,37 @@
+<div>
+  <h2>{{ profileHeading | translate }}</h2>
+</div>
+
+<div *ngIf="page != undefined && page != null && page != ''">
+  <h3>{{ page }}</h3>
+</div>
+
+<div class="divCenterOuter">
+  <div class="divCenterInner">
+    <mat-form-field>
+      <input matInput [min]="minStartTime" [max]="maxStartTime" [matDatepicker]="dp" placeholder="{{ choose | translate }}" 
+        (dateChange)="startTimeChangeEvent($event)" [formControl]="fcStartTime" />
+      <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+      <mat-datepicker #dp [startView]="dpStartView" (monthSelected)="monthSelected($event)" (yearSelected)="yearSelected($event)"></mat-datepicker>
+    </mat-form-field>
+  </div>
+</div>
+
+<div *ngIf="profileSet !== undefined && profileSet.graphs.length == 0">
+  <h3>{{ 'common.noDataFound' | translate }}</h3>  
+</div>
+
+<div *ngIf="profileTotalValues.length > 0">
+  <app-profile-total-table [profileTotalValues]="profileTotalValues"></app-profile-total-table>
+  <br/>
+  <br/>
+</div>
+
+<div *ngIf="profileSet !== undefined && profileSet.graphs.length > 0">
+  <div *ngFor="let graph of profileSet.graphs">
+    <app-profile-graph [profileGraph]="graph" [timeFormat]="timeFormat"></app-profile-graph>
+    <br/>
+    <br/>
+  </div>
+</div>
+

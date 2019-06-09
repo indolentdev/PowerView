@@ -1,0 +1,18 @@
+<div>
+  <h2>{{ 'headings.serieColors' | translate }}</h2>
+</div>
+
+<div *ngIf="serieColorSet !== undefined && serieColorSet.items.length == 0">
+  <h3>{{ 'common.noDataFound' | translate }}</h3>  
+</div>
+
+<div *ngIf="serieColorSet !== undefined && serieColorSet.items.length > 0">
+  <app-settings-serie-colors-table [serieColorSet]="serieColorSet"></app-settings-serie-colors-table>
+  <br/>
+  <br/>
+  <div class="divCenterOuter">
+    <button mat-raised-button (click)="saveClick()">{{ 'forms.settings.serieColors.buttonSave' | translate }}</button>
+  </div>
+  <br/>
+  <br/>
+</div>

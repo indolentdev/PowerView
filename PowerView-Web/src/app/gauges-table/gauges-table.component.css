@@ -1,0 +1,17 @@
+th.mat-header-cell {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+tr.mat-footer-row,tr.mat-row {
+    height:2em;
+}
+
+td.mat-cell,td.mat-footer-cell,th.mat-header-cell {
+    padding-left:7px;
+    padding-right:7px;
+}
+
+.mat-cell.mat-column-gaugeValue,.mat-header-cell.mat-column-gaugeValue  {
+    text-align: right;
+}
