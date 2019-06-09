@@ -1,0 +1,26 @@
+<div>
+  <h2>{{ 'headings.gaugesByDate' | translate }}</h2>
+</div>
+
+<div class="divCenterOuter">
+  <div class="divCenterInner">
+    <mat-form-field>
+      <input matInput [min]="minDate" [max]="maxDate" [matDatepicker]="dp" placeholder="{{ 'common.chooseDate' | translate }}" 
+        (dateChange)="dateChangeEvent($event)" [formControl]="fcDate" />
+      <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+      <mat-datepicker #dp startView="month"></mat-datepicker>
+    </mat-form-field>
+  </div>
+</div>
+
+<div *ngIf="gaugeValueGroupSet !== undefined && gaugeValueGroupSet.groups.length == 0">
+  <h3>{{ 'common.noDataFound' | translate }}</h3>  
+</div>
+
+<div *ngIf="gaugeValueGroupSet !== undefined && gaugeValueGroupSet.groups.length > 0">
+<div *ngFor="let group of gaugeValueGroupSet.groups">
+  <app-gauges-table [gaugeValueGroup]="group"></app-gauges-table>    
+  <br/>
+  <br/>
+</div>
+</div>

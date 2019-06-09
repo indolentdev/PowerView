@@ -1,0 +1,17 @@
+<h3>{{ 'headings.totals' | translate }}</h3>
+<table mat-table [dataSource]="dataSource" matSort class="center">
+  <ng-container matColumnDef="serie">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'columns.serie' | translate }}</th>
+    <td mat-cell *matCellDef="let v">{{ v.serie }}</td>
+  </ng-container>
+  <ng-container matColumnDef="value">
+    <th mat-header-cell *matHeaderCellDef>{{ 'columns.total' | translate }}</th>
+    <td mat-cell *matCellDef="let v">{{ v.value | number:'1.2-2' }}</td>
+  </ng-container>
+  <ng-container matColumnDef="unit">
+    <th mat-header-cell *matHeaderCellDef>{{ 'columns.unit' | translate }}</th>
+    <td mat-cell *matCellDef="let v">{{ v.unit }}</td>
+  </ng-container>
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+</table>

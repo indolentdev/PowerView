@@ -1,0 +1,39 @@
+<div *ngIf="profileGraphs != null && profileGraphs.length > 0">
+    <h3>{{ 'headings.periodPage' | translate:{ 
+      period:'headings.period.' + profileGraphs[0].period | translate, 
+      page:(profileGraphs[0].page == '' ? ('menu.defaultPage' | translate) : profileGraphs[0].page) 
+    } }}</h3>
+</div>
+  
+<table mat-table [dataSource]="dataSource" matSort class="center">
+  <ng-container matColumnDef="rank">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Rank</th>
+    <td mat-cell *matCellDef="let v">{{ v.rank }}</td>
+  </ng-container>
+  <ng-container matColumnDef="title">
+    <th mat-header-cell *matHeaderCellDef>{{ 'columns.title' | translate }}</th>
+    <td mat-cell *matCellDef="let v">{{ v.title }}</td>
+  </ng-container>
+  <ng-container matColumnDef="interval">
+    <th mat-header-cell *matHeaderCellDef>{{ 'columns.interval' | translate }}</th>
+    <td mat-cell *matCellDef="let v">{{ v.intervalValue }} {{ 'forms.settings.profileGraphs.' + v.intervalUnit | translate }}</td>
+  </ng-container>
+  <ng-container matColumnDef="series">
+    <th mat-header-cell *matHeaderCellDef>{{ 'columns.series' | translate }}</th>
+    <td mat-cell *matCellDef="let v"><div style="margin-top:3px;margin-bottom:3px">{{ getSerie(v.series).join("\n") }}</div></td>
+  </ng-container>
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef>{{ 'columns.actions' | translate }}</th>
+    <td mat-cell *matCellDef="let v">
+      <button style="margin-left:3px;margin-right:3px" mat-raised-button type="button" (click)="deleteClick(v)">{{ 'forms.settings.profileGraphs.buttonActionDelete' | translate }}</button>
+      <button *ngIf="v.isLast != undefined && !v.isLast" style="margin-left:3px;margin-right:3px" mat-raised-button type="button" (click)="downClick(v)">{{ 'forms.settings.profileGraphs.buttonActionDown' | translate }}</button>
+      <button *ngIf="v.isFirst != undefined && !v.isFirst" style="margin-left:3px;margin-right:3px" mat-raised-button type="button" (click)="upClick(v)">{{ 'forms.settings.profileGraphs.buttonActionUp' | translate }}</button>
+    </td>
+  </ng-container>
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr style="white-space: pre-wrap;" mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+</table>
+
+<br/>
+<br/>
+<br/>

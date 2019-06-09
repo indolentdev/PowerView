@@ -1,0 +1,26 @@
+using System.Collections.Generic;
+
+namespace PowerView.Model.Repository
+{
+  public interface ISettingRepository
+  {
+    void Upsert(string name, string value);
+
+    void Upsert(ICollection<KeyValuePair<string, string>> items);
+
+    string Get(string name);
+
+    IList<KeyValuePair<string, string>> Find(string startsWith);
+
+    string ProvideInstallationId();
+
+    MqttConfig GetMqttConfig();
+
+    void UpsertMqttConfig(MqttConfig mqttConfig);
+
+    SmtpConfig GetSmtpConfig();
+
+    void UpsertSmtpConfig(SmtpConfig smtpConfig);
+
+  }
+}

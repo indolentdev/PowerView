@@ -1,0 +1,36 @@
+<div>
+  <h2>{{ 'headings.mqtt' | translate }}</h2>
+</div>
+
+<div class="divCenterOuter">
+  <form [formGroup]="formGroup" (ngSubmit)="submitForm(formGroup.value)">
+
+    <mat-form-field style="width:17em">
+      <input matInput type="text" placeholder="{{ 'forms.settings.mqtt.placeholderServer' | translate }}" formControlName="server" id="server" required>
+      <mat-hint align="end">{{ 'forms.settings.mqtt.hintServer' | translate }}</mat-hint>
+      <mat-error *ngIf="hasError('server', 'required')">{{ 'forms.settings.mqtt.valErrors.required' | translate }}</mat-error>
+      <mat-error *ngIf="hasError('server', 'minlength')">{{ 'forms.settings.mqtt.valErrors.minLength_7' | translate }}</mat-error>
+      <mat-error *ngIf="hasError('server', 'maxlength')">{{ 'forms.settings.mqtt.valErrors.maxLength_39' | translate }}</mat-error>
+    </mat-form-field>
+    <br/>
+    <br/>
+    <mat-form-field style="width:17em">
+      <input matInput type="number" placeholder="{{ 'forms.settings.mqtt.placeholderPort' | translate }}" formControlName="port" id="port" required>
+      <mat-hint align="end">{{ 'forms.settings.mqtt.hintPort' | translate }}</mat-hint>
+      <mat-error *ngIf="hasError('port', 'required')">{{ 'forms.settings.mqtt.valErrors.required' | translate }}</mat-error>
+      <mat-error *ngIf="hasError('port', 'min')">{{ 'forms.settings.mqtt.valErrors.min_1' | translate }}</mat-error>
+      <mat-error *ngIf="hasError('port', 'max')">{{ 'forms.settings.mqtt.valErrors.max_65535' | translate }}</mat-error>
+    </mat-form-field>
+    <br/>
+    <br/>
+
+    <mat-checkbox formControlName="publishEnabled" id="publishEnabled">{{ 'forms.settings.mqtt.checkPublishReadings' | translate }}</mat-checkbox>
+
+    <br/>
+    <br/>
+    <br/>
+
+    <button mat-raised-button style="margin:5px;" type="submit" [disabled]="!formGroup.valid">{{ 'forms.settings.mqtt.buttonSave' | translate }}</button>
+    <button mat-raised-button style="margin:5px;" type="button" [disabled]="!formGroup.valid" (click)="testClick()">{{ 'forms.settings.mqtt.buttonTest' | translate }}</button>
+  </form>
+</div>

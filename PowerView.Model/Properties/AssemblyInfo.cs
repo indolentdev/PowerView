@@ -1,0 +1,11 @@
+using System.Reflection;
+using System.Runtime.CompilerServices;
+
+// Information about this assembly is defined by the following attributes. 
+// Change them to the values specific to your project.
+
+[assembly: AssemblyTitle("PowerView.Model")]
+
+[assembly: InternalsVisibleTo("PowerView.Model.Test")]
+//[assembly: InternalsVisibleTo("PowerView.Model.Test, PublicKey=00240000048000009400000006020000002400005253413100040000110000006f863cd06a1d9ef1b89c30d1947ce81b44ba4cdeb545a765021add61ee031fe6a797bb6a39caeab27fae8d46a5c8c4eb6d4746b7eec29d4350a26e9be85dcb4aa244822a87d1bc9e70e91ea111fe8447261037089446b13a042f4c79f799d1658278de2d28e257d217cde43a0e3061a6ec0fe234e74a93b51d1a14bc57aed082")]
+[assembly: InternalsVisibleTo("DynamicProxyGenAssembly2, PublicKey=00240000048000009400000006020000002400005253413100040000010001009f7a95086500f8f66d892174803850fed9c22225c2ccfff21f39c8af8abfa5415b1664efd0d8e0a6f7f2513b1c11659bd84723dc7900c3d481b833a73a2bcf1ed94c16c4be64d54352c86956c89930444e9ac15124d3693e3f029818e8410f167399d6b995324b635e95353ba97bfab856abbaeb9b40c9b160070c6325e22ddc")]

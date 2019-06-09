@@ -1,0 +1,320 @@
+{
+  "menu": {
+    "byDate": "By Date",
+    "betweenDates": "Between Dates",
+    "defaultPage": "[Default]",
+    "diff": "Diff",
+    "email": "Email",
+    "events": "Events",
+    "gauges": "Gauges",
+    "latest": "Latest",
+    "mqtt": "MQTT",
+    "profile": "Profile",
+    "profileDay": "Day Profile",
+    "profileGraphs": "Profile Graphs",
+    "profileMonth": "Month Profile",
+    "profileYear": "Year Profile",
+    "recipients": "Recipients",
+    "relayControls": "Relay Controls",
+    "serieColors": "Serie Colors",
+    "settings": "Settings",
+    "smtp": "SMTP"
+  },
+
+  "common": {
+    "chooseColor": "Choose color",
+    "chooseDate": "Choose date",
+    "chooseDateFrom": "Choose from date (incl.)",
+    "chooseDateTo": "Choose to date (incl.)",
+    "chooseFromMenu": "Choose from the menu",
+    "chooseMonth": "Choose month",
+    "chooseYear": "Choose year",
+    "forExampleProfileGraph": "For example: To add a profile graph with series go to 'Settings' then 'ProfileGraphs'.",
+    "noDataFound": "No data found"
+  },
+
+  "headings": {
+    "dayProfile": "Day Profile",
+    "diffByDates": "Diff Between Dates",
+    "emailRecipients": "Email Recipients",
+    "emailRecipientsAdd": "Add Email Recipient",
+    "emailRecipientsInfo": "Register email recipients to receive event notifications; water meter leak",
+    "emailRecipientsTable": "Email Recipients",
+    "events": "Events",
+    "latestGuages": "Latest Gauges",
+    "gaugesByDate": "Gauges By Date",
+    "gauges": {
+      "groupName": {
+        "Latest": "Latest",
+        "LatestDay": "Latest Day",
+        "LatestMonth": "Latest Month",
+        "LatestYear": "Latest Year",
+        "Custom": ""
+      }
+    },
+    "monthProfile": "Month Profile",
+    "mqtt": "Configure MQTT Integration",
+    "period": {
+      "day": "Day",
+      "month": "Month",
+      "year": "Year"
+    },
+    "periodPage": "Period:{{period}} - Page:{{page}}",
+    "profileGraphs": "Profile Graphs",
+    "profileGraphsInfo": "Define profile graphs",
+    "relayControls": "Configure Relay Controls",
+    "relayControlsInfo": "Define relay controls for automated connecting and disconnecting",
+    "relayControlsAdd": "Add Relay Control",
+    "relayControlsTable": "Relay Controls",
+    "serieColors": "Configure Serie Colors",
+    "smtp": "Configure SMTP Server",
+    "smtpInfo": "DO NOT use a personal account for SMTP configuration. The SMTP server must support simple logins. For example for GMail accounts do enable",
+    "smtpInfoLink": "less secure app access",
+    "totals": "Totals",
+    "yearProfile": "Year Profile"
+  },
+  
+  "columns": {
+    "actions": "Actions",
+    "color": "Color",
+    "details": "Details",
+    "detectTimestamp": "Detect Timestamp",
+    "difference": "Difference",
+    "email": "Email",
+    "event": "Event",
+    "from": "From",
+    "gaugeValue": "Gauge Value",
+    "interval": "Interval",
+    "label": "Label",
+    "maxAvgDuration": "Max Avg Duration",
+    "minAvgDisconnectToConnect": "Min Avg Value To Connect",
+    "minAvgConnectToDisconnect": "Min Avg Value To Keep Connected",
+    "monitorSerie": "Monitor Serie",
+    "name": "Name",
+    "page": "Page",
+    "relayUnit": "Relay Unit",
+    "serialNumber": "Serial Number",
+    "serie": "Serie",
+    "series": "Series",
+    "status": "Status",
+    "timestamp": "Timestamp",
+    "title": "Title",
+    "to": "To",
+    "total": "Total",
+    "unit": "Unit"
+  },
+
+  "forms": {
+    "settings": {
+      "emailRecipients": {
+        "buttonActionDelete": "Delete",
+        "buttonActionTest": "Test",
+        "buttonAdd": "Add Email Recipient",
+        "confirmActionDelete": "Email recipient deleted.",
+        "confirmActionTest": "Test email sent. Check the mailbox.",
+        "confirmAdd": "Email recipient added.",
+        "errorActionDelete": "Delete email recipient failed. ",
+        "errorActionTest": "Test email recipient failed. ",
+        "errorAdd": "Add email recipient failed. ",
+        "errorAdjustFields": "Adjust name or email values.",
+        "errorAdjustEmailField": "Email already exists.",
+        "errorSmtpAuthentification": "Could not authenticate with the SMTP server. Check SMTP configuration: Email and Password. ",
+        "errorSmtpConnection": "Could not connect to the SMTP server. Check SMTP configuration: SMTP Server Address and SMTP Server Port. ",
+        "hintEmail": "For example: johndoe@anysomewhere.org",
+        "hintName": "For example: John Doe",
+        "placeholderEmail": "Email",
+        "placeholderName": "Name",
+        "valErrors": {
+          "maxLength_39": "Maximum 39 characters",
+          "minLength_3": "Minimum 3 characters",
+          "required": "Required"
+        }
+      },
+      "mqtt": {
+        "buttonSave": "Save Configuration",
+        "buttonTest": "Test Configuration",
+        "confirmSave": "Configuration saved.",
+        "confirmTest": "Connection OK.",
+        "errorSave": "Save configuration failed. ",
+        "errorTest": "Test failed. ",
+        "errorTestNoConnection": "No connection.",
+        "errorAdjustFields": "Adjust server address or server port.",
+        "hintPort": "For example: 1883",
+        "hintServer": "For example: 192.168.0.123",
+        "placeholderPort": "MQTT Server Port",
+        "placeholderServer": "MQTT Server IP Address",
+        "checkPublishReadings": "Publish Readings",
+        "valErrors": {
+          "max_65535": "Maximum value is 65535",
+          "maxLength_39": "Maximum 39 characters",
+          "min_1": "Minimum value is 1",
+          "minLength_7": "Minimum 7 characters",
+          "required": "Required"
+        }
+      },
+      "profileGraphs": {
+        "buttonActionDelete": "Delete",
+        "buttonActionDown": "Down",
+        "buttonActionUp": "Up",
+        "buttonAdd": "Add Profile Graph",
+        "confirmActionDelete": "Profile graph deleted.",
+        "confirmActionSwap": "Profile graph moved.",
+        "confirmAdd": "Profile graph added.",
+        "days": "day(s)",
+        "errorActionDelete": "Delete profile graph failed. ",
+        "errorActionSwap": "Move profile graph failed. ",
+        "errorAdd": "Add profile graph failed. ",
+        "errorAdjustFields": "Adjust page or title values.",
+        "hintInterval": "Choose interval",
+        "hintPage": "For example: Ground Floor",
+        "hintPeriod": "Choose period",
+        "hintSeries": "Choose series",
+        "hintTitle": "For example: Electricity Import",
+        "minutes": "minutes",
+        "months": "month(s)",
+        "multipleSeries": "{{ value }} series",
+        "periods": {
+          "day": "Day",
+          "month": "Month",
+          "year": "Year"
+        },
+        "placeholderInterval": "Interval",
+        "placeholderPage": "Page",
+        "placeholderPeriod": "Period",
+        "placeholderSeries": "Series",
+        "placeholderTitle": "Title",
+        "valErrors": {
+          "maxLength_25": "Maximum 25 characters",
+          "minLength_1": "Minimum 1 characters",
+          "required": "Required"
+        }
+      },
+      "relayControls": {
+        "buttonActionDelete": "Delete",
+        "buttonAdd": "Add Relay Control",
+        "confirmActionDelete": "Relay control deleted.",
+        "confirmAdd": "Relay control added.",
+        "errorActionDelete": "Delete relay control failed. ",
+        "errorAdjustFields": "Adjust input values.",
+        "errorAdd": "Add relay control failed. ",
+        "formHint": "When '{{serieName}}' has transferred a minimum average of {{disconnectToConnect}} {{unit}} for up to {{duration}} then connect '{{relayName}}' and keep it connected while minimum average {{connectToDisconnect}} {{unit}} is transferred.",
+        "hintConnectToDisconnectValue": "For example: 200",
+        "hintDisconnectToConnectValue": "For example: 1000",
+        "hintDuration": "Choose duration",
+        "hintRelayName": "Choose relay",
+        "hintSerieName": "Choose serie",
+        "minutes": "minutes",
+        "placeholderConnectToDisconnectValue": "Min Avg Value To Keep Connected",
+        "placeholderDisconnectToConnectValue": "Min Avg Value To Connect",
+        "placeholderDuration": "Max Avg Duration",
+        "placeholderRelayName": "Relay Name",
+        "placeholderSerieName": "Monitor Serie",
+        "valErrors": {
+          "max_65535": "Maximum value is 65535",
+          "min_1": "Minimum value is 1",
+          "mustBeLess": "Must be less than value above",
+          "required": "Required"
+        }
+      },
+      "serieColors": {
+        "buttonSave": "Save Serie Colors",
+        "confirmSave": "Serie colors saved.",
+        "errorSave": "Save serie colors failed."
+      },
+      "smtp": {
+        "buttonSave": "Save Configuration",
+        "confirmSave": "Configuration saved.",
+        "errorSave": "Save configuration failed. ",
+        "errorAdjustFields": "Adjust server address, server port or email.",
+        "hintEmail": "Enter email",
+        "hintPassword": "Enter password",
+        "hintPort": "For example: 587",
+        "hintServer": "For example: smtp.gmail.com",
+        "placeholderEmail": "Email",
+        "placeholderPassword": "Password",
+        "placeholderPort": "SMTP Server Port",
+        "placeholderServer": "SMTP Server Address",
+        "valErrors": {
+          "max_65535": "Maximum value is 65535",
+          "maxLength_39": "Maximum 39 characters",
+          "min_1": "Minimum value is 1",
+          "minLength_7": "Minimum 7 characters",
+          "required": "Required"
+        }
+      }
+    }
+  },
+
+  "events": {
+    "details_leak": "From: {{startTimestamp}}{{newline}}To: {{endTimestamp}}{{newline}}Consumption: {{value}} {{unit}}",
+    "status_true": "Detected",
+    "status_false": "Reset",
+    "type_leak": "Leak"
+  },
+
+  "profileGraphs": {
+    "common": {
+      "DragToZoom": "Click and drag in the chart to zoom in",
+      "UnpinchToZoom": "Forstør for at zoome ind",
+      "resetZoom": "Reset zoom"
+    },
+    "yAxis": {
+      "Energy": "Energy",
+      "EnergyElement": "Energy Entry",
+      "Power": "Power",
+      "Volume": "Volume",
+      "VolumeElement": "Volume Entry",
+      "Flow": "Flow",
+      "Temperature": "Temperature",
+      "RelativeHumidity": "Relative Humidity"
+    }
+  },
+
+  "serie": {
+    "1.0.1.8.0.255": "Consumed Energy Total", 
+    "1.0.1.8.0.200": "Consumed Energy", 
+    "1.0.1.7.0.255": "Consumed Power", 
+    "1.0.21.7.0.255": "Consumed Power L1", 
+    "1.0.41.7.0.255": "Consumed Power L2", 
+    "1.0.61.7.0.255": "Consumed Power L3", 
+    "1.0.2.8.0.255": "Produced Energy Total", 
+    "1.0.2.8.0.200": "Produced Energy", 
+    "1.0.2.7.0.255": "Produced Power", 
+    "1.0.22.7.0.255": "Produced Power L1", 
+    "1.0.42.7.0.255": "Produced Power L2", 
+    "1.0.62.7.0.255": "Produced Power L3", 
+    "15.0.223.0.0.255": "Temperature", 
+    "15.0.223.0.2.255": "Humidity", 
+    "8.0.1.0.0.255": "Volume Total", 
+    "8.0.1.0.0.200": "Volume", 
+    "8.0.2.0.0.255": "Flow", 
+    "6.0.2.0.0.255": "Volume Total", 
+    "6.0.2.0.0.200": "Volume", 
+    "6.0.9.0.0.255": "Flow", 
+    "6.0.1.0.0.255": "Energy Total", 
+    "6.0.1.0.0.200": "Energy", 
+    "6.0.8.0.0.255": "Power", 
+    "6.0.10.0.0.255": "Inlet Temperature", 
+    "6.0.11.0.0.255": "Outlet Temperature", 
+    "1.210.1.8.0.255": "Consumed Electricity w/o Heat Total", 
+    "1.210.1.8.0.200": "Consumed Electricity w/o Heat", 
+    "1.210.1.8.0.100": "Consumed Electricity w/o Heat Entry", 
+    "1.220.1.8.0.255": "Consumed Electricity w/ Heat Total", 
+    "1.220.1.8.0.200": "Consumed Electricity w/ Heat", 
+    "1.220.1.8.0.100": "Consumed Electricity w/ Heat Entry", 
+    "1.0.1.8.0.100": "Consumed Energy Entry", 
+    "1.0.2.8.0.100": "Produced Energy Entry", 
+    "8.0.1.0.0.100": "Volume Entry", 
+    "6.0.2.0.0.100": "Volume Entry", 
+    "6.0.1.0.0.100": "Energy Entry",
+    "0.1.96.3.10.255": "Unit 1",
+    "0.2.96.3.10.255": "Unit 2",
+    "0.3.96.3.10.255": "Unit 3",
+    "0.4.96.3.10.255": "Unit 4",
+    "0.5.96.3.10.255": "Unit 5",
+    "0.6.96.3.10.255": "Unit 6",
+    "0.7.96.3.10.255": "Unit 7",
+    "0.8.96.3.10.255": "Unit 8"
+  }
+
+}
