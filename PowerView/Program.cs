@@ -179,13 +179,11 @@ namespace PowerView
     private static void GenerateTestDataIfDebug(ILifetimeScope scope)
     {
 #if DEBUG
-      var readingPipeRepository = scope.Resolve<IReadingPipeRepository>();
-
-      for (var i = 0; i < 3; i++)
-      {
-        readingPipeRepository.PipeLiveReadingsToDayReadings(DateTime.UtcNow);
-        readingPipeRepository.PipeDayReadingsToMonthReadings(DateTime.UtcNow);
-      }
+      var readingPiper = scope.Resolve<IReadingPiper>();
+      var now = DateTime.Now + TimeSpan.FromDays(1);
+      readingPiper.PipeLiveReadings(now);
+      readingPiper.PipeDayReadings(now);
+      readingPiper.PipeMonthReadings(now);
 
       new TestDataGenerator(scope).Invoke();
 #endif

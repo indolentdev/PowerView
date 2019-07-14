@@ -38,11 +38,11 @@ namespace PowerView.Model.Repository
       return PipeReadings<Db.LiveReading, Db.DayReading>(maximumDateTime);
     }
 
-    public void PipeDayReadingsToMonthReadings(DateTime maximumDateTime)
+    public bool PipeDayReadingsToMonthReadings(DateTime maximumDateTime)
     {
       if (maximumDateTime.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("maximumDateTime", "Must be UTC time");
 
-      PipeReadings<Db.DayReading, Db.MonthReading>(maximumDateTime);
+      return PipeReadings<Db.DayReading, Db.MonthReading>(maximumDateTime);
     }
 
     public void PipeMonthReadingsToYearReadings(DateTime maximumDateTime)
@@ -56,7 +56,7 @@ namespace PowerView.Model.Repository
       where TSrcReading : class, IDbReading, new()
       where TDstReading : class, IDbReading, new()
     {
-      log.InfoFormat("Starting piping {0} to {1}", typeof(TSrcReading).Name, typeof(TDstReading).Name);
+      log.DebugFormat("Starting piping {0} to {1}", typeof(TSrcReading).Name, typeof(TDstReading).Name);
 
       var existingLabelToTimeStamp = GetLabelMaxTimestamps<TDstReading>();
 
@@ -66,7 +66,7 @@ namespace PowerView.Model.Repository
 
       var pipedSomething = PipeReadings<TSrcReading, TDstReading>(readingsToPipeByLabel);
 
-      log.InfoFormat("Finished piping");
+      log.DebugFormat("Finished piping");
 
       return pipedSomething;
     }

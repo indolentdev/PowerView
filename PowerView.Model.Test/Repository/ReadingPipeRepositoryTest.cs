@@ -244,7 +244,7 @@ namespace PowerView.Model.Test.Repository
       var target = CreateTarget();
 
       // Act
-      target.PipeDayReadingsToMonthReadings(maximumDateTime);
+      var pipedSomething = target.PipeDayReadingsToMonthReadings(maximumDateTime);
 
       // Assert
       Assert.That(DbContext.Connection.Count<Db.MonthReading>(null), Is.EqualTo(1));
@@ -252,6 +252,8 @@ namespace PowerView.Model.Test.Repository
 
       Assert.That(DbContext.Connection.Count<Db.StreamPosition>(null), Is.EqualTo(1));
       AssertStreamPosition("MonthReading", dayReading.Label, dayReading.Id);
+
+      Assert.That(pipedSomething, Is.True);
     }
 
     [Test]
