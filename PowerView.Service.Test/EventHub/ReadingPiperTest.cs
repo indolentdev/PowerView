@@ -23,7 +23,7 @@ namespace PowerView.Service.Test.EventHub
     }
 
     [Test]
-    public void PiveLiveReadings()
+    public void PipeLiveReadings()
     {
       // Arrange
       var dateTime = new DateTime(2016, 6, 19, 14, 52, 31, 0, DateTimeKind.Local);
@@ -38,7 +38,7 @@ namespace PowerView.Service.Test.EventHub
     }
 
     [Test]
-    public void PiveLiveReadingsCanRepeat()
+    public void PipeLiveReadingsCanRepeat()
     {
       // Arrange
       var dateTime = new DateTime(2016, 6, 19, 14, 52, 31, 0, DateTimeKind.Local);
@@ -53,7 +53,7 @@ namespace PowerView.Service.Test.EventHub
     }
 
     [Test]
-    public void PiveLiveReadingsSuccessiveBeforeInterval()
+    public void PipeLiveReadingsSuccessiveBeforeInterval()
     {
       // Arrange
       var now = DateTime.Now;
@@ -70,7 +70,7 @@ namespace PowerView.Service.Test.EventHub
     }
 
     [Test]
-    public void PiveLiveReadingsSuccessiveAfterInterval()
+    public void PipeLiveReadingsSuccessiveAfterInterval()
     {
       // Arrange
       var now = DateTime.Now;
@@ -87,7 +87,7 @@ namespace PowerView.Service.Test.EventHub
     }
 
     [Test]
-    public void PiveDayReadings()
+    public void PipeDayReadingsWithoutPriorPipeReadingsToHead()
     {
       // Arrange
       var dateTime = new DateTime(2016, 6, 19, 14, 52, 31, 0, DateTimeKind.Local);
@@ -97,12 +97,42 @@ namespace PowerView.Service.Test.EventHub
       target.PipeDayReadings(dateTime.AddMonths(1));
 
       // Assert
-      factory.Verify(f => f.Create<IReadingPipeRepository>());
+      factory.Verify(f => f.Create<IReadingPipeRepository>(), Times.Never);
+    }
+
+    [Test]
+    public void PipeDayReadings()
+    {
+      // Arrange
+      var dateTime = new DateTime(2016, 6, 19, 14, 52, 31, 0, DateTimeKind.Local);
+      var target = CreateTarget(dateTime);
+      target.PipeLiveReadings(dateTime + TimeSpan.FromDays(1));
+
+      // Act
+      target.PipeDayReadings(dateTime.AddMonths(1));
+
+      // Assert
       readingPipeRepository.Verify(rpr => rpr.PipeDayReadingsToMonthReadings(dateTime.AddMonths(1).ToUniversalTime()));
     }
 
     [Test]
-    public void PiveDayReadingsBeforeInterval()
+    public void PipeDayReadingsCanRepeat()
+    {
+      // Arrange
+      var dateTime = new DateTime(2016, 6, 19, 14, 52, 31, 0, DateTimeKind.Local);
+      var target = CreateTarget(dateTime);
+      target.PipeLiveReadings(dateTime + TimeSpan.FromDays(1));
+      readingPipeRepository.Setup(rpr => rpr.PipeDayReadingsToMonthReadings(It.IsAny<DateTime>())).Returns(true);
+
+      // Act
+      target.PipeDayReadings(dateTime.AddMonths(1));
+
+      // Assert
+      readingPipeRepository.Verify(rpr => rpr.PipeDayReadingsToMonthReadings(dateTime.AddMonths(1).ToUniversalTime()), Times.Exactly(2));
+    }
+
+    [Test]
+    public void PipeDayReadingsBeforeInterval()
     {
       const DateTimeKind dtk = DateTimeKind.Local;
       var timePairs = new [] 
@@ -115,18 +145,18 @@ namespace PowerView.Service.Test.EventHub
       {
         // Arrange
         var target = CreateTarget(item.Construct);
+        target.PipeLiveReadings(item.Construct + TimeSpan.FromDays(1));
 
         // Act
         target.PipeDayReadings(item.Invoke);
 
         // Assert
-        factory.Verify(f => f.Create<IReadingPipeRepository>(), Times.Never);
         readingPipeRepository.Verify(rpr => rpr.PipeDayReadingsToMonthReadings(It.IsAny<DateTime>()), Times.Never);
       }
     }
 
     [Test]
-    public void PiveDayReadingsAfterInterval()
+    public void PipeDayReadingsAfterInterval()
     {
       const DateTimeKind dtk = DateTimeKind.Local;
       var timePairs = new [] 
@@ -141,18 +171,18 @@ namespace PowerView.Service.Test.EventHub
       {
         // Arrange
         var target = CreateTarget(item.Construct);
+        target.PipeLiveReadings(item.Construct + TimeSpan.FromDays(1));
 
         // Act
         target.PipeDayReadings(item.Invoke);
 
         // Assert
-        factory.Verify(f => f.Create<IReadingPipeRepository>());
         readingPipeRepository.Verify(rpr => rpr.PipeDayReadingsToMonthReadings(It.IsAny<DateTime>()));
       }
     }
 
     [Test]
-    public void PiveMonthReadings()
+    public void PipeMonthReadingsWithoutPriorPipeReadingsToHead()
     {
       // Arrange
       var dateTime = new DateTime(2016, 6, 19, 14, 52, 31, 0, DateTimeKind.Local);
@@ -162,12 +192,27 @@ namespace PowerView.Service.Test.EventHub
       target.PipeMonthReadings(dateTime.AddMonths(1));
 
       // Assert
-      factory.Verify(f => f.Create<IReadingPipeRepository>());
+      factory.Verify(f => f.Create<IReadingPipeRepository>(), Times.Never);
+    }
+
+    [Test]
+    public void PipeMonthReadings()
+    {
+      // Arrange
+      var dateTime = new DateTime(2016, 6, 19, 14, 52, 31, 0, DateTimeKind.Local);
+      var target = CreateTarget(dateTime);
+      target.PipeLiveReadings(dateTime + TimeSpan.FromDays(1));
+      target.PipeDayReadings(dateTime.AddMonths(1));
+
+      // Act
+      target.PipeMonthReadings(dateTime.AddMonths(1));
+
+      // Assert
       readingPipeRepository.Verify(rpr => rpr.PipeMonthReadingsToYearReadings(dateTime.AddMonths(1).ToUniversalTime()));
     }
 
     [Test]
-    public void PiveMonthReadingsBeforeInterval()
+    public void PipeMonthReadingsBeforeInterval()
     {
       const DateTimeKind dtk = DateTimeKind.Local;
       var timePairs = new[]
@@ -180,18 +225,19 @@ namespace PowerView.Service.Test.EventHub
       {
         // Arrange
         var target = CreateTarget(item.Construct);
+        target.PipeLiveReadings(item.Construct + TimeSpan.FromDays(1));
+        target.PipeDayReadings(item.Construct.AddMonths(1));
 
         // Act
         target.PipeMonthReadings(item.Invoke);
 
         // Assert
-        factory.Verify(f => f.Create<IReadingPipeRepository>(), Times.Never);
         readingPipeRepository.Verify(rpr => rpr.PipeMonthReadingsToYearReadings(It.IsAny<DateTime>()), Times.Never);
       }
     }
 
     [Test]
-    public void PiveMonthReadingsAfterInterval()
+    public void PipeMonthReadingsAfterInterval()
     {
       const DateTimeKind dtk = DateTimeKind.Local;
       var timePairs = new[]
@@ -206,12 +252,13 @@ namespace PowerView.Service.Test.EventHub
       {
         // Arrange
         var target = CreateTarget(item.Construct);
+        target.PipeLiveReadings(item.Construct + TimeSpan.FromDays(1));
+        target.PipeDayReadings(item.Construct.AddMonths(1));
 
         // Act
         target.PipeMonthReadings(item.Invoke);
 
         // Assert
-        factory.Verify(f => f.Create<IReadingPipeRepository>());
         readingPipeRepository.Verify(rpr => rpr.PipeMonthReadingsToYearReadings(It.IsAny<DateTime>()));
       }
     }

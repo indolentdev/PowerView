@@ -6,7 +6,7 @@ namespace PowerView.Model.Repository
   {
     bool PipeLiveReadingsToDayReadings(DateTime maximumDateTime);
 
-    void PipeDayReadingsToMonthReadings(DateTime maximumDateTime);
+    bool PipeDayReadingsToMonthReadings(DateTime maximumDateTime);
 
     void PipeMonthReadingsToYearReadings(DateTime maximumDateTime);
   }
