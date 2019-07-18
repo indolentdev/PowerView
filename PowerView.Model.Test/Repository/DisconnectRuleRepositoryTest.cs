@@ -40,7 +40,7 @@ namespace PowerView.Model.Test.Repository
     {
       // Arrange
       var sn1 = new SerieName("label1", ObisCode.ColdWaterFlow1);
-      var sn2 = new SerieName("label2", ObisCode.ActualPowerP14);
+      var sn2 = new SerieName("label2", ObisCode.ElectrActualPowerP14);
       var disconnectRule = new DisconnectRule(sn1, sn2, TimeSpan.FromMinutes(30), 1500, 200, Unit.Watt);
       var target = CreateTarget();
 
@@ -61,7 +61,7 @@ namespace PowerView.Model.Test.Repository
         DurationSeconds = 4, DisconnectToConnectValue = 4, ConnectToDisconnectValue = 3, Unit = 4 };
       DbContext.InsertTransaction("testdata", dbDisconnectRule);
 
-      var sn2 = new SerieName("label2", ObisCode.ActualPowerP14);
+      var sn2 = new SerieName("label2", ObisCode.ElectrActualPowerP14);
       var disconnectRule = new DisconnectRule(sn1, sn2, TimeSpan.FromMinutes(30), 1500, 200, Unit.Watt);
       var target = CreateTarget();
 
@@ -181,9 +181,9 @@ namespace PowerView.Model.Test.Repository
       var reading2 = new Db.LiveReading { Label = "lbl-other", SerialNumber = "SN-other", Timestamp = DateTime.UtcNow - TimeSpan.FromDays(3)};
       var reading3 = new Db.LiveReading { Label = "lbl", SerialNumber = "SN", Timestamp = DateTime.UtcNow - TimeSpan.FromDays(1)};
       Insert(new [] { reading1, reading2, reading3 });
-      var register1 = new Db.LiveRegister { ObisCode = ObisCode.ActualPowerP23L2, Unit = (byte)Unit.Watt, ReadingId = reading1.Id };
-      var register2 = new Db.LiveRegister { ObisCode = ObisCode.ActualPowerP23L2, Unit = (byte)Unit.Joule, ReadingId = reading2.Id };
-      var register3 = new Db.LiveRegister { ObisCode = ObisCode.ActualPowerP23L2, Unit = (byte)Unit.Percentage, ReadingId = reading3.Id };
+      var register1 = new Db.LiveRegister { ObisCode = ObisCode.ElectrActualPowerP23L2, Unit = (byte)Unit.Watt, ReadingId = reading1.Id };
+      var register2 = new Db.LiveRegister { ObisCode = ObisCode.ElectrActualPowerP23L2, Unit = (byte)Unit.Joule, ReadingId = reading2.Id };
+      var register3 = new Db.LiveRegister { ObisCode = ObisCode.ElectrActualPowerP23L2, Unit = (byte)Unit.Percentage, ReadingId = reading3.Id };
       Insert(new[] { register1, register2, register3 });
       var dateTime = DateTime.UtcNow;
       var target = CreateTarget();
@@ -193,7 +193,7 @@ namespace PowerView.Model.Test.Repository
 
       // Assert
       Assert.That(res.Count, Is.EqualTo(1));
-      Assert.That(res, Contains.Key(new SerieName("lbl", ObisCode.ActualPowerP23L2)));
+      Assert.That(res, Contains.Key(new SerieName("lbl", ObisCode.ElectrActualPowerP23L2)));
       Assert.That(res.First().Value, Is.EqualTo(Unit.Watt));
     }
 
@@ -205,9 +205,9 @@ namespace PowerView.Model.Test.Repository
       var reading2 = new Db.DayReading { Label = "lbl-other", SerialNumber = "SN-other", Timestamp = DateTime.UtcNow - TimeSpan.FromDays(8) };
       var reading3 = new Db.DayReading { Label = "lbl", SerialNumber = "SN", Timestamp = DateTime.UtcNow - TimeSpan.FromDays(6) };
       Insert(new[] { reading1, reading2, reading3 });
-      var register1 = new Db.DayRegister { ObisCode = ObisCode.ActualPowerP23L2, Unit = (byte)Unit.Watt, ReadingId = reading1.Id };
-      var register2 = new Db.DayRegister { ObisCode = ObisCode.ActualPowerP23L2, Unit = (byte)Unit.Joule, ReadingId = reading2.Id };
-      var register3 = new Db.DayRegister { ObisCode = ObisCode.ActualPowerP23L2, Unit = (byte)Unit.Percentage, ReadingId = reading3.Id };
+      var register1 = new Db.DayRegister { ObisCode = ObisCode.ElectrActualPowerP23L2, Unit = (byte)Unit.Watt, ReadingId = reading1.Id };
+      var register2 = new Db.DayRegister { ObisCode = ObisCode.ElectrActualPowerP23L2, Unit = (byte)Unit.Joule, ReadingId = reading2.Id };
+      var register3 = new Db.DayRegister { ObisCode = ObisCode.ElectrActualPowerP23L2, Unit = (byte)Unit.Percentage, ReadingId = reading3.Id };
       Insert(new[] { register1, register2, register3 });
       var dateTime = DateTime.UtcNow;
       var target = CreateTarget();
@@ -217,7 +217,7 @@ namespace PowerView.Model.Test.Repository
 
       // Assert
       Assert.That(res.Count, Is.EqualTo(1));
-      Assert.That(res, Contains.Key(new SerieName("lbl", ObisCode.ActualPowerP23L2)));
+      Assert.That(res, Contains.Key(new SerieName("lbl", ObisCode.ElectrActualPowerP23L2)));
       Assert.That(res.First().Value, Is.EqualTo(Unit.Watt));
     }
 

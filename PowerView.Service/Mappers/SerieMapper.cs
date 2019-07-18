@@ -10,10 +10,9 @@ namespace PowerView.Service.Mappers
 
     public string MapToSerieType(ObisCode obisCode)
     {
-      if (obisCode == ObisCode.ActiveEnergyA14Interim || obisCode == ObisCode.ActiveEnergyA23Interim ||
-         obisCode == ObisCode.ColdWaterVolume1Interim || obisCode == ObisCode.HeatEnergyEnergy1Interim ||
-         obisCode == ObisCode.HeatEnergyVolume1Interim ||
-         obisCode == ObisCode.ConsumedElectricityInterim || obisCode == ObisCode.ConsumedElectricityWithHeatInterim)
+      if (obisCode == ObisCode.ElectrActiveEnergyA14Period || obisCode == ObisCode.ElectrActiveEnergyA23Period ||
+         obisCode == ObisCode.ColdWaterVolume1Period || obisCode == ObisCode.HeatEnergyEnergy1Period ||
+         obisCode == ObisCode.HeatEnergyVolume1Period)
       {
         return "areaspline";
       }
@@ -23,37 +22,37 @@ namespace PowerView.Service.Mappers
 
     public string MapToSerieYAxis(ObisCode obisCode)
     {
-      if (obisCode == ObisCode.ActiveEnergyA14Interim || obisCode == ObisCode.ActiveEnergyA23Interim ||
-         obisCode == ObisCode.HeatEnergyEnergy1Interim || 
-         obisCode == ObisCode.ConsumedElectricityInterim || obisCode == ObisCode.ConsumedElectricityWithHeatInterim )
+      if (obisCode == ObisCode.ElectrActiveEnergyA14Period || obisCode == ObisCode.ElectrActiveEnergyA23Period ||
+         obisCode == ObisCode.HeatEnergyEnergy1Period)
       {
-        return "energyInterim";
+        return "energyPeriod";
       }
 
-      if (obisCode == ObisCode.ActiveEnergyA14Delta || obisCode == ObisCode.ActiveEnergyA23Delta ||
-         obisCode == ObisCode.HeatEnergyEnergy1Delta || 
-         obisCode == ObisCode.ConsumedElectricityDelta || obisCode == ObisCode.ConsumedElectricityWithHeatDelta)
+      if (obisCode == ObisCode.ElectrActiveEnergyA14Delta || obisCode == ObisCode.ElectrActiveEnergyA23Delta ||
+         obisCode == ObisCode.HeatEnergyEnergy1Delta)
       {
         return "energyDelta";
       }
 
-      if (obisCode == ObisCode.ActualPowerP14 || obisCode == ObisCode.ActualPowerP23 ||
-        obisCode == ObisCode.HeatEnergyPower1 || obisCode == ObisCode.ActualPowerP14L1 ||
-         obisCode == ObisCode.ActualPowerP14L2 || obisCode == ObisCode.ActualPowerP14L3 ||
-         obisCode == ObisCode.ActualPowerP23L1 || obisCode == ObisCode.ActualPowerP23L2 ||
-         obisCode == ObisCode.ActualPowerP23L3)
+      if (obisCode == ObisCode.ElectrActualPowerP14 || obisCode == ObisCode.ElectrActualPowerP14Average ||
+          obisCode == ObisCode.ElectrActualPowerP23 || obisCode == ObisCode.ElectrActualPowerP23Average ||
+          obisCode == ObisCode.HeatEnergyPower1 || obisCode == ObisCode.HeatEnergyPower1Average ||
+          obisCode == ObisCode.ElectrActualPowerP14L1 ||
+          obisCode == ObisCode.ElectrActualPowerP14L2 || obisCode == ObisCode.ElectrActualPowerP14L3 ||
+          obisCode == ObisCode.ElectrActualPowerP23L1 || obisCode == ObisCode.ElectrActualPowerP23L2 ||
+          obisCode == ObisCode.ElectrActualPowerP23L3)
       {
         return "power";
       }
 
-      if (obisCode == ObisCode.ColdWaterVolume1Interim)
+      if (obisCode == ObisCode.ColdWaterVolume1Period)
       {
-        return "volumeInterim";
+        return "volumePeriod";
       }
 
-      if (obisCode == ObisCode.HeatEnergyVolume1Interim)
+      if (obisCode == ObisCode.HeatEnergyVolume1Period)
       {
-        return "volumeInterimHiddenYAxis";
+        return "volumePeriodHiddenYAxis";
       }
 
       if (obisCode == ObisCode.ColdWaterVolume1Delta)
@@ -66,12 +65,12 @@ namespace PowerView.Service.Mappers
         return "volumeDeltaHiddenYAxis";
       }
 
-      if (obisCode == ObisCode.ColdWaterFlow1)
+      if (obisCode == ObisCode.ColdWaterFlow1 || obisCode == ObisCode.ColdWaterFlow1Average)
       {
         return "flow";
       }
 
-      if (obisCode == ObisCode.HeatEnergyFlow1)
+      if (obisCode == ObisCode.HeatEnergyFlow1 || obisCode == ObisCode.HeatEnergyFlow1Average)
       {
         return "flowHiddenYAxis";
       }

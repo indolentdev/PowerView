@@ -117,11 +117,11 @@ namespace PowerView.Service.Mappers
         CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal | DateTimeStyles.NoCurrentDateDefault).ToUniversalTime();
 
       var registerValues = new [] { 
-        GetRegisterValue(pvArgs, "v1", ObisCode.ActiveEnergyA23, Unit.WattHour),
-        GetRegisterValue(pvArgs, "v2", ObisCode.ActualPowerP23, Unit.Watt),
-        GetRegisterValue(pvArgs, actualPowerP23L1Param, ObisCode.ActualPowerP23L1, Unit.Watt),
-        GetRegisterValue(pvArgs, actualPowerP23L2Param, ObisCode.ActualPowerP23L2, Unit.Watt),
-        GetRegisterValue(pvArgs, actualPowerP23L3Param, ObisCode.ActualPowerP23L3, Unit.Watt),
+        GetRegisterValue(pvArgs, "v1", ObisCode.ElectrActiveEnergyA23, Unit.WattHour),
+        GetRegisterValue(pvArgs, "v2", ObisCode.ElectrActualPowerP23, Unit.Watt),
+        GetRegisterValue(pvArgs, actualPowerP23L1Param, ObisCode.ElectrActualPowerP23L1, Unit.Watt),
+        GetRegisterValue(pvArgs, actualPowerP23L2Param, ObisCode.ElectrActualPowerP23L2, Unit.Watt),
+        GetRegisterValue(pvArgs, actualPowerP23L3Param, ObisCode.ElectrActualPowerP23L3, Unit.Watt),
       }.Where(rv => rv != null);
 
       return new LiveReading(deviceLabel, serialNumber, timestamp, registerValues);

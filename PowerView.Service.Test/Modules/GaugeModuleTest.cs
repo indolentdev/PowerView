@@ -38,7 +38,7 @@ namespace PowerView.Service.Test.Modules
     public void GetLatest()
     {
       // Arrange
-      var gv = new GaugeValue("Lbl", "123", DateTime.UtcNow, ObisCode.ActiveEnergyA14, new UnitValue(1, Unit.WattHour));
+      var gv = new GaugeValue("Lbl", "123", DateTime.UtcNow, ObisCode.ElectrActiveEnergyA14, new UnitValue(1, Unit.WattHour));
       var gvs = new GaugeValueSet(GaugeSetName.Latest, new[] { gv });
       gaugeRepository.Setup(gr => gr.GetLatest(It.IsAny<DateTime>())).Returns(new[] { gvs });
 
@@ -143,7 +143,7 @@ namespace PowerView.Service.Test.Modules
     public void GetCustom()
     {
       // Arrange
-      var gv = new GaugeValue("Lbl", "123", DateTime.UtcNow, ObisCode.ActiveEnergyA14, new UnitValue(1, Unit.WattHour));
+      var gv = new GaugeValue("Lbl", "123", DateTime.UtcNow, ObisCode.ElectrActiveEnergyA14, new UnitValue(1, Unit.WattHour));
       var gvs = new GaugeValueSet(GaugeSetName.Custom, new[] { gv });
       gaugeRepository.Setup(gr => gr.GetCustom(It.IsAny<DateTime>())).Returns(new[] { gvs });
 

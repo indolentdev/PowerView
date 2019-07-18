@@ -13,7 +13,7 @@ namespace PowerView.Model.Test
       const string label = "lbl";
       const string sn = "123";
       DateTime dt = DateTime.UtcNow;
-      ObisCode oc = ObisCode.ActiveEnergyA14;
+      ObisCode oc = ObisCode.ElectrActiveEnergyA14;
       var unitValue = new UnitValue(1, Unit.CubicMetre);
 
       // Act & Assert
@@ -31,7 +31,7 @@ namespace PowerView.Model.Test
       const string label = "lbl";
       const string sn = "123";
       DateTime dt = DateTime.UtcNow;
-      ObisCode oc = ObisCode.ActiveEnergyA14;
+      ObisCode oc = ObisCode.ElectrActiveEnergyA14;
       var unitValue = new UnitValue(1, Unit.CubicMetre);
 
       // Act

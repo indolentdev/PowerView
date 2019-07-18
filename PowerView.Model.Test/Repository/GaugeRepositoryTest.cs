@@ -33,10 +33,10 @@ namespace PowerView.Model.Test.Repository
       Insert(rd2);
       Insert(rd3);
       Insert(rd4);
-      Insert(new Db.LiveRegister { ReadingId=rd1.Id, ObisCode = ObisCode.ActiveEnergyA14, Value = 1, Scale = 1, Unit = (byte)Unit.WattHour });
-      Insert(new Db.DayRegister { ReadingId=rd2.Id, ObisCode = ObisCode.ActiveEnergyA14, Value = 2, Scale = 1, Unit = (byte)Unit.WattHour });
-      Insert(new Db.MonthRegister { ReadingId=rd3.Id, ObisCode = ObisCode.ActiveEnergyA14, Value = 3, Scale = 1, Unit = (byte)Unit.WattHour });
-      Insert(new Db.YearRegister { ReadingId=rd4.Id, ObisCode = ObisCode.ActiveEnergyA14, Value = 4, Scale = 1, Unit = (byte)Unit.WattHour });
+      Insert(new Db.LiveRegister { ReadingId=rd1.Id, ObisCode = ObisCode.ElectrActiveEnergyA14, Value = 1, Scale = 1, Unit = (byte)Unit.WattHour });
+      Insert(new Db.DayRegister { ReadingId=rd2.Id, ObisCode = ObisCode.ElectrActiveEnergyA14, Value = 2, Scale = 1, Unit = (byte)Unit.WattHour });
+      Insert(new Db.MonthRegister { ReadingId=rd3.Id, ObisCode = ObisCode.ElectrActiveEnergyA14, Value = 3, Scale = 1, Unit = (byte)Unit.WattHour });
+      Insert(new Db.YearRegister { ReadingId=rd4.Id, ObisCode = ObisCode.ElectrActiveEnergyA14, Value = 4, Scale = 1, Unit = (byte)Unit.WattHour });
 
       // Act
       var values = target.GetLatest(dt);
@@ -64,10 +64,10 @@ namespace PowerView.Model.Test.Repository
       var rd3 = new Db.LiveReading { Label="L2", SerialNumber="2", Timestamp=dt };
       var rd4 = new Db.LiveReading { Label="L2", SerialNumber="2", Timestamp=dt };
       Insert(rd1, rd2, rd3, rd4);
-      Insert(new Db.LiveRegister { ReadingId=rd1.Id, ObisCode = ObisCode.ActiveEnergyA14, Value = 1, Scale = 1, Unit = (byte)Unit.WattHour });
-      Insert(new Db.LiveRegister { ReadingId=rd2.Id, ObisCode = ObisCode.ActiveEnergyA14, Value = 2, Scale = 1, Unit = (byte)Unit.WattHour });
-      Insert(new Db.LiveRegister { ReadingId=rd3.Id, ObisCode = ObisCode.ActiveEnergyA14, Value = 3, Scale = 1, Unit = (byte)Unit.WattHour });
-      Insert(new Db.LiveRegister { ReadingId=rd4.Id, ObisCode = ObisCode.ActiveEnergyA23, Value = 4, Scale = 1, Unit = (byte)Unit.WattHour });
+      Insert(new Db.LiveRegister { ReadingId=rd1.Id, ObisCode = ObisCode.ElectrActiveEnergyA14, Value = 1, Scale = 1, Unit = (byte)Unit.WattHour });
+      Insert(new Db.LiveRegister { ReadingId=rd2.Id, ObisCode = ObisCode.ElectrActiveEnergyA14, Value = 2, Scale = 1, Unit = (byte)Unit.WattHour });
+      Insert(new Db.LiveRegister { ReadingId=rd3.Id, ObisCode = ObisCode.ElectrActiveEnergyA14, Value = 3, Scale = 1, Unit = (byte)Unit.WattHour });
+      Insert(new Db.LiveRegister { ReadingId=rd4.Id, ObisCode = ObisCode.ElectrActiveEnergyA23, Value = 4, Scale = 1, Unit = (byte)Unit.WattHour });
 
       // Act
       var values = target.GetLatest(dt);
@@ -85,7 +85,7 @@ namespace PowerView.Model.Test.Repository
       var target = CreateTarget();
       var rd = new Db.LiveReading { Label="L1", SerialNumber="1", Timestamp=dt - TimeSpan.FromDays(2) };
       Insert(rd);
-      Insert(new Db.LiveRegister { ReadingId=rd.Id, ObisCode = ObisCode.ActiveEnergyA14, Value = 3, Scale = 1, Unit = (byte)Unit.WattHour });
+      Insert(new Db.LiveRegister { ReadingId=rd.Id, ObisCode = ObisCode.ElectrActiveEnergyA14, Value = 3, Scale = 1, Unit = (byte)Unit.WattHour });
 
       // Act
       var values = target.GetLatest(dt);
@@ -102,7 +102,7 @@ namespace PowerView.Model.Test.Repository
       var target = CreateTarget();
       var rd = new Db.LiveReading { Label="L1", SerialNumber="1", Timestamp=dt };
       Insert(rd);
-      Insert(new Db.LiveRegister { ReadingId=rd.Id, ObisCode = ObisCode.ActualPowerP14, Value = 3, Scale = 1, Unit = (byte)Unit.Watt });
+      Insert(new Db.LiveRegister { ReadingId=rd.Id, ObisCode = ObisCode.ElectrActualPowerP14, Value = 3, Scale = 1, Unit = (byte)Unit.Watt });
 
       // Act
       var values = target.GetLatest(dt);
@@ -119,7 +119,7 @@ namespace PowerView.Model.Test.Repository
       var target = CreateTarget();
       var rd = new Db.DayReading { Label="L1", SerialNumber="1", Timestamp=dt };
       Insert(rd);
-      Insert(new Db.DayRegister { ReadingId=rd.Id, ObisCode = ObisCode.ActiveEnergyA14, Value = 2, Scale = 1, Unit = (byte)Unit.WattHour });
+      Insert(new Db.DayRegister { ReadingId=rd.Id, ObisCode = ObisCode.ElectrActiveEnergyA14, Value = 2, Scale = 1, Unit = (byte)Unit.WattHour });
 
       // Act
       var values = target.GetCustom(dt.AddHours(1));
@@ -141,10 +141,10 @@ namespace PowerView.Model.Test.Repository
       var rd3 = new Db.DayReading { Label="L2", SerialNumber="2", Timestamp=dt };
       var rd4 = new Db.DayReading { Label="L2", SerialNumber="2", Timestamp=dt };
       Insert(rd1, rd2, rd3, rd4);
-      Insert(new Db.DayRegister { ReadingId=rd1.Id, ObisCode = ObisCode.ActiveEnergyA14, Value = 1, Scale = 1, Unit = (byte)Unit.WattHour });
-      Insert(new Db.DayRegister { ReadingId=rd2.Id, ObisCode = ObisCode.ActiveEnergyA14, Value = 2, Scale = 1, Unit = (byte)Unit.WattHour });
-      Insert(new Db.DayRegister { ReadingId=rd3.Id, ObisCode = ObisCode.ActiveEnergyA14, Value = 3, Scale = 1, Unit = (byte)Unit.WattHour });
-      Insert(new Db.DayRegister { ReadingId=rd4.Id, ObisCode = ObisCode.ActiveEnergyA23, Value = 4, Scale = 1, Unit = (byte)Unit.WattHour });
+      Insert(new Db.DayRegister { ReadingId=rd1.Id, ObisCode = ObisCode.ElectrActiveEnergyA14, Value = 1, Scale = 1, Unit = (byte)Unit.WattHour });
+      Insert(new Db.DayRegister { ReadingId=rd2.Id, ObisCode = ObisCode.ElectrActiveEnergyA14, Value = 2, Scale = 1, Unit = (byte)Unit.WattHour });
+      Insert(new Db.DayRegister { ReadingId=rd3.Id, ObisCode = ObisCode.ElectrActiveEnergyA14, Value = 3, Scale = 1, Unit = (byte)Unit.WattHour });
+      Insert(new Db.DayRegister { ReadingId=rd4.Id, ObisCode = ObisCode.ElectrActiveEnergyA23, Value = 4, Scale = 1, Unit = (byte)Unit.WattHour });
 
       // Act
       var values = target.GetCustom(dt.AddHours(1));
@@ -163,8 +163,8 @@ namespace PowerView.Model.Test.Repository
       var rd1 = new Db.DayReading { Label="L1", SerialNumber="1", Timestamp=dt - TimeSpan.FromDays(3) };
       var rd2 = new Db.DayReading { Label="L1", SerialNumber="1", Timestamp=dt };
       Insert(rd1, rd2);
-      Insert(new Db.DayRegister { ReadingId=rd1.Id, ObisCode = ObisCode.ActiveEnergyA14, Value = 3, Scale = 1, Unit = (byte)Unit.WattHour });
-      Insert(new Db.DayRegister { ReadingId=rd2.Id, ObisCode = ObisCode.ActiveEnergyA14, Value = 4, Scale = 1, Unit = (byte)Unit.WattHour });
+      Insert(new Db.DayRegister { ReadingId=rd1.Id, ObisCode = ObisCode.ElectrActiveEnergyA14, Value = 3, Scale = 1, Unit = (byte)Unit.WattHour });
+      Insert(new Db.DayRegister { ReadingId=rd2.Id, ObisCode = ObisCode.ElectrActiveEnergyA14, Value = 4, Scale = 1, Unit = (byte)Unit.WattHour });
 
       // Act
       var values = target.GetCustom(dt);
@@ -181,7 +181,7 @@ namespace PowerView.Model.Test.Repository
       var target = CreateTarget();
       var rd = new Db.DayReading { Label="L1", SerialNumber="1", Timestamp=dt };
       Insert(rd);
-      Insert(new Db.DayRegister { ReadingId=rd.Id, ObisCode = ObisCode.ActualPowerP14, Value = 3, Scale = 1, Unit = (byte)Unit.Watt });
+      Insert(new Db.DayRegister { ReadingId=rd.Id, ObisCode = ObisCode.ElectrActualPowerP14, Value = 3, Scale = 1, Unit = (byte)Unit.Watt });
 
       // Act
       var values = target.GetCustom(dt.AddHours(1));

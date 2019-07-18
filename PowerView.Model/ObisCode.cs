@@ -7,64 +7,73 @@ using System.Text.RegularExpressions;
 
 namespace PowerView.Model
 {
+  /// <summary>
+  /// Represents an obis code.
+  /// And defines some standard instances and some non-standard instances.
+  /// 
+  /// Non-standard instances are grouped mainly into: 
+  /// Delta value which is the difference between two adjencent series values, calculated from the corresponding cumulative value. 
+  /// Applies utility specific B code: 65
+  /// 
+  /// Period value which is the difference between the first series value of a period and another series value within the period, calculated from the corresponding cumulative value. 
+  /// Applies utility specific B code: 66
+  /// 
+  /// Average value which is the converted "actual" average actual between two adjencent series values, calculated from the corresponding cumulative value.
+  /// I.e. the energy between two time points converted to an average power. Or the volume between two time points converted to average flow.
+  /// Applies utility specific B code: 67
+  /// </summary>
   public struct ObisCode : IEnumerable<byte>, IEquatable<ObisCode>
   {
-    public static readonly ObisCode ActiveEnergyA14 = "1.0.1.8.0.255";
-    public static readonly ObisCode ActiveEnergyA14Interim = "1.0.1.8.0.200"; // Fictive obis
-    public static readonly ObisCode ActiveEnergyA14Delta = "1.0.1.8.0.100"; // Fictive obis
-    public static readonly ObisCode ActualPowerP14 = "1.0.1.7.0.255";
-    public static readonly ObisCode ActualPowerP14L1 = "1.0.21.7.0.255";
-    public static readonly ObisCode ActualPowerP14L2 = "1.0.41.7.0.255";
-    public static readonly ObisCode ActualPowerP14L3 = "1.0.61.7.0.255";
-    public static readonly ObisCode ActiveEnergyA23 = "1.0.2.8.0.255";
-    public static readonly ObisCode ActiveEnergyA23Interim = "1.0.2.8.0.200"; // Fictive obis
-    public static readonly ObisCode ActiveEnergyA23Delta = "1.0.2.8.0.100"; // Fictive obis
-    public static readonly ObisCode ActualPowerP23 = "1.0.2.7.0.255";
-    public static readonly ObisCode ActualPowerP23L1 = "1.0.22.7.0.255";
-    public static readonly ObisCode ActualPowerP23L2 = "1.0.42.7.0.255";
-    public static readonly ObisCode ActualPowerP23L3 = "1.0.62.7.0.255";
+    public static readonly ObisCode ElectrActiveEnergyA14 = "1.0.1.8.0.255";
+    public static readonly ObisCode ElectrActiveEnergyA14Delta = "1.65.1.8.0.255";
+    public static readonly ObisCode ElectrActiveEnergyA14Period = "1.66.1.8.0.255";
+    public static readonly ObisCode ElectrActualPowerP14 = "1.0.1.7.0.255";
+    public static readonly ObisCode ElectrActualPowerP14Average = "1.67.1.7.0.255";
+    public static readonly ObisCode ElectrActualPowerP14L1 = "1.0.21.7.0.255";
+    public static readonly ObisCode ElectrActualPowerP14L2 = "1.0.41.7.0.255";
+    public static readonly ObisCode ElectrActualPowerP14L3 = "1.0.61.7.0.255";
+    public static readonly ObisCode ElectrActiveEnergyA23 = "1.0.2.8.0.255";
+    public static readonly ObisCode ElectrActiveEnergyA23Delta = "1.65.2.8.0.255";
+    public static readonly ObisCode ElectrActiveEnergyA23Period = "1.66.2.8.0.255";
+    public static readonly ObisCode ElectrActualPowerP23 = "1.0.2.7.0.255";
+    public static readonly ObisCode ElectrActualPowerP23Average = "1.67.2.7.0.255";
+    public static readonly ObisCode ElectrActualPowerP23L1 = "1.0.22.7.0.255";
+    public static readonly ObisCode ElectrActualPowerP23L2 = "1.0.42.7.0.255";
+    public static readonly ObisCode ElectrActualPowerP23L3 = "1.0.62.7.0.255";
 
-    private static readonly Regex isElectricityImport  = new Regex(@"^1\.0\.[246]?1\.[7-8]{1}\.0\.[0-9]{1,3}", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Compiled);
-    private static readonly Regex isElectricityExport  = new Regex(@"^1\.0\.[246]?2\.[7-8]{1}\.0\.[0-9]{1,3}", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Compiled);
-    private static readonly Regex isElectricityCumulative  = new Regex(@"^1\.[0-9]{1,3}\.[1-2]{1}\.8\.0\.255", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Compiled);
+    private static readonly Regex isElectricityImport  = new Regex(@"^1\.[0-9]{1,3}\.[246]?1\.[7-8]{1}\.0\.255$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Compiled);
+    private static readonly Regex isElectricityExport  = new Regex(@"^1\.[0-9]{1,3}\.[246]?2\.[7-8]{1}\.0\.255$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Compiled);
+    private static readonly Regex isElectricityCumulative  = new Regex(@"^1\.0\.[1-2]{1}\.8\.0\.255$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
     public static readonly ObisCode ColdWaterVolume1 = "8.0.1.0.0.255";
-    public static readonly ObisCode ColdWaterVolume1Interim = "8.0.1.0.0.200"; // Fictive obis
-    public static readonly ObisCode ColdWaterVolume1Delta = "8.0.1.0.0.100"; // Fictive obis
+    public static readonly ObisCode ColdWaterVolume1Delta = "8.65.1.0.0.255";
+    public static readonly ObisCode ColdWaterVolume1Period = "8.66.1.0.0.255";
     public static readonly ObisCode ColdWaterFlow1 = "8.0.2.0.0.255";
+    public static readonly ObisCode ColdWaterFlow1Average = "8.67.2.0.0.255";
 
-    private static readonly Regex isWaterImport  = new Regex(@"^[8-9]{1}\.0\.[1-2]{1}\.0\.0\.[0-9]{1,3}", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Compiled);
-    private static readonly Regex isWaterCumulative  = new Regex(@"^[8-9]{1}\.0\.1\.0\.0\.255", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Compiled);
+    private static readonly Regex isWaterImport  = new Regex(@"^8\.[0-9]{1,3}\.[1-2]{1}\.0\.0\.255$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Compiled);
+    private static readonly Regex isWaterCumulative  = new Regex(@"^8\.0\.1\.0\.0\.255$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
     public static readonly ObisCode HeatEnergyEnergy1 = "6.0.1.0.0.255";
-    public static readonly ObisCode HeatEnergyEnergy1Interim = "6.0.1.0.0.200"; // Fictive obis
-    public static readonly ObisCode HeatEnergyEnergy1Delta = "6.0.1.0.0.100"; // Fictive obis
+    public static readonly ObisCode HeatEnergyEnergy1Delta = "6.65.1.0.0.255";
+    public static readonly ObisCode HeatEnergyEnergy1Period = "6.66.1.0.0.255";
     public static readonly ObisCode HeatEnergyVolume1 = "6.0.2.0.0.255";
-    public static readonly ObisCode HeatEnergyVolume1Interim = "6.0.2.0.0.200"; // Fictive obis
-    public static readonly ObisCode HeatEnergyVolume1Delta = "6.0.2.0.0.100"; // Fictive obis
+    public static readonly ObisCode HeatEnergyVolume1Delta = "6.65.2.0.0.255";
+    public static readonly ObisCode HeatEnergyVolume1Period = "6.66.2.0.0.255";
     public static readonly ObisCode HeatEnergyPower1 = "6.0.8.0.0.255";
+    public static readonly ObisCode HeatEnergyPower1Average = "6.67.8.0.0.255";
     public static readonly ObisCode HeatEnergyFlow1 = "6.0.9.0.0.255";
+    public static readonly ObisCode HeatEnergyFlow1Average = "6.67.9.0.0.255";
     public static readonly ObisCode HeatEnergyFlowTemperature = "6.0.10.0.0.255";
     public static readonly ObisCode HeatEnergyReturnTemperature = "6.0.11.0.0.255";
 
-    private static readonly Regex isEnergyImport  = new Regex(@"^[5-6]{1}\.0\.[0-9]{1,3}\.0\.0\.[0-9]{1,3}", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Compiled);
-    private static readonly Regex isEnergyCumulative  = new Regex(@"^[5-6]{1}\.0\.[12]{1}\.0\.0\.255", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Compiled);
+    private static readonly Regex isEnergyImport  = new Regex(@"^6\.[0-9]{1,3}\.[0-9]{1,2}\.0\.0\.255$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Compiled);
+    private static readonly Regex isEnergyCumulative  = new Regex(@"^6\.0\.[12]{1}\.0\.0\.255$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-    public static readonly ObisCode RoomTemperature = "15.0.223.0.0.255"; // Fictive obis
-    public static readonly ObisCode RoomRelativeHumidity = "15.0.223.0.2.255"; // Fictive obis
+    public static readonly ObisCode RoomTemperature = "15.0.223.0.0.255"; // "Manufacture" specific obis
+    public static readonly ObisCode RoomRelativeHumidity = "15.0.223.0.2.255"; // "Manufacture" specific obis
 
-    public static readonly ObisCode ConsumedElectricity = "1.210.1.8.0.255"; // Fictive obis
-    public static readonly ObisCode ConsumedElectricityInterim = "1.210.1.8.0.200"; // Fictive obis
-    public static readonly ObisCode ConsumedElectricityDelta = "1.210.1.8.0.100"; // Fictive obis
-    public static readonly ObisCode ConsumedElectricityWithHeat = "1.220.1.8.0.255"; // Fictive obis
-    public static readonly ObisCode ConsumedElectricityWithHeatInterim = "1.220.1.8.0.200"; // Fictive obis
-    public static readonly ObisCode ConsumedElectricityWithHeatDelta = "1.220.1.8.0.100"; // Fictive obis
-
-    private static readonly Regex isDisconnectControl = new Regex(@"^0\.[0-9]{1,3}\.96\.3\.10\.255", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Compiled);
-
-    private static readonly ICollection<ObisCode> templates = new [] { 
-      ConsumedElectricity, ConsumedElectricityInterim, ConsumedElectricityDelta, 
-      ConsumedElectricityWithHeat, ConsumedElectricityWithHeatInterim, ConsumedElectricityWithHeatDelta };
+    private static readonly Regex isDisconnectControl = new Regex(@"^0\.[0-9]\.96\.3\.10\.255$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
     private readonly byte a;
     private readonly byte b;
@@ -98,22 +107,27 @@ namespace PowerView.Model
 
     public bool IsCumulative { get { return IsElectricityCumulative || IsWaterCumulative || IsEnergyCumulative; } }
 
-    public bool IsInterim { get { return f == 200; } }
+    public bool IsDelta { get { return b == 65; } }
 
-    public bool IsDelta { get { return f == 100; } }
+    public bool IsPeriod { get { return b == 66; } }
+
+    public bool IsAverage { get { return b == 67; } }
 
     public bool IsDisconnectControl { get { return isDisconnectControl.IsMatch(ToString()); } }
 
-    public static ICollection<ObisCode> Templates { get { return templates; } }
-
-    public ObisCode ToInterim()
-    {
-      return new ObisCode(new byte[] { a, b, c, d, e, 200 });
-    }
-
     public ObisCode ToDelta()
     {
-      return new ObisCode(new byte[] { a, b, c, d, e, 100 });
+      return new ObisCode(new byte[] { a, 65, c, d, e, f });
+    }
+
+    public ObisCode ToPeriod()
+    {
+      return new ObisCode(new byte[] { a, 66, c, d, e, f });
+    }
+
+    public ObisCode ToAverage()
+    {
+      return new ObisCode(new byte[] { a, 67, c, d, e, f });
     }
 
     public override bool Equals(object obj)

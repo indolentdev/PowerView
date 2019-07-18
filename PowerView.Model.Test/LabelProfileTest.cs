@@ -187,7 +187,7 @@ namespace PowerView.Model.Test
       var target = CreateTarget("label", dt, values);
 
       // Assert
-      Assert.That(target, Is.EqualTo(new ObisCode[] { values.First().Key, "1.0.1.8.0.200", "1.0.1.8.0.100" }));
+      Assert.That(target, Is.EqualTo(new ObisCode[] { values.First().Key, "1.66.1.8.0.255", "1.65.1.8.0.255" }));
       var periodValues = new [] {
         new TimeRegisterValue("1", dt, 0, unit),
         new TimeRegisterValue("1", dt.AddHours(1), 10, unit),
@@ -200,7 +200,7 @@ namespace PowerView.Model.Test
         new TimeRegisterValue("1", dt.AddHours(8), 140, unit),
         new TimeRegisterValue("1", dt.AddHours(9), 150, unit),
       };
-      Assert.That(target["1.0.1.8.0.200"], Is.EqualTo(periodValues));
+      Assert.That(target["1.66.1.8.0.255"], Is.EqualTo(periodValues));
 
       var deltaValues = new [] {
         new TimeRegisterValue("1", dt, 0, unit),
@@ -214,7 +214,7 @@ namespace PowerView.Model.Test
         new TimeRegisterValue("1", dt.AddHours(8), 40, unit),
         new TimeRegisterValue("1", dt.AddHours(9), 10, unit),
       };
-      Assert.That(target["1.0.1.8.0.100"], Is.EqualTo(deltaValues));
+      Assert.That(target["1.65.1.8.0.255"], Is.EqualTo(deltaValues));
     }
 
     [Test]
@@ -242,7 +242,7 @@ namespace PowerView.Model.Test
       var target = CreateTarget("label", dt, values);
 
       // Assert
-      Assert.That(target, Is.EqualTo(new ObisCode[] { values.First().Key, "1.0.1.8.0.200", "1.0.1.8.0.100" }));
+      Assert.That(target, Is.EqualTo(new ObisCode[] { values.First().Key, "1.66.1.8.0.255", "1.65.1.8.0.255" }));
       var periodValues = new [] {
         new TimeRegisterValue("1", dt, 0, unit),
         new TimeRegisterValue("1", dt.AddHours(1), 10, unit),
@@ -255,7 +255,7 @@ namespace PowerView.Model.Test
         new TimeRegisterValue(TimeRegisterValue.DummySerialNumber, dt.AddHours(8), 30+40+10, unit),
         new TimeRegisterValue(TimeRegisterValue.DummySerialNumber, dt.AddHours(9), 30+40+30, unit)
       };
-      Assert.That(target["1.0.1.8.0.200"], Is.EqualTo(periodValues));
+      Assert.That(target["1.66.1.8.0.255"], Is.EqualTo(periodValues));
 
       var deltaValues = new [] {
         new TimeRegisterValue("1", dt, 0, unit),
@@ -269,7 +269,7 @@ namespace PowerView.Model.Test
         new TimeRegisterValue("3", dt.AddHours(8), 10, unit),
         new TimeRegisterValue("3", dt.AddHours(9), 20, unit)
       };
-      Assert.That(target["1.0.1.8.0.100"], Is.EqualTo(deltaValues));
+      Assert.That(target["1.65.1.8.0.255"], Is.EqualTo(deltaValues));
     }
 
     [Test]
@@ -297,7 +297,7 @@ namespace PowerView.Model.Test
       var target = CreateTarget("label", dt, values);
 
       // Assert
-      Assert.That(target, Is.EqualTo(new ObisCode[] { values.First().Key, "1.0.1.8.0.200", "1.0.1.8.0.100" }));
+      Assert.That(target, Is.EqualTo(new ObisCode[] { values.First().Key, "1.66.1.8.0.255", "1.65.1.8.0.255" }));
       var periodValues = new[] {
         new TimeRegisterValue("1", dt, 0, unit),
         new TimeRegisterValue("1", dt.AddHours(1), 10, unit),
@@ -310,7 +310,7 @@ namespace PowerView.Model.Test
         new TimeRegisterValue(TimeRegisterValue.DummySerialNumber, dt.AddHours(8), 30+40+20, unit),
         new TimeRegisterValue(TimeRegisterValue.DummySerialNumber, dt.AddHours(9), 30+40+30, unit)
       };
-      Assert.That(target["1.0.1.8.0.200"], Is.EqualTo(periodValues));
+      Assert.That(target["1.66.1.8.0.255"], Is.EqualTo(periodValues));
 
       var deltaValues = new[] {
         new TimeRegisterValue("1", dt, 0, unit),
@@ -324,7 +324,7 @@ namespace PowerView.Model.Test
         new TimeRegisterValue("1", dt.AddHours(8), 20, unit),
         new TimeRegisterValue("1", dt.AddHours(9), 10, unit)
       };
-      Assert.That(target["1.0.1.8.0.100"], Is.EqualTo(deltaValues));
+      Assert.That(target["1.65.1.8.0.255"], Is.EqualTo(deltaValues));
     }
 
     [Test]
@@ -348,7 +348,7 @@ namespace PowerView.Model.Test
       var target = CreateTarget("label", dt, values);
 
       // Assert
-      Assert.That(target, Is.EqualTo(new ObisCode[] { values.First().Key, "1.0.1.8.0.200", "1.0.1.8.0.100" }));
+      Assert.That(target, Is.EqualTo(new ObisCode[] { values.First().Key, "1.66.1.8.0.255", "1.65.1.8.0.255" }));
       var periodValues = new[] {
         new TimeRegisterValue("1", dt, 0, unit),
         new TimeRegisterValue("1", dt.AddHours(1), 10, unit),
@@ -357,7 +357,7 @@ namespace PowerView.Model.Test
         new TimeRegisterValue(TimeRegisterValue.DummySerialNumber, dt.AddHours(7), 30+0, unit),
         new TimeRegisterValue(TimeRegisterValue.DummySerialNumber, dt.AddHours(8), 30+0+20, unit)
       };
-      Assert.That(target["1.0.1.8.0.200"], Is.EqualTo(periodValues));
+      Assert.That(target["1.66.1.8.0.255"], Is.EqualTo(periodValues));
 
       var deltaValues = new[] {
         new TimeRegisterValue("1", dt, 0, unit),
@@ -367,7 +367,7 @@ namespace PowerView.Model.Test
         new TimeRegisterValue("1", dt.AddHours(7), 0, unit),
         new TimeRegisterValue("1", dt.AddHours(8), 20, unit)
       };
-      Assert.That(target["1.0.1.8.0.100"], Is.EqualTo(deltaValues));
+      Assert.That(target["1.65.1.8.0.255"], Is.EqualTo(deltaValues));
     }
 
     [Test]
@@ -390,41 +390,20 @@ namespace PowerView.Model.Test
       var target = CreateTarget("label", dt.AddHours(2), values);
 
       // Assert
-      Assert.That(target, Is.EqualTo(new ObisCode[] { values.First().Key, "1.0.1.8.0.200", "1.0.1.8.0.100" }));
+      Assert.That(target, Is.EqualTo(new ObisCode[] { values.First().Key, "1.66.1.8.0.255", "1.65.1.8.0.255" }));
       var periodValues = new [] {
         new TimeRegisterValue("1", dt.AddHours(2), 10, unit),
         new TimeRegisterValue("1", dt.AddHours(3), 20, unit),
         new TimeRegisterValue("1", dt.AddHours(4), 40, unit),
       };
-      Assert.That(target["1.0.1.8.0.200"], Is.EqualTo(periodValues));
+      Assert.That(target["1.66.1.8.0.255"], Is.EqualTo(periodValues));
 
       var deltaValues = new [] {
         new TimeRegisterValue("1", dt.AddHours(2), 10, unit),
         new TimeRegisterValue("1", dt.AddHours(3), 10, unit),
         new TimeRegisterValue("1", dt.AddHours(4), 20, unit),
       };
-      Assert.That(target["1.0.1.8.0.100"], Is.EqualTo(deltaValues));
-    }
-
-    [Test]
-    public void SeriesUnknownCumulativeDoesNotExpandToActual()
-    {
-      // Arrange
-      var wh = Unit.WattHour;
-      var dt = new DateTime(2015, 02, 13, 00, 00, 00, DateTimeKind.Local).ToUniversalTime();
-      var sv0 = new TimeRegisterValue("1", dt, 960936, 1, wh);
-      var sv1 = new TimeRegisterValue("1", dt.AddMinutes(5), 960944, 1, wh);
-
-      var values = new Dictionary<ObisCode, ICollection<TimeRegisterValue>> {
-        { "1.1.1.8.0.255", new [] { sv0, sv1 } },
-        { "1.1.2.8.0.255", new [] { sv0, sv1 } }
-      };
-
-      // Act
-      var target = CreateTarget("label", dt, values);
-
-      // Assert
-      Assert.That(target, Is.All.Matches((ObisCode oc) => oc.IsCumulative || oc.IsInterim || oc.IsDelta));
+      Assert.That(target["1.65.1.8.0.255"], Is.EqualTo(deltaValues));
     }
 
     [Test]
@@ -448,7 +427,7 @@ namespace PowerView.Model.Test
     }
 
     [Test]
-    public void SeriesCumulaitveExpandsToActualValues()
+    public void SeriesCumulaitveExpandsToAverageValues()
     {
       // Arrange
       var wh = Unit.WattHour;
@@ -472,9 +451,9 @@ namespace PowerView.Model.Test
       var target = CreateTarget("label", dt, values);
 
       // Assert
-      Assert.That(target, Contains.Item((ObisCode)"1.0.1.7.0.255"));
+      Assert.That(target, Contains.Item((ObisCode)"1.67.1.7.0.255"));
       var w = Unit.Watt;
-      var periodValues = new[] {
+      var averageValues = new[] {
         new TimeRegisterValue("1", dt.AddMinutes(5), 960, w),
         new TimeRegisterValue("1", dt.AddMinutes(10), 960, w),
         new TimeRegisterValue("1", dt.AddMinutes(15), 960, w),
@@ -485,11 +464,11 @@ namespace PowerView.Model.Test
         new TimeRegisterValue("1", dt.AddMinutes(40), 960, w),
         new TimeRegisterValue("1", dt.AddMinutes(45), 840, w),
       };
-      Assert.That(target["1.0.1.7.0.255"], Is.EqualTo(periodValues));
+      Assert.That(target["1.67.1.7.0.255"], Is.EqualTo(averageValues));
     }
 
     [Test]
-    public void SeriesCumulaitveExpandsToActualValuesExcludesSerialNumberChange()
+    public void SeriesCumulaitveExpandsToAverageValuesExcludesSerialNumberChange()
     {
       // Arrange
       var wh = Unit.WattHour;
@@ -506,18 +485,18 @@ namespace PowerView.Model.Test
       var target = CreateTarget("label", dt, values);
 
       // Assert
-      Assert.That(target, Contains.Item((ObisCode)"1.0.1.7.0.255"));
+      Assert.That(target, Contains.Item((ObisCode)"1.67.1.7.0.255"));
       var w = Unit.Watt;
-      var periodValues = new[] {
+      var averageValues = new[] {
         new TimeRegisterValue("1", dt.AddMinutes(5), 960, w)
       };
-      Assert.That(target["1.0.1.7.0.255"], Is.EqualTo(periodValues));
+      Assert.That(target["1.67.1.7.0.255"], Is.EqualTo(averageValues));
     }
 
     [Test]
     [TestCase(61)] // Max 6 min interval
     [TestCase(181)] // Min 2 min interval
-    public void SeriesCumulaitveExpandsToActualValuesExcludesMinAndMaxReadingInterval(int timestampAdjustmentSeconds)
+    public void SeriesCumulaitveExpandsToAverageValuesExcludesMinAndMaxReadingInterval(int timestampAdjustmentSeconds)
     {
       // Arrange
       var wh = Unit.WattHour;
@@ -534,21 +513,21 @@ namespace PowerView.Model.Test
       var target = CreateTarget("label", dt, values);
 
       // Assert
-      Assert.That(target, Contains.Item((ObisCode)"1.0.1.7.0.255"));
+      Assert.That(target, Contains.Item((ObisCode)"1.67.1.7.0.255"));
       var w = Unit.Watt;
-      var periodValues = new[] {
+      var averageValues = new[] {
         new TimeRegisterValue("1", dt.AddMinutes(5), 960, w)
       };
-      Assert.That(target["1.0.1.7.0.255"], Is.EqualTo(periodValues));
+      Assert.That(target["1.67.1.7.0.255"], Is.EqualTo(averageValues));
     }
 
     [Test]
-    [TestCase("1.0.1.8.0.255", Unit.WattHour, "1.0.1.7.0.255", Unit.Watt)]
-    [TestCase("1.0.2.8.0.255", Unit.WattHour, "1.0.2.7.0.255", Unit.Watt)]
-    [TestCase("6.0.1.0.0.255", Unit.WattHour, "6.0.8.0.0.255", Unit.Watt)]
-    [TestCase("6.0.2.0.0.255", Unit.CubicMetre, "6.0.9.0.0.255", Unit.CubicMetrePrHour)]
-    [TestCase("8.0.1.0.0.255", Unit.CubicMetre, "8.0.2.0.0.255", Unit.CubicMetrePrHour)]
-    public void SeriesCumulaitveExpandsToActualValuesObisCodesAndUnits(string cumulativeObisCode, Unit cumulativeUnit, string actualObisCode, Unit actualUnit)
+    [TestCase("1.0.1.8.0.255", Unit.WattHour, "1.67.1.7.0.255", Unit.Watt)]
+    [TestCase("1.0.2.8.0.255", Unit.WattHour, "1.67.2.7.0.255", Unit.Watt)]
+    [TestCase("6.0.1.0.0.255", Unit.WattHour, "6.67.8.0.0.255", Unit.Watt)]
+    [TestCase("6.0.2.0.0.255", Unit.CubicMetre, "6.67.9.0.0.255", Unit.CubicMetrePrHour)]
+    [TestCase("8.0.1.0.0.255", Unit.CubicMetre, "8.67.2.0.0.255", Unit.CubicMetrePrHour)]
+    public void SeriesCumulaitveExpandsToAverageValuesObisCodesAndUnits(string cumulativeObisCode, Unit cumulativeUnit, string actualObisCode, Unit actualUnit)
     {
       // Arrange
       var dt = new DateTime(2015, 02, 13, 00, 00, 00, DateTimeKind.Local).ToUniversalTime();
@@ -564,10 +543,10 @@ namespace PowerView.Model.Test
 
       // Assert
       Assert.That(target, Contains.Item((ObisCode)actualObisCode));
-      var periodValues = new[] {
+      var averageValues = new[] {
         new TimeRegisterValue("1", dt.AddMinutes(5), 960, actualUnit),
       };
-      Assert.That(target[actualObisCode], Is.EqualTo(periodValues));
+      Assert.That(target[actualObisCode], Is.EqualTo(averageValues));
     }
 
     [Test]
@@ -599,7 +578,7 @@ namespace PowerView.Model.Test
       var dateTime = DateTime.UtcNow;
 
       // Act & Assert
-      Assert.That(() => target.GetLeakCharacteristic(obisCode.ToInterim(), dateTime, dateTime), Throws.TypeOf<ArgumentOutOfRangeException>());
+      Assert.That(() => target.GetLeakCharacteristic(obisCode.ToPeriod(), dateTime, dateTime), Throws.TypeOf<ArgumentOutOfRangeException>());
       Assert.That(() => target.GetLeakCharacteristic(obisCode, DateTime.Now, dateTime), Throws.TypeOf<ArgumentOutOfRangeException>());
       Assert.That(() => target.GetLeakCharacteristic(obisCode, dateTime, DateTime.Now), Throws.TypeOf<ArgumentOutOfRangeException>());
     }

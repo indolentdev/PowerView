@@ -53,16 +53,16 @@ namespace PowerView.Model.Test.Repository
       // Arrange
       var target = CreateTarget();
       const string label = "label";
-      InsertDayReading(label, ObisCode.ActiveEnergyA14);
+      InsertDayReading(label, ObisCode.ElectrActiveEnergyA14);
 
       // Act
       var serieColors = target.GetSerieNames(new LabelObisCodeTemplate[0]);
 
       // Assert
       Assert.That(serieColors.Count, Is.EqualTo(3));
-      Assert.That(serieColors.Count(sc => sc.Label==label && sc.ObisCode==ObisCode.ActiveEnergyA14Interim), Is.EqualTo(1));
-      Assert.That(serieColors.Count(sc => sc.Label==label && sc.ObisCode==ObisCode.ActiveEnergyA14Delta), Is.EqualTo(1));
-      Assert.That(serieColors.Count(sc => sc.Label==label && sc.ObisCode==ObisCode.ActualPowerP14), Is.EqualTo(1));
+      Assert.That(serieColors.Count(sc => sc.Label==label && sc.ObisCode==ObisCode.ElectrActiveEnergyA14Period), Is.EqualTo(1));
+      Assert.That(serieColors.Count(sc => sc.Label==label && sc.ObisCode==ObisCode.ElectrActiveEnergyA14Delta), Is.EqualTo(1));
+      Assert.That(serieColors.Count(sc => sc.Label==label && sc.ObisCode==ObisCode.ElectrActualPowerP14Average), Is.EqualTo(1));
     }
 
     [Test]

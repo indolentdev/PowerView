@@ -177,8 +177,8 @@ namespace PowerView.Service.Test.Mappers
       Assert.That(liveReading.Timestamp.Kind, Is.EqualTo(DateTimeKind.Utc));
       var registerValues = liveReading.GetRegisterValues();
       Assert.That(registerValues, Has.Length.EqualTo(2));
-      AssertRegisterValue(new RegisterValueDto { ObisCode=ObisCode.ActiveEnergyA23.ToString(), Value=123, Scale=0, Unit="watthour" }, registerValues.First());
-      AssertRegisterValue(new RegisterValueDto { ObisCode=ObisCode.ActualPowerP23.ToString(), Value=456, Scale=0, Unit="watt" }, registerValues.Last());
+      AssertRegisterValue(new RegisterValueDto { ObisCode=ObisCode.ElectrActiveEnergyA23.ToString(), Value=123, Scale=0, Unit="watthour" }, registerValues.First());
+      AssertRegisterValue(new RegisterValueDto { ObisCode=ObisCode.ElectrActualPowerP23.ToString(), Value=456, Scale=0, Unit="watt" }, registerValues.Last());
     }
 
     [Test]
@@ -202,8 +202,8 @@ namespace PowerView.Service.Test.Mappers
       Assert.That(liveReading.Timestamp.Kind, Is.EqualTo(DateTimeKind.Utc));
       var registerValues = liveReading.GetRegisterValues();
       Assert.That(registerValues, Has.Length.EqualTo(2));
-      AssertRegisterValue(new RegisterValueDto{ ObisCode=ObisCode.ActiveEnergyA23.ToString(),Value=123,Scale=0,Unit="watthour" }, registerValues.First());
-      AssertRegisterValue(new RegisterValueDto{ ObisCode=ObisCode.ActualPowerP23.ToString(),Value=456,Scale=0,Unit="watt" }, registerValues.Last());
+      AssertRegisterValue(new RegisterValueDto{ ObisCode=ObisCode.ElectrActiveEnergyA23.ToString(),Value=123,Scale=0,Unit="watthour" }, registerValues.First());
+      AssertRegisterValue(new RegisterValueDto{ ObisCode=ObisCode.ElectrActualPowerP23.ToString(),Value=456,Scale=0,Unit="watt" }, registerValues.Last());
     }
 
     [Test]
@@ -257,7 +257,7 @@ namespace PowerView.Service.Test.Mappers
       // Assert
       var registerValues = liveReading.GetRegisterValues();
       Assert.That(registerValues, Has.Length.EqualTo(1));
-      Assert.That(registerValues.First().ObisCode, Is.EqualTo(ObisCode.ActiveEnergyA23));
+      Assert.That(registerValues.First().ObisCode, Is.EqualTo(ObisCode.ElectrActiveEnergyA23));
     }
 
     [Test]
@@ -277,7 +277,7 @@ namespace PowerView.Service.Test.Mappers
       // Assert
       var registerValues = liveReading.GetRegisterValues();
       Assert.That(registerValues, Has.Length.EqualTo(1));
-      Assert.That(registerValues.First().ObisCode, Is.EqualTo(ObisCode.ActualPowerP23));
+      Assert.That(registerValues.First().ObisCode, Is.EqualTo(ObisCode.ElectrActualPowerP23));
     }
 
     [Test]
@@ -426,9 +426,9 @@ namespace PowerView.Service.Test.Mappers
       // Assert
       var registerValues = liveReading.GetRegisterValues();
       Assert.That(registerValues, Has.Length.EqualTo(4));
-      AssertRegisterValue(new RegisterValueDto { ObisCode=ObisCode.ActualPowerP23L1.ToString(), Value=22, Scale=0, Unit="watt" }, registerValues[1]);
-      AssertRegisterValue(new RegisterValueDto { ObisCode=ObisCode.ActualPowerP23L2.ToString(), Value=33, Scale=0, Unit="watt" }, registerValues[2]);
-      AssertRegisterValue(new RegisterValueDto { ObisCode=ObisCode.ActualPowerP23L3.ToString(), Value=44, Scale=0, Unit="watt" }, registerValues[3]);
+      AssertRegisterValue(new RegisterValueDto { ObisCode=ObisCode.ElectrActualPowerP23L1.ToString(), Value=22, Scale=0, Unit="watt" }, registerValues[1]);
+      AssertRegisterValue(new RegisterValueDto { ObisCode=ObisCode.ElectrActualPowerP23L2.ToString(), Value=33, Scale=0, Unit="watt" }, registerValues[2]);
+      AssertRegisterValue(new RegisterValueDto { ObisCode=ObisCode.ElectrActualPowerP23L3.ToString(), Value=44, Scale=0, Unit="watt" }, registerValues[3]);
     }
 
     [Test]

@@ -49,7 +49,7 @@ namespace PowerView.Model.Test
     public void GetProfileViewSetEmptyLabelProfileSet()
     {
       // Arrange
-      ProfileGraph profileGraph = new ProfileGraph("day", "MyPage", "MyTitle", "5-minutes", 0, new [] { new SerieName("TheLabel", ObisCode.ActiveEnergyA14 ) });
+      ProfileGraph profileGraph = new ProfileGraph("day", "MyPage", "MyTitle", "5-minutes", 0, new [] { new SerieName("TheLabel", ObisCode.ElectrActiveEnergyA14 ) });
       var profileGraphs = new[] { profileGraph };
       var labelProfile = new LabelProfile("TheLabel", DateTime.UtcNow, new Dictionary<ObisCode, ICollection<SV>>());
       var target = CreateTarget(DateTime.UtcNow, new [] { labelProfile });
@@ -66,7 +66,7 @@ namespace PowerView.Model.Test
     public void GetProfileViewSetOneSerie()
     {
       // Arrange
-      var serieName = new SerieName("TheLabel", ObisCode.ActualPowerP14);
+      var serieName = new SerieName("TheLabel", ObisCode.ElectrActualPowerP14);
       ProfileGraph profileGraph = new ProfileGraph("day", "MyPage", "MyTitle", "5-minutes", 0, new[] { serieName });
       var profileGraphs = new[] { profileGraph };
       var ts1 = new DateTime(2000, 1, 1, 1, 0, 0, DateTimeKind.Utc);
@@ -92,8 +92,8 @@ namespace PowerView.Model.Test
     public void GetProfileViewSetTwoSeries()
     {
       // Arrange
-      var serieName1 = new SerieName("TheLabel", ObisCode.ActualPowerP14);
-      var serieName2 = new SerieName("TheLabel", ObisCode.ActualPowerP23);
+      var serieName1 = new SerieName("TheLabel", ObisCode.ElectrActualPowerP14);
+      var serieName2 = new SerieName("TheLabel", ObisCode.ElectrActualPowerP23);
       ProfileGraph profileGraph = new ProfileGraph("day", "MyPage", "MyTitle", "5-minutes", 0, new[] { serieName1, serieName2 });
       var profileGraphs = new[] { profileGraph };
       var ts1 = new DateTime(2000, 1, 2, 3, 5, 0, DateTimeKind.Utc);
@@ -121,8 +121,8 @@ namespace PowerView.Model.Test
     public void GetProfileViewSetMergeCategories()
     {
       // Arrange
-      var serieName1 = new SerieName("TheLabel", ObisCode.ActualPowerP14);
-      var serieName2 = new SerieName("TheLabel", ObisCode.ActualPowerP23);
+      var serieName1 = new SerieName("TheLabel", ObisCode.ElectrActualPowerP14);
+      var serieName2 = new SerieName("TheLabel", ObisCode.ElectrActualPowerP23);
       ProfileGraph profileGraph = new ProfileGraph("day", "MyPage", "MyTitle", "5-minutes", 0, new[] { serieName1, serieName2 });
       var profileGraphs = new[] { profileGraph };
       var ts1 = new DateTime(2000, 1, 2, 3, 5, 0, DateTimeKind.Utc);
@@ -149,8 +149,8 @@ namespace PowerView.Model.Test
     public void GetProfileViewSetTwoGraphs()
     {
       // Arrange
-      var serieName1 = new SerieName("TheLabel1", ObisCode.ActualPowerP14);
-      var serieName2 = new SerieName("TheLabel2", ObisCode.ActualPowerP23);
+      var serieName1 = new SerieName("TheLabel1", ObisCode.ElectrActualPowerP14);
+      var serieName2 = new SerieName("TheLabel2", ObisCode.ElectrActualPowerP23);
       ProfileGraph profileGraph1 = new ProfileGraph("day", "MyPage", "MyTitle1", "5-minutes", 1, new[] { serieName1 });
       ProfileGraph profileGraph2 = new ProfileGraph("day", "MyPage", "MyTitle2", "5-minutes", 2, new[] { serieName2 });
       var profileGraphs = new[] { profileGraph1, profileGraph2 };
@@ -175,9 +175,9 @@ namespace PowerView.Model.Test
     public void GetProfileViewSetInterimPeriodTotals()
     {
       // Arrange
-      var serieName1 = new SerieName("TheLabel1", ObisCode.ActiveEnergyA14Interim);
-      var serieName2 = new SerieName("TheLabel2", ObisCode.ActiveEnergyA14Interim);
-      var serieName3 = new SerieName("TheLabel3", ObisCode.ActualPowerP14);
+      var serieName1 = new SerieName("TheLabel1", ObisCode.ElectrActiveEnergyA14Period);
+      var serieName2 = new SerieName("TheLabel2", ObisCode.ElectrActiveEnergyA14Period);
+      var serieName3 = new SerieName("TheLabel3", ObisCode.ElectrActualPowerP14);
       ProfileGraph profileGraph1 = new ProfileGraph("day", "MyPage", "MyTitle1", "5-minutes", 1, new[] { serieName1 });
       ProfileGraph profileGraph2 = new ProfileGraph("day", "MyPage", "MyTitle2", "5-minutes", 2, new[] { serieName2 });
       ProfileGraph profileGraph3 = new ProfileGraph("day", "MyPage", "MyTitle3", "5-minutes", 3, new[] { serieName3 });

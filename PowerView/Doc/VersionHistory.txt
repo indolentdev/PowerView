@@ -1,4 +1,6 @@
 PowerView version 0.0.28 - Xxxx 2019
+- Calculated power and flow series are actually average values. Now they are 
+  explicitly named as such, for clarity.
 - Perform database integrity checks daily and at application start to reduce 
   loss of readings in case of database file corruption.
 - Minor stability improvements.

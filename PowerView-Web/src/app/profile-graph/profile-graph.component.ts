@@ -210,11 +210,11 @@ export class ProfileGraphComponent implements OnInit {
     var self = this;
 
     return [ 
-      this.getYAxis("energyInterim", "Energy", 0, true),
+      this.getYAxis("energyPeriod", "Energy", 0, true),
       this.getYAxis("energyDelta", "EnergyElement"),
       this.getYAxis("power", "Power"),
-      this.getYAxis("volumeInterim", "Volume", 0, true),
-      this.getYAxis("volumeInterimHiddenYAxis"),
+      this.getYAxis("volumePeriod", "Volume", 0, true),
+      this.getYAxis("volumePeriodHiddenYAxis"),
       this.getYAxis("volumeDelta", "VolumeElement"),
       this.getYAxis("volumeDeltaHiddenYAxis"),
       this.getYAxis("flow", "Flow"),

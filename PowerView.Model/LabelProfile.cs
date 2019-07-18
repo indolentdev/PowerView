@@ -124,13 +124,13 @@ namespace PowerView.Model
 
         if ( obisCode.IsCumulative )
         {
-          GenerateValues(obisCode.ToInterim(), GetPeriodValues(start, orderedTimeRegisterValues));
+          GenerateValues(obisCode.ToPeriod(), GetPeriodValues(start, orderedTimeRegisterValues));
           GenerateValues(obisCode.ToDelta(), GetDeltaValues(orderedTimeRegisterValues).Where(sv => sv.Timestamp >= start));
 
-          var actualObisCode = GetActualObisCode(obisCode);
-          if (actualObisCode != null && !source.Contains(actualObisCode.Value))
+          var averageActualObisCode = GetAverageActualObisCode(obisCode);
+          if (averageActualObisCode != null && !source.Contains(averageActualObisCode.Value))
           {
-            GenerateValues(actualObisCode.Value, GetActualValues(orderedTimeRegisterValues).Where(sv => sv.Timestamp >= start));
+            GenerateValues(averageActualObisCode.Value, GetAverageActualValues(orderedTimeRegisterValues).Where(sv => sv.Timestamp >= start));
           }
         }
       }
@@ -243,27 +243,27 @@ namespace PowerView.Model
       }
     }
 
-    private static ObisCode? GetActualObisCode(ObisCode obisCode)
+    private static ObisCode? GetAverageActualObisCode(ObisCode obisCode)
     {
-      if (obisCode == ObisCode.ActiveEnergyA14)
+      if (obisCode == ObisCode.ElectrActiveEnergyA14)
       {
-        return ObisCode.ActualPowerP14;
+        return ObisCode.ElectrActualPowerP14Average;
       }
-      else if (obisCode == ObisCode.ActiveEnergyA23)
+      else if (obisCode == ObisCode.ElectrActiveEnergyA23)
       {
-        return ObisCode.ActualPowerP23;
+        return ObisCode.ElectrActualPowerP23Average;
       }
       else if (obisCode == ObisCode.ColdWaterVolume1)
       {
-        return ObisCode.ColdWaterFlow1;
+        return ObisCode.ColdWaterFlow1Average;
       }
       else if (obisCode == ObisCode.HeatEnergyEnergy1)
       {
-        return ObisCode.HeatEnergyPower1;
+        return ObisCode.HeatEnergyPower1Average;
       }
       else if (obisCode == ObisCode.HeatEnergyVolume1)
       {
-        return ObisCode.HeatEnergyFlow1;
+        return ObisCode.HeatEnergyFlow1Average;
       }
 
       return null;
@@ -283,7 +283,7 @@ namespace PowerView.Model
       return (Unit)250;
     }
 
-    private static IEnumerable<TimeRegisterValue> GetActualValues(TimeRegisterValue[] orderedTimeRegisterValues)
+    private static IEnumerable<TimeRegisterValue> GetAverageActualValues(TimeRegisterValue[] orderedTimeRegisterValues)
     {
       for (var ix = 0; ix < orderedTimeRegisterValues.Length; ix++)
       {
@@ -310,10 +310,10 @@ namespace PowerView.Model
             }
             else
             {
-              var actualUnit = GetActualUnit(minutend.UnitValue.Unit);
+              var unit = GetActualUnit(minutend.UnitValue.Unit);
               var delta = minutend.SubtractValue(substrahend).UnitValue.Value;
-              var actualValue = delta / duration.TotalHours;
-              yield return new TimeRegisterValue(minutend.SerialNumber, minutend.Timestamp, actualValue, actualUnit);
+              var averageActualValue = delta / duration.TotalHours;
+              yield return new TimeRegisterValue(minutend.SerialNumber, minutend.Timestamp, averageActualValue, unit);
             }
           }
         }

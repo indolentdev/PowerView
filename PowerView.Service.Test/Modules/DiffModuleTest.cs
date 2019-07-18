@@ -152,8 +152,8 @@ namespace PowerView.Service.Test.Modules
       Assert.That(json.to, Is.EqualTo(utcNow.ToString("o")));
 
       Assert.That(json.registers, Has.Length.EqualTo(2));
-      AssertDiffRegister("Label1", ObisCode.ColdWaterVolume1Interim, t1, t2, 100, "m3", json.registers.First());
-      AssertDiffRegister("Label2", ObisCode.ActiveEnergyA14Interim, t1, t2, 1000, "kWh", json.registers.Last());
+      AssertDiffRegister("Label1", ObisCode.ColdWaterVolume1Period, t1, t2, 100, "m3", json.registers.First());
+      AssertDiffRegister("Label2", ObisCode.ElectrActiveEnergyA14Period, t1, t2, 1000, "kWh", json.registers.Last());
     }
 
     private static void AssertDiffRegister(string label, ObisCode obisCode, DateTime from, DateTime to, double value, string unit, DiffRegister actual)

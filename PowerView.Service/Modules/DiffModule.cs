@@ -82,8 +82,8 @@ namespace PowerView.Service.Modules
     {
       foreach (var labelProfile in profileSet)
       {
-        var interimObisCodes = labelProfile.GetAllObisCodes().Where(oc => oc.IsInterim).ToList();
-        foreach (var obisCode in interimObisCodes)
+        var periodObisCodes = labelProfile.GetAllObisCodes().Where(oc => oc.IsPeriod).ToList();
+        foreach (var obisCode in periodObisCodes)
         {
           var timeRegisterValues = labelProfile[obisCode];
           if (timeRegisterValues.Count < 2) continue;
