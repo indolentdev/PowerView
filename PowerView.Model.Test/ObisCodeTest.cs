@@ -116,48 +116,53 @@ namespace PowerView.Model.Test
       // Arrange
 
       // Act & Assert
-      Assert.That(ObisCode.ActiveEnergyA14, Is.EqualTo(new byte[] {1,0,1,8,0,255}));
-      Assert.That(ObisCode.ActiveEnergyA14Interim, Is.EqualTo(new byte[] {1,0,1,8,0,200}));
-      Assert.That(ObisCode.ActiveEnergyA14Delta, Is.EqualTo(new byte[] {1,0,1,8,0,100}));
-      Assert.That(ObisCode.ActualPowerP14, Is.EqualTo(new byte[] {1,0,1,7,0,255}));
-      Assert.That(ObisCode.ActualPowerP14L1, Is.EqualTo(new byte[] { 1, 0, 21, 7, 0, 255 }));
-      Assert.That(ObisCode.ActualPowerP14L2, Is.EqualTo(new byte[] { 1, 0, 41, 7, 0, 255 }));
-      Assert.That(ObisCode.ActualPowerP14L3, Is.EqualTo(new byte[] { 1, 0, 61, 7, 0, 255 }));
-      Assert.That(ObisCode.ActiveEnergyA23, Is.EqualTo(new byte[] {1,0,2,8,0,255}));
-      Assert.That(ObisCode.ActiveEnergyA23Interim, Is.EqualTo(new byte[] {1,0,2,8,0,200}));
-      Assert.That(ObisCode.ActiveEnergyA23Delta, Is.EqualTo(new byte[] {1,0,2,8,0,100}));
-      Assert.That(ObisCode.ActualPowerP23, Is.EqualTo(new byte[] {1,0,2,7,0,255}));
-      Assert.That(ObisCode.ActualPowerP23L1, Is.EqualTo(new byte[] { 1, 0, 22, 7, 0, 255 }));
-      Assert.That(ObisCode.ActualPowerP23L2, Is.EqualTo(new byte[] { 1, 0, 42, 7, 0, 255 }));
-      Assert.That(ObisCode.ActualPowerP23L3, Is.EqualTo(new byte[] { 1, 0, 62, 7, 0, 255 }));
+      Assert.That(ObisCode.ElectrActiveEnergyA14, Is.EqualTo(new byte[] {1,0,1,8,0,255}));
+      Assert.That(ObisCode.ElectrActiveEnergyA14Delta, Is.EqualTo(new byte[] {1,65,1,8,0,255}));
+      Assert.That(ObisCode.ElectrActiveEnergyA14Period, Is.EqualTo(new byte[] {1,66,1,8,0,255}));
+      Assert.That(ObisCode.ElectrActualPowerP14, Is.EqualTo(new byte[] {1,0,1,7,0,255}));
+      Assert.That(ObisCode.ElectrActualPowerP14Average, Is.EqualTo(new byte[] {1,67,1,7,0,255}));
+      Assert.That(ObisCode.ElectrActualPowerP14L1, Is.EqualTo(new byte[] {1,0,21,7,0,255}));
+      Assert.That(ObisCode.ElectrActualPowerP14L2, Is.EqualTo(new byte[] {1,0,41,7,0,255}));
+      Assert.That(ObisCode.ElectrActualPowerP14L3, Is.EqualTo(new byte[] {1,0,61,7,0,255}));
+      Assert.That(ObisCode.ElectrActiveEnergyA23, Is.EqualTo(new byte[] {1,0,2,8,0,255}));
+      Assert.That(ObisCode.ElectrActiveEnergyA23Delta, Is.EqualTo(new byte[] {1,65,2,8,0,255}));
+      Assert.That(ObisCode.ElectrActiveEnergyA23Period, Is.EqualTo(new byte[] {1,66,2,8,0,255}));
+      Assert.That(ObisCode.ElectrActualPowerP23, Is.EqualTo(new byte[] {1,0,2,7,0,255}));
+      Assert.That(ObisCode.ElectrActualPowerP23Average, Is.EqualTo(new byte[] {1,67,2,7,0,255}));
+      Assert.That(ObisCode.ElectrActualPowerP23L1, Is.EqualTo(new byte[] {1,0,22,7,0,255}));
+      Assert.That(ObisCode.ElectrActualPowerP23L2, Is.EqualTo(new byte[] {1,0,42,7,0,255}));
+      Assert.That(ObisCode.ElectrActualPowerP23L3, Is.EqualTo(new byte[] {1,0,62,7,0,255}));
     }
 
     [Test]
-    public void StaticObisCodesWater()
+    public void StaticObisCodesColdWater()
     {
       // Arrange
 
       // Act & Assert
       Assert.That(ObisCode.ColdWaterVolume1, Is.EqualTo(new byte[] {8,0,1,0,0,255}));
-      Assert.That(ObisCode.ColdWaterVolume1Interim, Is.EqualTo(new byte[] {8,0,1,0,0,200}));
-      Assert.That(ObisCode.ColdWaterVolume1Delta, Is.EqualTo(new byte[] {8,0,1,0,0,100}));
+      Assert.That(ObisCode.ColdWaterVolume1Delta, Is.EqualTo(new byte[] {8,65,1,0,0,255}));
+      Assert.That(ObisCode.ColdWaterVolume1Period, Is.EqualTo(new byte[] {8,66,1,0,0,255}));
       Assert.That(ObisCode.ColdWaterFlow1, Is.EqualTo(new byte[] {8,0,2,0,0,255}));
+      Assert.That(ObisCode.ColdWaterFlow1Average, Is.EqualTo(new byte[] {8,67,2,0,0,255}));
     }
 
     [Test]
-    public void StaticObisCodesEnergy()
+    public void StaticObisCodesHeatEnergy()
     {
       // Arrange
 
       // Act & Assert
       Assert.That(ObisCode.HeatEnergyEnergy1, Is.EqualTo(new byte[] {6,0,1,0,0,255}));
-      Assert.That(ObisCode.HeatEnergyEnergy1Interim, Is.EqualTo(new byte[] {6,0,1,0,0,200}));
-      Assert.That(ObisCode.HeatEnergyEnergy1Delta, Is.EqualTo(new byte[] {6,0,1,0,0,100}));
+      Assert.That(ObisCode.HeatEnergyEnergy1Delta, Is.EqualTo(new byte[] {6,65,1,0,0,255}));
+      Assert.That(ObisCode.HeatEnergyEnergy1Period, Is.EqualTo(new byte[] {6,66,1,0,0,255}));
       Assert.That(ObisCode.HeatEnergyVolume1, Is.EqualTo(new byte[] {6,0,2,0,0,255}));
-      Assert.That(ObisCode.HeatEnergyVolume1Interim, Is.EqualTo(new byte[] {6,0,2,0,0,200}));
-      Assert.That(ObisCode.HeatEnergyVolume1Delta, Is.EqualTo(new byte[] {6,0,2,0,0,100}));
+      Assert.That(ObisCode.HeatEnergyVolume1Delta, Is.EqualTo(new byte[] {6,65,2,0,0,255}));
+      Assert.That(ObisCode.HeatEnergyVolume1Period, Is.EqualTo(new byte[] {6,66,2,0,0,255}));
       Assert.That(ObisCode.HeatEnergyPower1, Is.EqualTo(new byte[] {6,0,8,0,0,255}));
-      Assert.That(ObisCode.HeatEnergyFlow1, Is.EqualTo(new byte[] {6,0,9,0,0,255}));
+      Assert.That(ObisCode.HeatEnergyPower1Average, Is.EqualTo(new byte[] {6,67,8,0,0,255}));
+      Assert.That(ObisCode.HeatEnergyFlow1, Is.EqualTo(new byte[] { 6, 0, 9, 0, 0, 255 }));
+      Assert.That(ObisCode.HeatEnergyFlow1Average, Is.EqualTo(new byte[] {6,67,9,0,0,255}));
       Assert.That(ObisCode.HeatEnergyFlowTemperature, Is.EqualTo(new byte[] {6,0,10,0,0,255}));
       Assert.That(ObisCode.HeatEnergyReturnTemperature, Is.EqualTo(new byte[] {6,0,11,0,0,255}));
     }
@@ -173,28 +178,14 @@ namespace PowerView.Model.Test
     }
 
     [Test]
-    public void StaticObisTemplates()
-    {
-      // Arrange
-
-      // Act & Assert
-      Assert.That(ObisCode.ConsumedElectricity, Is.EqualTo(new byte[] {1,210,1,8,0,255}));
-      Assert.That(ObisCode.ConsumedElectricityInterim, Is.EqualTo(new byte[] { 1, 210, 1, 8, 0, 200 }));
-      Assert.That(ObisCode.ConsumedElectricityDelta, Is.EqualTo(new byte[] { 1, 210, 1, 8, 0, 100 }));
-      Assert.That(ObisCode.ConsumedElectricityWithHeat, Is.EqualTo(new byte[] {1,220,1,8,0,255}));
-      Assert.That(ObisCode.ConsumedElectricityWithHeatInterim, Is.EqualTo(new byte[] { 1, 220, 1, 8, 0, 200 }));
-      Assert.That(ObisCode.ConsumedElectricityWithHeatDelta, Is.EqualTo(new byte[] { 1, 220, 1, 8, 0, 100 }));
-    }
-
-    [Test]
     [TestCase("1.0.1.7.0.255")]
+    [TestCase("1.67.1.7.0.255")]
     [TestCase("1.0.21.7.0.255")]
     [TestCase("1.0.41.7.0.255")]
     [TestCase("1.0.61.7.0.255")]
     [TestCase("1.0.1.8.0.255")]
-    [TestCase("1.0.1.8.0.200")]
-    [TestCase("1.0.1.8.0.100")]
-    [TestCase("1.0.1.8.0.123")]
+    [TestCase("1.65.1.8.0.255")]
+    [TestCase("1.66.1.8.0.255")]
     public void IsElectricityImport(string obisCode)
     {
       // Arrange
@@ -209,13 +200,13 @@ namespace PowerView.Model.Test
 
     [Test]
     [TestCase("1.0.2.7.0.255")]
+    [TestCase("1.67.2.7.0.255")]
     [TestCase("1.0.22.7.0.255")]
     [TestCase("1.0.42.7.0.255")]
     [TestCase("1.0.62.7.0.255")]
     [TestCase("1.0.2.8.0.255")]
-    [TestCase("1.0.2.8.0.200")]
-    [TestCase("1.0.2.8.0.100")]
-    [TestCase("1.0.2.8.0.123")]
+    [TestCase("1.65.2.8.0.255")]
+    [TestCase("1.66.2.8.0.255")]
     public void IsElectricityExport(string obisCode)
     {
       // Arrange
@@ -231,10 +222,6 @@ namespace PowerView.Model.Test
     [Test]
     [TestCase("1.0.1.8.0.255")]
     [TestCase("1.0.2.8.0.255")]
-    [TestCase("1.100.1.8.0.255")]
-    [TestCase("1.100.2.8.0.255")]
-    [TestCase("1.200.1.8.0.255")]
-    [TestCase("1.200.2.8.0.255")]
     public void IsElectricityCumulative(string obisCode)
     {
       // Arrange
@@ -249,11 +236,10 @@ namespace PowerView.Model.Test
 
     [Test]
     [TestCase("8.0.1.0.0.255")]
-    [TestCase("8.0.1.0.0.200")]
-    [TestCase("8.0.1.0.0.100")]
-    [TestCase("9.0.1.0.0.255")]
+    [TestCase("8.65.1.0.0.255")]
+    [TestCase("8.66.1.0.0.255")]
     [TestCase("8.0.2.0.0.255")]
-    [TestCase("9.0.2.0.0.255")]
+    [TestCase("8.67.2.0.0.255")]
     public void IsWaterImport(string obisCode)
     {
       // Arrange
@@ -281,18 +267,34 @@ namespace PowerView.Model.Test
     }
 
     [Test]
+    [TestCase("8.65.1.0.0.255")]
+    [TestCase("8.66.1.0.0.255")]
+    [TestCase("8.67.1.0.0.255")]
+    public void IsNotWaterCumulative(string obisCode)
+    {
+      // Arrange
+      ObisCode target = obisCode;
+
+      // Act
+      var result = target.IsWaterCumulative;
+
+      // Assert
+      Assert.That(result, Is.False);
+    }
+
+    [Test]
     [TestCase("6.0.1.0.0.255")]
-    [TestCase("6.0.1.0.0.200")]
-    [TestCase("6.0.1.0.0.100")]
+    [TestCase("6.65.1.0.0.255")]
+    [TestCase("6.66.1.0.0.255")]
     [TestCase("6.0.2.0.0.255")]
-    [TestCase("6.0.2.0.0.200")]
-    [TestCase("6.0.2.0.0.100")]
+    [TestCase("6.65.2.0.0.255")]
+    [TestCase("6.66.2.0.0.255")]
     [TestCase("6.0.8.0.0.255")]
+    [TestCase("6.67.8.0.0.255")]
     [TestCase("6.0.9.0.0.255")]
+    [TestCase("6.67.9.0.0.255")]
     [TestCase("6.0.10.0.0.255")]
     [TestCase("6.0.11.0.0.255")]
-    [TestCase("5.0.1.0.0.255")]
-    [TestCase("5.0.2.0.0.255")]
     public void IsEnergyImport(string obisCode)
     {
       // Arrange
@@ -322,8 +324,6 @@ namespace PowerView.Model.Test
     [Test]
     [TestCase("6.0.1.0.0.255")]
     [TestCase("6.0.2.0.0.255")]
-    [TestCase("5.0.1.0.0.255")]
-    [TestCase("5.0.2.0.0.255")]
     public void IsEnergyCumulative(string obisCode)
     {
       // Arrange
@@ -342,8 +342,6 @@ namespace PowerView.Model.Test
     [TestCase("8.0.1.0.0.255")]
     [TestCase("6.0.1.0.0.255")]
     [TestCase("6.0.2.0.0.255")]
-    [TestCase("5.0.1.0.0.255")]
-    [TestCase("5.0.2.0.0.255")]
     public void IsCumulative(string obisCode)
     {
       // Arrange
@@ -357,31 +355,11 @@ namespace PowerView.Model.Test
     }
 
     [Test]
-    [TestCase("1.0.1.8.0.200")]
-    [TestCase("1.0.2.8.0.200")]
-    [TestCase("1.100.1.8.0.200")]
-    [TestCase("1.100.2.8.0.200")]
-    [TestCase("1.200.1.8.0.200")]
-    [TestCase("1.200.2.8.0.200")]
-    public void IsInterim(string obisCode)
-    {
-      // Arrange
-      ObisCode target = obisCode;
-
-      // Act
-      var result = target.IsInterim;
-
-      // Assert
-      Assert.That(result, Is.True);
-    }
-
-    [Test]
-    [TestCase("1.0.1.8.0.100")]
-    [TestCase("1.0.2.8.0.100")]
-    [TestCase("1.100.1.8.0.100")]
-    [TestCase("1.100.2.8.0.100")]
-    [TestCase("1.200.1.8.0.100")]
-    [TestCase("1.200.2.8.0.100")]
+    [TestCase("1.65.1.8.0.255")]
+    [TestCase("1.65.2.8.0.255")]
+    [TestCase("8.65.1.0.0.255")]
+    [TestCase("6.65.1.0.0.255")]
+    [TestCase("6.65.2.0.0.255")]
     public void IsDelta(string obisCode)
     {
       // Arrange
@@ -395,13 +373,46 @@ namespace PowerView.Model.Test
     }
 
     [Test]
+    [TestCase("1.66.1.8.0.255")]
+    [TestCase("1.66.2.8.0.255")]
+    [TestCase("8.66.1.0.0.255")]
+    [TestCase("6.66.1.0.0.255")]
+    [TestCase("6.66.2.0.0.255")]
+    public void IsPeriod(string obisCode)
+    {
+      // Arrange
+      ObisCode target = obisCode;
+
+      // Act
+      var result = target.IsPeriod;
+
+      // Assert
+      Assert.That(result, Is.True);
+    }
+
+    [Test]
+    [TestCase("1.67.1.7.0.255")]
+    [TestCase("1.67.2.7.0.255")]
+    [TestCase("8.67.2.0.0.255")]
+    [TestCase("6.67.8.0.0.255")]
+    [TestCase("6.67.9.0.0.255")]
+    public void IsAverage(string obisCode)
+    {
+      // Arrange
+      ObisCode target = obisCode;
+
+      // Act
+      var result = target.IsAverage;
+
+      // Assert
+      Assert.That(result, Is.True);
+    }
+
+    [Test]
     [TestCase("0.0.96.3.10.255")]
     [TestCase("0.1.96.3.10.255")]
+    [TestCase("0.8.96.3.10.255")]
     [TestCase("0.9.96.3.10.255")]
-    [TestCase("0.10.96.3.10.255")]
-    [TestCase("0.99.96.3.10.255")]
-    [TestCase("0.100.96.3.10.255")]
-    [TestCase("0.255.96.3.10.255")]
     public void IsDisconnectControl(string obisCode)
     {
       // Arrange
@@ -412,42 +423,6 @@ namespace PowerView.Model.Test
 
       // Assert
       Assert.That(result, Is.True);
-    }
-
-    [Test]
-    public void Templates()
-    {
-      // Arrange
-      var expectedTemplates = new [] { ObisCode.ConsumedElectricity, ObisCode.ConsumedElectricityInterim, ObisCode.ConsumedElectricityDelta, 
-        ObisCode.ConsumedElectricityWithHeat, ObisCode.ConsumedElectricityWithHeatInterim, ObisCode.ConsumedElectricityWithHeatDelta };
-
-      // Act
-      var actualTemplates = ObisCode.Templates;
-
-      // Assert
-      CollectionAssert.AreEquivalent(actualTemplates, expectedTemplates);
-    }
-
-    [Test]
-    [TestCase("1.0.1.8.0.255")]
-    [TestCase("1.0.1.8.0.200")]
-    [TestCase("1.0.1.8.0.100")]
-    [TestCase("1.0.1.8.0.123")]
-    [TestCase("1.0.2.8.0.255")]
-    [TestCase("1.0.2.8.0.200")]
-    [TestCase("1.0.2.8.0.100")]
-    [TestCase("1.0.2.8.0.123")]
-    [TestCase("8.0.1.0.0.255")]
-    public void ToInterim(string obisCode)
-    {
-      // Arrange
-      ObisCode target = obisCode;
-
-      // Act
-      var result = target.ToInterim();
-
-      // Assert
-      Assert.That(result.ToString(), Is.EqualTo(obisCode.Substring(0,10)+"200"));
     }
 
     [Test]
@@ -469,7 +444,57 @@ namespace PowerView.Model.Test
       var result = target.ToDelta();
 
       // Assert
-      Assert.That(result.ToString(), Is.EqualTo(obisCode.Substring(0,10)+"100"));
+      var fields = obisCode.Split('.');
+      fields[1] = "65";
+      Assert.That(result.ToString(), Is.EqualTo(string.Join(".", fields)));
+    }
+
+    [Test]
+    [TestCase("1.0.1.8.0.255")]
+    [TestCase("1.0.1.8.0.200")]
+    [TestCase("1.0.1.8.0.100")]
+    [TestCase("1.0.1.8.0.123")]
+    [TestCase("1.0.2.8.0.255")]
+    [TestCase("1.0.2.8.0.200")]
+    [TestCase("1.0.2.8.0.100")]
+    [TestCase("1.0.2.8.0.123")]
+    [TestCase("8.0.1.0.0.255")]
+    public void ToPeriod(string obisCode)
+    {
+      // Arrange
+      ObisCode target = obisCode;
+
+      // Act
+      var result = target.ToPeriod();
+
+      // Assert
+      var fields = obisCode.Split('.');
+      fields[1] = "66";
+      Assert.That(result.ToString(), Is.EqualTo(string.Join(".", fields)));
+    }
+
+    [Test]
+    [TestCase("1.0.1.8.0.255")]
+    [TestCase("1.0.1.8.0.200")]
+    [TestCase("1.0.1.8.0.100")]
+    [TestCase("1.0.1.8.0.123")]
+    [TestCase("1.0.2.8.0.255")]
+    [TestCase("1.0.2.8.0.200")]
+    [TestCase("1.0.2.8.0.100")]
+    [TestCase("1.0.2.8.0.123")]
+    [TestCase("8.0.1.0.0.255")]
+    public void ToAverage(string obisCode)
+    {
+      // Arrange
+      ObisCode target = obisCode;
+
+      // Act
+      var result = target.ToAverage();
+
+      // Assert
+      var fields = obisCode.Split('.');
+      fields[1] = "67";
+      Assert.That(result.ToString(), Is.EqualTo(string.Join(".", fields)));
     }
 
     [Test]

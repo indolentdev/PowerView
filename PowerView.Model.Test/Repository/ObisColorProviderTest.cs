@@ -18,7 +18,7 @@ namespace PowerView.Model.Test.Repository
       var obisCodes = GetObisCodes().ToArray();
 
       // Assert
-      Assert.That(obisCodes.Length-ObisCode.Templates.Count, Is.EqualTo(30), "Remember to extend this test fixture when adding obis code definitions");
+      Assert.That(obisCodes.Length, Is.EqualTo(35), "Remember to extend this test fixture when adding obis code definitions");
     }
 
     [Test]
@@ -43,7 +43,7 @@ namespace PowerView.Model.Test.Repository
       var target = CreateTarget();
 
       // Act
-      var color = target.GetColor(ObisCode.ActiveEnergyA14Interim);
+      var color = target.GetColor(ObisCode.ElectrActiveEnergyA14Period);
 
       // Assert
       Assert.That(color, Is.EqualTo("#FFF5CC"));
@@ -56,7 +56,7 @@ namespace PowerView.Model.Test.Repository
       var target = CreateTarget();
 
       // Act
-      var color = target.GetColor(ObisCode.ActiveEnergyA14Delta);
+      var color = target.GetColor(ObisCode.ElectrActiveEnergyA14Delta);
 
       // Assert
       Assert.That(color, Is.EqualTo("#FFCC00"));
@@ -69,7 +69,20 @@ namespace PowerView.Model.Test.Repository
       var target = CreateTarget();
 
       // Act
-      var color = target.GetColor(ObisCode.ActualPowerP14);
+      var color = target.GetColor(ObisCode.ElectrActualPowerP14);
+
+      // Assert
+      Assert.That(color, Is.EqualTo("#FFCC00"));
+    }
+
+    [Test]
+    public void ActualAveragePowerP14()
+    {
+      // Arrange
+      var target = CreateTarget();
+
+      // Act
+      var color = target.GetColor(ObisCode.ElectrActualPowerP14Average);
 
       // Assert
       Assert.That(color, Is.EqualTo("#FFCC00"));
@@ -82,7 +95,7 @@ namespace PowerView.Model.Test.Repository
       var target = CreateTarget();
 
       // Act
-      var color = target.GetColor(ObisCode.ActiveEnergyA23Interim);
+      var color = target.GetColor(ObisCode.ElectrActiveEnergyA23Period);
 
       // Assert
       Assert.That(color, Is.EqualTo("#FFFFCC"));
@@ -95,7 +108,7 @@ namespace PowerView.Model.Test.Repository
       var target = CreateTarget();
 
       // Act
-      var color = target.GetColor(ObisCode.ActiveEnergyA23Delta);
+      var color = target.GetColor(ObisCode.ElectrActiveEnergyA23Delta);
 
       // Assert
       Assert.That(color, Is.EqualTo("#FFFF00"));
@@ -108,7 +121,20 @@ namespace PowerView.Model.Test.Repository
       var target = CreateTarget();
 
       // Act
-      var color = target.GetColor(ObisCode.ActualPowerP23);
+      var color = target.GetColor(ObisCode.ElectrActualPowerP23);
+
+      // Assert
+      Assert.That(color, Is.EqualTo("#FFFF00"));
+    }
+
+    [Test]
+    public void ActualAveragePowerP23()
+    {
+      // Arrange
+      var target = CreateTarget();
+
+      // Act
+      var color = target.GetColor(ObisCode.ElectrActualPowerP23Average);
 
       // Assert
       Assert.That(color, Is.EqualTo("#FFFF00"));
@@ -121,7 +147,7 @@ namespace PowerView.Model.Test.Repository
       var target = CreateTarget();
 
       // Act
-      var color = target.GetColor(ObisCode.ColdWaterVolume1Interim);
+      var color = target.GetColor(ObisCode.ColdWaterVolume1Period);
 
       // Assert
       Assert.That(color, Is.EqualTo("#99CCFF"));
@@ -154,13 +180,26 @@ namespace PowerView.Model.Test.Repository
     }
 
     [Test]
+    public void ColdWaterAverageFlow1()
+    {
+      // Arrange
+      var target = CreateTarget();
+
+      // Act
+      var color = target.GetColor(ObisCode.ColdWaterFlow1Average);
+
+      // Assert
+      Assert.That(color, Is.EqualTo("#330066"));
+    }
+
+    [Test]
     public void HeatEnergyEnergy1Interim()
     {
       // Arrange
       var target = CreateTarget();
 
       // Act
-      var color = target.GetColor(ObisCode.HeatEnergyEnergy1Interim);
+      var color = target.GetColor(ObisCode.HeatEnergyEnergy1Period);
 
       // Assert
       Assert.That(color, Is.EqualTo("#FF6699"));
@@ -186,7 +225,7 @@ namespace PowerView.Model.Test.Repository
       var target = CreateTarget();
 
       // Act
-      var color = target.GetColor(ObisCode.HeatEnergyVolume1Interim);
+      var color = target.GetColor(ObisCode.HeatEnergyVolume1Period);
 
       // Assert
       Assert.That(color, Is.EqualTo("#D6F5F5"));
@@ -219,6 +258,19 @@ namespace PowerView.Model.Test.Repository
     }
 
     [Test]
+    public void HeatEnergyAveragePower1()
+    {
+      // Arrange
+      var target = CreateTarget();
+
+      // Act
+      var color = target.GetColor(ObisCode.HeatEnergyPower1Average);
+
+      // Assert
+      Assert.That(color, Is.EqualTo("#CC3300"));
+    }
+
+    [Test]
     public void HeatEnergyFlow1()
     {
       // Arrange
@@ -226,6 +278,19 @@ namespace PowerView.Model.Test.Repository
 
       // Act
       var color = target.GetColor(ObisCode.HeatEnergyFlow1);
+
+      // Assert
+      Assert.That(color, Is.EqualTo("#33CCCC"));
+    }
+
+    [Test]
+    public void HeatEnergyAverageFlow1()
+    {
+      // Arrange
+      var target = CreateTarget();
+
+      // Act
+      var color = target.GetColor(ObisCode.HeatEnergyFlow1Average);
 
       // Assert
       Assert.That(color, Is.EqualTo("#33CCCC"));

@@ -138,7 +138,7 @@ namespace PowerView.Service.Test.Mqtt
       }
       if (obisCode == null)
       {
-        obisCode = ObisCode.ActiveEnergyA14;
+        obisCode = ObisCode.ElectrActiveEnergyA14;
       }
       return new[] { new LiveReading(label, "SN", dateTime.Value, new[] { new RegisterValue(obisCode.Value, value, 0, unit) }) };
     }

@@ -31,7 +31,7 @@ namespace PowerView.Service.Test.Modules
       var hub = new Mock<IHub>();
       var target = new ReadingAccepter(liveReadingRepository.Object, hub.Object);
       var liveReadings = new[] { new LiveReading("lbl", "sn1", DateTime.UtcNow,
-                                                  new [] { new RegisterValue(ObisCode.ActiveEnergyA14Interim, 1, 0, Unit.WattHour)}) };
+                                                  new [] { new RegisterValue(ObisCode.ElectrActiveEnergyA14Period, 1, 0, Unit.WattHour)}) };
 
       // Act
       target.Accept(liveReadings);

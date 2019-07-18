@@ -65,16 +65,16 @@ namespace PowerView.Service.Mqtt
 
     private static string ObisCodeToTopicFormat(ObisCode obisCode)
     {
-      if (obisCode == ObisCode.ActiveEnergyA14) return "Electricity/{0}/Energy/Import";
-      if (obisCode == ObisCode.ActualPowerP14) return "Electricity/{0}/Power/Import";
-      if (obisCode == ObisCode.ActualPowerP14L1) return "Electricity/{0}/Power/Import/L1";
-      if (obisCode == ObisCode.ActualPowerP14L2) return "Electricity/{0}/Power/Import/L2";
-      if (obisCode == ObisCode.ActualPowerP14L3) return "Electricity/{0}/Power/Import/L3";
-      if (obisCode == ObisCode.ActiveEnergyA23) return "Electricity/{0}/Energy/Export";
-      if (obisCode == ObisCode.ActualPowerP23) return "Electricity/{0}/Power/Export";
-      if (obisCode == ObisCode.ActualPowerP23L1) return "Electricity/{0}/Power/Export/L1";
-      if (obisCode == ObisCode.ActualPowerP23L2) return "Electricity/{0}/Power/Export/L2";
-      if (obisCode == ObisCode.ActualPowerP23L3) return "Electricity/{0}/Power/Export/L3";
+      if (obisCode == ObisCode.ElectrActiveEnergyA14) return "Electricity/{0}/Energy/Import";
+      if (obisCode == ObisCode.ElectrActualPowerP14) return "Electricity/{0}/Power/Import";
+      if (obisCode == ObisCode.ElectrActualPowerP14L1) return "Electricity/{0}/Power/Import/L1";
+      if (obisCode == ObisCode.ElectrActualPowerP14L2) return "Electricity/{0}/Power/Import/L2";
+      if (obisCode == ObisCode.ElectrActualPowerP14L3) return "Electricity/{0}/Power/Import/L3";
+      if (obisCode == ObisCode.ElectrActiveEnergyA23) return "Electricity/{0}/Energy/Export";
+      if (obisCode == ObisCode.ElectrActualPowerP23) return "Electricity/{0}/Power/Export";
+      if (obisCode == ObisCode.ElectrActualPowerP23L1) return "Electricity/{0}/Power/Export/L1";
+      if (obisCode == ObisCode.ElectrActualPowerP23L2) return "Electricity/{0}/Power/Export/L2";
+      if (obisCode == ObisCode.ElectrActualPowerP23L3) return "Electricity/{0}/Power/Export/L3";
 
       if (obisCode == ObisCode.ColdWaterVolume1) return "ColdWater/{0}/Volume/Import";
       if (obisCode == ObisCode.ColdWaterFlow1) return "ColdWater/{0}/Flow/Import";

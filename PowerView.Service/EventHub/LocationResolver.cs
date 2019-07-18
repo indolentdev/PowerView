@@ -93,7 +93,8 @@ namespace PowerView.Service.EventHub
       }
       catch (HttpWebException e)
       {
-        log.Info("Location resolve failed. Query error", e);
+        var msg = string.Format(CultureInfo.InvariantCulture, "Location resolve failed. Request error. {0}", uri);
+        log.Info(msg, e);
         return null;
       }
 

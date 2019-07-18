@@ -11,7 +11,7 @@ namespace PowerView.Model.Test
     {
       // Arrange
       var name = GaugeSetName.Latest;
-      var values = new GaugeValue[] { new GaugeValue("l", "123", DateTime.UtcNow, ObisCode.ActiveEnergyA14, new UnitValue(1, Unit.WattHour)) };
+      var values = new GaugeValue[] { new GaugeValue("l", "123", DateTime.UtcNow, ObisCode.ElectrActiveEnergyA14, new UnitValue(1, Unit.WattHour)) };
 
       // Act & Assert
       Assert.That(() => new GaugeValueSet((GaugeSetName)12345, values), Throws.TypeOf<ArgumentOutOfRangeException>());
@@ -24,7 +24,7 @@ namespace PowerView.Model.Test
     {
       // Arrange
       var name = GaugeSetName.Latest;
-      var values = new GaugeValue[] { new GaugeValue("l", "123", DateTime.UtcNow, ObisCode.ActiveEnergyA14, new UnitValue(1, Unit.WattHour)) };
+      var values = new GaugeValue[] { new GaugeValue("l", "123", DateTime.UtcNow, ObisCode.ElectrActiveEnergyA14, new UnitValue(1, Unit.WattHour)) };
 
       // Act
       var target = new GaugeValueSet(name, values);

@@ -83,23 +83,23 @@ namespace PowerView
     {
       var result = new Dictionary<string, SerieGenerator[]>();
 
-      var mainActualPowerP14 = new ActSG { Unit=Unit.Watt, Scale=0, BaseValue=400, BaseOffset=1100, MinValue=500, MaxValue=5000, ObisCode = OC.ActualPowerP14 };
-      var mainActiveEnergyA14 = new AccSG { Unit=Unit.WattHour, Scale=0, ObisCode=OC.ActiveEnergyA14, BackingGenerator=mainActualPowerP14 };
-      var mainActualPowerP23L1 = new ActSG { Unit=Unit.Watt, Scale=0, BaseValue=40, BaseOffset=300,  MinValue=100, MaxValue=1000, ObisCode = OC.ActualPowerP23L1 };
-      var mainActualPowerP23L2 = new ActSG { Unit = Unit.Watt, Scale = 0, BaseValue = 40, BaseOffset = 300, MinValue = 100, MaxValue = 1000, ObisCode = OC.ActualPowerP23L2 };
-      var mainActualPowerP23L3 = new ActSG { Unit = Unit.Watt, Scale = 0, BaseValue = 40, BaseOffset = 300, MinValue = 100, MaxValue = 1000, ObisCode = OC.ActualPowerP23L3 };
-      var mainActualPowerP23 = new SumSG { Unit = Unit.Watt, Scale = 0, ObisCode = OC.ActualPowerP23, BackingGenerators = new [] {
+      var mainActualPowerP14 = new ActSG { Unit=Unit.Watt, Scale=0, BaseValue=400, BaseOffset=1100, MinValue=500, MaxValue=5000, ObisCode = OC.ElectrActualPowerP14 };
+      var mainActiveEnergyA14 = new AccSG { Unit=Unit.WattHour, Scale=0, ObisCode=OC.ElectrActiveEnergyA14, BackingGenerator=mainActualPowerP14 };
+      var mainActualPowerP23L1 = new ActSG { Unit=Unit.Watt, Scale=0, BaseValue=40, BaseOffset=300,  MinValue=100, MaxValue=1000, ObisCode = OC.ElectrActualPowerP23L1 };
+      var mainActualPowerP23L2 = new ActSG { Unit = Unit.Watt, Scale = 0, BaseValue = 40, BaseOffset = 300, MinValue = 100, MaxValue = 1000, ObisCode = OC.ElectrActualPowerP23L2 };
+      var mainActualPowerP23L3 = new ActSG { Unit = Unit.Watt, Scale = 0, BaseValue = 40, BaseOffset = 300, MinValue = 100, MaxValue = 1000, ObisCode = OC.ElectrActualPowerP23L3 };
+      var mainActualPowerP23 = new SumSG { Unit = Unit.Watt, Scale = 0, ObisCode = OC.ElectrActualPowerP23, BackingGenerators = new [] {
           mainActualPowerP23L1, mainActualPowerP23L2, mainActualPowerP23L3
         } };
-      var mainActiveEnergyA23 = new AccSG { Unit=Unit.WattHour, Scale=0, ObisCode=OC.ActiveEnergyA23, BackingGenerator=mainActualPowerP23 };
+      var mainActiveEnergyA23 = new AccSG { Unit=Unit.WattHour, Scale=0, ObisCode=OC.ElectrActiveEnergyA23, BackingGenerator=mainActualPowerP23 };
       result.Add("Main", new SerieGenerator[] { mainActualPowerP14, mainActiveEnergyA14, mainActualPowerP23L1, mainActualPowerP23L2, mainActualPowerP23L3, mainActualPowerP23, mainActiveEnergyA23 });
 
-      var heaterActualPowerP14 = new ActSG { Unit=Unit.Watt, Scale=0, BaseValue=50, BaseOffset=500, MinValue=100, MaxValue=4000, ObisCode = OC.ActualPowerP14 };
-      var heaterActiveEnergyA14 = new AccSG { Unit=Unit.WattHour, Scale=0, ObisCode=OC.ActiveEnergyA14, BackingGenerator=heaterActualPowerP14 };
+      var heaterActualPowerP14 = new ActSG { Unit=Unit.Watt, Scale=0, BaseValue=50, BaseOffset=500, MinValue=100, MaxValue=4000, ObisCode = OC.ElectrActualPowerP14 };
+      var heaterActiveEnergyA14 = new AccSG { Unit=Unit.WattHour, Scale=0, ObisCode=OC.ElectrActiveEnergyA14, BackingGenerator=heaterActualPowerP14 };
       result.Add("Heater", new SerieGenerator[] { heaterActualPowerP14, heaterActiveEnergyA14 });
 
-      var invActualPowerP23 = new ActSG { Unit=Unit.Watt, Scale=0, BaseValue=150, BaseOffset=900,  MinValue=500, MaxValue=3000, ObisCode = OC.ActualPowerP23 };
-      var invActiveEnergyA23 = new AccSG { Unit=Unit.WattHour, Scale=0, ObisCode=OC.ActiveEnergyA23, BackingGenerator=invActualPowerP23 };
+      var invActualPowerP23 = new ActSG { Unit=Unit.Watt, Scale=0, BaseValue=150, BaseOffset=900,  MinValue=500, MaxValue=3000, ObisCode = OC.ElectrActualPowerP23 };
+      var invActiveEnergyA23 = new AccSG { Unit=Unit.WattHour, Scale=0, ObisCode=OC.ElectrActiveEnergyA23, BackingGenerator=invActualPowerP23 };
       result.Add("Inverter", new SerieGenerator[] { invActualPowerP23, invActiveEnergyA23 });
 
       var waterFlow = new ActSG { Unit=Unit.CubicMetrePrHour, Scale=-3, BaseValue=5, BaseOffset=200,  MinValue=25, MaxValue=600, ObisCode = OC.ColdWaterFlow1 };

@@ -113,11 +113,11 @@ namespace PowerView.Service.Test.Modules
       // Arrange
       disconnectRuleRepository.Setup(drr => drr.GetLatestSerieNames(It.IsAny<DateTime>())).Returns(new Dictionary<ISerieName, Unit> 
       {
-        { new SerieName("label1", ObisCode.ActualPowerP14L1), Unit.Watt },
-        { new SerieName("label1", ObisCode.ActualPowerP23L1), Unit.Watt },
-        { new SerieName("label2", ObisCode.ActualPowerP23L2), Unit.Percentage },
-        { new SerieName("label3", ObisCode.ActualPowerP23L3), Unit.DegreeCelsius },
-        { new SerieName("label3", ObisCode.ActualPowerP14L1), Unit.Watt }
+        { new SerieName("label1", ObisCode.ElectrActualPowerP14L1), Unit.Watt },
+        { new SerieName("label1", ObisCode.ElectrActualPowerP23L1), Unit.Watt },
+        { new SerieName("label2", ObisCode.ElectrActualPowerP23L2), Unit.Percentage },
+        { new SerieName("label3", ObisCode.ElectrActualPowerP23L3), Unit.DegreeCelsius },
+        { new SerieName("label3", ObisCode.ElectrActualPowerP14L1), Unit.Watt }
       });
       disconnectRuleRepository.Setup(drr => drr.GetDisconnectRules()).Returns(new IDisconnectRule[0]);
 
@@ -132,11 +132,11 @@ namespace PowerView.Service.Test.Modules
       Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
       var json = JObject.Parse(response.Body.AsString());
       Assert.That(json.SelectTokens("$.evaluationItems[*]").Count(), Is.EqualTo(3));
-      Assert.That(json.SelectToken("$.evaluationItems[?(@.label == 'label1')]")["obisCode"].ToString(), Is.EqualTo(ObisCode.ActualPowerP23L1.ToString()));
+      Assert.That(json.SelectToken("$.evaluationItems[?(@.label == 'label1')]")["obisCode"].ToString(), Is.EqualTo(ObisCode.ElectrActualPowerP23L1.ToString()));
       Assert.That(json.SelectToken("$.evaluationItems[?(@.label == 'label1')]")["unit"].ToString(), Is.EqualTo("W"));
-      Assert.That(json.SelectToken("$.evaluationItems[?(@.label == 'label2')]")["obisCode"].ToString(), Is.EqualTo(ObisCode.ActualPowerP23L2.ToString()));
+      Assert.That(json.SelectToken("$.evaluationItems[?(@.label == 'label2')]")["obisCode"].ToString(), Is.EqualTo(ObisCode.ElectrActualPowerP23L2.ToString()));
       Assert.That(json.SelectToken("$.evaluationItems[?(@.label == 'label2')]")["unit"].ToString(), Is.EqualTo("%"));
-      Assert.That(json.SelectToken("$.evaluationItems[?(@.label == 'label3')]")["obisCode"].ToString(), Is.EqualTo(ObisCode.ActualPowerP23L3.ToString()));
+      Assert.That(json.SelectToken("$.evaluationItems[?(@.label == 'label3')]")["obisCode"].ToString(), Is.EqualTo(ObisCode.ElectrActualPowerP23L3.ToString()));
       Assert.That(json.SelectToken("$.evaluationItems[?(@.label == 'label3')]")["unit"].ToString(), Is.EqualTo("C"));
     }
 
@@ -146,10 +146,10 @@ namespace PowerView.Service.Test.Modules
       // Arrange
       disconnectRuleRepository.Setup(drr => drr.GetLatestSerieNames(It.IsAny<DateTime>())).Returns(new Dictionary<ISerieName, Unit>
       {
-        { new SerieName("label1", ObisCode.ActualPowerP14L1), Unit.Watt },
+        { new SerieName("label1", ObisCode.ElectrActualPowerP14L1), Unit.Watt },
         { new SerieName("label2", "0.1.96.3.10.255"), Unit.NoUnit },
         { new SerieName("label3", "0.2.96.3.10.255"), Unit.NoUnit },
-        { new SerieName("label4", ObisCode.ActualPowerP14L1), Unit.Watt }
+        { new SerieName("label4", ObisCode.ElectrActualPowerP14L1), Unit.Watt }
       });
       disconnectRuleRepository.Setup(drr => drr.GetDisconnectRules()).Returns(new IDisconnectRule[0]);
 
@@ -174,10 +174,10 @@ namespace PowerView.Service.Test.Modules
       // Arrange
       disconnectRuleRepository.Setup(drr => drr.GetLatestSerieNames(It.IsAny<DateTime>())).Returns(new Dictionary<ISerieName, Unit>
       {
-        { new SerieName("label1", ObisCode.ActualPowerP14L1), Unit.Watt },
+        { new SerieName("label1", ObisCode.ElectrActualPowerP14L1), Unit.Watt },
         { new SerieName("label2", "0.1.96.3.10.255"), Unit.NoUnit },
         { new SerieName("label3", "0.2.96.3.10.255"), Unit.NoUnit },
-        { new SerieName("label4", ObisCode.ActualPowerP14L1), Unit.Watt }
+        { new SerieName("label4", ObisCode.ElectrActualPowerP14L1), Unit.Watt }
       });
       disconnectRuleRepository.Setup(drr => drr.GetDisconnectRules()).Returns(new [] { 
         new DisconnectRule(new SerieName("label2", "0.1.96.3.10.255"), new SerieName("l", "1.2.3.4.5.6"), new TimeSpan(0, 30, 0), 2, 1, Unit.Watt) });

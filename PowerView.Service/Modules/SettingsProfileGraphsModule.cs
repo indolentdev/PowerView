@@ -44,9 +44,9 @@ namespace PowerView.Service.Modules
 
       var day = serieNames.Where(sn => !sn.ObisCode.IsDelta)
         .Select(sn => new { Period = "day", sn.Label, ObisCode = sn.ObisCode.ToString() });
-      var month = serieNames.Where(sn => sn.ObisCode.IsDelta || sn.ObisCode.IsInterim)
+      var month = serieNames.Where(sn => sn.ObisCode.IsDelta || sn.ObisCode.IsPeriod)
         .Select(sn => new { Period = "month", sn.Label, ObisCode = sn.ObisCode.ToString() });
-      var year = serieNames.Where(sn => sn.ObisCode.IsDelta || sn.ObisCode.IsInterim)
+      var year = serieNames.Where(sn => sn.ObisCode.IsDelta || sn.ObisCode.IsPeriod)
         .Select(sn => new { Period = "year", sn.Label, ObisCode = sn.ObisCode.ToString() });
 
       var r = new { Items = day.Concat(month).Concat(year) };

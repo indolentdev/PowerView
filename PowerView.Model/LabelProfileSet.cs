@@ -129,7 +129,7 @@ namespace PowerView.Model
       }
 
       var periodTotals = serieSets.SelectMany(x => x.Series)
-                                  .Where(x => x.SerieName.ObisCode.IsInterim)
+                                  .Where(x => x.SerieName.ObisCode.IsPeriod)
                                   .GroupBy(x => x.SerieName)
                                   .Select(x => x.First())
                                   .Select(x => new NamedValue(x.SerieName, new UnitValue((double)x.Values.Reverse().First(z => z != null), x.Unit)))

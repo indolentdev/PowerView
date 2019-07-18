@@ -7,13 +7,11 @@ namespace PowerView.Service.Test.Mappers
   public class SerieMapperTest
   {
     [Test]
-    [TestCase("1.0.1.8.0.200")]
-    [TestCase("1.0.2.8.0.200")]
-    [TestCase("8.0.1.0.0.200")]
-    [TestCase("6.0.1.0.0.200")]
-    [TestCase("6.0.2.0.0.200")]
-    [TestCase("1.210.1.8.0.200")]
-    [TestCase("1.220.1.8.0.200")]
+    [TestCase("1.66.1.8.0.255")]
+    [TestCase("1.66.2.8.0.255")]
+    [TestCase("8.66.1.0.0.255")]
+    [TestCase("6.66.1.0.0.255")]
+    [TestCase("6.66.2.0.0.255")]
     public void MapToSerieTypeAreaspline(string obisCode)
     {
       // Arrange
@@ -27,8 +25,10 @@ namespace PowerView.Service.Test.Mappers
     }
 
     [Test]
-    [TestCase("1.0.1.8.0.100")]
-    [TestCase("1.0.2.8.0.100")]
+    [TestCase("1.65.1.8.0.255")]
+    [TestCase("1.65.2.8.0.255")]
+    [TestCase("1.67.1.8.0.255")]
+    [TestCase("1.67.2.8.0.255")]
     [TestCase("1.0.1.7.0.255")]
     [TestCase("1.0.2.7.0.255")]
     [TestCase("1.2.3.4.5.6")]
@@ -45,12 +45,10 @@ namespace PowerView.Service.Test.Mappers
     }
 
     [Test]
-    [TestCase("1.0.1.8.0.200")]
-    [TestCase("1.0.2.8.0.200")]
-    [TestCase("6.0.1.0.0.200")]
-    [TestCase("1.210.1.8.0.200")]
-    [TestCase("1.220.1.8.0.200")]
-    public void MapToSerieYAxisEnergyInterim(string obisCode)
+    [TestCase("1.66.1.8.0.255")]
+    [TestCase("1.66.2.8.0.255")]
+    [TestCase("6.66.1.0.0.255")]
+    public void MapToSerieYAxisEnergyPeriod(string obisCode)
     {
       // Arrange
       var target = CreateTarget();
@@ -59,15 +57,13 @@ namespace PowerView.Service.Test.Mappers
       var yAxis = target.MapToSerieYAxis(obisCode);
 
       // Assert
-      Assert.That(yAxis, Is.EqualTo("energyInterim"));
+      Assert.That(yAxis, Is.EqualTo("energyPeriod"));
     }
 
     [Test]
-    [TestCase("1.0.1.8.0.100")]
-    [TestCase("1.0.2.8.0.100")]
-    [TestCase("6.0.1.0.0.100")]
-    [TestCase("1.210.1.8.0.100")]
-    [TestCase("1.220.1.8.0.100")]
+    [TestCase("1.65.1.8.0.255")]
+    [TestCase("1.65.2.8.0.255")]
+    [TestCase("6.65.1.0.0.255")]
     public void MapToSerieYAxisEnergyDelta(string obisCode)
     {
       // Arrange
@@ -82,8 +78,11 @@ namespace PowerView.Service.Test.Mappers
 
     [Test]
     [TestCase("1.0.1.7.0.255")]
+    [TestCase("1.67.1.7.0.255")]
     [TestCase("1.0.2.7.0.255")]
+    [TestCase("1.67.2.7.0.255")]
     [TestCase("6.0.8.0.0.255")]
+    [TestCase("6.67.8.0.0.255")]
     [TestCase("1.0.21.7.0.255")]
     [TestCase("1.0.41.7.0.255")]
     [TestCase("1.0.61.7.0.255")]
@@ -103,8 +102,8 @@ namespace PowerView.Service.Test.Mappers
     }
       
     [Test]
-    [TestCase("8.0.1.0.0.200")]
-    public void MapToSerieYAxisVolumeInterim(string obisCode)
+    [TestCase("8.66.1.0.0.255")]
+    public void MapToSerieYAxisVolumePeriod(string obisCode)
     {
       // Arrange
       var target = CreateTarget();
@@ -113,12 +112,12 @@ namespace PowerView.Service.Test.Mappers
       var yAxis = target.MapToSerieYAxis(obisCode);
 
       // Assert
-      Assert.That(yAxis, Is.EqualTo("volumeInterim"));
+      Assert.That(yAxis, Is.EqualTo("volumePeriod"));
     }
 
     [Test]
-    [TestCase("6.0.2.0.0.200")]
-    public void MapToSerieYAxisVolumeInterimHidden(string obisCode)
+    [TestCase("6.66.2.0.0.255")]
+    public void MapToSerieYAxisVolumePeriodHidden(string obisCode)
     {
       // Arrange
       var target = CreateTarget();
@@ -127,11 +126,11 @@ namespace PowerView.Service.Test.Mappers
       var yAxis = target.MapToSerieYAxis(obisCode);
 
       // Assert
-      Assert.That(yAxis, Is.EqualTo("volumeInterimHiddenYAxis"));
+      Assert.That(yAxis, Is.EqualTo("volumePeriodHiddenYAxis"));
     }
 
     [Test]
-    [TestCase("8.0.1.0.0.100")]
+    [TestCase("8.65.1.0.0.255")]
     public void MapToSerieYAxisVolumeDelta(string obisCode)
     {
       // Arrange
@@ -145,7 +144,7 @@ namespace PowerView.Service.Test.Mappers
     }
 
     [Test]
-    [TestCase("6.0.2.0.0.100")]
+    [TestCase("6.65.2.0.0.255")]
     public void MapToSerieYAxisVolumeDeltaHidden(string obisCode)
     {
       // Arrange
@@ -160,6 +159,7 @@ namespace PowerView.Service.Test.Mappers
 
     [Test]
     [TestCase("8.0.2.0.0.255")]
+    [TestCase("8.67.2.0.0.255")]
     public void MapToSerieYAxisFlow(string obisCode)
     {
       // Arrange
@@ -174,6 +174,7 @@ namespace PowerView.Service.Test.Mappers
 
     [Test]
     [TestCase("6.0.9.0.0.255")]
+    [TestCase("6.67.9.0.0.255")]
     public void MapToSerieYAxisFlowHidden(string obisCode)
     {
       // Arrange

@@ -229,7 +229,7 @@ namespace PowerView.Model.Test
     {
       var rule = new Mock<IDisconnectRule>();
       rule.Setup(r => r.Name).Returns(new SerieName("Relay", "0.1.96.3.10.255"));
-      rule.Setup(r => r.EvaluationName).Returns(new SerieName("Meter", ObisCode.ActualPowerP14L1));
+      rule.Setup(r => r.EvaluationName).Returns(new SerieName("Meter", ObisCode.ElectrActualPowerP14L1));
       rule.Setup(r => r.Duration).Returns(TimeSpan.FromMinutes(30));
       rule.Setup(r => r.ConnectToDisconnectValue).Returns(500);
       rule.Setup(r => r.DisconnectToConnectValue).Returns(1500);

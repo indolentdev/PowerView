@@ -10,7 +10,7 @@ namespace PowerView.Model.Test
     public void ConstructorThrows()
     {
       // Arrange
-      var name = new SerieName("Lbl", ObisCode.ActualPowerP14);
+      var name = new SerieName("Lbl", ObisCode.ElectrActualPowerP14);
       var duration = TimeSpan.FromMinutes(30);
       var unit = Unit.Watt;
 
@@ -29,8 +29,8 @@ namespace PowerView.Model.Test
     public void ConstructorAndProperties()
     {
       // Arrange
-      var name = new SerieName("Lbl1", ObisCode.ActualPowerP14);
-      var evaluationName = new SerieName("Lbl2", ObisCode.ActualPowerP23);
+      var name = new SerieName("Lbl1", ObisCode.ElectrActualPowerP14);
+      var evaluationName = new SerieName("Lbl2", ObisCode.ElectrActualPowerP23);
       var duration = TimeSpan.FromMinutes(30);
       var dtc = 10;
       var ctd = 5;
@@ -52,14 +52,14 @@ namespace PowerView.Model.Test
     public void EqualsAndHashCode()
     {
       // Arrange
-      var t1 = new DisconnectRule(new SerieName("lbl", ObisCode.ActualPowerP14), new SerieName("lbl2", ObisCode.ActualPowerP23), TimeSpan.FromMinutes(30), 3, 1, Unit.Watt);
-      var t2 = new DisconnectRule(new SerieName("lbl", ObisCode.ActualPowerP14), new SerieName("lbl2", ObisCode.ActualPowerP23), TimeSpan.FromMinutes(30), 3, 1, Unit.Watt);
-      var t3 = new DisconnectRule(new SerieName("FFF", ObisCode.ActualPowerP14), new SerieName("lbl2", ObisCode.ActualPowerP23), TimeSpan.FromMinutes(30), 3, 1, Unit.Watt);
-      var t4 = new DisconnectRule(new SerieName("lbl", ObisCode.ActualPowerP14), new SerieName("FFFF", ObisCode.ActualPowerP23), TimeSpan.FromMinutes(30), 3, 1, Unit.Watt);
-      var t5 = new DisconnectRule(new SerieName("lbl", ObisCode.ActualPowerP14), new SerieName("lbl2", ObisCode.ActualPowerP23), TimeSpan.FromMinutes(99), 3, 1, Unit.Watt);
-      var t6 = new DisconnectRule(new SerieName("lbl", ObisCode.ActualPowerP14), new SerieName("lbl2", ObisCode.ActualPowerP23), TimeSpan.FromMinutes(30), 4, 1, Unit.Watt);
-      var t7 = new DisconnectRule(new SerieName("lbl", ObisCode.ActualPowerP14), new SerieName("lbl2", ObisCode.ActualPowerP23), TimeSpan.FromMinutes(30), 3, 2, Unit.Watt);
-      var t8 = new DisconnectRule(new SerieName("lbl", ObisCode.ActualPowerP14), new SerieName("lbl2", ObisCode.ActualPowerP23), TimeSpan.FromMinutes(30), 3, 1, Unit.Joule);
+      var t1 = new DisconnectRule(new SerieName("lbl", ObisCode.ElectrActualPowerP14), new SerieName("lbl2", ObisCode.ElectrActualPowerP23), TimeSpan.FromMinutes(30), 3, 1, Unit.Watt);
+      var t2 = new DisconnectRule(new SerieName("lbl", ObisCode.ElectrActualPowerP14), new SerieName("lbl2", ObisCode.ElectrActualPowerP23), TimeSpan.FromMinutes(30), 3, 1, Unit.Watt);
+      var t3 = new DisconnectRule(new SerieName("FFF", ObisCode.ElectrActualPowerP14), new SerieName("lbl2", ObisCode.ElectrActualPowerP23), TimeSpan.FromMinutes(30), 3, 1, Unit.Watt);
+      var t4 = new DisconnectRule(new SerieName("lbl", ObisCode.ElectrActualPowerP14), new SerieName("FFFF", ObisCode.ElectrActualPowerP23), TimeSpan.FromMinutes(30), 3, 1, Unit.Watt);
+      var t5 = new DisconnectRule(new SerieName("lbl", ObisCode.ElectrActualPowerP14), new SerieName("lbl2", ObisCode.ElectrActualPowerP23), TimeSpan.FromMinutes(99), 3, 1, Unit.Watt);
+      var t6 = new DisconnectRule(new SerieName("lbl", ObisCode.ElectrActualPowerP14), new SerieName("lbl2", ObisCode.ElectrActualPowerP23), TimeSpan.FromMinutes(30), 4, 1, Unit.Watt);
+      var t7 = new DisconnectRule(new SerieName("lbl", ObisCode.ElectrActualPowerP14), new SerieName("lbl2", ObisCode.ElectrActualPowerP23), TimeSpan.FromMinutes(30), 3, 2, Unit.Watt);
+      var t8 = new DisconnectRule(new SerieName("lbl", ObisCode.ElectrActualPowerP14), new SerieName("lbl2", ObisCode.ElectrActualPowerP23), TimeSpan.FromMinutes(30), 3, 1, Unit.Joule);
 
       // Act & Assert
       Assert.That(t1, Is.EqualTo(t2));

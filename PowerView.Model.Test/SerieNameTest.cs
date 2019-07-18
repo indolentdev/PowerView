@@ -38,7 +38,7 @@ namespace PowerView.Model.Test
       var t1 = new SerieName("MyLabel", ObisCode.ColdWaterVolume1);
       var t2 = new SerieName("MyLabel", ObisCode.ColdWaterVolume1);
       var t3 = new SerieName("OtherLabel", ObisCode.ColdWaterVolume1);
-      var t4 = new SerieName("MyLabel", ObisCode.ActiveEnergyA14);
+      var t4 = new SerieName("MyLabel", ObisCode.ElectrActiveEnergyA14);
 
       // Act & Assert
       Assert.That(t1, Is.EqualTo(t2));
