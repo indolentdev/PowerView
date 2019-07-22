@@ -15,7 +15,7 @@ namespace PowerView.Service.DisconnectControl
     private readonly IFactory factory;
     private readonly EventQueue eventQueue;
     private readonly IDisconnectCache disconnectCache;
-    private volatile IDictionary<ISerieName, bool> statusReadCopy;
+    private volatile IDictionary<ISeriesName, bool> statusReadCopy;
 
     public DisconnectWarden(IFactory factory)
     {
@@ -24,10 +24,10 @@ namespace PowerView.Service.DisconnectControl
       this.factory = factory;
       eventQueue = new EventQueue();
       disconnectCache = new DisconnectCache();
-      statusReadCopy = new Dictionary<ISerieName, bool>(0);
+      statusReadCopy = new Dictionary<ISeriesName, bool>(0);
     }
 
-    public IDictionary<ISerieName, bool> GetOutputStatus(string label)
+    public IDictionary<ISeriesName, bool> GetOutputStatus(string label)
     { // Purposely do not use the event queue.
       var statusReadCopyLocal = statusReadCopy; // locking free multithreading
       var filtered = statusReadCopyLocal

@@ -49,7 +49,7 @@ namespace PowerView.Model.Repository
       }
     }
 
-    public void DeleteDisconnectRule(ISerieName name)
+    public void DeleteDisconnectRule(ISeriesName name)
     {
       if (name == null) throw new ArgumentNullException("name");
 
@@ -78,11 +78,11 @@ namespace PowerView.Model.Repository
 
     private IDisconnectRule ToDisconnectRule(Db.DisconnectRule dr)
     {
-      return new DisconnectRule(new SerieName(dr.Label, dr.ObisCode), new SerieName(dr.EvaluationLabel, dr.EvaluationObisCode), 
+      return new DisconnectRule(new SeriesName(dr.Label, dr.ObisCode), new SeriesName(dr.EvaluationLabel, dr.EvaluationObisCode), 
                                 TimeSpan.FromSeconds(dr.DurationSeconds), dr.DisconnectToConnectValue, dr.ConnectToDisconnectValue, (Unit)dr.Unit);
     }
 
-    public IDictionary<ISerieName, Unit> GetLatestSerieNames(DateTime dateTime)
+    public IDictionary<ISeriesName, Unit> GetLatestSerieNames(DateTime dateTime)
     {
       if (dateTime.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("dateTime");
 
@@ -94,7 +94,7 @@ namespace PowerView.Model.Repository
                         .Where(x => Enum.IsDefined(typeof(Unit), x.Unit))
                         .GroupBy(x => new { x.Label, x.ObisCode })
                         .Select(x => x.OrderByDescending(i => i.Timestamp).First())
-                        .ToDictionary(x => (ISerieName)new SerieName(x.Label, x.ObisCode), x => (Unit)x.Unit);
+                        .ToDictionary(x => (ISeriesName)new SeriesName(x.Label, x.ObisCode), x => (Unit)x.Unit);
       return serieNameToUnit;
     }
 

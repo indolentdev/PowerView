@@ -2,21 +2,19 @@
 
 namespace PowerView.Model
 {
-  public class SerieColor
+  public class SeriesColor
   {
-    public SerieColor(string label, ObisCode obisCode, string color)
+    public SeriesColor(SeriesName seriesName, string color)
     {
-      if (string.IsNullOrEmpty(label)) throw new ArgumentNullException("label");
+      if (seriesName == null) throw new ArgumentNullException("seriesName");
       if (string.IsNullOrEmpty(color)) throw new ArgumentNullException("color");
       if (!IsColorValid(color)) throw new ArgumentOutOfRangeException("color", color, "Not a HTML color");
 
-      Label = label;
-      ObisCode = obisCode;
+      SeriesName = seriesName;
       Color = color;
     }
 
-    public string Label { get; private set; }
-    public ObisCode ObisCode { get; private set; }
+    public SeriesName SeriesName { get; private set; }
     public string Color { get; private set; }
 
     public static bool IsColorValid(string color)

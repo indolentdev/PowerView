@@ -10,6 +10,6 @@ namespace PowerView.Model
     void SynchronizeRules(ICollection<IDisconnectRule> rules);
     void Add(ICollection<LiveReading> liveReadings);
     void Calculate(DateTime time);
-    IDictionary<ISerieName, bool> GetStatus();
+    IDictionary<ISeriesName, bool> GetStatus();
   }
 }

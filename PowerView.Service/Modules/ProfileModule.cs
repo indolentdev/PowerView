@@ -17,12 +17,12 @@ namespace PowerView.Service.Modules
     private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
     private readonly IProfileRepository profileRepository;
-    private readonly ISerieColorRepository serieRepository;
+    private readonly ISeriesColorRepository serieRepository;
     private readonly IProfileGraphRepository profileGraphRepository;
     private readonly ISerieMapper serieMapper;
     private readonly ITemplateConfigProvider templateConfigProvider;
 
-    public ProfileModule(IProfileRepository profileRepository, ISerieColorRepository serieRepository, IProfileGraphRepository profileGraphRepository, ISerieMapper serieMapper, ITemplateConfigProvider templateConfigProvider)
+    public ProfileModule(IProfileRepository profileRepository, ISeriesColorRepository serieRepository, IProfileGraphRepository profileGraphRepository, ISerieMapper serieMapper, ITemplateConfigProvider templateConfigProvider)
       :base("/api/profile")
     {
       if (profileRepository == null) throw new ArgumentNullException("profileRepository");
@@ -120,12 +120,12 @@ namespace PowerView.Service.Modules
       return viewSet;
     }
 
-    private object GetGraph(SerieSet serieSet)
+    private object GetGraph(SeriesSet serieSet)
     {
-      var series = serieSet.Series.Select(x => new { x.SerieName.Label, ObisCode=x.SerieName.ObisCode.ToString(),
-        Unit=ValueAndUnitMapper.Map(x.Unit), SerieType=serieMapper.MapToSerieType(x.SerieName.ObisCode),
-        SerieYAxis=serieMapper.MapToSerieYAxis(x.SerieName.ObisCode),
-        SerieColor=serieRepository.GetColorCached(x.SerieName.Label, x.SerieName.ObisCode),
+      var series = serieSet.Series.Select(x => new { x.SeriesName.Label, ObisCode=x.SeriesName.ObisCode.ToString(),
+        Unit=ValueAndUnitMapper.Map(x.Unit), SerieType=serieMapper.MapToSerieType(x.SeriesName.ObisCode),
+        SerieYAxis=serieMapper.MapToSerieYAxis(x.SeriesName.ObisCode),
+        SerieColor=serieRepository.GetColorCached(x.SeriesName.Label, x.SeriesName.ObisCode),
         Values=x.Values.Select(value => ValueAndUnitMapper.Map(value, x.Unit)).ToList() } );
      
       return new { Title = serieSet.Title, Categories = serieSet.Categories.Select(x => DateTimeMapper.Map(x)).ToList(), 

@@ -4,14 +4,14 @@ namespace PowerView.Model
 {
   public class DisconnectRule : IDisconnectRule, IEquatable<DisconnectRule>
   {
-    private readonly ISerieName name;
-    private readonly ISerieName evaluationName;
+    private readonly ISeriesName name;
+    private readonly ISeriesName evaluationName;
     private readonly TimeSpan duration;
     private readonly int disconnectToConnectValue;
     private readonly int connectToDisconnectValue;
     private readonly Unit unit;
 
-    public DisconnectRule(ISerieName name, ISerieName evaluationName, TimeSpan duration, int disconnectToConnectValue, int connectToDisconnectValue, Unit unit)
+    public DisconnectRule(ISeriesName name, ISeriesName evaluationName, TimeSpan duration, int disconnectToConnectValue, int connectToDisconnectValue, Unit unit)
     {
       if (name == null) throw new ArgumentNullException("name");
       if (evaluationName == null) throw new ArgumentNullException("evaluationName");
@@ -29,8 +29,8 @@ namespace PowerView.Model
       this.unit = unit;
     }
 
-    public ISerieName Name { get { return name; } }
-    public ISerieName EvaluationName { get { return evaluationName; } }
+    public ISeriesName Name { get { return name; } }
+    public ISeriesName EvaluationName { get { return evaluationName; } }
     public TimeSpan Duration { get { return duration; } }
     public int DisconnectToConnectValue { get { return disconnectToConnectValue; } }
     public int ConnectToDisconnectValue { get { return connectToDisconnectValue; } }

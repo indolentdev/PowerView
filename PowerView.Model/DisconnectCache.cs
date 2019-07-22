@@ -6,11 +6,11 @@ namespace PowerView.Model
 {
   public class DisconnectCache : IDisconnectCache
   {
-    private readonly Dictionary<ISerieName, IDisconnectCacheItem> cacheItems;
+    private readonly Dictionary<ISeriesName, IDisconnectCacheItem> cacheItems;
 
     public DisconnectCache()
     {
-      cacheItems = new Dictionary<ISerieName, IDisconnectCacheItem>(4);
+      cacheItems = new Dictionary<ISeriesName, IDisconnectCacheItem>(4);
     }
 
     public int Count { get { return cacheItems.Count; } }
@@ -42,7 +42,7 @@ namespace PowerView.Model
     public void Add(ICollection<LiveReading> liveReadings)
     {
       var itemGropups = liveReadings.SelectMany(lr => lr.GetRegisterValues(), (reading, register) => 
-                                      new { Key = new SerieName(reading.Label, register.ObisCode), reading, register })
+                                      new { Key = new SeriesName(reading.Label, register.ObisCode), reading, register })
                           .GroupBy(x => x.Key, x => x);
       
       foreach (var itemGroup in itemGropups)
@@ -64,10 +64,10 @@ namespace PowerView.Model
       }
     }
 
-    public IDictionary<ISerieName, bool> GetStatus()
+    public IDictionary<ISeriesName, bool> GetStatus()
     {
-      return cacheItems.Select(x => new { Name = new SerieName(x.Value.Rule.Name.Label, x.Value.Rule.Name.ObisCode), x.Value.Connected })
-                       .ToDictionary(x => (ISerieName)x.Name, x => x.Connected);
+      return cacheItems.Select(x => new { Name = new SeriesName(x.Value.Rule.Name.Label, x.Value.Rule.Name.ObisCode), x.Value.Connected })
+                       .ToDictionary(x => (ISeriesName)x.Name, x => x.Connected);
     }
 
   }

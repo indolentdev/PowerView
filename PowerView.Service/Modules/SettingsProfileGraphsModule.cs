@@ -15,11 +15,11 @@ namespace PowerView.Service.Modules
   {
     private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-    private readonly ISerieNameRepository serieNameRepository;
+    private readonly ISeriesNameRepository serieNameRepository;
     private readonly IProfileGraphRepository profileGraphRepository;
     private readonly ITemplateConfigProvider templateConfigProvider;
 
-    public SettingsProfileGraphsModule(ISerieNameRepository serieNameRepository, IProfileGraphRepository profileGraphRepository, ITemplateConfigProvider templateConfigProvider)
+    public SettingsProfileGraphsModule(ISeriesNameRepository serieNameRepository, IProfileGraphRepository profileGraphRepository, ITemplateConfigProvider templateConfigProvider)
       : base("/api/settings/profilegraphs")
     {
       if (serieNameRepository == null) throw new ArgumentNullException("serieNameRepository");
@@ -40,7 +40,7 @@ namespace PowerView.Service.Modules
 
     private dynamic GetProfileGraphSeries(dynamic param)
     {
-      var serieNames = serieNameRepository.GetSerieNames(templateConfigProvider.LabelObisCodeTemplates);
+      var serieNames = serieNameRepository.GetSeriesNames(templateConfigProvider.LabelObisCodeTemplates);
 
       var day = serieNames.Where(sn => !sn.ObisCode.IsDelta)
         .Select(sn => new { Period = "day", sn.Label, ObisCode = sn.ObisCode.ToString() });
@@ -92,7 +92,7 @@ namespace PowerView.Service.Modules
       ProfileGraph profileGraph = null;
       try
       {
-        var serieNames = dto.Series.Select(x => new SerieName(x.Label, x.ObisCode)).ToList();
+        var serieNames = dto.Series.Select(x => new SeriesName(x.Label, x.ObisCode)).ToList();
         profileGraph = new ProfileGraph(dto.Period, dto.Page, dto.Title, dto.Interval, 0, serieNames);
       }
       catch (ArgumentException e)

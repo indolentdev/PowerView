@@ -97,10 +97,10 @@ namespace PowerView.Service.Modules
       string label = param.label;
       string obisCode = param.obisCode;
 
-      ISerieName name;
+      ISeriesName name;
       try
       {
-        name = new SerieName(label, obisCode);
+        name = new SeriesName(label, obisCode);
       }
       catch (ArgumentException e)
       {

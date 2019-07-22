@@ -8,7 +8,7 @@ using PowerView.Model.Repository;
 namespace PowerView.Model.Test.Repository
 {
   [TestFixture]
-  public class SerieNameRepositoryTest : DbTestFixtureWithSchema
+  public class SeriesNameRepositoryTest : DbTestFixtureWithSchema
   {
     [Test]
     public void ConstructorThrows()
@@ -16,7 +16,7 @@ namespace PowerView.Model.Test.Repository
       // Arrange
 
       // Act & Assert
-      Assert.That(() => new SerieNameRepository(null), Throws.TypeOf<ArgumentNullException>());
+      Assert.That(() => new SeriesNameRepository(null), Throws.TypeOf<ArgumentNullException>());
     }
 
     [Test]
@@ -38,7 +38,7 @@ namespace PowerView.Model.Test.Repository
       InsertMonthReading(label1, obisCode1);
 
       // Act
-      var serieNames = target.GetSerieNames(new LabelObisCodeTemplate[0]);
+      var serieNames = target.GetSeriesNames(new LabelObisCodeTemplate[0]);
 
       // Assert
       Assert.That(serieNames.Count, Is.EqualTo(3));
@@ -56,7 +56,7 @@ namespace PowerView.Model.Test.Repository
       InsertDayReading(label, ObisCode.ElectrActiveEnergyA14);
 
       // Act
-      var serieColors = target.GetSerieNames(new LabelObisCodeTemplate[0]);
+      var serieColors = target.GetSeriesNames(new LabelObisCodeTemplate[0]);
 
       // Assert
       Assert.That(serieColors.Count, Is.EqualTo(3));
@@ -79,7 +79,7 @@ namespace PowerView.Model.Test.Repository
         new LabelObisCodeTemplate(label2, new [] { new ObisCodeTemplate(obisCode2, new RegisterTemplateExpression(label1 + ":" + obisCode1)) }) };
 
       // Act
-      var serieNames = target.GetSerieNames(labelObisCodeTemplats);
+      var serieNames = target.GetSeriesNames(labelObisCodeTemplats);
 
       // Assert
       Assert.That(serieNames.Count, Is.EqualTo(2));
@@ -122,9 +122,9 @@ namespace PowerView.Model.Test.Repository
       }
     }
 
-    private SerieNameRepository CreateTarget()
+    private SeriesNameRepository CreateTarget()
     {
-      return new SerieNameRepository(DbContext);
+      return new SeriesNameRepository(DbContext);
     }
 
   }

@@ -11,16 +11,16 @@ using PowerView.Model.Expression;
 
 namespace PowerView.Model.Repository
 {
-  internal class SerieNameRepository : RepositoryBase, ISerieNameRepository
+  internal class SeriesNameRepository : RepositoryBase, ISeriesNameRepository
   {
     private static ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-    public SerieNameRepository(IDbContext dbContext)
+    public SeriesNameRepository(IDbContext dbContext)
       : base(dbContext)
     {
     }
 
-    public IList<SerieName> GetSerieNames(ICollection<LabelObisCodeTemplate> labelObisCodeTemplates)
+    public IList<SeriesName> GetSeriesNames(ICollection<LabelObisCodeTemplate> labelObisCodeTemplates)
     {
       var labelsAndObisCodes = GetLabelsAndObisCodes();
 
@@ -40,10 +40,10 @@ namespace PowerView.Model.Repository
       var labelProfileSet = new LabelProfileSet(dt1, labelProfiles);
       labelProfileSet.GenerateFromTemplates(labelObisCodeTemplates, "5-minutes");
 
-      var serieNames = labelProfileSet
-        .SelectMany(lp => lp.GetAllObisCodes().Where(oc => !oc.IsCumulative).Select(oc => new SerieName(lp.Label, oc)))
+      var seriesNames = labelProfileSet
+        .SelectMany(lp => lp.GetAllObisCodes().Where(oc => !oc.IsCumulative).Select(oc => new SeriesName(lp.Label, oc)))
         .ToList();
-      return serieNames;
+      return seriesNames;
     }
 
     private IEnumerable<dynamic> GetLabelsAndObisCodes()

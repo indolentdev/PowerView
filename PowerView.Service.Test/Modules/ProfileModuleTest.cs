@@ -19,7 +19,7 @@ namespace PowerView.Service.Test.Modules
   public class ProfileModuleTest
   {
     private Mock<IProfileRepository> profileRepository;
-    private Mock<ISerieColorRepository> serieRepository;
+    private Mock<ISeriesColorRepository> serieRepository;
     private Mock<IProfileGraphRepository> profileGraphRepository;
     private Mock<ISerieMapper> serieMapper;
     private Mock<ITemplateConfigProvider> templateConfigProvider;
@@ -30,7 +30,7 @@ namespace PowerView.Service.Test.Modules
     public void SetUp()
     {
       profileRepository = new Mock<IProfileRepository>();
-      serieRepository = new Mock<ISerieColorRepository>();
+      serieRepository = new Mock<ISeriesColorRepository>();
       profileGraphRepository = new Mock<IProfileGraphRepository>();
       serieMapper = new Mock<ISerieMapper>();
       templateConfigProvider = new Mock<ITemplateConfigProvider>();
@@ -44,7 +44,7 @@ namespace PowerView.Service.Test.Modules
       {
         cfg.Module<ProfileModule>();
         cfg.Dependency<IProfileRepository>(profileRepository.Object);
-        cfg.Dependency<ISerieColorRepository>(serieRepository.Object);
+        cfg.Dependency<ISeriesColorRepository>(serieRepository.Object);
         cfg.Dependency<IProfileGraphRepository>(profileGraphRepository.Object);
         cfg.Dependency<ISerieMapper>(serieMapper.Object);
         cfg.Dependency<ITemplateConfigProvider>(templateConfigProvider.Object);
@@ -55,7 +55,7 @@ namespace PowerView.Service.Test.Modules
     public void GetDayProfilePeriodAndPagePassedToRepository()
     {
       // Arrange
-      var profileGraph = new ProfileGraph("day", "ThePage", "title", "5-minutes", 1, new[] { new SerieName("Label", ObisCode.ElectrActiveEnergyA14Period) });
+      var profileGraph = new ProfileGraph("day", "ThePage", "title", "5-minutes", 1, new[] { new SeriesName("Label", ObisCode.ElectrActiveEnergyA14Period) });
       StubProfileGraph(profileGraph);
       var utcNow = DateTime.UtcNow;
       profileRepository.Setup(dpr => dpr.GetDayProfileSet(It.IsAny<DateTime>()))
@@ -161,9 +161,9 @@ namespace PowerView.Service.Test.Modules
     {
       // Arrange
       var profileGraph1 = new ProfileGraph("day", "thePage", "Import", "5-minutes", 1, new[] { 
-        new SerieName("Label1", "6.0.1.0.0.255"), new SerieName("Label1", "6.66.1.0.0.255"), new SerieName("Label1", "6.67.8.0.0.255"), 
-        new SerieName("Label1", "6.0.2.0.0.255"), new SerieName("Label1", "6.66.2.0.0.255"), new SerieName("Label1", "6.67.9.0.0.255"),
-        new SerieName("Label1", "6.0.9.0.0.255")
+        new SeriesName("Label1", "6.0.1.0.0.255"), new SeriesName("Label1", "6.66.1.0.0.255"), new SeriesName("Label1", "6.67.8.0.0.255"), 
+        new SeriesName("Label1", "6.0.2.0.0.255"), new SeriesName("Label1", "6.66.2.0.0.255"), new SeriesName("Label1", "6.67.9.0.0.255"),
+        new SeriesName("Label1", "6.0.9.0.0.255")
       });
       StubProfileGraph(profileGraph1);
       var now = DateTime.UtcNow;
@@ -217,7 +217,7 @@ namespace PowerView.Service.Test.Modules
     public void GetMonthProfilePeriodAndPagePassedToRepository()
     {
       // Arrange
-      var profileGraph = new ProfileGraph("month", "ThePage", "title", "1-days", 1, new[] { new SerieName("Label", ObisCode.ElectrActiveEnergyA14Period) });
+      var profileGraph = new ProfileGraph("month", "ThePage", "title", "1-days", 1, new[] { new SeriesName("Label", ObisCode.ElectrActiveEnergyA14Period) });
       StubProfileGraph(profileGraph);
       var utcNow = DateTime.UtcNow;
       profileRepository.Setup(dpr => dpr.GetMonthProfileSet(It.IsAny<DateTime>()))
@@ -323,9 +323,9 @@ namespace PowerView.Service.Test.Modules
     {
       // Arrange
       var profileGraph1 = new ProfileGraph("month", "thePage", "Import", "1-days", 1, 
-        new[] { new SerieName("Label1", "1.0.1.8.0.255"), new SerieName("Label1", "1.66.1.8.0.255"), new SerieName("Label1", "1.65.1.8.0.255") });
+        new[] { new SeriesName("Label1", "1.0.1.8.0.255"), new SeriesName("Label1", "1.66.1.8.0.255"), new SeriesName("Label1", "1.65.1.8.0.255") });
       var profileGraph2 = new ProfileGraph("month", "thePage", "Export", "1-days", 2, 
-        new[] { new SerieName("Label0", "1.0.2.8.0.255"), new SerieName("Label0", "1.66.2.8.0.255"), new SerieName("Label0", "1.65.2.8.0.255") });
+        new[] { new SeriesName("Label0", "1.0.2.8.0.255"), new SeriesName("Label0", "1.66.2.8.0.255"), new SeriesName("Label0", "1.65.2.8.0.255") });
       StubProfileGraph(profileGraph1, profileGraph2);
       var now = DateTime.UtcNow;
       var t1 = now-TimeSpan.FromDays(5);
@@ -386,7 +386,7 @@ namespace PowerView.Service.Test.Modules
     public void GetYearProfilePeriodAndPagePassedToRepository()
     {
       // Arrange
-      var profileGraph = new ProfileGraph("year", "ThePage", "title", "1-months", 1, new[] { new SerieName("Label", ObisCode.ElectrActiveEnergyA14Period) });
+      var profileGraph = new ProfileGraph("year", "ThePage", "title", "1-months", 1, new[] { new SeriesName("Label", ObisCode.ElectrActiveEnergyA14Period) });
       StubProfileGraph(profileGraph);
       var utcNow = DateTime.UtcNow;
       profileRepository.Setup(dpr => dpr.GetYearProfileSet(It.IsAny<DateTime>()))
@@ -489,9 +489,9 @@ namespace PowerView.Service.Test.Modules
     {
       // Arrange
       var profileGraph1 = new ProfileGraph("month", "thePage", "Import", "1-months", 1,
-        new[] { new SerieName("Label1", "1.0.1.8.0.255"), new SerieName("Label1", "1.66.1.8.0.255"), new SerieName("Label1", "1.65.1.8.0.255") });
+        new[] { new SeriesName("Label1", "1.0.1.8.0.255"), new SeriesName("Label1", "1.66.1.8.0.255"), new SeriesName("Label1", "1.65.1.8.0.255") });
       var profileGraph2 = new ProfileGraph("month", "thePage", "Export", "1-months", 2,
-        new[] { new SerieName("Label0", "1.0.2.8.0.255"), new SerieName("Label0", "1.66.2.8.0.255"), new SerieName("Label0", "1.65.2.8.0.255") });
+        new[] { new SeriesName("Label0", "1.0.2.8.0.255"), new SeriesName("Label0", "1.66.2.8.0.255"), new SeriesName("Label0", "1.65.2.8.0.255") });
       StubProfileGraph(profileGraph1, profileGraph2);
       var t0 = DateTime.UtcNow - TimeSpan.FromDays(365);
       var t1 = t0.AddMonths(1);
@@ -553,7 +553,7 @@ namespace PowerView.Service.Test.Modules
 
       if (profileGraphsLocal.Count == 0)
       {
-        profileGraphsLocal.Add(new ProfileGraph("day", "thePage", "theTitle", "5-minutes", 1, new[] { new SerieName("theLabel", ObisCode.ElectrActiveEnergyA14Period) }));
+        profileGraphsLocal.Add(new ProfileGraph("day", "thePage", "theTitle", "5-minutes", 1, new[] { new SeriesName("theLabel", ObisCode.ElectrActiveEnergyA14Period) }));
       }
 
       profileGraphRepository.Setup(x => x.GetProfileGraphs(It.IsAny<string>(), It.IsAny<string>())).Returns(profileGraphsLocal);

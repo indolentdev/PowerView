@@ -15,8 +15,8 @@ namespace PowerView.Model
       containerBuilder.RegisterType<ProfileRepository>().As<IProfileRepository>();
       containerBuilder.RegisterType<ReadingPipeRepository>().As<IReadingPipeRepository>();
       containerBuilder.RegisterType<SettingRepository>().As<ISettingRepository>();
-      containerBuilder.RegisterType<SerieNameRepository>().As<ISerieNameRepository>();
-      containerBuilder.RegisterType<SerieColorRepository>().As<ISerieColorRepository>();
+      containerBuilder.RegisterType<SeriesNameRepository>().As<ISeriesNameRepository>();
+      containerBuilder.RegisterType<SeriesColorRepository>().As<ISeriesColorRepository>();
       containerBuilder.RegisterType<ProfileGraphRepository>().As<IProfileGraphRepository>();
       containerBuilder.RegisterType<EmailRecipientRepository>().As<IEmailRecipientRepository>();
       containerBuilder.RegisterType<EmailMessageRepository>().As<IEmailMessageRepository>();

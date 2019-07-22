@@ -25,8 +25,8 @@ namespace PowerView.Service.Mappers
     {
       try
       {
-        var name = new SerieName(dto.NameLabel, dto.NameObisCode);
-        var evaluation = new SerieName(dto.EvaluationLabel, dto.EvaluationObisCode);
+        var name = new SeriesName(dto.NameLabel, dto.NameObisCode);
+        var evaluation = new SeriesName(dto.EvaluationLabel, dto.EvaluationObisCode);
         var duration = TimeSpan.FromMinutes(dto.DurationMinutes);
         return new DisconnectRule(name, evaluation, duration, dto.DisconnectToConnectValue, dto.ConnectToDisconnectValue,
                                   ValueAndUnitMapper.Map(dto.Unit));

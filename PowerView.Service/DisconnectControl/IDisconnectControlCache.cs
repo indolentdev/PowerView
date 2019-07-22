@@ -6,6 +6,6 @@ namespace PowerView.Service.DisconnectControl
 {
   public interface IDisconnectControlCache
   {
-    IDictionary<ISerieName, bool> GetOutputStatus(string label);
+    IDictionary<ISeriesName, bool> GetOutputStatus(string label);
   }
 }

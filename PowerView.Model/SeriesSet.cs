@@ -4,9 +4,9 @@ using System.Linq;
 
 namespace PowerView.Model
 {
-  public class SerieSet
+  public class SeriesSet
   {
-    public SerieSet(string title, IEnumerable<DateTime> categories, ICollection<Serie> series)
+    public SeriesSet(string title, IEnumerable<DateTime> categories, ICollection<Series> series)
     {
       if (string.IsNullOrEmpty(title)) throw new ArgumentNullException("title");
       if (categories == null) throw new ArgumentNullException("categories");
@@ -19,7 +19,7 @@ namespace PowerView.Model
 
     public string Title { get; private set; }
     public DateTime[] Categories { get; private set; }
-    public ICollection<Serie> Series { get; private set; }
+    public ICollection<Series> Series { get; private set; }
   }
 }
 

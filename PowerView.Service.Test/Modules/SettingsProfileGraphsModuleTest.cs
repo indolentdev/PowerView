@@ -15,7 +15,7 @@ namespace PowerView.Service.Test.Modules
   [TestFixture]
   public class SettingsProfileGraphsModuleTest
   {
-    private Mock<ISerieNameRepository> serieNameRepository;
+    private Mock<ISeriesNameRepository> serieNameRepository;
     private Mock<IProfileGraphRepository> profileGraphRepository;
     private Mock<ITemplateConfigProvider> templateConfigProvider;
 
@@ -29,14 +29,14 @@ namespace PowerView.Service.Test.Modules
     [SetUp]
     public void SetUp()
     {
-      serieNameRepository= new Mock<ISerieNameRepository>();
+      serieNameRepository= new Mock<ISeriesNameRepository>();
       profileGraphRepository = new Mock<IProfileGraphRepository>();
       templateConfigProvider = new Mock<ITemplateConfigProvider>();
 
       browser = new Browser(cfg =>
       {
         cfg.Module<SettingsProfileGraphsModule>();
-        cfg.Dependency<ISerieNameRepository>(serieNameRepository.Object);
+        cfg.Dependency<ISeriesNameRepository>(serieNameRepository.Object);
         cfg.Dependency<IProfileGraphRepository>(profileGraphRepository.Object);
         cfg.Dependency<ITemplateConfigProvider>(templateConfigProvider.Object);
       });
@@ -47,8 +47,8 @@ namespace PowerView.Service.Test.Modules
     {
       // Arrange
       const string label = "label";
-      var serieNames = new[] { new SerieName(label, ObisCode.ElectrActiveEnergyA14Delta), new SerieName(label, ObisCode.ElectrActiveEnergyA14Period), new SerieName(label, ObisCode.ElectrActualPowerP14) };
-      serieNameRepository.Setup(snr => snr.GetSerieNames(It.IsAny<ICollection<LabelObisCodeTemplate>>())).Returns(serieNames);
+      var serieNames = new[] { new SeriesName(label, ObisCode.ElectrActiveEnergyA14Delta), new SeriesName(label, ObisCode.ElectrActiveEnergyA14Period), new SeriesName(label, ObisCode.ElectrActualPowerP14) };
+      serieNameRepository.Setup(snr => snr.GetSeriesNames(It.IsAny<ICollection<LabelObisCodeTemplate>>())).Returns(serieNames);
       var labelObisCodeTemplates = new LabelObisCodeTemplate[0];
       templateConfigProvider.Setup(tcp => tcp.LabelObisCodeTemplates).Returns(labelObisCodeTemplates);
 
@@ -70,7 +70,7 @@ namespace PowerView.Service.Test.Modules
       AssertProfileGraphSerie("month", label, ObisCode.ElectrActiveEnergyA14Period, json.items[3]);
       AssertProfileGraphSerie("year", label, ObisCode.ElectrActiveEnergyA14Delta, json.items[4]);
       AssertProfileGraphSerie("year", label, ObisCode.ElectrActiveEnergyA14Period, json.items[5]);
-      serieNameRepository.Verify(snr => snr.GetSerieNames(labelObisCodeTemplates));
+      serieNameRepository.Verify(snr => snr.GetSeriesNames(labelObisCodeTemplates));
     }
 
     [Test]
@@ -101,8 +101,8 @@ namespace PowerView.Service.Test.Modules
     public void GetProfileGraphs()
     {
       // Arrange
-      var profileGraph1 = new ProfileGraph("day", "Page1", "T1", "5-minutes", 1, new[] { new SerieName("label", "1.2.3.4.5.6") });
-      var profileGraph2 = new ProfileGraph("month", "Page2", "T2", "1-days", 2, new[] { new SerieName("label", "1.2.3.4.5.6") });
+      var profileGraph1 = new ProfileGraph("day", "Page1", "T1", "5-minutes", 1, new[] { new SeriesName("label", "1.2.3.4.5.6") });
+      var profileGraph2 = new ProfileGraph("month", "Page2", "T2", "1-days", 2, new[] { new SeriesName("label", "1.2.3.4.5.6") });
       profileGraphRepository.Setup(pgr => pgr.GetProfileGraphs()).Returns(new[] { profileGraph1, profileGraph2 });
 
       // Act
@@ -333,7 +333,7 @@ namespace PowerView.Service.Test.Modules
       }
     }
 
-    private void AssertProfileGraphSerieName(SerieName serieName, ProfileGraphSerieDto dto)
+    private void AssertProfileGraphSerieName(SeriesName serieName, ProfileGraphSerieDto dto)
     {
       Assert.That(dto.Label, Is.EqualTo(serieName.Label));
       Assert.That(dto.ObisCode, Is.EqualTo(serieName.ObisCode.ToString()));

@@ -4,20 +4,19 @@ using System.Linq;
 
 namespace PowerView.Model
 {
-  public class Serie
+  public class Series
   {
-    public Serie(SerieName serieName, Unit unit, IEnumerable<double?> values)
+    public Series(SeriesName serieName, Unit unit, IEnumerable<double?> values)
     {
       if (serieName == null) throw new ArgumentNullException("serieName");
 
-      SerieName = serieName;
+      SeriesName = serieName;
       Unit = unit;
       Values = values.ToArray();
     }
 
-    public SerieName SerieName { get; private set; }
+    public SeriesName SeriesName { get; private set; }
     public Unit Unit { get; private set; }
     public double?[] Values { get; private set; }
   }
 }
-

@@ -28,7 +28,7 @@ namespace PowerView.Service.Test.DisconnectControl
       var disconnectCache = new Mock<IDisconnectCache>();
       var liveReadings = new List<LiveReading>();
       var disconnectRuleRepository = new Mock<IDisconnectRuleRepository>();
-      var disconnectRule = new DisconnectRule(new SerieName("lbl", ObisCode.ColdWaterFlow1), new SerieName("other", ObisCode.ElectrActualPowerP23L1),
+      var disconnectRule = new DisconnectRule(new SeriesName("lbl", ObisCode.ColdWaterFlow1), new SeriesName("other", ObisCode.ElectrActualPowerP23L1),
                                              TimeSpan.FromMinutes(30), 1500, 300, Unit.Watt);
       disconnectRuleRepository.Setup(x => x.GetDisconnectRules()).Returns(new [] { disconnectRule });
       var target = new DisconnectCalculator(disconnectRuleRepository.Object);

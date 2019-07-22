@@ -79,8 +79,8 @@
     <Compile Include="ContainerConfiguration.cs" />
     <Compile Include="Repository\RepositoryBase.cs" />
     <Compile Include="ProfileViewSet.cs" />
-    <Compile Include="Serie.cs" />
-    <Compile Include="SerieSet.cs" />
+    <Compile Include="Series.cs" />
+    <Compile Include="SeriesSet.cs" />
     <Compile Include="LabelProfile.cs" />
     <Compile Include="LabelProfileSet.cs" />
     <Compile Include="Repository\IProfileRepository.cs" />
@@ -107,9 +107,9 @@
     <Compile Include="Repository\IDbMigrate.cs" />
     <Compile Include="Repository\IObisColorProvider.cs" />
     <Compile Include="Repository\ObisColorProvider.cs" />
-    <Compile Include="Repository\ISerieColorRepository.cs" />
-    <Compile Include="Repository\SerieColorRepository.cs" />
-    <Compile Include="SerieColor.cs" />
+    <Compile Include="Repository\ISeriesColorRepository.cs" />
+    <Compile Include="Repository\SeriesColorRepository.cs" />
+    <Compile Include="SeriesColor.cs" />
     <Compile Include="Repository\ILocationProvider.cs" />
     <Compile Include="Repository\LocationProvider.cs" />
     <Compile Include="Repository\Settings.cs" />
@@ -138,9 +138,9 @@
     <Compile Include="Repository\DataStoreUniqueConstraintException.cs" />
     <Compile Include="Repository\ProfileGraphRepository.cs" />
     <Compile Include="Repository\IProfileGraphRepository.cs" />
-    <Compile Include="Repository\SerieNameRepository.cs" />
-    <Compile Include="Repository\ISerieNameRepository.cs" />
-    <Compile Include="SerieName.cs" />
+    <Compile Include="Repository\SeriesNameRepository.cs" />
+    <Compile Include="Repository\ISeriesNameRepository.cs" />
+    <Compile Include="SeriesName.cs" />
     <Compile Include="ProfileGraph.cs" />
     <Compile Include="NamedValue.cs" />
     <Compile Include="DateTimeResolutionDivider.cs" />
@@ -156,7 +156,7 @@
     <Compile Include="MissingDataException.cs" />
     <Compile Include="DisconnectRule.cs" />
     <Compile Include="IDisconnectRule.cs" />
-    <Compile Include="ISerieName.cs" />
+    <Compile Include="ISeriesName.cs" />
     <Compile Include="DisconnectCache.cs" />
     <Compile Include="DisconnectCacheItem.cs" />
     <Compile Include="IDisconnectCacheItem.cs" />

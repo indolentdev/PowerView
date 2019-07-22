@@ -7,11 +7,11 @@ namespace PowerView.Model.Repository
   {
     void AddDisconnectRule(DisconnectRule disconnectRule);
 
-    void DeleteDisconnectRule(ISerieName name);
+    void DeleteDisconnectRule(ISeriesName name);
 
     ICollection<IDisconnectRule> GetDisconnectRules();
 
-    IDictionary<ISerieName, Unit> GetLatestSerieNames(DateTime dateTime);
+    IDictionary<ISeriesName, Unit> GetLatestSerieNames(DateTime dateTime);
 
   }
 }

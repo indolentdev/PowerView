@@ -13,7 +13,7 @@ namespace PowerView.Service.Test.Mappers
     public void MapToDto()
     {
       // Arrange
-      var disconnectRule = new DisconnectRule(new SerieName("Lbl", "0.1.96.3.10.255"), new SerieName("EvalLabel", ObisCode.ElectrActualPowerP23L2),
+      var disconnectRule = new DisconnectRule(new SeriesName("Lbl", "0.1.96.3.10.255"), new SeriesName("EvalLabel", ObisCode.ElectrActualPowerP23L2),
                                               TimeSpan.FromMinutes(30), 1500, 200, Unit.Watt);
       var target = new DisconnectRuleMapper();
 

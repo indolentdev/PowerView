@@ -86,7 +86,7 @@ namespace PowerView.Service.Test.Modules
     public void GetDisconnectControlOptionsEmpty()
     {
       // Arrange
-      disconnectRuleRepository.Setup(drr => drr.GetLatestSerieNames(It.IsAny<DateTime>())).Returns(new Dictionary<ISerieName, Unit>());
+      disconnectRuleRepository.Setup(drr => drr.GetLatestSerieNames(It.IsAny<DateTime>())).Returns(new Dictionary<ISeriesName, Unit>());
       disconnectRuleRepository.Setup(drr => drr.GetDisconnectRules()).Returns(new IDisconnectRule[0]);
 
       // Act
@@ -111,13 +111,13 @@ namespace PowerView.Service.Test.Modules
     public void GetDisconnectControlOptionsEvaluationItems()
     {
       // Arrange
-      disconnectRuleRepository.Setup(drr => drr.GetLatestSerieNames(It.IsAny<DateTime>())).Returns(new Dictionary<ISerieName, Unit> 
+      disconnectRuleRepository.Setup(drr => drr.GetLatestSerieNames(It.IsAny<DateTime>())).Returns(new Dictionary<ISeriesName, Unit> 
       {
-        { new SerieName("label1", ObisCode.ElectrActualPowerP14L1), Unit.Watt },
-        { new SerieName("label1", ObisCode.ElectrActualPowerP23L1), Unit.Watt },
-        { new SerieName("label2", ObisCode.ElectrActualPowerP23L2), Unit.Percentage },
-        { new SerieName("label3", ObisCode.ElectrActualPowerP23L3), Unit.DegreeCelsius },
-        { new SerieName("label3", ObisCode.ElectrActualPowerP14L1), Unit.Watt }
+        { new SeriesName("label1", ObisCode.ElectrActualPowerP14L1), Unit.Watt },
+        { new SeriesName("label1", ObisCode.ElectrActualPowerP23L1), Unit.Watt },
+        { new SeriesName("label2", ObisCode.ElectrActualPowerP23L2), Unit.Percentage },
+        { new SeriesName("label3", ObisCode.ElectrActualPowerP23L3), Unit.DegreeCelsius },
+        { new SeriesName("label3", ObisCode.ElectrActualPowerP14L1), Unit.Watt }
       });
       disconnectRuleRepository.Setup(drr => drr.GetDisconnectRules()).Returns(new IDisconnectRule[0]);
 
@@ -144,12 +144,12 @@ namespace PowerView.Service.Test.Modules
     public void GetDisconnectControlOptionsDisconnectControlItems()
     {
       // Arrange
-      disconnectRuleRepository.Setup(drr => drr.GetLatestSerieNames(It.IsAny<DateTime>())).Returns(new Dictionary<ISerieName, Unit>
+      disconnectRuleRepository.Setup(drr => drr.GetLatestSerieNames(It.IsAny<DateTime>())).Returns(new Dictionary<ISeriesName, Unit>
       {
-        { new SerieName("label1", ObisCode.ElectrActualPowerP14L1), Unit.Watt },
-        { new SerieName("label2", "0.1.96.3.10.255"), Unit.NoUnit },
-        { new SerieName("label3", "0.2.96.3.10.255"), Unit.NoUnit },
-        { new SerieName("label4", ObisCode.ElectrActualPowerP14L1), Unit.Watt }
+        { new SeriesName("label1", ObisCode.ElectrActualPowerP14L1), Unit.Watt },
+        { new SeriesName("label2", "0.1.96.3.10.255"), Unit.NoUnit },
+        { new SeriesName("label3", "0.2.96.3.10.255"), Unit.NoUnit },
+        { new SeriesName("label4", ObisCode.ElectrActualPowerP14L1), Unit.Watt }
       });
       disconnectRuleRepository.Setup(drr => drr.GetDisconnectRules()).Returns(new IDisconnectRule[0]);
 
@@ -172,15 +172,15 @@ namespace PowerView.Service.Test.Modules
     public void GetDisconnectControlOptionsDisconnectControlItemsDisconnectRulePresent()
     {
       // Arrange
-      disconnectRuleRepository.Setup(drr => drr.GetLatestSerieNames(It.IsAny<DateTime>())).Returns(new Dictionary<ISerieName, Unit>
+      disconnectRuleRepository.Setup(drr => drr.GetLatestSerieNames(It.IsAny<DateTime>())).Returns(new Dictionary<ISeriesName, Unit>
       {
-        { new SerieName("label1", ObisCode.ElectrActualPowerP14L1), Unit.Watt },
-        { new SerieName("label2", "0.1.96.3.10.255"), Unit.NoUnit },
-        { new SerieName("label3", "0.2.96.3.10.255"), Unit.NoUnit },
-        { new SerieName("label4", ObisCode.ElectrActualPowerP14L1), Unit.Watt }
+        { new SeriesName("label1", ObisCode.ElectrActualPowerP14L1), Unit.Watt },
+        { new SeriesName("label2", "0.1.96.3.10.255"), Unit.NoUnit },
+        { new SeriesName("label3", "0.2.96.3.10.255"), Unit.NoUnit },
+        { new SeriesName("label4", ObisCode.ElectrActualPowerP14L1), Unit.Watt }
       });
       disconnectRuleRepository.Setup(drr => drr.GetDisconnectRules()).Returns(new [] { 
-        new DisconnectRule(new SerieName("label2", "0.1.96.3.10.255"), new SerieName("l", "1.2.3.4.5.6"), new TimeSpan(0, 30, 0), 2, 1, Unit.Watt) });
+        new DisconnectRule(new SeriesName("label2", "0.1.96.3.10.255"), new SeriesName("l", "1.2.3.4.5.6"), new TimeSpan(0, 30, 0), 2, 1, Unit.Watt) });
 
       // Act
       var response = browser.Get(DisconnectRulesOptionsRoute, with =>
@@ -202,7 +202,7 @@ namespace PowerView.Service.Test.Modules
       // Arrange
       var disconnectRuleDto = new DisconnectRuleDto { NameLabel = "NameLabel", NameObisCode = "1.2.3.4.5.6", EvaluationLabel = "EvalLabel",
         EvaluationObisCode = "6.5.4.3.2.1", DurationMinutes = 30, DisconnectToConnectValue = 1550, ConnectToDisconnectValue = 350, Unit = "W" };
-      var disconnectRule = new DisconnectRule(new SerieName("NameLabel", "1.2.3.4.5.6"), new SerieName("EvalLabel", "6.5.4.3.2.1"), TimeSpan.FromMinutes(30),
+      var disconnectRule = new DisconnectRule(new SeriesName("NameLabel", "1.2.3.4.5.6"), new SeriesName("EvalLabel", "6.5.4.3.2.1"), TimeSpan.FromMinutes(30),
                                               1550, 350, Unit.Watt);
       disconnectRuleMapper.Setup(drm => drm.MapFromDto(It.IsAny<DisconnectRuleDto>())).Returns(disconnectRule);
 
@@ -242,7 +242,7 @@ namespace PowerView.Service.Test.Modules
     public void AddDisconnectRuleNameAlreadyExists()
     {
       // Arrange
-      var disconnectRule = new DisconnectRule(new SerieName("NameLabel", "1.2.3.4.5.6"), new SerieName("EvalLabel", "6.5.4.3.2.1"), TimeSpan.FromMinutes(30),
+      var disconnectRule = new DisconnectRule(new SeriesName("NameLabel", "1.2.3.4.5.6"), new SeriesName("EvalLabel", "6.5.4.3.2.1"), TimeSpan.FromMinutes(30),
                                               1550, 350, Unit.Watt);
       disconnectRuleMapper.Setup(drm => drm.MapFromDto(It.IsAny<DisconnectRuleDto>())).Returns(disconnectRule);
       disconnectRuleRepository.Setup(err => err.AddDisconnectRule(It.IsAny<DisconnectRule>())).Throws(new DataStoreUniqueConstraintException());
@@ -273,7 +273,7 @@ namespace PowerView.Service.Test.Modules
 
       // Assert
       Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
-      disconnectRuleRepository.Verify(drr => drr.DeleteDisconnectRule(It.IsAny<ISerieName>()), Times.Never);
+      disconnectRuleRepository.Verify(drr => drr.DeleteDisconnectRule(It.IsAny<ISeriesName>()), Times.Never);
     }
 
     [Test]
@@ -292,7 +292,7 @@ namespace PowerView.Service.Test.Modules
 
       // Assert
       Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.UnsupportedMediaType));
-      disconnectRuleRepository.Verify(drr => drr.DeleteDisconnectRule(It.IsAny<ISerieName>()), Times.Never);
+      disconnectRuleRepository.Verify(drr => drr.DeleteDisconnectRule(It.IsAny<ISeriesName>()), Times.Never);
     }
 
     [Test]
@@ -311,7 +311,7 @@ namespace PowerView.Service.Test.Modules
 
       // Assert
       Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
-      disconnectRuleRepository.Verify(drr => drr.DeleteDisconnectRule(new SerieName(label, obisCode)));
+      disconnectRuleRepository.Verify(drr => drr.DeleteDisconnectRule(new SeriesName(label, obisCode)));
     }
 
   }

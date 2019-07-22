@@ -94,8 +94,8 @@
     <Compile Include="Repository\DbMigrateTest.cs" />
     <Compile Include="Repository\DbTestFixtureWithSchemaAndDbFile.cs" />
     <Compile Include="Repository\ObisColorProviderTest.cs" />
-    <Compile Include="Repository\SerieColorRepositoryTest.cs" />
-    <Compile Include="SerieColorTest.cs" />
+    <Compile Include="Repository\SeriesColorRepositoryTest.cs" />
+    <Compile Include="SeriesColorTest.cs" />
     <Compile Include="Repository\RepositoryBaseTest.cs" />
     <Compile Include="Repository\LocationProviderTest.cs" />
     <Compile Include="Repository\MeterEventRepositoryTest.cs" />
@@ -111,8 +111,8 @@
     <Compile Include="EmailRecipientTest.cs" />
     <Compile Include="Repository\EmailRecipientRepositoryTest.cs" />
     <Compile Include="Repository\ProfileGraphRepositoryTest.cs" />
-    <Compile Include="SerieNameTest.cs" />
-    <Compile Include="Repository\SerieNameRepositoryTest.cs" />
+    <Compile Include="SeriesNameTest.cs" />
+    <Compile Include="Repository\SeriesNameRepositoryTest.cs" />
     <Compile Include="ProfileGraphTest.cs" />
     <Compile Include="DateTimeResolutionDividerTest.cs" />
     <Compile Include="CoarseTimeRegisterValueTest.cs" />
