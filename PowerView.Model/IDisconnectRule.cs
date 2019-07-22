@@ -4,8 +4,8 @@ namespace PowerView.Model
 {
   public interface IDisconnectRule : IEquatable<IDisconnectRule>
   {
-    ISerieName Name { get; }
-    ISerieName EvaluationName { get; }
+    ISeriesName Name { get; }
+    ISeriesName EvaluationName { get; }
     TimeSpan Duration { get; }
     int DisconnectToConnectValue { get; }
     int ConnectToDisconnectValue { get; }

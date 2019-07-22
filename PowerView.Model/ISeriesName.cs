@@ -1,7 +1,7 @@
 ﻿using System;
 namespace PowerView.Model
 {
-  public interface ISerieName : IEquatable<ISerieName>
+  public interface ISeriesName : IEquatable<ISeriesName>
   {
     string Label { get; }
     ObisCode ObisCode { get; }

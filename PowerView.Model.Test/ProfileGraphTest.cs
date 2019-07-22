@@ -15,7 +15,7 @@ namespace PowerView.Model.Test
       const string title = "theTitle";
       const string interval = "5-minutes";
       const long rank = 1;
-      var serieNames = new[] { new SerieName("label", ObisCode.ElectrActiveEnergyA14Period), new SerieName("label2", ObisCode.ElectrActualPowerP14) };
+      var serieNames = new[] { new SeriesName("label", ObisCode.ElectrActiveEnergyA14Period), new SeriesName("label2", ObisCode.ElectrActualPowerP14) };
 
       // Act
       var target = new ProfileGraph(period, page, title, interval, rank, serieNames);
@@ -38,7 +38,7 @@ namespace PowerView.Model.Test
       const string title = "theTitle";
       const string interval = "5-minutes";
       const long rank = 1;
-      var sn = new SerieName("label", ObisCode.ElectrActiveEnergyA14Period);
+      var sn = new SeriesName("label", ObisCode.ElectrActiveEnergyA14Period);
       var serieNames = new[] { sn };
 
       // Act & Assert
@@ -51,9 +51,9 @@ namespace PowerView.Model.Test
       Assert.That(() => new ProfileGraph(period, page, title, null, rank, serieNames), Throws.TypeOf<ArgumentNullException>());
       Assert.That(() => new ProfileGraph(period, page, title, "", rank, serieNames), Throws.TypeOf<ArgumentNullException>());
       Assert.That(() => new ProfileGraph(period, page, title, interval, rank, null), Throws.TypeOf<ArgumentNullException>());
-      Assert.That(() => new ProfileGraph(period, page, title, interval, rank, new SerieName[] { }), Throws.TypeOf<ArgumentException>());
-      Assert.That(() => new ProfileGraph(period, page, title, interval, rank, new SerieName[] { null }), Throws.TypeOf<ArgumentNullException>());
-      Assert.That(() => new ProfileGraph(period, page, title, interval, rank, new SerieName[] { sn, sn }), Throws.TypeOf<ArgumentException>());
+      Assert.That(() => new ProfileGraph(period, page, title, interval, rank, new SeriesName[] { }), Throws.TypeOf<ArgumentException>());
+      Assert.That(() => new ProfileGraph(period, page, title, interval, rank, new SeriesName[] { null }), Throws.TypeOf<ArgumentNullException>());
+      Assert.That(() => new ProfileGraph(period, page, title, interval, rank, new SeriesName[] { sn, sn }), Throws.TypeOf<ArgumentException>());
     }
 
   }

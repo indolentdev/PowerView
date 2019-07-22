@@ -49,7 +49,7 @@ namespace PowerView.Model.Test
     public void GetProfileViewSetEmptyLabelProfileSet()
     {
       // Arrange
-      ProfileGraph profileGraph = new ProfileGraph("day", "MyPage", "MyTitle", "5-minutes", 0, new [] { new SerieName("TheLabel", ObisCode.ElectrActiveEnergyA14 ) });
+      ProfileGraph profileGraph = new ProfileGraph("day", "MyPage", "MyTitle", "5-minutes", 0, new [] { new SeriesName("TheLabel", ObisCode.ElectrActiveEnergyA14 ) });
       var profileGraphs = new[] { profileGraph };
       var labelProfile = new LabelProfile("TheLabel", DateTime.UtcNow, new Dictionary<ObisCode, ICollection<SV>>());
       var target = CreateTarget(DateTime.UtcNow, new [] { labelProfile });
@@ -66,7 +66,7 @@ namespace PowerView.Model.Test
     public void GetProfileViewSetOneSerie()
     {
       // Arrange
-      var serieName = new SerieName("TheLabel", ObisCode.ElectrActualPowerP14);
+      var serieName = new SeriesName("TheLabel", ObisCode.ElectrActualPowerP14);
       ProfileGraph profileGraph = new ProfileGraph("day", "MyPage", "MyTitle", "5-minutes", 0, new[] { serieName });
       var profileGraphs = new[] { profileGraph };
       var ts1 = new DateTime(2000, 1, 1, 1, 0, 0, DateTimeKind.Utc);
@@ -83,7 +83,7 @@ namespace PowerView.Model.Test
       Assert.That(profileViewSet.SerieSets.Count, Is.EqualTo(1));
       Assert.That(profileViewSet.SerieSets.First().Categories, Is.EqualTo(new []{ts1, ts2}));
       Assert.That(profileViewSet.SerieSets.First().Series.Count, Is.EqualTo(1));
-      Assert.That(profileViewSet.SerieSets.First().Series.First().SerieName, Is.EqualTo(serieName));
+      Assert.That(profileViewSet.SerieSets.First().Series.First().SeriesName, Is.EqualTo(serieName));
       Assert.That(profileViewSet.SerieSets.First().Series.First().Unit, Is.EqualTo(w));
       Assert.That(profileViewSet.SerieSets.First().Series.First().Values, Is.EqualTo(new double[] {4, 5}));
     }
@@ -92,8 +92,8 @@ namespace PowerView.Model.Test
     public void GetProfileViewSetTwoSeries()
     {
       // Arrange
-      var serieName1 = new SerieName("TheLabel", ObisCode.ElectrActualPowerP14);
-      var serieName2 = new SerieName("TheLabel", ObisCode.ElectrActualPowerP23);
+      var serieName1 = new SeriesName("TheLabel", ObisCode.ElectrActualPowerP14);
+      var serieName2 = new SeriesName("TheLabel", ObisCode.ElectrActualPowerP23);
       ProfileGraph profileGraph = new ProfileGraph("day", "MyPage", "MyTitle", "5-minutes", 0, new[] { serieName1, serieName2 });
       var profileGraphs = new[] { profileGraph };
       var ts1 = new DateTime(2000, 1, 2, 3, 5, 0, DateTimeKind.Utc);
@@ -111,9 +111,9 @@ namespace PowerView.Model.Test
       Assert.That(profileViewSet.SerieSets.Count, Is.EqualTo(1));
       Assert.That(profileViewSet.SerieSets.First().Categories, Is.EqualTo(new[] { ts1, ts2 }));
       Assert.That(profileViewSet.SerieSets.First().Series.Count, Is.EqualTo(2));
-      Assert.That(profileViewSet.SerieSets.First().Series.First().SerieName, Is.EqualTo(serieName1));
+      Assert.That(profileViewSet.SerieSets.First().Series.First().SeriesName, Is.EqualTo(serieName1));
       Assert.That(profileViewSet.SerieSets.First().Series.First().Values, Is.EqualTo(new double[] { 4, 5 }));
-      Assert.That(profileViewSet.SerieSets.First().Series.Last().SerieName, Is.EqualTo(serieName2));
+      Assert.That(profileViewSet.SerieSets.First().Series.Last().SeriesName, Is.EqualTo(serieName2));
       Assert.That(profileViewSet.SerieSets.First().Series.Last().Values, Is.EqualTo(new double[] { 6, 7 }));
     }
 
@@ -121,8 +121,8 @@ namespace PowerView.Model.Test
     public void GetProfileViewSetMergeCategories()
     {
       // Arrange
-      var serieName1 = new SerieName("TheLabel", ObisCode.ElectrActualPowerP14);
-      var serieName2 = new SerieName("TheLabel", ObisCode.ElectrActualPowerP23);
+      var serieName1 = new SeriesName("TheLabel", ObisCode.ElectrActualPowerP14);
+      var serieName2 = new SeriesName("TheLabel", ObisCode.ElectrActualPowerP23);
       ProfileGraph profileGraph = new ProfileGraph("day", "MyPage", "MyTitle", "5-minutes", 0, new[] { serieName1, serieName2 });
       var profileGraphs = new[] { profileGraph };
       var ts1 = new DateTime(2000, 1, 2, 3, 5, 0, DateTimeKind.Utc);
@@ -149,8 +149,8 @@ namespace PowerView.Model.Test
     public void GetProfileViewSetTwoGraphs()
     {
       // Arrange
-      var serieName1 = new SerieName("TheLabel1", ObisCode.ElectrActualPowerP14);
-      var serieName2 = new SerieName("TheLabel2", ObisCode.ElectrActualPowerP23);
+      var serieName1 = new SeriesName("TheLabel1", ObisCode.ElectrActualPowerP14);
+      var serieName2 = new SeriesName("TheLabel2", ObisCode.ElectrActualPowerP23);
       ProfileGraph profileGraph1 = new ProfileGraph("day", "MyPage", "MyTitle1", "5-minutes", 1, new[] { serieName1 });
       ProfileGraph profileGraph2 = new ProfileGraph("day", "MyPage", "MyTitle2", "5-minutes", 2, new[] { serieName2 });
       var profileGraphs = new[] { profileGraph1, profileGraph2 };
@@ -175,9 +175,9 @@ namespace PowerView.Model.Test
     public void GetProfileViewSetInterimPeriodTotals()
     {
       // Arrange
-      var serieName1 = new SerieName("TheLabel1", ObisCode.ElectrActiveEnergyA14Period);
-      var serieName2 = new SerieName("TheLabel2", ObisCode.ElectrActiveEnergyA14Period);
-      var serieName3 = new SerieName("TheLabel3", ObisCode.ElectrActualPowerP14);
+      var serieName1 = new SeriesName("TheLabel1", ObisCode.ElectrActiveEnergyA14Period);
+      var serieName2 = new SeriesName("TheLabel2", ObisCode.ElectrActiveEnergyA14Period);
+      var serieName3 = new SeriesName("TheLabel3", ObisCode.ElectrActualPowerP14);
       ProfileGraph profileGraph1 = new ProfileGraph("day", "MyPage", "MyTitle1", "5-minutes", 1, new[] { serieName1 });
       ProfileGraph profileGraph2 = new ProfileGraph("day", "MyPage", "MyTitle2", "5-minutes", 2, new[] { serieName2 });
       ProfileGraph profileGraph3 = new ProfileGraph("day", "MyPage", "MyTitle3", "5-minutes", 3, new[] { serieName3 });

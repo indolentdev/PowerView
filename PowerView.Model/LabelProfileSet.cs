@@ -90,7 +90,7 @@ namespace PowerView.Model
 
       var seriesByProfileGraph = GetSeriesByProfileGraph(timeDividerFactory, profileGraphs);
 
-      var serieSets = new List<SerieSet>(profileGraphs.Count);
+      var serieSets = new List<SeriesSet>(profileGraphs.Count);
       foreach (var profileGraphAndSeries in seriesByProfileGraph)
       {
         var profileGraph = profileGraphAndSeries.Key;
@@ -98,7 +98,7 @@ namespace PowerView.Model
 
         var timeEntries = serieValuesBySerieName.Values.SelectMany(x => x).Select(x => x .Timestamp).Distinct().OrderBy(x => x).ToList();
 
-        var series = new List<Serie>(profileGraph.SerieNames.Count);
+        var series = new List<Series>(profileGraph.SerieNames.Count);
         foreach (var serieNameAndValues in serieValuesBySerieName)
         {
           var serieName = serieNameAndValues.Key;
@@ -114,7 +114,7 @@ namespace PowerView.Model
             continue;
           }
 
-          var serie = new Serie(serieName, entry.TimeRegisterValue.UnitValue.Unit,
+          var serie = new Series(serieName, entry.TimeRegisterValue.UnitValue.Unit,
             obisEntries.Select(x => (x == null ? null : (double?)x.TimeRegisterValue.UnitValue.Value)));
           series.Add(serie);
         }
@@ -124,28 +124,28 @@ namespace PowerView.Model
           continue;
         }
 
-        var serieSet = new SerieSet(profileGraph.Title, timeEntries, series);
+        var serieSet = new SeriesSet(profileGraph.Title, timeEntries, series);
         serieSets.Add(serieSet);
       }
 
       var periodTotals = serieSets.SelectMany(x => x.Series)
-                                  .Where(x => x.SerieName.ObisCode.IsPeriod)
-                                  .GroupBy(x => x.SerieName)
+                                  .Where(x => x.SeriesName.ObisCode.IsPeriod)
+                                  .GroupBy(x => x.SeriesName)
                                   .Select(x => x.First())
-                                  .Select(x => new NamedValue(x.SerieName, new UnitValue((double)x.Values.Reverse().First(z => z != null), x.Unit)))
+                                  .Select(x => new NamedValue(x.SeriesName, new UnitValue((double)x.Values.Reverse().First(z => z != null), x.Unit)))
                                   .ToList();
 
       var profileViewSet = new ProfileViewSet(serieSets, periodTotals);
       return profileViewSet;
     }
 
-    private IDictionary<ProfileGraph, IDictionary<SerieName, ICollection<CoarseTimeRegisterValue>>> GetSeriesByProfileGraph(Func<string, Func<DateTime, DateTime>> timeDividerFactory, ICollection<ProfileGraph> profileGraphs)
+    private IDictionary<ProfileGraph, IDictionary<SeriesName, ICollection<CoarseTimeRegisterValue>>> GetSeriesByProfileGraph(Func<string, Func<DateTime, DateTime>> timeDividerFactory, ICollection<ProfileGraph> profileGraphs)
     {
       var labelProfilesByLabel = labelProfiles.ToDictionary(x => x.Label, x => x);
-      var graphs = new Dictionary<ProfileGraph, IDictionary<SerieName, ICollection<CoarseTimeRegisterValue>>>(profileGraphs.Count);
+      var graphs = new Dictionary<ProfileGraph, IDictionary<SeriesName, ICollection<CoarseTimeRegisterValue>>>(profileGraphs.Count);
       foreach (var profileGraph in profileGraphs)
       {
-        var serieValues = new Dictionary<SerieName, ICollection<CoarseTimeRegisterValue>>(profileGraph.SerieNames.Count);
+        var serieValues = new Dictionary<SeriesName, ICollection<CoarseTimeRegisterValue>>(profileGraph.SerieNames.Count);
         var timeDivider = timeDividerFactory(profileGraph.Interval);
         foreach (var serieName in profileGraph.SerieNames)
         {

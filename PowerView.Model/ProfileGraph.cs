@@ -6,7 +6,7 @@ namespace PowerView.Model
 {
   public class ProfileGraph
   {
-    public ProfileGraph(string period, string page, string title, string interval, long rank, IList<SerieName> serieNames)
+    public ProfileGraph(string period, string page, string title, string interval, long rank, IList<SeriesName> serieNames)
     {
       if (string.IsNullOrEmpty(period)) throw new ArgumentNullException("period");
       if (!(new[] { "day", "month", "year" }.Contains(period))) throw new ArgumentOutOfRangeException("period", period, "Invalid period");
@@ -32,7 +32,7 @@ namespace PowerView.Model
     public string Title { get; private set; }
     public string Interval { get; private set; }
     public long Rank { get; private set; }
-    public IList<SerieName> SerieNames { get; private set; }
+    public IList<SeriesName> SerieNames { get; private set; }
 
   }
 }

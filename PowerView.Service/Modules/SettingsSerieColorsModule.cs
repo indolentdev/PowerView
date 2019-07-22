@@ -16,12 +16,12 @@ namespace PowerView.Service.Modules
   {
     private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-    private readonly ISerieColorRepository serieColorRepository;
-    private readonly ISerieNameRepository serieNameRepository;
+    private readonly ISeriesColorRepository serieColorRepository;
+    private readonly ISeriesNameRepository serieNameRepository;
     private readonly IObisColorProvider obisColorProvider;
     private readonly ITemplateConfigProvider templateConfigProvider;
 
-    public SettingsSerieColorsModule(ISerieColorRepository serieColorRepository, ISerieNameRepository serieNameRepository, IObisColorProvider obisColorProvider, ITemplateConfigProvider templateConfigProvider)
+    public SettingsSerieColorsModule(ISeriesColorRepository serieColorRepository, ISeriesNameRepository serieNameRepository, IObisColorProvider obisColorProvider, ITemplateConfigProvider templateConfigProvider)
       : base("/api/settings/seriecolors")
     {
       if (serieColorRepository == null) throw new ArgumentNullException("serieColorRepository");
@@ -34,24 +34,24 @@ namespace PowerView.Service.Modules
       this.obisColorProvider = obisColorProvider;
       this.templateConfigProvider = templateConfigProvider;
 
-      Get[""] = GetSerieColors;
-      Put[""] = PutSerieColors;
+      Get[""] = GetSeriesColors;
+      Put[""] = PutSeriesColors;
     }
 
-    private dynamic GetSerieColors(dynamic param)
+    private dynamic GetSeriesColors(dynamic param)
     {
-      var serieColorsDb = serieColorRepository.GetSerieColors();
-      var serieColors = serieNameRepository.GetSerieNames(templateConfigProvider.LabelObisCodeTemplates)
-        .ToDictionary(sn => sn, sn => new SerieColor(sn.Label, sn.ObisCode, obisColorProvider.GetColor(sn.ObisCode)));
+      var seriesColorsDb = serieColorRepository.GetSeriesColors();
+      var seriesColors = serieNameRepository.GetSeriesNames(templateConfigProvider.LabelObisCodeTemplates)
+        .ToDictionary(sn => sn, sn => new SeriesColor(new SeriesName(sn.Label, sn.ObisCode), obisColorProvider.GetColor(sn.ObisCode)));
 
-      foreach (var serieColor in serieColorsDb)
+      foreach (var seriesColor in seriesColorsDb)
       {
-        serieColors[new SerieName(serieColor.Label, serieColor.ObisCode)] = serieColor;
+        seriesColors[seriesColor.SeriesName] = seriesColor;
       }
 
-      var items = serieColors.Values.Select(sc => new SerieColorDto
+      var items = seriesColors.Values.Select(sc => new SerieColorDto
       {
-        Label = sc.Label, ObisCode = sc.ObisCode.ToString(), Color = sc.Color
+        Label = sc.SeriesName.Label, ObisCode = sc.SeriesName.ObisCode.ToString(), Color = sc.Color
       })
       .OrderBy(x => x.Label).ThenBy(x => x.ObisCode);
       var r = new SerieColorSetDto { Items = items.ToArray() };
@@ -59,31 +59,31 @@ namespace PowerView.Service.Modules
       return Response.AsJson(r);
     }
 
-    private dynamic PutSerieColors(dynamic param)
+    private dynamic PutSeriesColors(dynamic param)
     {
-      var serieColorSetDto = this.Bind<SerieColorSetDto>();
+      var seriesColorSetDto = this.Bind<SerieColorSetDto>();
 
-      var serieColors = ToSerieColors(serieColorSetDto.Items).ToArray();
-      if (serieColors.Length > 0)
+      var seriesColors = ToSeriesColors(seriesColorSetDto.Items).ToArray();
+      if (seriesColors.Length > 0)
       {
-        serieColorRepository.SetSerieColors(serieColors);
+        serieColorRepository.SetSeriesColors(seriesColors);
       }
 
       return Response.AsJson(string.Empty, HttpStatusCode.NoContent);
     }
 
-    private static IEnumerable<SerieColor> ToSerieColors(IEnumerable<SerieColorDto> serieColorDtos)
+    private static IEnumerable<SeriesColor> ToSeriesColors(IEnumerable<SerieColorDto> seriesColorDtos)
     {
-      foreach (var serieColorDto in serieColorDtos)
+      foreach (var seriesColorDto in seriesColorDtos)
       {
-        if (!SerieColor.IsColorValid(serieColorDto.Color))
+        if (!SeriesColor.IsColorValid(seriesColorDto.Color))
         {
           log.InfoFormat("Skipping serie color item having invalid color format {0} {1} {2}",
-            serieColorDto.Label, serieColorDto.ObisCode, serieColorDto.Color);
+            seriesColorDto.Label, seriesColorDto.ObisCode, seriesColorDto.Color);
           continue;
         }
 
-        yield return new SerieColor(serieColorDto.Label, serieColorDto.ObisCode, serieColorDto.Color);
+        yield return new SeriesColor(new SeriesName(seriesColorDto.Label, seriesColorDto.ObisCode), seriesColorDto.Color);
       }
     }
 

@@ -2,9 +2,9 @@
 
 namespace PowerView.Model
 {
-  public class SerieName : ISerieName, IEquatable<SerieName>
+  public class SeriesName : ISeriesName, IEquatable<SeriesName>
   {
-    public SerieName(string label, ObisCode obisCode)
+    public SeriesName(string label, ObisCode obisCode)
     {
       if (string.IsNullOrEmpty(label)) throw new ArgumentNullException("label");
 
@@ -17,11 +17,11 @@ namespace PowerView.Model
 
     public override bool Equals(object obj)
     {
-      if (!(obj is SerieName)) return false;
-      return Equals((SerieName)obj);
+      if (!(obj is SeriesName)) return false;
+      return Equals((SeriesName)obj);
     }
 
-    public bool Equals(SerieName other)
+    public bool Equals(SeriesName other)
     {
       if (ReferenceEquals(null, other)) return false;
       if (ReferenceEquals(this, other)) return true;
@@ -29,7 +29,7 @@ namespace PowerView.Model
                    ObisCode.Equals(other.ObisCode);
     }
 
-    public bool Equals(ISerieName obj)
+    public bool Equals(ISeriesName obj)
     {
       return Equals((object)obj);
     }

@@ -62,7 +62,7 @@ namespace PowerView.Model.Test
     {
       // Arrange
       var target = CreateTarget();
-      var meterSerieName = new SerieName("TheMeter", ObisCode.ElectrActualPowerP14L1);
+      var meterSerieName = new SeriesName("TheMeter", ObisCode.ElectrActualPowerP14L1);
       var rule = GetRule(meterSerieName);
       var cacheItem = new Mock<IDisconnectCacheItem>();
       var factory = GetFactory(cacheItem.Object);
@@ -105,7 +105,7 @@ namespace PowerView.Model.Test
     {
       // Arrange
       var target = CreateTarget();
-      var name = new SerieName("Relay", "0.1.96.3.10.255");
+      var name = new SeriesName("Relay", "0.1.96.3.10.255");
       var rule = GetRule(name: name);
       var cacheItem = new Mock<IDisconnectCacheItem>();
       cacheItem.Setup(ci => ci.Rule).Returns(rule);
@@ -127,15 +127,15 @@ namespace PowerView.Model.Test
       return new DisconnectCache();
     }
 
-    private static IDisconnectRule GetRule(SerieName evaluationName = null, SerieName name = null)
+    private static IDisconnectRule GetRule(SeriesName evaluationName = null, SeriesName name = null)
     {
       if (evaluationName == null)
       {
-        evaluationName = new SerieName("lbl", "1.1.21.7.0.255");
+        evaluationName = new SeriesName("lbl", "1.1.21.7.0.255");
       }
       if (name == null)
       {
-        name = new SerieName("lbl2", "0.5.96.3.10.255");
+        name = new SeriesName("lbl2", "0.5.96.3.10.255");
       }
       var rule = new Mock<IDisconnectRule>();
       rule.Setup(x => x.Name).Returns(name);

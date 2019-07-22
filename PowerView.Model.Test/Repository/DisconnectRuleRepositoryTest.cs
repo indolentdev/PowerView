@@ -39,8 +39,8 @@ namespace PowerView.Model.Test.Repository
     public void AddDisconnectRuleInserts()
     {
       // Arrange
-      var sn1 = new SerieName("label1", ObisCode.ColdWaterFlow1);
-      var sn2 = new SerieName("label2", ObisCode.ElectrActualPowerP14);
+      var sn1 = new SeriesName("label1", ObisCode.ColdWaterFlow1);
+      var sn2 = new SeriesName("label2", ObisCode.ElectrActualPowerP14);
       var disconnectRule = new DisconnectRule(sn1, sn2, TimeSpan.FromMinutes(30), 1500, 200, Unit.Watt);
       var target = CreateTarget();
 
@@ -55,13 +55,13 @@ namespace PowerView.Model.Test.Repository
     public void AddDisconnectRuleUpdates()
     {
       // Arrange
-      var sn1 = new SerieName("label1", ObisCode.ColdWaterFlow1);
+      var sn1 = new SeriesName("label1", ObisCode.ColdWaterFlow1);
 
       var dbDisconnectRule = new Db.DisconnectRule { Label = sn1.Label, ObisCode = sn1.ObisCode, EvaluationLabel = sn1.Label, EvaluationObisCode = sn1.ObisCode,
         DurationSeconds = 4, DisconnectToConnectValue = 4, ConnectToDisconnectValue = 3, Unit = 4 };
       DbContext.InsertTransaction("testdata", dbDisconnectRule);
 
-      var sn2 = new SerieName("label2", ObisCode.ElectrActualPowerP14);
+      var sn2 = new SeriesName("label2", ObisCode.ElectrActualPowerP14);
       var disconnectRule = new DisconnectRule(sn1, sn2, TimeSpan.FromMinutes(30), 1500, 200, Unit.Watt);
       var target = CreateTarget();
 
@@ -103,7 +103,7 @@ namespace PowerView.Model.Test.Repository
     public void DeleteDisconnectRuleAbsent()
     {
       // Arrange
-      var sn = new SerieName("label", "0.1.96.3.10.255");
+      var sn = new SeriesName("label", "0.1.96.3.10.255");
       var target = CreateTarget();
 
       // Act
@@ -125,7 +125,7 @@ namespace PowerView.Model.Test.Repository
         DurationSeconds = 3333, DisconnectToConnectValue = 33, ConnectToDisconnectValue = 3, Unit = 3 };
 
       DbContext.InsertTransaction("", (IEnumerable<Db.DisconnectRule>)new[] { dbDr1, dbDr2 });
-      var sn = new SerieName("lbl1", "0.1.96.3.10.255");
+      var sn = new SeriesName("lbl1", "0.1.96.3.10.255");
       var target = CreateTarget();
 
       // Act
@@ -193,7 +193,7 @@ namespace PowerView.Model.Test.Repository
 
       // Assert
       Assert.That(res.Count, Is.EqualTo(1));
-      Assert.That(res, Contains.Key(new SerieName("lbl", ObisCode.ElectrActualPowerP23L2)));
+      Assert.That(res, Contains.Key(new SeriesName("lbl", ObisCode.ElectrActualPowerP23L2)));
       Assert.That(res.First().Value, Is.EqualTo(Unit.Watt));
     }
 
@@ -217,14 +217,14 @@ namespace PowerView.Model.Test.Repository
 
       // Assert
       Assert.That(res.Count, Is.EqualTo(1));
-      Assert.That(res, Contains.Key(new SerieName("lbl", ObisCode.ElectrActualPowerP23L2)));
+      Assert.That(res, Contains.Key(new SeriesName("lbl", ObisCode.ElectrActualPowerP23L2)));
       Assert.That(res.First().Value, Is.EqualTo(Unit.Watt));
     }
 
     private static void AssertDisconnectRule(Db.DisconnectRule dbDisconnectRule, IDisconnectRule disconnectRule)
     {
-      Assert.That(disconnectRule.Name, Is.EqualTo(new SerieName(dbDisconnectRule.Label, dbDisconnectRule.ObisCode)));
-      Assert.That(disconnectRule.EvaluationName, Is.EqualTo(new SerieName(dbDisconnectRule.EvaluationLabel, dbDisconnectRule.EvaluationObisCode)));
+      Assert.That(disconnectRule.Name, Is.EqualTo(new SeriesName(dbDisconnectRule.Label, dbDisconnectRule.ObisCode)));
+      Assert.That(disconnectRule.EvaluationName, Is.EqualTo(new SeriesName(dbDisconnectRule.EvaluationLabel, dbDisconnectRule.EvaluationObisCode)));
       Assert.That(disconnectRule.Duration, Is.EqualTo(TimeSpan.FromSeconds(dbDisconnectRule.DurationSeconds)));
       Assert.That(disconnectRule.DisconnectToConnectValue, Is.EqualTo(dbDisconnectRule.DisconnectToConnectValue));
       Assert.That(disconnectRule.ConnectToDisconnectValue, Is.EqualTo(dbDisconnectRule.ConnectToDisconnectValue));

@@ -56,9 +56,9 @@ ORDER BY pg.Rank, pgs.Id;";
       return new ProfileGraph(profileGraph.Period, profileGraph.Page, profileGraph.Title, profileGraph.Interval, profileGraph.Rank, serieNames);
     }
 
-    private SerieName ToSerieName(Db.ProfileGraphSerie serie)
+    private SeriesName ToSerieName(Db.ProfileGraphSerie serie)
     {
-      return new SerieName(serie.Label, serie.ObisCode);
+      return new SeriesName(serie.Label, serie.ObisCode);
     }
 
     public void AddProfileGraph(ProfileGraph profileGraph)

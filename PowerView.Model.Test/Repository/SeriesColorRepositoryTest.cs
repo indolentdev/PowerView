@@ -8,7 +8,7 @@ using PowerView.Model.Repository;
 namespace PowerView.Model.Test.Repository
 {
   [TestFixture]
-  public class SerieColorRepositoryTest : DbTestFixtureWithSchema
+  public class SeriesColorRepositoryTest : DbTestFixtureWithSchema
   {
     private Mock<IObisColorProvider> obisColorProvider;
     
@@ -26,8 +26,8 @@ namespace PowerView.Model.Test.Repository
       // Arrange
 
       // Act & Assert
-      Assert.That(() => new SerieColorRepository(null, obisColorProvider.Object), Throws.TypeOf<ArgumentNullException>());
-      Assert.That(() => new SerieColorRepository(DbContext, null), Throws.TypeOf<ArgumentNullException>());
+      Assert.That(() => new SeriesColorRepository(null, obisColorProvider.Object), Throws.TypeOf<ArgumentNullException>());
+      Assert.That(() => new SeriesColorRepository(DbContext, null), Throws.TypeOf<ArgumentNullException>());
     }
 
     [Test]
@@ -93,13 +93,13 @@ namespace PowerView.Model.Test.Repository
       DbContext.Connection.Insert(new Db.SerieColor{ Label=label1, ObisCode=obisCode3, Color="#333333" });
 
       // Act
-      var serieColors = target.GetSerieColors();
+      var seriesColors = target.GetSeriesColors();
 
       // Assert
-      Assert.That(serieColors.Count, Is.EqualTo(3));
-      Assert.That(serieColors.Count(sc => sc.Label==label1 && sc.ObisCode==obisCode1 && sc.Color=="#111111"), Is.EqualTo(1));
-      Assert.That(serieColors.Count(sc => sc.Label==label2 && sc.ObisCode==obisCode2 && sc.Color=="#222222"), Is.EqualTo(1));
-      Assert.That(serieColors.Count(sc => sc.Label==label1 && sc.ObisCode==obisCode3 && sc.Color=="#333333"), Is.EqualTo(1));
+      Assert.That(seriesColors.Count, Is.EqualTo(3));
+      Assert.That(seriesColors.Count(sc => sc.SeriesName.Label==label1 && sc.SeriesName.ObisCode==obisCode1 && sc.Color=="#111111"), Is.EqualTo(1));
+      Assert.That(seriesColors.Count(sc => sc.SeriesName.Label==label2 && sc.SeriesName.ObisCode==obisCode2 && sc.Color=="#222222"), Is.EqualTo(1));
+      Assert.That(seriesColors.Count(sc => sc.SeriesName.Label==label1 && sc.SeriesName.ObisCode==obisCode3 && sc.Color=="#333333"), Is.EqualTo(1));
     }
 
     [Test]
@@ -109,21 +109,21 @@ namespace PowerView.Model.Test.Repository
       var target = CreateTarget();
 
       // Act & Assert
-      Assert.That(() => target.SetSerieColors(null), Throws.TypeOf<ArgumentNullException>());
+      Assert.That(() => target.SetSeriesColors(null), Throws.TypeOf<ArgumentNullException>());
     }
 
     [Test]
-    public void SetSerieColorsInserts()
+    public void SetSeriesColorsInserts()
     {
       // Arrange
       var target = CreateTarget();
-      var serieColor = new SerieColor("label", "1.2.3.4.5.6", "#123456");
+      var serieColor = new SeriesColor(new SeriesName("label", "1.2.3.4.5.6"), "#123456");
 
       // Act
-      target.SetSerieColors(new [] { serieColor });
+      target.SetSeriesColors(new [] { serieColor });
 
       // Assert
-      AssertSerieColorExists(serieColor);
+      AssertSeriesColorExists(serieColor);
     }
 
     [Test]
@@ -132,13 +132,13 @@ namespace PowerView.Model.Test.Repository
       // Arrange
       var target = CreateTarget();
       var dbSerieColor = new Db.SerieColor { Label = "label", ObisCode = (ObisCode)"1.2.3.4.5.6", Color="#111111" };
-      var serieColor = new SerieColor(dbSerieColor.Label, dbSerieColor.ObisCode, "#222222");
+      var seriesColor = new SeriesColor(new SeriesName(dbSerieColor.Label, dbSerieColor.ObisCode), "#222222");
 
       // Act
-      target.SetSerieColors(new [] { serieColor });
+      target.SetSeriesColors(new [] { seriesColor });
 
       // Assert
-      AssertSerieColorExists(serieColor);
+      AssertSeriesColorExists(seriesColor);
     }
       
     [Test]
@@ -148,28 +148,28 @@ namespace PowerView.Model.Test.Repository
       var target = CreateTarget();
       var dbSerieColor = new Db.SerieColor { Label = "label", ObisCode = (ObisCode)"1.2.3.4.5.6", Color="#111111" };
       DbContext.Connection.Insert(dbSerieColor);
-      var serieColor = new SerieColor(dbSerieColor.Label, dbSerieColor.ObisCode, "#222222");
-      obisColorProvider.Setup(ocp => ocp.GetColor(serieColor.ObisCode)).Returns(serieColor.Color);
+      var seriesColor = new SeriesColor(new SeriesName(dbSerieColor.Label, dbSerieColor.ObisCode), "#222222");
+      obisColorProvider.Setup(ocp => ocp.GetColor(seriesColor.SeriesName.ObisCode)).Returns(seriesColor.Color);
 
       // Act
-      target.SetSerieColors(new [] { serieColor });
+      target.SetSeriesColors(new [] { seriesColor });
 
       // Assert
-      AssertSerieColorExists(serieColor, not:true);
+      AssertSeriesColorExists(seriesColor, not:true);
     }
 
-    private void AssertSerieColorExists(SerieColor serieColor, bool not = false)
+    private void AssertSeriesColorExists(SeriesColor serieColor, bool not = false)
     {
-      var predicateLabel = Predicates.Field<Db.SerieColor>(sc => sc.Label, Operator.Eq, serieColor.Label);
-      var predicateObisCode = Predicates.Field<Db.SerieColor>(sc => sc.ObisCode, Operator.Eq, (long)serieColor.ObisCode);
+      var predicateLabel = Predicates.Field<Db.SerieColor>(sc => sc.Label, Operator.Eq, serieColor.SeriesName.Label);
+      var predicateObisCode = Predicates.Field<Db.SerieColor>(sc => sc.ObisCode, Operator.Eq, (long)serieColor.SeriesName.ObisCode);
       var predicateColor = Predicates.Field<Db.SerieColor>(sc => sc.Color, Operator.Eq, serieColor.Color);
       var predicate = Predicates.Group(GroupOperator.And, predicateLabel, predicateObisCode, predicateColor);
       Assert.That(DbContext.Connection.Count<Db.SerieColor>(predicate), Is.EqualTo(not ? 0 : 1));
     }
 
-    private SerieColorRepository CreateTarget()
+    private SeriesColorRepository CreateTarget()
     {
-      return new SerieColorRepository(DbContext, obisColorProvider.Object);
+      return new SeriesColorRepository(DbContext, obisColorProvider.Object);
     }
 
   }

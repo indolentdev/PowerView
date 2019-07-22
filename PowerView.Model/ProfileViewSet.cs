@@ -6,7 +6,7 @@ namespace PowerView.Model
 {
   public class ProfileViewSet
   {
-    public ProfileViewSet(ICollection<SerieSet> serieSets, ICollection<NamedValue> interimTotals)
+    public ProfileViewSet(ICollection<SeriesSet> serieSets, ICollection<NamedValue> interimTotals)
     {
       if (serieSets == null) throw new ArgumentNullException("serieSets");
       if (serieSets.Where(x => x == null).Any()) throw new ArgumentOutOfRangeException("serieSets");
@@ -17,7 +17,7 @@ namespace PowerView.Model
       PeriodTotals = interimTotals;
     }
 
-    public ICollection<SerieSet> SerieSets { get; private set; }
+    public ICollection<SeriesSet> SerieSets { get; private set; }
     public ICollection<NamedValue> PeriodTotals { get; private set; }
   }
 }

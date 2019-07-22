@@ -32,8 +32,8 @@ namespace PowerView.Service.Test.Modules
     public void GetOnDemand()
     {
       // Arrange
-      var outputStatuses = new Dictionary<ISerieName, bool> { 
-        { new SerieName("lbl", "0.1.96.3.10.255"), true }, { new SerieName("lbl", "0.2.96.3.10.255"), false } };
+      var outputStatuses = new Dictionary<ISeriesName, bool> { 
+        { new SeriesName("lbl", "0.1.96.3.10.255"), true }, { new SeriesName("lbl", "0.2.96.3.10.255"), false } };
       disconnectControlCache.Setup(dcc => dcc.GetOutputStatus(It.IsAny<string>())).Returns(outputStatuses);
 
       // Act

@@ -110,8 +110,8 @@ namespace PowerView.Model.Test.Repository
     public void AddProfileGraph()
     {
       // Arrange
-      var sn1 = new SerieName("label", ObisCode.ElectrActiveEnergyA14Period);
-      var sn2 = new SerieName("label", ObisCode.ElectrActualPowerP14);
+      var sn1 = new SeriesName("label", ObisCode.ElectrActiveEnergyA14Period);
+      var sn2 = new SeriesName("label", ObisCode.ElectrActualPowerP14);
       var profileGraph = new ProfileGraph("day", "pPage", "pTitle", "5-minutes", 0, new [] {sn1, sn2});
       var target = CreateTarget();
 
@@ -126,8 +126,8 @@ namespace PowerView.Model.Test.Repository
     public void AddProfileGraphExplicitRank()
     {
       // Arrange
-      var sn1 = new SerieName("label", ObisCode.ElectrActiveEnergyA14Period);
-      var sn2 = new SerieName("label", ObisCode.ElectrActualPowerP14);
+      var sn1 = new SeriesName("label", ObisCode.ElectrActiveEnergyA14Period);
+      var sn2 = new SeriesName("label", ObisCode.ElectrActualPowerP14);
       var profileGraph = new ProfileGraph("day", "pPage", "pTitle", "5-minutes", 100, new[] { sn1, sn2 });
       var target = CreateTarget();
 
@@ -142,7 +142,7 @@ namespace PowerView.Model.Test.Repository
     public void AddProfileGraphDuplicate()
     {
       // Arrange
-      var sn = new SerieName("label", ObisCode.ElectrActiveEnergyA14Period);
+      var sn = new SeriesName("label", ObisCode.ElectrActiveEnergyA14Period);
       var profileGraph1 = new ProfileGraph("day", "pPage", "pTitle", "5-minutes", 1, new[] { sn });
       var profileGraph2 = new ProfileGraph("day", "pPage", "pTitle", "5-minutes", 2, new[] { sn });
       var target = CreateTarget();
@@ -156,7 +156,7 @@ namespace PowerView.Model.Test.Repository
     public void AddProfileGraphDuplicateRank()
     {
       // Arrange
-      var sn = new SerieName("label", ObisCode.ElectrActiveEnergyA14Period);
+      var sn = new SeriesName("label", ObisCode.ElectrActiveEnergyA14Period);
       var profileGraph1 = new ProfileGraph("day", "pPage", "pTitle1", "5-minutes", 1, new[] { sn });
       var profileGraph2 = new ProfileGraph("day", "pPage", "pTitle2", "5-minutes", 1, new[] { sn });
       var target = CreateTarget();
@@ -170,8 +170,8 @@ namespace PowerView.Model.Test.Repository
     public void DeleteProfileGraph()
     {
       // Arrange
-      var profileGraph1 = new ProfileGraph("day", "pPage1", "pTitle1", "5-minutes", 1, new[] { new SerieName("label1", ObisCode.ElectrActualPowerP14) });
-      var profileGraph2 = new ProfileGraph("day", "", "pTitle2", "5-minutes", 2, new[] { new SerieName("label2", ObisCode.ElectrActualPowerP14) });
+      var profileGraph1 = new ProfileGraph("day", "pPage1", "pTitle1", "5-minutes", 1, new[] { new SeriesName("label1", ObisCode.ElectrActualPowerP14) });
+      var profileGraph2 = new ProfileGraph("day", "", "pTitle2", "5-minutes", 2, new[] { new SeriesName("label2", ObisCode.ElectrActualPowerP14) });
       var target = CreateTarget();
       target.AddProfileGraph(profileGraph1);
       target.AddProfileGraph(profileGraph2);
@@ -187,7 +187,7 @@ namespace PowerView.Model.Test.Repository
     public void DeleteProfileGraphEmptyPage()
     {
       // Arrange
-      var profileGraph = new ProfileGraph("day", "", "pTitle1", "5-minutes", 1, new[] { new SerieName("label1", ObisCode.ElectrActualPowerP14) });
+      var profileGraph = new ProfileGraph("day", "", "pTitle1", "5-minutes", 1, new[] { new SeriesName("label1", ObisCode.ElectrActualPowerP14) });
       var target = CreateTarget();
       target.AddProfileGraph(profileGraph);
 

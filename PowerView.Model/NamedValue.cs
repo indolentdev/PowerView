@@ -3,7 +3,7 @@ namespace PowerView.Model
 {
   public class NamedValue
   {
-    public NamedValue(SerieName serieName, UnitValue unitValue)
+    public NamedValue(SeriesName serieName, UnitValue unitValue)
     {
       if (serieName == null) throw new ArgumentNullException("serieName");
 
@@ -11,7 +11,7 @@ namespace PowerView.Model
       UnitValue = unitValue;
     }
 
-    public SerieName SerieName { get; private set; }
+    public SeriesName SerieName { get; private set; }
     public UnitValue UnitValue { get; private set; }
   }
 }
