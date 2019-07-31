@@ -170,6 +170,10 @@
     <Compile Include="Repository\DbCheck.cs" />
     <Compile Include="Repository\DataStoreCorruptException.cs" />
     <Compile Include="Repository\IDbCheck.cs" />
+    <Compile Include="LabelSeries.cs" />
+    <Compile Include="Repository\LabelSeriesRepository.cs" />
+    <Compile Include="LabelSeriesSet.cs" />
+    <Compile Include="Repository\ILabelSeriesRepository.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
