@@ -127,6 +127,9 @@
     <Compile Include="SmtpConfigTest.cs" />
     <Compile Include="Repository\DbTestFixtureWithDbFile.cs" />
     <Compile Include="Repository\DbCheckTest.cs" />
+    <Compile Include="LabelSeriesTest.cs" />
+    <Compile Include="Repository\LabelSeriesRepositoryTest.cs" />
+    <Compile Include="LabelSeriesSetTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

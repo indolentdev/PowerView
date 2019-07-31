@@ -13,6 +13,7 @@ namespace PowerView.Model
 
       containerBuilder.RegisterType<LiveReadingRepository>().As<ILiveReadingRepository>();
       containerBuilder.RegisterType<ProfileRepository>().As<IProfileRepository>();
+      containerBuilder.RegisterType<LabelSeriesRepository>().As<ILabelSeriesRepository>();
       containerBuilder.RegisterType<ReadingPipeRepository>().As<IReadingPipeRepository>();
       containerBuilder.RegisterType<SettingRepository>().As<ISettingRepository>();
       containerBuilder.RegisterType<SeriesNameRepository>().As<ISeriesNameRepository>();

@@ -15,21 +15,29 @@ namespace PowerView.Model
     public UnitValue UnitValue { get { return unitValue; } }
 
     public TimeRegisterValue(string serialNumber, DateTime timestamp, int value, short scale, Unit unit)
+      : this(serialNumber, timestamp, new UnitValue(value, scale, unit))
     {
-      if ( timestamp.Kind != DateTimeKind.Utc ) throw new ArgumentOutOfRangeException("timestamp", "Must be UTC");
-
-      this.serialNumber = serialNumber;
-      this.timestamp = timestamp;
-      unitValue = new UnitValue(value, scale, unit);
     }
 
     internal TimeRegisterValue(string serialNumber, DateTime timestamp, double value, Unit unit)
+      : this(serialNumber, timestamp, new UnitValue(value, unit))
     {
-      if ( timestamp.Kind != DateTimeKind.Utc ) throw new ArgumentOutOfRangeException("timestamp", "Must be UTC");
+    }
+
+    internal TimeRegisterValue(string serialNumber, DateTime timestamp, UnitValue unitValue)
+    {
+      if (timestamp.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("timestamp", "Must be UTC");
 
       this.serialNumber = serialNumber;
       this.timestamp = timestamp;
-      unitValue = new UnitValue(value, unit);
+      this.unitValue = unitValue;
+    }
+
+    public TimeRegisterValue Normalize(Func<DateTime, DateTime> timeDivider)
+    {
+      if (timeDivider == null) throw new ArgumentNullException("timeDivider");
+
+      return new TimeRegisterValue(serialNumber, timeDivider(Timestamp), unitValue);
     }
 
     public TimeRegisterValue SubtractValue(TimeRegisterValue baseValue)

@@ -34,6 +34,33 @@ namespace PowerView.Model.Test
     }
 
     [Test]
+    public void NormalizeThrows()
+    {
+      // Arrange
+      var target = new TimeRegisterValue("1", DateTime.UtcNow, 100, 2, Unit.WattHour);
+
+      // Act & Assert
+      Assert.That(() => target.Normalize(null), Throws.ArgumentNullException);
+    }
+
+    [Test]
+    public void Normalize()
+    {
+      // Arrange
+      var dt = DateTime.UtcNow;
+      var target = new TimeRegisterValue("1", dt, 100, 2, Unit.WattHour);
+      var timeDivider = DateTimeResolutionDivider.GetResolutionDivider("60-minutes");
+
+      // Act
+      var target2 = target.Normalize(timeDivider);
+
+      // Assert
+      Assert.That(target2.SerialNumber, Is.EqualTo(target.SerialNumber));
+      Assert.That(target2.Timestamp, Is.EqualTo(timeDivider(target.Timestamp)));
+      Assert.That(target2.UnitValue, Is.EqualTo(target.UnitValue));
+    }
+
+    [Test]
     public void SubstractValue()
     {
       // Arrange
