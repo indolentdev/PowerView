@@ -130,6 +130,9 @@
     <Compile Include="LabelSeriesTest.cs" />
     <Compile Include="Repository\LabelSeriesRepositoryTest.cs" />
     <Compile Include="LabelSeriesSetTest.cs" />
+    <Compile Include="SeriesGenerators\PeriodSeriesGeneratorTest.cs" />
+    <Compile Include="SeriesGenerators\DeltaSeriesGeneratorTest.cs" />
+    <Compile Include="SeriesGenerators\AverageActualSeriesGeneratorTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -144,5 +147,6 @@
   <ItemGroup>
     <Folder Include="Repository\" />
     <Folder Include="Expression\" />
+    <Folder Include="SeriesGenerators\" />
   </ItemGroup>
 </Project>
