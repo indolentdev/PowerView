@@ -174,6 +174,10 @@
     <Compile Include="Repository\LabelSeriesRepository.cs" />
     <Compile Include="LabelSeriesSet.cs" />
     <Compile Include="Repository\ILabelSeriesRepository.cs" />
+    <Compile Include="SeriesGenerators\PeriodSeriesGenerator.cs" />
+    <Compile Include="SeriesGenerators\ISeriesGenerator.cs" />
+    <Compile Include="SeriesGenerators\DeltaSeriesGenerator.cs" />
+    <Compile Include="SeriesGenerators\AverageActualSeriesGenerator.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -217,5 +221,6 @@
     <Folder Include="Repository\DbVersion\15\" />
     <Folder Include="Repository\DbVersion\16\" />
     <Folder Include="Repository\DbVersion\17\" />
+    <Folder Include="SeriesGenerators\" />
   </ItemGroup>
 </Project>

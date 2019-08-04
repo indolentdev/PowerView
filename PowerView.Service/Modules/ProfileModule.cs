@@ -158,6 +158,7 @@ namespace PowerView.Service.Modules
         var timeDivider = DateTimeResolutionDivider.GetResolutionDivider(groupInterval);
         var groupLabelSeriesSet = labelSeriesSet.Normalize(timeDivider);
 
+        groupLabelSeriesSet.GenerateSeriesFromCumulative();
         // TODO generate sereis ... on the set or label series level?
       }
       sw.Stop();

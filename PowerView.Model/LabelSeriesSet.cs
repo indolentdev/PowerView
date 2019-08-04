@@ -42,6 +42,14 @@ namespace PowerView.Model
       return new LabelSeriesSet(Start, End, labelSeries.Count, labelSeries.Select(x => x.Normalize(timeDivider)));
     }
 
+    public void GenerateSeriesFromCumulative()
+    {
+      foreach (var localLabelSeries in labelSeries)
+      {
+        localLabelSeries.GenerateSeriesFromCumulative();
+      }
+    }
+
     /*
         public void GenerateFromTemplates(ICollection<LabelObisCodeTemplate> labelObisCodeTemplates, string interval)
         {
