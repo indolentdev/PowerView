@@ -38,6 +38,22 @@ namespace PowerView.Model.Expression
       return addedValues;
     }
 
+
+    public ICollection<TimeRegisterValue> Evaluate2()
+    {
+      var a1Values = minuend.Evaluate2();
+      var a2Values = subtrahend.Evaluate2();
+
+      var subtractedValues = a1Values
+        .Join(a2Values,
+              x => new { x.Timestamp, x.UnitValue.Unit },
+              x => new { x.Timestamp, x.UnitValue.Unit },
+              (a1, a2) => new TimeRegisterValue(TimeRegisterValue.DummySerialNumber, a1.Timestamp, a1.UnitValue - a2.UnitValue))
+        .ToList();
+
+      return subtractedValues;
+    }
+
     #endregion
 
   }

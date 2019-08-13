@@ -158,24 +158,19 @@ namespace PowerView.Service.Modules
         var timeDivider = DateTimeResolutionDivider.GetResolutionDivider(groupInterval);
         var groupLabelSeriesSet = labelSeriesSet.Normalize(timeDivider);
 
+        var swMeantime = new System.Diagnostics.Stopwatch();
+        swMeantime.Start();
         groupLabelSeriesSet.GenerateSeriesFromCumulative();
-        // TODO generate sereis ... on the set or label series level?
+        swMeantime.Stop();
+        if (log.IsDebugEnabled) log.DebugFormat("GetProfile timing - Meantime - GenerateFromCumulative: {0}ms", swMeantime.ElapsedMilliseconds);
+
+        sw.Restart();
+        labelSeriesSet.GenerateFromTemplates(templateConfigProvider.LabelObisCodeTemplates);
+        sw.Stop();
+        if (log.IsDebugEnabled) log.DebugFormat("GetProfile timing - Meantime - GenerateFromTemplates: {0}ms", swMeantime.ElapsedMilliseconds);
       }
       sw.Stop();
       if (log.IsDebugEnabled) log.DebugFormat("GetProfile timing - Group by intervals: {0}ms", sw.ElapsedMilliseconds);
-
-
-      // Autogenerate series per. interval
-
-      // Generate from templates per. interval
-      var intervalOld = period == "month" ? "1-days" : (period == "year" ? "1-months" : "5-minutes");
-      if (intervalOld != string.Empty)
-      {
-        sw.Restart();
-//        labelSeriesSet.GenerateFromTemplates(templateConfigProvider.LabelObisCodeTemplates, interval);
-        sw.Stop();
-        if (log.IsDebugEnabled) log.DebugFormat("GetProfile timing - GenerateFromTemplates: {0}ms", sw.ElapsedMilliseconds);
-      }
 
       sw.Restart();
 //      var viewSet = labelSeriesSet.GetProfileViewSet(profileGraphs);

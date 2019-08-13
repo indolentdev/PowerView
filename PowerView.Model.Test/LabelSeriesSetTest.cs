@@ -64,6 +64,26 @@ namespace PowerView.Model.Test
     }
 
     [Test]
+    public void GenerateSeriesFromCumulative()
+    {
+      // Arrange
+      var obisCode = ObisCode.ElectrActiveEnergyA14;
+      var utcNow = DateTime.UtcNow;
+      var timeRegisterValues = new[] { new TimeRegisterValue("sn1", utcNow + TimeSpan.FromHours(1), 14, Unit.WattHour), new TimeRegisterValue("sn1", utcNow, 11, Unit.WattHour) };
+      var labelSeries1 = new LabelSeries("label1", new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, timeRegisterValues } });
+      var labelSeries2 = new LabelSeries("label2", new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, timeRegisterValues } });
+      var target = CreateTarget(utcNow, utcNow, new[] { labelSeries1, labelSeries2 });
+
+      // Act
+      target.GenerateSeriesFromCumulative();
+
+      // Assert
+      Assert.That(target.Count(), Is.EqualTo(2));
+      Assert.That(target.First().Count(), Is.GreaterThan(1));
+      Assert.That(target.Last().Count(), Is.GreaterThan(1));
+    }
+
+    [Test]
     public void NormalizeThrows()
     {
       // Arrange

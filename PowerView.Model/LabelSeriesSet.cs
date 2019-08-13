@@ -35,13 +35,6 @@ namespace PowerView.Model
     public DateTime Start { get; private set; }
     public DateTime End { get; private set; }
 
-    public LabelSeriesSet Normalize(Func<DateTime, DateTime> timeDivider)
-    {
-      if (timeDivider == null) throw new ArgumentNullException("timeDivider");
-
-      return new LabelSeriesSet(Start, End, labelSeries.Count, labelSeries.Select(x => x.Normalize(timeDivider)));
-    }
-
     public void GenerateSeriesFromCumulative()
     {
       foreach (var localLabelSeries in labelSeries)
@@ -50,67 +43,70 @@ namespace PowerView.Model
       }
     }
 
-    /*
-        public void GenerateFromTemplates(ICollection<LabelObisCodeTemplate> labelObisCodeTemplates, string interval)
+    public LabelSeriesSet Normalize(Func<DateTime, DateTime> timeDivider)
+    {
+      if (timeDivider == null) throw new ArgumentNullException("timeDivider");
+
+      return new LabelSeriesSet(Start, End, labelSeries.Count, labelSeries.Select(x => x.Normalize(timeDivider)));
+    }
+
+    public void GenerateFromTemplates(ICollection<LabelObisCodeTemplate> labelObisCodeTemplates)
+    {
+      if (labelObisCodeTemplates == null) throw new ArgumentNullException("labelObisCodeTemplates");
+
+      var labelsAndObisCodes = GetLabelsAndObisCodes();
+
+      foreach (var labelObisCodeTemplate in labelObisCodeTemplates)
+      {
+        var obisCodeAndValues = Generate(labelsAndObisCodes, labelObisCodeTemplate.Label, labelObisCodeTemplate.ObisCodeTemplates);
+        if (obisCodeAndValues.Count == 0)
         {
-          if (labelObisCodeTemplates == null) throw new ArgumentNullException("labelObisCodeTemplates");
-          var timeDivider = DateTimeResolutionDivider.GetResolutionDivider(interval);
-
-          var labelsAndObisCodes = GetLabelsAndObisCodes();
-
-          foreach (var labelObisCodeTemplate in labelObisCodeTemplates)
-          {
-            var obisCodeAndValues = Generate(labelsAndObisCodes, labelObisCodeTemplate.Label, labelObisCodeTemplate.ObisCodeTemplates, timeDivider);
-            if (obisCodeAndValues.Count == 0)
-            {
-              continue;
-            }
-            var labelProfile = new LabelProfile(labelObisCodeTemplate.Label, Start, obisCodeAndValues);
-            labelProfiles.Add(labelProfile);
-          }
+          continue;
         }
-    */
-    /*
-        private IDictionary<string, ICollection<ObisCode>> GetLabelsAndObisCodes()
+        var labelSeriesItem = new LabelSeries(labelObisCodeTemplate.Label, obisCodeAndValues);
+        labelSeries.Add(labelSeriesItem);
+      }
+    }
+
+    private IDictionary<string, ICollection<ObisCode>> GetLabelsAndObisCodes()
+    {
+      var result = new Dictionary<string, ICollection<ObisCode>>();
+
+      foreach (var labelSeriesItem in labelSeries)
+      {
+        result.Add(labelSeriesItem.Label.ToLowerInvariant(), labelSeriesItem.ToList());
+      }
+
+      return result;
+    }
+
+    private IDictionary<ObisCode, IEnumerable<TimeRegisterValue>> Generate(IDictionary<string, ICollection<ObisCode>> labelsAndObisCodes, string label, ICollection<ObisCodeTemplate> obisCodeTemplates)
+    {
+      var obisCodeAndValues = new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>>();
+      foreach (var obisCodeTemplate in obisCodeTemplates)
+      {
+        if (!obisCodeTemplate.TemplateExpression.IsSatisfied(labelsAndObisCodes))
         {
-          var result = new Dictionary<string, ICollection<ObisCode>>();
-
-          foreach (var labelProfile in labelProfiles)
-          {
-            result.Add(labelProfile.Label.ToLowerInvariant(), labelProfile.GetAllObisCodes());
-          }
-          return result;
+          log.DebugFormat("Template has unmet data sources. Skipping it. Label:{0}, ObisCode:{1}", label, obisCodeTemplate.ObisCode);
+          continue;
         }
-    */
-    /*
-        private IDictionary<ObisCode, ICollection<TimeRegisterValue>> Generate(IDictionary<string, ICollection<ObisCode>> labelsAndObisCodes, string label, ICollection<ObisCodeTemplate> obisCodeTemplates, Func<DateTime, DateTime> timeDivider)
+
+        try
         {
-          var obisCodeAndValues = new Dictionary<ObisCode, ICollection<TimeRegisterValue>>();
-          foreach (var obisCodeTemplate in obisCodeTemplates)
-          {
-            if (!obisCodeTemplate.TemplateExpression.IsSatisfied(labelsAndObisCodes))
-            {
-              log.DebugFormat("Template has unmet data sources. Skipping it. Label:{0}, ObisCode:{1}", label, obisCodeTemplate.ObisCode);
-              continue;
-            }
-
-            try
-            {
-              var valueExpressionSet = obisCodeTemplate.TemplateExpression.GetValueExpressionSet(this, timeDivider);
-              var coarseTimeRegisterValues = valueExpressionSet.Evaluate();
-              var timeRegisterValues = coarseTimeRegisterValues.Select(x => x.TimeRegisterValue).OrderBy(x => x.Timestamp).ToList();
-              obisCodeAndValues.Add(obisCodeTemplate.ObisCode, timeRegisterValues);
-            }
-            catch (ValueExpressionSetException e)
-            {
-              var msg = string.Format(CultureInfo.InvariantCulture, "Failed calculation for template. Skipping it. Label:{0}, ObisCode:{1}", 
-                                      label, obisCodeTemplate.ObisCode);
-              log.Error(msg, e);
-            }
-          }
-          return obisCodeAndValues;
+          var valueExpressionSet = obisCodeTemplate.TemplateExpression.GetValueExpressionSet(this);
+          var timeRegisterValues = valueExpressionSet.Evaluate2();
+          obisCodeAndValues.Add(obisCodeTemplate.ObisCode, timeRegisterValues);
         }
-    */
+        catch (ValueExpressionSetException e)
+        {
+          var msg = string.Format(CultureInfo.InvariantCulture, "Failed calculation for template. Skipping it. Label:{0}, ObisCode:{1}",
+                                  label, obisCodeTemplate.ObisCode);
+          log.Error(msg, e);
+        }
+      }
+      return obisCodeAndValues;
+    }
+
     /*
         public ProfileViewSet GetProfileViewSet(ICollection<ProfileGraph> profileGraphs)
         {

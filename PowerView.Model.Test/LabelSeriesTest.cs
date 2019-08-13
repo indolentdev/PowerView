@@ -106,6 +106,60 @@ namespace PowerView.Model.Test
     }
 
     [Test]
+    public void GenerateSeriesFromCumulativeNotCumulative()
+    {
+      // Arrange
+      const string label = "label";
+      var obisCode = ObisCode.ElectrActualPowerP14;
+      var utcNow = DateTime.UtcNow;
+      var timeRegisterValues = new[] { new TimeRegisterValue("sn1", utcNow + TimeSpan.FromHours(1), 14, Unit.Watt), new TimeRegisterValue("sn1", utcNow, 11, Unit.Watt) };
+      var target = new LabelSeries(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, timeRegisterValues } });
+
+      // Act
+      target.GenerateSeriesFromCumulative();
+
+      // Assert
+      Assert.That(target, Is.EquivalentTo(new ObisCode[] { obisCode }));
+    }
+
+    [Test]
+    public void GenerateSeriesFromCumulative()
+    {
+      // Arrange
+      const string label = "label";
+      var obisCode = ObisCode.ElectrActiveEnergyA14;
+      var utcNow = DateTime.UtcNow;
+      var timeRegisterValues = new[] { new TimeRegisterValue("sn1", utcNow + TimeSpan.FromHours(1), 14, Unit.WattHour), new TimeRegisterValue("sn1", utcNow, 11, Unit.WattHour) };
+      var target = new LabelSeries(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, timeRegisterValues } });
+
+      // Act
+      target.GenerateSeriesFromCumulative();
+
+      // Assert
+      Assert.That(target, Is.EquivalentTo(new ObisCode[] { obisCode, ObisCode.ElectrActiveEnergyA14Delta, ObisCode.ElectrActiveEnergyA14Period, ObisCode.ElectrActualPowerP14Average }));
+    }
+
+    [Test]
+    [TestCase("1.0.1.8.0.255", "1.67.1.7.0.255")]
+    [TestCase("1.0.2.8.0.255", "1.67.2.7.0.255")]
+    [TestCase("8.0.1.0.0.255", "8.67.2.0.0.255")]
+    [TestCase("6.0.1.0.0.255", "6.67.8.0.0.255")]
+    [TestCase("6.0.2.0.0.255", "6.67.9.0.0.255")]
+    public void GenerateSeriesFromCumulativeAverages(string obisCode, string expectedAverage)
+    {
+      const string label = "label";
+      var utcNow = DateTime.UtcNow;
+      var timeRegisterValues = new[] { new TimeRegisterValue("sn1", utcNow + TimeSpan.FromHours(1), 14, Unit.WattHour), new TimeRegisterValue("sn1", utcNow, 11, Unit.WattHour) };
+      var target = new LabelSeries(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, timeRegisterValues } });
+
+      // Act
+      target.GenerateSeriesFromCumulative();
+
+      // Assert
+      Assert.That(target, Contains.Item((ObisCode)expectedAverage));
+    }
+
+    [Test]
     public void NormalizeThrows()
     {
       // Arrange
