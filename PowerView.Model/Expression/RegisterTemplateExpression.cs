@@ -75,6 +75,18 @@ namespace PowerView.Model.Expression
       return new ValueExpressionSet(coarseTimeRegisterValues);
     }
 
+    public IValueExpressionSet GetValueExpressionSet(LabelSeriesSet labelSeriesSet)
+    {
+      var labelSeries = labelSeriesSet.FirstOrDefault(ls => string.Equals(ls.Label, Label, StringComparison.InvariantCultureIgnoreCase));
+      if (labelSeries == null)
+      {
+        throw new ValueExpressionSetException("Unable to construct. " + Label + " not found");
+      }
+
+      var timeRegisterValues = labelSeries[ObisCode];
+      return new ValueExpressionSet(timeRegisterValues);
+    }
+
   }
 }
 

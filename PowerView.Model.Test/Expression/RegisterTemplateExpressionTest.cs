@@ -89,7 +89,7 @@ namespace PowerView.Model.Test.Expression
     }
 
     [Test]
-    public void GetValueExpressionSet()
+    public void GetValueExpressionSetOld()
     {
       // Arrange
       var start = new DateTime(2017, 6, 7, 8, 9, 10, DateTimeKind.Utc);
@@ -111,7 +111,7 @@ namespace PowerView.Model.Test.Expression
     }
 
     [Test]
-    public void GetValueExpressionSetWrongLabel()
+    public void GetValueExpressionSetWrongLabelOld()
     {
       // Arrange
       var start = DateTime.UtcNow;
@@ -126,7 +126,7 @@ namespace PowerView.Model.Test.Expression
     }
 
     [Test]
-    public void GetValueExpressionSetWrongObisCode()
+    public void GetValueExpressionSetWrongObisCodeOld()
     {
       // Arrange
       var start = new DateTime(2017, 6, 7, 8, 9, 10, DateTimeKind.Utc);
@@ -141,6 +141,64 @@ namespace PowerView.Model.Test.Expression
 
       // Assert
       Assert.That(valueExpressionSet.Evaluate().Count, Is.EqualTo(0));
+    }
+
+    [Test]
+    public void GetValueExpressionSet()
+    {
+      // Arrange
+      var start = new DateTime(2017, 6, 7, 8, 9, 10, DateTimeKind.Utc);
+      var trv1 = new TimeRegisterValue("1", start, 1, Unit.Watt);
+      var trv2 = new TimeRegisterValue("1", start.AddMonths(4), 2, Unit.Watt);
+      var trv3 = new TimeRegisterValue("1", start.AddMonths(9), 3, Unit.Watt);
+      var timeRegisterValues = new[] { trv1, trv2, trv3 };
+      var labelSeries = new LabelSeries("MyLabel", new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { "1.2.3.4.5.6", timeRegisterValues } });
+      var labelSeriesSet = new LabelSeriesSet(start, start.AddMonths(11), new[] { labelSeries });
+      Func<DateTime, DateTime> timeDivider = dt => new DateTime(dt.Year, 1, 1, 1, 1, 1, dt.Kind);
+      var target = new RegisterTemplateExpression("MyLabel:1.2.3.4.5.6");
+
+      // Act
+      var valueExpressionSet = target.GetValueExpressionSet(labelSeriesSet);
+
+      // Assert
+      Assert.That(valueExpressionSet.Evaluate2(), Is.EqualTo(timeRegisterValues));
+    }
+
+    [Test]
+    public void GetValueExpressionSetWrongLabel()
+    {
+      // Arrange
+      var start = new DateTime(2017, 6, 7, 8, 9, 10, DateTimeKind.Utc);
+      var trv1 = new TimeRegisterValue("1", start, 1, Unit.Watt);
+      var trv2 = new TimeRegisterValue("1", start.AddMonths(4), 2, Unit.Watt);
+      var trv3 = new TimeRegisterValue("1", start.AddMonths(9), 3, Unit.Watt);
+      var timeRegisterValues = new[] { trv1, trv2, trv3 };
+      var labelSeries = new LabelSeries("MyLabel", new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { "1.2.3.4.5.6", timeRegisterValues } });
+      var labelSeriesSet = new LabelSeriesSet(start, start.AddMonths(11), new[] { labelSeries });
+      var target = new RegisterTemplateExpression("WrongLabel:1.2.3.4.5.6");
+
+      // Act & Assert
+      Assert.That(() => target.GetValueExpressionSet(labelSeriesSet), Throws.TypeOf<ValueExpressionSetException>());
+    }
+
+    [Test]
+    public void GetValueExpressionSetWrongObisCode()
+    {
+      // Arrange
+      var start = new DateTime(2017, 6, 7, 8, 9, 10, DateTimeKind.Utc);
+      var trv1 = new TimeRegisterValue("1", start, 1, Unit.Watt);
+      var trv2 = new TimeRegisterValue("1", start.AddMonths(4), 2, Unit.Watt);
+      var trv3 = new TimeRegisterValue("1", start.AddMonths(9), 3, Unit.Watt);
+      var timeRegisterValues = new[] { trv1, trv2, trv3 };
+      var labelSeries = new LabelSeries("MyLabel", new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { "1.2.3.4.5.6", timeRegisterValues } });
+      var labelSeriesSet = new LabelSeriesSet(start, start.AddMonths(11), new[] { labelSeries });
+      var target = new RegisterTemplateExpression("MyLabel:255.2.3.4.5.6");
+
+      // Act
+      var valueExpressionSet = target.GetValueExpressionSet(labelSeriesSet);
+
+      // Assert
+      Assert.That(valueExpressionSet.Evaluate2(), Is.Empty);
     }
 
   }

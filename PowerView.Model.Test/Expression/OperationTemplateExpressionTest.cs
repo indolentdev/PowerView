@@ -83,7 +83,7 @@ namespace PowerView.Model.Test.Expression
     }
 
     [Test]
-    public void GetValueExpressionSetAdd()
+    public void GetValueExpressionSetAddOld()
     {
       // Arrange
       var templateExpressionLeft = new Mock<ITemplateExpression>();
@@ -106,7 +106,7 @@ namespace PowerView.Model.Test.Expression
     }
 
     [Test]
-    public void GetValueExpressionSetSubtract()
+    public void GetValueExpressionSetSubtractOld()
     {
       // Arrange
       var templateExpressionLeft = new Mock<ITemplateExpression>();
@@ -126,6 +126,52 @@ namespace PowerView.Model.Test.Expression
       Assert.That(valExprSet, Is.TypeOf<SubtractValueExpressionSet>());
       templateExpressionLeft.Verify(te => te.GetValueExpressionSet(labelProfileSet, timeDivider));
       templateExpressionRight.Verify(te => te.GetValueExpressionSet(labelProfileSet, timeDivider));
+    }
+
+    [Test]
+    public void GetValueExpressionSetAdd()
+    {
+      // Arrange
+      var templateExpressionLeft = new Mock<ITemplateExpression>();
+      var templateExpressionRight = new Mock<ITemplateExpression>();
+      const string op = "+";
+      var target = new OperationTemplateExpression(templateExpressionLeft.Object, op, templateExpressionRight.Object);
+      var start = new DateTime(2017, 6, 7, 8, 9, 10, DateTimeKind.Utc);
+      var labelSeriesSet = new LabelSeriesSet(start, start.AddMonths(11), new LabelSeries[0]);
+      var valueExpressionSet = new Mock<IValueExpressionSet>();
+      templateExpressionLeft.Setup(te => te.GetValueExpressionSet(It.IsAny<LabelSeriesSet>())).Returns(valueExpressionSet.Object);
+      templateExpressionRight.Setup(te => te.GetValueExpressionSet(It.IsAny<LabelSeriesSet>())).Returns(valueExpressionSet.Object);
+
+      // Act
+      var valExprSet = target.GetValueExpressionSet(labelSeriesSet);
+
+      // Assert
+      Assert.That(valExprSet, Is.TypeOf<AddValueExpressionSet>());
+      templateExpressionLeft.Verify(te => te.GetValueExpressionSet(labelSeriesSet));
+      templateExpressionRight.Verify(te => te.GetValueExpressionSet(labelSeriesSet));
+    }
+
+    [Test]
+    public void GetValueExpressionSetSubtract()
+    {
+      // Arrange
+      var templateExpressionLeft = new Mock<ITemplateExpression>();
+      var templateExpressionRight = new Mock<ITemplateExpression>();
+      const string op = "-";
+      var target = new OperationTemplateExpression(templateExpressionLeft.Object, op, templateExpressionRight.Object);
+      var start = new DateTime(2017, 6, 7, 8, 9, 10, DateTimeKind.Utc);
+      var labelSeriesSet = new LabelSeriesSet(start, start.AddMonths(11), new LabelSeries[0]);
+      var valueExpressionSet = new Mock<IValueExpressionSet>();
+      templateExpressionLeft.Setup(te => te.GetValueExpressionSet(It.IsAny<LabelSeriesSet>())).Returns(valueExpressionSet.Object);
+      templateExpressionRight.Setup(te => te.GetValueExpressionSet(It.IsAny<LabelSeriesSet>())).Returns(valueExpressionSet.Object);
+
+      // Act
+      var valExprSet = target.GetValueExpressionSet(labelSeriesSet);
+
+      // Assert
+      Assert.That(valExprSet, Is.TypeOf<SubtractValueExpressionSet>());
+      templateExpressionLeft.Verify(te => te.GetValueExpressionSet(labelSeriesSet));
+      templateExpressionRight.Verify(te => te.GetValueExpressionSet(labelSeriesSet));
     }
 
   }

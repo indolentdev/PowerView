@@ -54,6 +54,24 @@ namespace PowerView.Model.Expression
       }
     }
 
+    public IValueExpressionSet GetValueExpressionSet(LabelSeriesSet labelSeriesSet)
+    {
+      var valueExpressionSetLeft = Left.GetValueExpressionSet(labelSeriesSet);
+      var valueExpressionSetRight = Right.GetValueExpressionSet(labelSeriesSet);
+
+      switch (Operator)
+      {
+        case Plus:
+          return new AddValueExpressionSet(valueExpressionSetLeft, valueExpressionSetRight);
+        case Minus:
+          return new SubtractValueExpressionSet(valueExpressionSetLeft, valueExpressionSetRight);
+
+        default:
+          throw new NotImplementedException("Missing impl of operator:" + Operator);
+      }
+    }
+
+
   }
 }
 
