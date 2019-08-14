@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-
-using SV=PowerView.Model.TimeRegisterValue;
 using PowerView.Model.Expression;
 using Moq;
 
@@ -127,6 +125,70 @@ namespace PowerView.Model.Test
       {
         timeRegisterValues[0].Normalize(timeDivider), timeRegisterValues[2].Normalize(timeDivider), timeRegisterValues[4].Normalize(timeDivider)
       }));
+    }
+
+    [Test]
+    public void GenerateFromTemplates()
+    {
+      // Arrange
+      var baseTime = DateTime.UtcNow;
+      var target = new LabelSeriesSet(baseTime, baseTime + TimeSpan.FromMinutes(30), new LabelSeries[0]);
+      var templateExpression = new Mock<ITemplateExpression>();
+      ObisCode obisCode = "1.2.3.4.5.255";
+      var labelObisCodeTemplates = new[] { new LabelObisCodeTemplate("NewLabel", new[] { new ObisCodeTemplate(obisCode, templateExpression.Object) }) };
+      templateExpression.Setup(te => te.IsSatisfied(It.IsAny<IDictionary<string, ICollection<ObisCode>>>())).Returns(true);
+      var valueExpressionSet = new Mock<IValueExpressionSet>();
+      templateExpression.Setup(te => te.GetValueExpressionSet(It.IsAny<LabelSeriesSet>())).Returns(valueExpressionSet.Object);
+      var trv1 = new TimeRegisterValue("1", baseTime.AddMinutes(1), 7, Unit.WattHour);
+      var trv2 = new TimeRegisterValue("1", baseTime.AddMinutes(20), 9, Unit.WattHour);
+      valueExpressionSet.Setup(sve => sve.Evaluate2()).Returns(new[] { trv2, trv1 });
+
+      // Act
+      target.GenerateFromTemplates(labelObisCodeTemplates);
+
+      // Assert
+      templateExpression.Verify(te => te.GetValueExpressionSet(It.Is<LabelSeriesSet>(x => x == target)));
+      Assert.That(target.Count(), Is.EqualTo(1));
+      var newLabelSeries = target.First();
+      Assert.That(newLabelSeries.Label, Is.EqualTo("NewLabel"));
+      Assert.That(newLabelSeries.ToArray(), Is.EqualTo(new[] { obisCode }));
+      Assert.That(newLabelSeries[obisCode].Count(), Is.EqualTo(2));
+      Assert.That(newLabelSeries[obisCode], Is.EqualTo(new[] { trv1, trv2 }));
+    }
+
+    [Test]
+    public void GenerateFromTemplatesIsSatisfiedFalse()
+    {
+      // Arrange
+      var baseTime = DateTime.UtcNow;
+      var target = new LabelSeriesSet(baseTime, baseTime + TimeSpan.FromMinutes(30), new LabelSeries[0]);
+      var templateExpression = new Mock<ITemplateExpression>();
+      var labelObisCodeTemplates = new[] { new LabelObisCodeTemplate("NewLabel", new[] { new ObisCodeTemplate("1.100.1.8.0.255", templateExpression.Object) }) };
+      templateExpression.Setup(te => te.IsSatisfied(It.IsAny<IDictionary<string, ICollection<ObisCode>>>())).Returns(false);
+
+      // Act
+      target.GenerateFromTemplates(labelObisCodeTemplates);
+
+      // Assert
+      Assert.That(target, Is.Empty);
+    }
+
+    [Test]
+    public void GenerateFromTemplatesGetValueExpressionSetThrows()
+    {
+      // Arrange
+      var baseTime = DateTime.UtcNow;
+      var target = new LabelSeriesSet(baseTime, baseTime + TimeSpan.FromMinutes(30), new LabelSeries[0]);
+      var templateExpression = new Mock<ITemplateExpression>();
+      var labelObisCodeTemplates = new[] { new LabelObisCodeTemplate("NewLabel", new[] { new ObisCodeTemplate("1.100.1.8.0.255", templateExpression.Object) }) };
+      templateExpression.Setup(te => te.IsSatisfied(It.IsAny<IDictionary<string, ICollection<ObisCode>>>())).Returns(true);
+      templateExpression.Setup(te => te.GetValueExpressionSet(It.IsAny<LabelSeriesSet>())).Throws(new ValueExpressionSetException());
+
+      // Act
+      target.GenerateFromTemplates(labelObisCodeTemplates);
+
+      // Assert
+      Assert.That(target, Is.Empty);
     }
 
     /*
@@ -291,70 +353,7 @@ namespace PowerView.Model.Test
           Assert.That(profileViewSet.PeriodTotals.Last().UnitValue.Value, Is.EqualTo(7));
         }
     */
-    /*
-        [Test]
-        public void GenerateFromTemplates()
-        {
-          // Arrange
-          var target = CreateTarget(DateTime.UtcNow, new LabelProfile[0]);
-          var templateExpression = new Mock<ITemplateExpression>();
-          ObisCode obisCode = "1.2.3.4.5.255";
-          var labelObisCodeTemplates = new[] { new LabelObisCodeTemplate("NewLabel", new[] { new ObisCodeTemplate(obisCode, templateExpression.Object) }) };
-          templateExpression.Setup(te => te.IsSatisfied(It.IsAny<IDictionary<string,ICollection<ObisCode>>>())).Returns(true);
-          var valueExpressionSet = new Mock<IValueExpressionSet>();
-          templateExpression.Setup(te => te.GetValueExpressionSet(It.IsAny<LabelProfileSet>(), It.IsAny<Func<DateTime,DateTime>>()))
-                                   .Returns(valueExpressionSet.Object);
-          var trv1 = new SV("1", DateTime.UtcNow.AddMinutes(1), 7, Unit.WattHour);
-          var trv2 = new SV("1", DateTime.UtcNow.AddMinutes(20), 9, Unit.WattHour);
-          valueExpressionSet.Setup(sve => sve.Evaluate())
-                            .Returns(new [] { new CoarseTimeRegisterValue(trv2.Timestamp, trv2), new CoarseTimeRegisterValue(trv1.Timestamp, trv1) });
 
-          // Act
-          target.GenerateFromTemplates(labelObisCodeTemplates, "5-minutes");
-
-          // Assert
-          templateExpression.Verify(te => te.GetValueExpressionSet(It.Is<LabelProfileSet>(x => x == target), It.IsAny<Func<DateTime, DateTime>>()));
-          Assert.That(target.Count(), Is.EqualTo(1));
-          var newLabelProfile = target.First();
-          Assert.That(newLabelProfile.Label, Is.EqualTo("NewLabel"));
-          Assert.That(newLabelProfile.ToArray(), Is.EqualTo(new [] {obisCode}));
-          Assert.That(newLabelProfile[obisCode].Count(), Is.EqualTo(2));
-          Assert.That(newLabelProfile[obisCode], Is.EqualTo(new [] { trv1, trv2 }));
-        }
-
-        [Test]
-        public void GenerateFromTemplatesIsSatisfiedFalse()
-        {
-          // Arrange
-          var target = CreateTarget(DateTime.UtcNow, new LabelProfile[0]);
-          var templateExpression = new Mock<ITemplateExpression>();
-          var labelObisCodeTemplates = new[] { new LabelObisCodeTemplate("NewLabel", new[] { new ObisCodeTemplate("1.100.1.8.0.255", templateExpression.Object) }) };
-          templateExpression.Setup(te => te.IsSatisfied(It.IsAny<IDictionary<string,ICollection<ObisCode>>>())).Returns(false);
-
-          // Act
-          target.GenerateFromTemplates(labelObisCodeTemplates, "5-minutes");
-
-          // Assert
-          Assert.That(target.Count(), Is.EqualTo(0));
-        }
-
-        [Test]
-        public void GenerateFromTemplatesGetValueExpressionSetThrows()
-        {
-          // Arrange
-          var target = CreateTarget(DateTime.UtcNow, new LabelProfile[0]);
-          var templateExpression = new Mock<ITemplateExpression>();
-          var labelObisCodeTemplates = new[] { new LabelObisCodeTemplate("NewLabel", new[] { new ObisCodeTemplate("1.100.1.8.0.255", templateExpression.Object) }) };
-          templateExpression.Setup(te => te.IsSatisfied(It.IsAny<IDictionary<string,ICollection<ObisCode>>>())).Returns(true);
-          templateExpression.Setup(te => te.GetValueExpressionSet(It.IsAny<LabelProfileSet>(), It.IsAny<Func<DateTime,DateTime>>())).Throws(new ValueExpressionSetException());
-
-          // Act
-          target.GenerateFromTemplates(labelObisCodeTemplates, "5-minutes");
-
-          // Assert
-          Assert.That(target.Count(), Is.EqualTo(0));
-        }
-    */
     private static LabelSeriesSet CreateTarget(DateTime start, DateTime end, IList<LabelSeries> labelSeries)
     {
       return new LabelSeriesSet(start, end, labelSeries);
