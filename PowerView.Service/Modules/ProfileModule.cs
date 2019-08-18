@@ -158,19 +158,17 @@ namespace PowerView.Service.Modules
         var timeDivider = DateTimeResolutionDivider.GetResolutionDivider(groupInterval);
         var groupLabelSeriesSet = labelSeriesSet.Normalize(timeDivider);
 
-        var swMeantime = new System.Diagnostics.Stopwatch();
-        swMeantime.Start();
         groupLabelSeriesSet.GenerateSeriesFromCumulative();
-        swMeantime.Stop();
-        if (log.IsDebugEnabled) log.DebugFormat("GetProfile timing - Meantime - GenerateFromCumulative: {0}ms", swMeantime.ElapsedMilliseconds);
 
-        sw.Restart();
-        labelSeriesSet.GenerateFromTemplates(templateConfigProvider.LabelObisCodeTemplates);
-        sw.Stop();
-        if (log.IsDebugEnabled) log.DebugFormat("GetProfile timing - Meantime - GenerateFromTemplates: {0}ms", swMeantime.ElapsedMilliseconds);
+        groupLabelSeriesSet.GenerateFromTemplates(templateConfigProvider.LabelObisCodeTemplates);
+
+        var getNext = DateTimeResolutionDivider.GetNext(groupInterval);
+
+        var source = new ProfileGraphGroup(groupInterval, groupProfileGraphs, labelSeriesSet);
+
       }
       sw.Stop();
-      if (log.IsDebugEnabled) log.DebugFormat("GetProfile timing - Group by intervals: {0}ms", sw.ElapsedMilliseconds);
+      if (log.IsDebugEnabled) log.DebugFormat("GetProfile timing - Group by intervals and generate: {0}ms", sw.ElapsedMilliseconds);
 
       sw.Restart();
 //      var viewSet = labelSeriesSet.GetProfileViewSet(profileGraphs);

@@ -178,6 +178,7 @@
     <Compile Include="SeriesGenerators\ISeriesGenerator.cs" />
     <Compile Include="SeriesGenerators\DeltaSeriesGenerator.cs" />
     <Compile Include="SeriesGenerators\AverageActualSeriesGenerator.cs" />
+    <Compile Include="ProfileGraphGroup.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
