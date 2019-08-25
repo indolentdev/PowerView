@@ -137,46 +137,41 @@ namespace PowerView.Service.Modules
     private ProfileViewSet GetProfileViewSet2(ICollection<ProfileGraph> profileGraphs, Func<DateTime, DateTime, DateTime, LabelSeriesSet> getLabelSeriesSet, DateTime start, string period)
     {
       // Distinct intervals
-      var distinctIntervals = profileGraphs.GroupBy(x => x.Interval);
+      var distinctIntervals = profileGraphs.GroupBy(x => x.Interval).ToList();
 
       // Find query start and end times based on max interval and period...
       var end = DateTimeResolutionDivider.GetPeriodEnd(period, start);
       var preStart = distinctIntervals.Select(x => DateTimeResolutionDivider.GetNext(x.Key, false)(start)).Min();
 
+      // Query db
       var sw = new System.Diagnostics.Stopwatch();
       sw.Start();
       var labelSeriesSet = getLabelSeriesSet(preStart, start, end);
       sw.Stop();
       if (log.IsDebugEnabled) log.DebugFormat("GetProfile timing - GetLabelSeriesSet: {0}ms", sw.ElapsedMilliseconds);
 
+      // group by interval and generate additional series
+      var intervalGroups = new List<IntervalGroup>(distinctIntervals.Count);
       sw.Restart();
       foreach (var group in distinctIntervals)
       {
         var groupInterval = group.Key;
         var groupProfileGraphs = group.ToList();
 
-        var timeDivider = DateTimeResolutionDivider.GetResolutionDivider(groupInterval);
-        var groupLabelSeriesSet = labelSeriesSet.Normalize(timeDivider);
-
-        groupLabelSeriesSet.GenerateSeriesFromCumulative();
-
-        groupLabelSeriesSet.GenerateFromTemplates(templateConfigProvider.LabelObisCodeTemplates);
-
-        var getNext = DateTimeResolutionDivider.GetNext(groupInterval);
-
-        var source = new ProfileGraphGroup(groupInterval, groupProfileGraphs, labelSeriesSet);
-
+        var intervalGroup = new IntervalGroup(groupInterval, groupProfileGraphs, labelSeriesSet);
+        intervalGroup.Prepare(templateConfigProvider.LabelObisCodeTemplates);
+        intervalGroups.Add(intervalGroup);
       }
       sw.Stop();
       if (log.IsDebugEnabled) log.DebugFormat("GetProfile timing - Group by intervals and generate: {0}ms", sw.ElapsedMilliseconds);
 
       sw.Restart();
-//      var viewSet = labelSeriesSet.GetProfileViewSet(profileGraphs);
+      var profileViewSetSource = new ProfileViewSetSource(profileGraphs, intervalGroups);
+      var viewSet = profileViewSetSource.GetProfileViewSet();
       sw.Stop();
       if (log.IsDebugEnabled) log.DebugFormat("GetProfile timing - GetProfileViewSet: {0}ms", sw.ElapsedMilliseconds);
 
-      return null;
-//      return viewSet;
+      return viewSet;
     }
 
     private object GetGraph2(SeriesSet serieSet)

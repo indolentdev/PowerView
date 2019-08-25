@@ -5,18 +5,17 @@ using PowerView.Model.Expression;
 
 namespace PowerView.Model
 {
-  public class ProfileGraphGroup
+  public class IntervalGroup
   {
     private readonly Func<DateTime, DateTime> timeDivider;
     private readonly Func<DateTime, DateTime> getNext;
 
-    public ProfileGraphGroup(string interval, IList<ProfileGraph> profileGraphs, LabelSeriesSet sourceLabelSeriesSet)
+    public IntervalGroup(string interval, IList<ProfileGraph> profileGraphs, LabelSeriesSet sourceLabelSeriesSet)
     {
       timeDivider = DateTimeResolutionDivider.GetResolutionDivider(interval);
       getNext = DateTimeResolutionDivider.GetNext(interval);
       if (profileGraphs == null) throw new ArgumentNullException("profileGraphs");
       if (sourceLabelSeriesSet == null) throw new ArgumentNullException("sourceLabelSeriesSet");
-
 
       Interval = interval;
       ProfileGraphs = new ReadOnlyCollection<ProfileGraph>(profileGraphs);

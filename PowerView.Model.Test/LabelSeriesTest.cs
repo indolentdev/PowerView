@@ -59,6 +59,27 @@ namespace PowerView.Model.Test
     }
 
     [Test]
+    [TestCase("1.2.3.4.5.6", true)]
+    [TestCase("6.5.4.3.2.1", false)]
+    public void ContainsObisCode(string obisCode, bool expected)
+    {
+      // Arrange
+      var dt = new DateTime(2015, 02, 13, 19, 30, 00, DateTimeKind.Utc);
+      var sv1 = new TimeRegisterValue("1", dt, 21, 1, Unit.WattHour);
+      var sv2 = new TimeRegisterValue("1", dt.AddMinutes(5), 22, 1, Unit.WattHour);
+      var timeRegisterValues = new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> {
+        { "1.2.3.4.5.6", new [] { sv1, sv2 } }
+      };
+      var target = new LabelSeries("label", timeRegisterValues);
+
+      // Act
+      var containsObisCode = target.ContainsObisCode(obisCode);
+
+      // Assert
+      Assert.That(containsObisCode, Is.EqualTo(expected));
+    }
+
+    [Test]
     public void IndexerOrderedByTimestamp()
     {
       // Arrange
