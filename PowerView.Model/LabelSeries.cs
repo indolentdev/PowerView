@@ -32,6 +32,11 @@ namespace PowerView.Model
 
     public string Label { get; private set; }
 
+    public bool ContainsObisCode(ObisCode obisCode)
+    {
+      return obisCodeSets.ContainsKey(obisCode);
+    }
+
     public ICollection<TimeRegisterValue> this[ObisCode obisCode]
     {
       get

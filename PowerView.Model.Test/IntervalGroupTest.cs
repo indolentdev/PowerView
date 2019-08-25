@@ -7,7 +7,7 @@ using PowerView.Model.Expression;
 namespace PowerView.Model.Test
 {
   [TestFixture]
-  public class ProfileGraphGroupTest
+  public class IntervalGroupTest
   {
     [Test]
     public void ConstructorThrows()
@@ -18,12 +18,12 @@ namespace PowerView.Model.Test
       var labelSeriesSet = new LabelSeriesSet(DateTime.UtcNow, DateTime.UtcNow + TimeSpan.FromDays(1), new LabelSeries[0]);
 
       // Act & Assert
-      Assert.That(() => new ProfileGraphGroup(null, profileGraphs, labelSeriesSet), Throws.ArgumentNullException);
-      Assert.That(() => new ProfileGraphGroup(interval, null, labelSeriesSet), Throws.ArgumentNullException);
-      Assert.That(() => new ProfileGraphGroup(interval, profileGraphs, null), Throws.ArgumentNullException);
+      Assert.That(() => new IntervalGroup(null, profileGraphs, labelSeriesSet), Throws.ArgumentNullException);
+      Assert.That(() => new IntervalGroup(interval, null, labelSeriesSet), Throws.ArgumentNullException);
+      Assert.That(() => new IntervalGroup(interval, profileGraphs, null), Throws.ArgumentNullException);
 
-      Assert.That(() => new ProfileGraphGroup(string.Empty, profileGraphs, labelSeriesSet), Throws.TypeOf<ArgumentOutOfRangeException>());
-      Assert.That(() => new ProfileGraphGroup("whatnot", profileGraphs, labelSeriesSet), Throws.TypeOf<ArgumentOutOfRangeException>());
+      Assert.That(() => new IntervalGroup(string.Empty, profileGraphs, labelSeriesSet), Throws.TypeOf<ArgumentOutOfRangeException>());
+      Assert.That(() => new IntervalGroup("whatnot", profileGraphs, labelSeriesSet), Throws.TypeOf<ArgumentOutOfRangeException>());
     }
 
     [Test]
@@ -40,7 +40,7 @@ namespace PowerView.Model.Test
       });
 
       // Act
-      var target = new ProfileGraphGroup(interval, profileGraphs, labelSeriesSet);
+      var target = new IntervalGroup(interval, profileGraphs, labelSeriesSet);
 
       // Assert
       Assert.That(target.Interval, Is.EqualTo(interval));
@@ -66,7 +66,7 @@ namespace PowerView.Model.Test
         new LabelSeries(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, new[] {
         new TimeRegisterValue("SN1", start, 1234, Unit.Watt) } } })
       });
-      var target = new ProfileGraphGroup(interval, profileGraphs, labelSeriesSet);
+      var target = new IntervalGroup(interval, profileGraphs, labelSeriesSet);
       var labelObisCodeTemplate = new LabelObisCodeTemplate("newTemplate", new ObisCodeTemplate[0]);
       var labelObisCodeTemplates = new[] { labelObisCodeTemplate };
 
@@ -94,7 +94,7 @@ namespace PowerView.Model.Test
         new LabelSeries(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, new[] { 
         new TimeRegisterValue("SN1", start.AddMinutes(2), 1234, Unit.Watt) } } })
       });
-      var target = new ProfileGraphGroup(interval, profileGraphs, labelSeriesSet);
+      var target = new IntervalGroup(interval, profileGraphs, labelSeriesSet);
       var labelObisCodeTemplate = new LabelObisCodeTemplate("newTemplate", new ObisCodeTemplate[0]);
       var labelObisCodeTemplates = new[] { labelObisCodeTemplate };
 
@@ -124,7 +124,7 @@ namespace PowerView.Model.Test
         new LabelSeries(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, new[] {
         new TimeRegisterValue("SN1", start, 1234, Unit.Watt) } } })
       });
-      var target = new ProfileGraphGroup(interval, profileGraphs, labelSeriesSet);
+      var target = new IntervalGroup(interval, profileGraphs, labelSeriesSet);
       var labelObisCodeTemplate = new LabelObisCodeTemplate("newTemplate", new ObisCodeTemplate[0]);
       var labelObisCodeTemplates = new[] { labelObisCodeTemplate };
 
@@ -151,7 +151,7 @@ namespace PowerView.Model.Test
         new LabelSeries(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, new[] {
         new TimeRegisterValue("SN1", start, 1234, Unit.Watt) } } })
       });
-      var target = new ProfileGraphGroup(interval, profileGraphs, labelSeriesSet);
+      var target = new IntervalGroup(interval, profileGraphs, labelSeriesSet);
       var obisCodeTemplate = new ObisCodeTemplate("6.5.4.3.2.1", new RegisterTemplateExpression(label + ":" + obisCode));
       var labelObisCodeTemplate = new LabelObisCodeTemplate("new-label", new[] { obisCodeTemplate });
       var labelObisCodeTemplates = new[] { labelObisCodeTemplate };
