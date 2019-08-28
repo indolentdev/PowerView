@@ -134,6 +134,7 @@
     <Compile Include="SeriesGenerators\DeltaSeriesGeneratorTest.cs" />
     <Compile Include="SeriesGenerators\AverageActualSeriesGeneratorTest.cs" />
     <Compile Include="IntervalGroupTest.cs" />
+    <Compile Include="ProfileViewSetSourceTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

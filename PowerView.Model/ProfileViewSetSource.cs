@@ -7,7 +7,8 @@ namespace PowerView.Model
   public class ProfileViewSetSource
   {
     private readonly ICollection<ProfileGraph> profileGraphs;
-    private readonly IDictionary<string, IntervalGroup> intervalGroups;
+    private readonly IDictionary<string, IList<DateTime>> intervalToCategories;
+    private readonly IDictionary<string, IDictionary<SeriesName, IEnumerable<TimeRegisterValue?>>> intervalSeriesNameToValues;
 
     public ProfileViewSetSource(IEnumerable<ProfileGraph> profileGraphs, IList<IntervalGroup> intervalGroups)
     {
@@ -15,41 +16,62 @@ namespace PowerView.Model
       if (intervalGroups == null) throw new ArgumentNullException("intervalGroups");
 
       this.profileGraphs = profileGraphs.ToList();
-      this.intervalGroups = intervalGroups.ToDictionary(x => x.Interval, x => x);
 
-      if (this.profileGraphs.Count != this.intervalGroups.Values.SelectMany(x => x.ProfileGraphs).Count())
+      var groupProfileGraphs = intervalGroups.SelectMany(x => x.ProfileGraphs).ToList();
+      if (this.profileGraphs.Count != groupProfileGraphs.Count)
       {
         throw new ArgumentOutOfRangeException("intervalGroups", "Must contain all instances of profileGraphs argument");
       }
       foreach (var profileGraph in profileGraphs)
       {
-        if (!this.intervalGroups.ContainsKey(profileGraph.Interval) || !this.intervalGroups[profileGraph.Interval].ProfileGraphs.Contains(profileGraph))
+        if (!groupProfileGraphs.Contains(profileGraph))
         {
           throw new ArgumentOutOfRangeException("intervalGroups", "Must contain all instances of profileGraphs argument");
         }
       }
+
+      intervalToCategories = intervalGroups.ToDictionary(x => x.Interval, x => x.Categories);
+      intervalSeriesNameToValues = intervalGroups.ToDictionary(x => x.Interval, GetSeriesNamesAndValues);
+    }
+
+    private static IDictionary<SeriesName, IEnumerable<TimeRegisterValue?>> GetSeriesNamesAndValues(IntervalGroup intervalGroup)
+    {
+      var result = new Dictionary<SeriesName, IEnumerable<TimeRegisterValue?>>();
+
+      var labelSeriesSet = intervalGroup.PreparedLabelSeriesSet;
+      foreach (var labelSeries in labelSeriesSet)
+      {
+        foreach (var obisCode in labelSeries)
+        {
+          var seriesName = new SeriesName(labelSeries.Label, obisCode);
+          var timeRegisterValues = labelSeries[obisCode]
+            .Where(x => x.Timestamp >= labelSeriesSet.Start && x.Timestamp <= labelSeriesSet.End)
+            .Select(x => (TimeRegisterValue?)x);
+          result.Add(seriesName, timeRegisterValues);
+        }
+      }
+
+      return result;
     }
 
     public ProfileViewSet GetProfileViewSet()
     {
-      // TODO: slice labelseriessets to start time..
-
       var seriesSets = new List<SeriesSet>(profileGraphs.Count);
       foreach (var profileGraph in profileGraphs)
       {
-        var intervalGroup = intervalGroups[profileGraph.Interval];
+        var categories = intervalToCategories[profileGraph.Interval];
 
         var profileGraphSeries = new List<Series>(profileGraph.SerieNames.Count);
         foreach (var seriesName in profileGraph.SerieNames)
-        { 
-          var labelSeriesByLabel = intervalGroup.PreparedLabelSeriesSet.ToDictionary(x => x.Label, x => x);
-          if (!labelSeriesByLabel.ContainsKey(seriesName.Label)) continue;
-          var labelSeries = labelSeriesByLabel[seriesName.Label];
-          if (!labelSeries.ContainsObisCode(seriesName.ObisCode)) continue;
+        {
+          if (!intervalSeriesNameToValues.ContainsKey(profileGraph.Interval) || !intervalSeriesNameToValues[profileGraph.Interval].ContainsKey(seriesName))
+          {
+            continue;
+          }
 
           var timeRegisterValues = 
-                            (from categoryTimestamp in intervalGroup.Categories
-                             join timeRegisterValue in labelSeries[seriesName.ObisCode].Select(x => (TimeRegisterValue?)x)
+                            (from categoryTimestamp in categories
+                             join timeRegisterValue in intervalSeriesNameToValues[profileGraph.Interval][seriesName]
                              on categoryTimestamp equals timeRegisterValue.Value.Timestamp 
                              into items
                              from timeRegisterValueOrNull in items.DefaultIfEmpty()
@@ -65,7 +87,7 @@ namespace PowerView.Model
 
         if (profileGraphSeries.Count == 0) continue;
 
-        var seriesSet = new SeriesSet(profileGraph.Title, intervalGroup.Categories, profileGraphSeries);
+        var seriesSet = new SeriesSet(profileGraph.Title, categories, profileGraphSeries);
         seriesSets.Add(seriesSet);
       }
 
