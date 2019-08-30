@@ -44,7 +44,7 @@ namespace PowerView.Model
       var categoryTimestamp = SourceLabelSeriesSet.Start;
       while (categoryTimestamp < SourceLabelSeriesSet.End)
       {
-        categories.Add(categoryTimestamp);
+        categories.Add(timeDivider(categoryTimestamp));
         categoryTimestamp = getNext(categoryTimestamp);
       }
 
