@@ -52,7 +52,7 @@ namespace PowerView.Model.Test
     }
 
     [Test]
-    public void Prepare_Categories()
+    public void Prepare_Categories_Minute()
     {
       // Arrange
       const string label = "label";
@@ -77,6 +77,34 @@ namespace PowerView.Model.Test
       Assert.That(target.Categories.Count, Is.EqualTo(24));
       Assert.That(target.Categories.First(), Is.EqualTo(start));
       Assert.That(target.Categories.Last(), Is.EqualTo(end.AddHours(-1)));
+    }
+
+    [Test]
+    public void Prepare_Categories_Days()
+    {
+      // Arrange
+      const string label = "label";
+      const string interval = "1-days";
+      ObisCode obisCode = "1.2.3.4.5.6";
+      var profileGraph = new ProfileGraph("month", "The Page", "The Title", interval, 1, new[] { new SeriesName(label, obisCode) });
+      var profileGraphs = new List<ProfileGraph> { profileGraph };
+      var start = new DateTime(2019, 3, 1, 00, 00, 00, DateTimeKind.Utc);
+      var end = start.AddMonths(1);
+      var labelSeriesSet = new LabelSeriesSet(start, end, new[] {
+        new LabelSeries(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, new[] {
+        new TimeRegisterValue("SN1", start, 1234, Unit.Watt) } } })
+      });
+      var target = new IntervalGroup(interval, profileGraphs, labelSeriesSet);
+      var labelObisCodeTemplate = new LabelObisCodeTemplate("newTemplate", new ObisCodeTemplate[0]);
+      var labelObisCodeTemplates = new[] { labelObisCodeTemplate };
+
+      // Act
+      target.Prepare(labelObisCodeTemplates);
+
+      // Assert
+      Assert.That(target.Categories.Count, Is.EqualTo(31));
+      Assert.That(target.Categories.First(), Is.EqualTo(start.AddHours(12)));
+      Assert.That(target.Categories.Last(), Is.EqualTo(end.AddDays(-1).AddHours(12)));
     }
 
     [Test]

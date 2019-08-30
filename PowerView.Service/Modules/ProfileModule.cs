@@ -44,17 +44,17 @@ namespace PowerView.Service.Modules
 
     private dynamic GetDayProfile(dynamic param)
     {
-      return GetProfile(profileRepository.GetDayProfileSet, "day");
+      return GetProfile2(profileRepository.GetDayProfileSet, "day");
     }
 
     private dynamic GetMonthProfile(dynamic param)
     {
-      return GetProfile(profileRepository.GetMonthProfileSet, "month");
+      return GetProfile2(profileRepository.GetMonthProfileSet, "month");
     }
 
     private dynamic GetYearProfile(dynamic param)
     {
-      return GetProfile(profileRepository.GetYearProfileSet, "year");
+      return GetProfile2(profileRepository.GetYearProfileSet, "year");
     }
 
     private dynamic GetProfile(Func<DateTime, LabelProfileSet> getProfileSet, string period)
