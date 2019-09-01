@@ -5,11 +5,11 @@
   </ng-container>
   <ng-container matColumnDef="from">
     <th mat-header-cell *matHeaderCellDef>{{ 'columns.from' | translate }}</th>
-    <td mat-cell *matCellDef="let dv">{{ dv.from | date:'short' }}</td>
+    <td mat-cell *matCellDef="let dv">{{ dv.from | date:'shortDate' }}</td>
   </ng-container>
   <ng-container matColumnDef="to">
     <th mat-header-cell *matHeaderCellDef>{{ 'columns.to' | translate }}</th>
-    <td mat-cell *matCellDef="let dv">{{ dv.to | date:'short' }}</td>
+    <td mat-cell *matCellDef="let dv">{{ dv.to | date:'shortDate' }}</td>
   </ng-container>
   <ng-container matColumnDef="value">
     <th mat-header-cell *matHeaderCellDef>{{ 'columns.difference' | translate }}</th>
