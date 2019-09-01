@@ -101,8 +101,9 @@ namespace PowerView.Service.Test.Modules
     {
       // Arrange
       var utcNow = DateTime.UtcNow;
-      profileRepository.Setup(dpr => dpr.GetCustomProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
-        .Returns(new LabelProfileSet(utcNow, new LabelProfile[0]));
+      var utcOneDay = utcNow.AddDays(1);
+      profileRepository.Setup(dpr => dpr.GetMonthProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+        .Returns(new LabelSeriesSet(utcNow, utcOneDay, new LabelSeries[0]));
 
       // Act
       var response = browser.Get(DiffRoute, with =>
@@ -110,13 +111,14 @@ namespace PowerView.Service.Test.Modules
         with.HttpRequest();
         with.HostName("localhost");
         with.Query("from", utcNow.ToString("o"));
-        with.Query("to", (utcNow+TimeSpan.FromDays(1)).ToString("o"));
+        with.Query("to", utcOneDay.ToString("o"));
       });
 
       // Assert
       Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-      profileRepository.Verify(pr => pr.GetCustomProfileSet(It.Is<DateTime>(dt => dt == utcNow && dt.Kind == utcNow.Kind), 
-                                                            It.Is<DateTime>(dt => dt == utcNow+TimeSpan.FromDays(1) && dt.Kind == utcNow.Kind)));
+      profileRepository.Verify(pr => pr.GetMonthProfileSet(It.Is<DateTime>(dt => dt == utcNow.AddHours(-12) && dt.Kind == utcNow.Kind),
+                                                           It.Is<DateTime>(dt => dt == utcNow && dt.Kind == utcNow.Kind), 
+                                                           It.Is<DateTime>(dt => dt == utcOneDay && dt.Kind == utcNow.Kind)));
     }
 
     [Test]
@@ -126,34 +128,35 @@ namespace PowerView.Service.Test.Modules
       var utcNow = DateTime.UtcNow;
       var t1 = utcNow-TimeSpan.FromDays(2);
       var t2 = utcNow-TimeSpan.FromDays(1);
-      var label1Values = new Dictionary<ObisCode, ICollection<TimeRegisterValue>> {
+      var label1Values = new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> {
         {"8.0.1.0.0.255", new [] { new TimeRegisterValue("1", t1, 2, 2, Unit.CubicMetre), new TimeRegisterValue("1", t2, 3, 2, Unit.CubicMetre) } }
       };
-      var label2Values = new Dictionary<ObisCode, ICollection<TimeRegisterValue>> {
+      var label2Values = new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> {
         {"1.0.1.8.0.255", new [] { new TimeRegisterValue("1", t1, 2, 6, Unit.WattHour), new TimeRegisterValue("1", t2, 3, 6, Unit.WattHour) } },
         {"1.0.2.8.0.255", new [] { new TimeRegisterValue("1", t1, 4, 6, Unit.WattHour) } }
       };
-      var dps = new LabelProfileSet(t1, new[] { new LabelProfile("Label1", t1, label1Values), new LabelProfile("Label2", t1, label2Values) });
-      profileRepository.Setup(pr => pr.GetCustomProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(dps);
+      var lss = new LabelSeriesSet(t1, utcNow, new[] { new LabelSeries("Label1", label1Values), new LabelSeries("Label2", label2Values) });
+      profileRepository.Setup(pr => pr.GetMonthProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(lss);
 
       // Act
       var response = browser.Get(DiffRoute, with =>
       {
         with.HttpRequest();
         with.HostName("localhost");
-        with.Query("from", (utcNow-TimeSpan.FromDays(10)).ToString("o"));
+        with.Query("from", t1.ToString("o"));
         with.Query("to", utcNow.ToString("o"));
       });
 
       // Assert
       Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
       var json = response.Body.DeserializeJson<DiffRoot>();
-      Assert.That(json.from, Is.EqualTo((utcNow-TimeSpan.FromDays(10)).ToString("o")));
+      Assert.That(json.from, Is.EqualTo(t1.ToString("o")));
       Assert.That(json.to, Is.EqualTo(utcNow.ToString("o")));
 
+      var timeDivider = DateTimeResolutionDivider.GetResolutionDivider("1-days");
       Assert.That(json.registers, Has.Length.EqualTo(2));
-      AssertDiffRegister("Label1", ObisCode.ColdWaterVolume1Period, t1, t2, 100, "m3", json.registers.First());
-      AssertDiffRegister("Label2", ObisCode.ElectrActiveEnergyA14Period, t1, t2, 1000, "kWh", json.registers.Last());
+      AssertDiffRegister("Label1", ObisCode.ColdWaterVolume1Period, timeDivider(t1), timeDivider(t2), 100, "m3", json.registers.First());
+      AssertDiffRegister("Label2", ObisCode.ElectrActiveEnergyA14Period, timeDivider(t1), timeDivider(t2), 1000, "kWh", json.registers.Last());
     }
 
     private static void AssertDiffRegister(string label, ObisCode obisCode, DateTime from, DateTime to, double value, string unit, DiffRegister actual)

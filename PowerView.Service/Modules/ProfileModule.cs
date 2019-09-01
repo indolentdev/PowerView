@@ -44,20 +44,20 @@ namespace PowerView.Service.Modules
 
     private dynamic GetDayProfile(dynamic param)
     {
-      return GetProfile2(profileRepository.GetDayProfileSet, "day");
+      return GetProfile(profileRepository.GetDayProfileSet, "day");
     }
 
     private dynamic GetMonthProfile(dynamic param)
     {
-      return GetProfile2(profileRepository.GetMonthProfileSet, "month");
+      return GetProfile(profileRepository.GetMonthProfileSet, "month");
     }
 
     private dynamic GetYearProfile(dynamic param)
     {
-      return GetProfile2(profileRepository.GetYearProfileSet, "year");
+      return GetProfile(profileRepository.GetYearProfileSet, "year");
     }
 
-    private dynamic GetProfile(Func<DateTime, LabelProfileSet> getProfileSet, string period)
+    private dynamic GetProfile(Func<DateTime, DateTime, DateTime, LabelSeriesSet> getLabelSeriesSet, string period)
     {
       if (!Request.Query.page.HasValue)
       {
@@ -83,11 +83,12 @@ namespace PowerView.Service.Modules
         return HttpStatusCode.BadRequest;
       }
 
-      var viewSet = GetProfileViewSet(profileGraphs, getProfileSet, start, period);
+      var viewSet = GetProfileViewSet(profileGraphs, getLabelSeriesSet, start, period);
 
-      var r = new { 
-        Page=page,
-        StartTime=DateTimeMapper.Map(start),
+      var r = new
+      {
+        Page = page,
+        StartTime = DateTimeMapper.Map(start),
         Graphs = viewSet.SerieSets.Select(GetGraph).ToList(),
         PeriodTotals = viewSet.PeriodTotals.Select(GetPeriodTotal).ToList()
       };
@@ -95,46 +96,7 @@ namespace PowerView.Service.Modules
       return Response.AsJson(r);
     }
 
-    private dynamic GetProfile2(Func<DateTime, DateTime, DateTime, LabelSeriesSet> getLabelSeriesSet, string period)
-    {
-      if (!Request.Query.page.HasValue)
-      {
-        return Response.AsJson("Query parameter page is misisng.", HttpStatusCode.BadRequest);
-      }
-      if (!Request.Query.start.HasValue)
-      {
-        return Response.AsJson("Query parameter start is missing.", HttpStatusCode.BadRequest);
-      }
-      string page = Request.Query.page;
-      string startString = Request.Query.start;
-      DateTime start;
-      if (!DateTime.TryParse(startString, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out start) ||
-        start.Kind != DateTimeKind.Utc)
-      {
-        var msg = string.Format(CultureInfo.InvariantCulture, "Unable to parse UTC start date time string:{0}", startString);
-        return Response.AsJson(msg, HttpStatusCode.BadRequest);
-      }
-
-      var profileGraphs = profileGraphRepository.GetProfileGraphs(period, page);
-      if (profileGraphs.Count == 0 || profileGraphs.Any(x => x.SerieNames.Count == 0))
-      {
-        return HttpStatusCode.BadRequest;
-      }
-
-      var viewSet = GetProfileViewSet2(profileGraphs, getLabelSeriesSet, start, period);
-
-      var r = new
-      {
-        Page = page,
-        StartTime = DateTimeMapper.Map(start),
-        Graphs = viewSet.SerieSets.Select(GetGraph2).ToList(),
-        PeriodTotals = viewSet.PeriodTotals.Select(GetPeriodTotal).ToList()
-      };
-
-      return Response.AsJson(r);
-    }
-
-    private ProfileViewSet GetProfileViewSet2(ICollection<ProfileGraph> profileGraphs, Func<DateTime, DateTime, DateTime, LabelSeriesSet> getLabelSeriesSet, DateTime start, string period)
+    private ProfileViewSet GetProfileViewSet(ICollection<ProfileGraph> profileGraphs, Func<DateTime, DateTime, DateTime, LabelSeriesSet> getLabelSeriesSet, DateTime start, string period)
     {
       // Distinct intervals
       var distinctIntervals = profileGraphs.GroupBy(x => x.Interval).ToList();
@@ -174,7 +136,7 @@ namespace PowerView.Service.Modules
       return viewSet;
     }
 
-    private object GetGraph2(SeriesSet serieSet)
+    private object GetGraph(SeriesSet serieSet)
     {
       var series = serieSet.Series.Select(x => new {
         x.SeriesName.Label,
@@ -192,43 +154,6 @@ namespace PowerView.Service.Modules
         Categories = serieSet.Categories.Select(x => DateTimeMapper.Map(x)).ToList(),
         Series = series.OrderBy(x => x.Label + x.ObisCode).ToList()
       };
-    }
-
-    private ProfileViewSet GetProfileViewSet(ICollection<ProfileGraph> profileGraphs, Func<DateTime, LabelProfileSet> getProfileSet, DateTime start, string period)
-    {
-      var sw = new System.Diagnostics.Stopwatch();
-      sw.Start();
-      var profileSet = getProfileSet(start);
-      sw.Stop();
-      if (log.IsDebugEnabled) log.DebugFormat("GetProfile timing - GetProfile: {0}ms", sw.ElapsedMilliseconds);
-
-      var interval = period == "month" ? "1-days" : (period == "year" ? "1-months" : "5-minutes");
-      if (interval != string.Empty)
-      {
-        sw.Restart();
-        profileSet.GenerateFromTemplates(templateConfigProvider.LabelObisCodeTemplates, interval);
-        sw.Stop();
-        if (log.IsDebugEnabled) log.DebugFormat("GetProfile timing - GenerateFromTemplates: {0}ms", sw.ElapsedMilliseconds);
-      }
-
-      sw.Restart();
-      var viewSet = profileSet.GetProfileViewSet(profileGraphs);
-      sw.Stop();
-      if (log.IsDebugEnabled) log.DebugFormat("GetProfile timing - GetProfileViewSet: {0}ms", sw.ElapsedMilliseconds);
-
-      return viewSet;
-    }
-
-    private object GetGraph(SeriesSet serieSet)
-    {
-      var series = serieSet.Series.Select(x => new { x.SeriesName.Label, ObisCode=x.SeriesName.ObisCode.ToString(),
-        Unit=ValueAndUnitMapper.Map(x.Unit), SerieType=serieMapper.MapToSerieType(x.SeriesName.ObisCode),
-        SerieYAxis=serieMapper.MapToSerieYAxis(x.SeriesName.ObisCode),
-        SerieColor=serieRepository.GetColorCached(x.SeriesName.Label, x.SeriesName.ObisCode),
-        Values=x.Values.Select(value => ValueAndUnitMapper.Map(value, x.Unit)).ToList() } );
-     
-      return new { Title = serieSet.Title, Categories = serieSet.Categories.Select(x => DateTimeMapper.Map(x)).ToList(), 
-        Series = series.OrderBy(x => x.Label+x.ObisCode).ToList() };
     }
 
     private object GetPeriodTotal(NamedValue maxValue)
