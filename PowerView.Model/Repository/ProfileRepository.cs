@@ -25,6 +25,7 @@ namespace PowerView.Model.Repository
 
     public LabelSeriesSet GetMonthProfileSet(DateTime preStart, DateTime start, DateTime end)
     {
+      end = end.AddHours(1); // Also compensate for daylight saving
       return GetLabelSeriesSet(preStart, start, end, "DayReading", "DayRegister");
     }
 
