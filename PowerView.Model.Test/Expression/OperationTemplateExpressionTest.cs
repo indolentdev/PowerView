@@ -137,10 +137,10 @@ namespace PowerView.Model.Test.Expression
       const string op = "+";
       var target = new OperationTemplateExpression(templateExpressionLeft.Object, op, templateExpressionRight.Object);
       var start = new DateTime(2017, 6, 7, 8, 9, 10, DateTimeKind.Utc);
-      var labelSeriesSet = new LabelSeriesSet(start, start.AddMonths(11), new LabelSeries[0]);
+      var labelSeriesSet = new LabelSeriesSet<NormalizedTimeRegisterValue>(start, start.AddMonths(11), new LabelSeries<NormalizedTimeRegisterValue>[0]);
       var valueExpressionSet = new Mock<IValueExpressionSet>();
-      templateExpressionLeft.Setup(te => te.GetValueExpressionSet(It.IsAny<LabelSeriesSet>())).Returns(valueExpressionSet.Object);
-      templateExpressionRight.Setup(te => te.GetValueExpressionSet(It.IsAny<LabelSeriesSet>())).Returns(valueExpressionSet.Object);
+      templateExpressionLeft.Setup(te => te.GetValueExpressionSet(It.IsAny<LabelSeriesSet<NormalizedTimeRegisterValue>>())).Returns(valueExpressionSet.Object);
+      templateExpressionRight.Setup(te => te.GetValueExpressionSet(It.IsAny<LabelSeriesSet<NormalizedTimeRegisterValue>>())).Returns(valueExpressionSet.Object);
 
       // Act
       var valExprSet = target.GetValueExpressionSet(labelSeriesSet);
@@ -160,10 +160,10 @@ namespace PowerView.Model.Test.Expression
       const string op = "-";
       var target = new OperationTemplateExpression(templateExpressionLeft.Object, op, templateExpressionRight.Object);
       var start = new DateTime(2017, 6, 7, 8, 9, 10, DateTimeKind.Utc);
-      var labelSeriesSet = new LabelSeriesSet(start, start.AddMonths(11), new LabelSeries[0]);
+      var labelSeriesSet = new LabelSeriesSet<NormalizedTimeRegisterValue>(start, start.AddMonths(11), new LabelSeries<NormalizedTimeRegisterValue>[0]);
       var valueExpressionSet = new Mock<IValueExpressionSet>();
-      templateExpressionLeft.Setup(te => te.GetValueExpressionSet(It.IsAny<LabelSeriesSet>())).Returns(valueExpressionSet.Object);
-      templateExpressionRight.Setup(te => te.GetValueExpressionSet(It.IsAny<LabelSeriesSet>())).Returns(valueExpressionSet.Object);
+      templateExpressionLeft.Setup(te => te.GetValueExpressionSet(It.IsAny<LabelSeriesSet<NormalizedTimeRegisterValue>>())).Returns(valueExpressionSet.Object);
+      templateExpressionRight.Setup(te => te.GetValueExpressionSet(It.IsAny<LabelSeriesSet<NormalizedTimeRegisterValue>>())).Returns(valueExpressionSet.Object);
 
       // Act
       var valExprSet = target.GetValueExpressionSet(labelSeriesSet);

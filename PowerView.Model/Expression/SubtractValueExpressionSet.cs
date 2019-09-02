@@ -39,19 +39,24 @@ namespace PowerView.Model.Expression
     }
 
 
-    public ICollection<TimeRegisterValue> Evaluate2()
+    public ICollection<NormalizedTimeRegisterValue> Evaluate2()
     {
       var a1Values = minuend.Evaluate2();
       var a2Values = subtrahend.Evaluate2();
 
-      var subtractedValues = a1Values
+      var addedValues = a1Values
         .Join(a2Values,
-              x => new { x.Timestamp, x.UnitValue.Unit },
-              x => new { x.Timestamp, x.UnitValue.Unit },
-              (a1, a2) => new TimeRegisterValue(TimeRegisterValue.DummySerialNumber, a1.Timestamp, a1.UnitValue - a2.UnitValue))
+              x => new { x.NormalizedTimestamp, x.TimeRegisterValue.UnitValue.Unit },
+              x => new { x.NormalizedTimestamp, x.TimeRegisterValue.UnitValue.Unit },
+              (a1, a2) => new NormalizedTimeRegisterValue(
+                new TimeRegisterValue(TimeRegisterValue.DummySerialNumber,
+                                ValueExpressionSetHelper.GetMeanTimestamp(a1.TimeRegisterValue, a2.TimeRegisterValue),
+                                a1.TimeRegisterValue.UnitValue.Value - a2.TimeRegisterValue.UnitValue.Value,
+                                a1.TimeRegisterValue.UnitValue.Unit),
+                a1.NormalizedTimestamp))
         .ToList();
 
-      return subtractedValues;
+      return addedValues;
     }
 
     #endregion

@@ -59,7 +59,7 @@ namespace PowerView.Service.Test.Modules
       StubProfileGraph(profileGraph);
       var utcNow = DateTime.UtcNow;
       profileRepository.Setup(dpr => dpr.GetDayProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
-        .Returns(new LabelSeriesSet(utcNow, utcNow.AddDays(1), new LabelSeries[0]));
+        .Returns(new LabelSeriesSet<TimeRegisterValue>(utcNow, utcNow.AddDays(1), new LabelSeries<TimeRegisterValue>[0]));
 
       // Act
       browser.Get("/api/profile/day", with =>
@@ -102,7 +102,7 @@ namespace PowerView.Service.Test.Modules
       StubProfileGraph();
       var utcNow = DateTime.UtcNow;
       profileRepository.Setup(dpr => dpr.GetDayProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
-        .Returns(new LabelSeriesSet(utcNow, utcNow.AddDays(1), new LabelSeries[0]));
+        .Returns(new LabelSeriesSet<TimeRegisterValue>(utcNow, utcNow.AddDays(1), new LabelSeries<TimeRegisterValue>[0]));
 
       // Act
       browser.Get("/api/profile/day", with => 
@@ -176,7 +176,7 @@ namespace PowerView.Service.Test.Modules
         {"6.0.2.0.0.255", new [] { new TimeRegisterValue("1", t0, 2, 0, Unit.CubicMetre), new TimeRegisterValue("1", t1, 3, 0, Unit.CubicMetre), new TimeRegisterValue("1", t2, 4, 0, Unit.CubicMetre) } },
         {"6.0.9.0.0.255", new [] { new TimeRegisterValue("1", t1, 4, 0, Unit.CubicMetrePrHour), new TimeRegisterValue("1", t2, 5, 0, Unit.CubicMetrePrHour) } }
       };
-      var lss = new LabelSeriesSet(now, now.AddDays(1), new [] {new LabelSeries("Label1", label1Values)} );
+      var lss = new LabelSeriesSet<TimeRegisterValue>(now, now.AddDays(1), new [] {new LabelSeries<TimeRegisterValue>("Label1", label1Values)} );
       profileRepository.Setup(dpr => dpr.GetDayProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(lss);
 
       // Act
@@ -229,7 +229,7 @@ namespace PowerView.Service.Test.Modules
       StubProfileGraph(profileGraph);
       var utcNow = DateTime.UtcNow;
       profileRepository.Setup(dpr => dpr.GetMonthProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
-        .Returns(new LabelSeriesSet(utcNow, utcNow.AddDays(1), new LabelSeries[0]));
+        .Returns(new LabelSeriesSet<TimeRegisterValue>(utcNow, utcNow.AddDays(1), new LabelSeries<TimeRegisterValue>[0]));
 
       // Act
       browser.Get("/api/profile/month", with =>
@@ -273,7 +273,7 @@ namespace PowerView.Service.Test.Modules
       StubProfileGraph(profileGraph);
       var utcNow = DateTime.UtcNow;
       profileRepository.Setup(dpr => dpr.GetMonthProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
-        .Returns(new LabelSeriesSet(utcNow, utcNow.AddDays(1), new LabelSeries[0]));
+        .Returns(new LabelSeriesSet<TimeRegisterValue>(utcNow, utcNow.AddDays(1), new LabelSeries<TimeRegisterValue>[0]));
 
       // Act
       browser.Get("/api/profile/month", with => 
@@ -347,7 +347,7 @@ namespace PowerView.Service.Test.Modules
       var label0Values = new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> {
         {"1.0.2.8.0.255", new [] { new TimeRegisterValue("1", t1, 4, 6, Unit.WattHour), new TimeRegisterValue("1", t3, 6, 6, Unit.WattHour) } }
       };
-      var lss = new LabelSeriesSet(now, now.AddMonths(1), new [] {new LabelSeries("Label1", label1Values), new LabelSeries("Label0", label0Values)} );
+      var lss = new LabelSeriesSet<TimeRegisterValue>(now, now.AddMonths(1), new [] {new LabelSeries<TimeRegisterValue>("Label1", label1Values), new LabelSeries<TimeRegisterValue>("Label0", label0Values)} );
       profileRepository.Setup(dpr => dpr.GetMonthProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(lss);
 
       // Act
@@ -406,7 +406,7 @@ namespace PowerView.Service.Test.Modules
       StubProfileGraph(profileGraph);
       var utcNow = DateTime.UtcNow;
       profileRepository.Setup(dpr => dpr.GetYearProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
-        .Returns(new LabelSeriesSet(utcNow, utcNow.AddDays(1), new LabelSeries[0]));
+        .Returns(new LabelSeriesSet<TimeRegisterValue>(utcNow, utcNow.AddDays(1), new LabelSeries<TimeRegisterValue>[0]));
 
       // Act
       browser.Get("/api/profile/year", with =>
@@ -450,7 +450,7 @@ namespace PowerView.Service.Test.Modules
       StubProfileGraph(profileGraph);
       var utcNow = DateTime.UtcNow;
       profileRepository.Setup(dpr => dpr.GetYearProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
-        .Returns(new LabelSeriesSet(utcNow, utcNow.AddMonths(12), new LabelSeries[0]));
+        .Returns(new LabelSeriesSet<TimeRegisterValue>(utcNow, utcNow.AddMonths(12), new LabelSeries<TimeRegisterValue>[0]));
 
       // Act
       browser.Get("/api/profile/year", with => 
@@ -522,7 +522,7 @@ namespace PowerView.Service.Test.Modules
       var label2Values = new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> {
         {"1.0.2.8.0.255", new [] { new TimeRegisterValue("1", t1, 4, 6, Unit.WattHour), new TimeRegisterValue("1", t3, 6, 6, Unit.WattHour) } }
       };
-      var lss = new LabelSeriesSet(t1, t1.AddMonths(12), new [] {new LabelSeries("Label1", label1Values), new LabelSeries("Label0", label2Values)} );
+      var lss = new LabelSeriesSet<TimeRegisterValue>(t1, t1.AddMonths(12), new [] {new LabelSeries<TimeRegisterValue>("Label1", label1Values), new LabelSeries<TimeRegisterValue>("Label0", label2Values)} );
       profileRepository.Setup(dpr => dpr.GetYearProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(lss);
 
       // Act
@@ -592,12 +592,12 @@ namespace PowerView.Service.Test.Modules
 
     private static string ToStringDay(DateTime dt)
     {
-      return dt.ToString("yyyy-MM-ddT12:00Z", CultureInfo.InvariantCulture);
+      return dt.ToString("yyyy-MM-ddTHH:mmZ", CultureInfo.InvariantCulture);
     }
 
     private static string ToStringMonth(DateTime dt)
     {
-      return dt.ToString("yyyy-MM-01T12:00Z", CultureInfo.InvariantCulture);
+      return dt.ToString("yyyy-MM-ddTHH:mmZ", CultureInfo.InvariantCulture);
     }
 
     private static void AssertSerieSet(ViewModelProfileGraph expected, ViewModelProfileGraph actual)

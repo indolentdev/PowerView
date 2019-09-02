@@ -54,7 +54,7 @@ namespace PowerView.Model.Expression
       }
     }
 
-    public IValueExpressionSet GetValueExpressionSet(LabelSeriesSet labelSeriesSet)
+    public IValueExpressionSet GetValueExpressionSet(LabelSeriesSet<NormalizedTimeRegisterValue> labelSeriesSet)
     {
       var valueExpressionSetLeft = Left.GetValueExpressionSet(labelSeriesSet);
       var valueExpressionSetRight = Right.GetValueExpressionSet(labelSeriesSet);

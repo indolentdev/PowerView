@@ -2,7 +2,7 @@ using System;
 
 namespace PowerView.Model
 {
-  public struct TimeRegisterValue : IEquatable<TimeRegisterValue>
+  public struct TimeRegisterValue : IEquatable<TimeRegisterValue>, ISeries
   {
     public const string DummySerialNumber = "0";
 
@@ -13,6 +13,8 @@ namespace PowerView.Model
     public string SerialNumber { get { return serialNumber; } }
     public DateTime Timestamp { get { return timestamp; } }
     public UnitValue UnitValue { get { return unitValue; } }
+
+    public DateTime OrderProperty { get { return Timestamp; } }
 
     public TimeRegisterValue(string serialNumber, DateTime timestamp, int value, short scale, Unit unit)
       : this(serialNumber, timestamp, new UnitValue(value, scale, unit))
@@ -33,11 +35,11 @@ namespace PowerView.Model
       this.unitValue = unitValue;
     }
 
-    public TimeRegisterValue Normalize(Func<DateTime, DateTime> timeDivider)
+    public NormalizedTimeRegisterValue Normalize(Func<DateTime, DateTime> timeDivider)
     {
       if (timeDivider == null) throw new ArgumentNullException("timeDivider");
 
-      return new TimeRegisterValue(serialNumber, timeDivider(Timestamp), unitValue);
+      return new NormalizedTimeRegisterValue(this, timeDivider(Timestamp));
     }
 
     public TimeRegisterValue SubtractValue(TimeRegisterValue baseValue)

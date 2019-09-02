@@ -75,7 +75,7 @@ namespace PowerView.Model.Expression
       return new ValueExpressionSet(coarseTimeRegisterValues);
     }
 
-    public IValueExpressionSet GetValueExpressionSet(LabelSeriesSet labelSeriesSet)
+    public IValueExpressionSet GetValueExpressionSet(LabelSeriesSet<NormalizedTimeRegisterValue> labelSeriesSet)
     {
       var labelSeries = labelSeriesSet.FirstOrDefault(ls => string.Equals(ls.Label, Label, StringComparison.InvariantCultureIgnoreCase));
       if (labelSeries == null)

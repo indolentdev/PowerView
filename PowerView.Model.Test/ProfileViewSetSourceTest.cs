@@ -132,7 +132,7 @@ namespace PowerView.Model.Test
       return intervalGroup;
     }
 
-    private static LabelSeriesSet GetLabelSeriesSet(DateTime? firstTimestamp, int? fromFirstCount, DateTime? start, int? fromStartCount, TimeSpan? interval, int? baseValue, IEnumerable<ProfileGraph> profileGraphs)
+    private static LabelSeriesSet<TimeRegisterValue> GetLabelSeriesSet(DateTime? firstTimestamp, int? fromFirstCount, DateTime? start, int? fromStartCount, TimeSpan? interval, int? baseValue, IEnumerable<ProfileGraph> profileGraphs)
     {
       if (firstTimestamp == null) firstTimestamp = new DateTime(2019, 8, 25, 23, 5, 0, DateTimeKind.Utc);
       if (fromFirstCount == null) fromFirstCount = 25;
@@ -149,11 +149,11 @@ namespace PowerView.Model.Test
         .SelectMany(x => x.SerieNames)
         .Distinct()
         .GroupBy(x => x.Label, x => x.ObisCode)
-        .Select(x => new LabelSeries(x.Key, GetTimeRegisterValues(x, firstTimestamp.Value, interval.Value, fromFirstCount.Value, baseValue.Value)))
+        .Select(x => new LabelSeries<TimeRegisterValue>(x.Key, GetTimeRegisterValues(x, firstTimestamp.Value, interval.Value, fromFirstCount.Value, baseValue.Value)))
         .Where(x => x.Any())
         .ToList();
 
-      return new LabelSeriesSet(start.Value, start.Value + TimeSpan.FromMilliseconds(interval.Value.TotalMilliseconds * fromStartCount.Value), labelSeries);
+      return new LabelSeriesSet<TimeRegisterValue>(start.Value, start.Value + TimeSpan.FromMilliseconds(interval.Value.TotalMilliseconds * fromStartCount.Value), labelSeries);
     }
 
     private static IDictionary<ObisCode, IEnumerable<TimeRegisterValue>> GetTimeRegisterValues(IEnumerable<ObisCode> obisCodes, DateTime firstTimestamp, TimeSpan interval, int count, int baseValue)

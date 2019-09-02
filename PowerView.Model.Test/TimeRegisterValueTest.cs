@@ -31,6 +31,7 @@ namespace PowerView.Model.Test
       Assert.That(target.Timestamp, Is.EqualTo(dt));
       Assert.That(target.UnitValue.Value, Is.EqualTo(10000));
       Assert.That(target.UnitValue.Unit, Is.EqualTo(Unit.WattHour));
+      Assert.That(target.OrderProperty, Is.EqualTo(dt));
     }
 
     [Test]
@@ -52,12 +53,11 @@ namespace PowerView.Model.Test
       var timeDivider = DateTimeResolutionDivider.GetResolutionDivider("60-minutes");
 
       // Act
-      var target2 = target.Normalize(timeDivider);
+      var normalizedTimeRegisterValue = target.Normalize(timeDivider);
 
       // Assert
-      Assert.That(target2.SerialNumber, Is.EqualTo(target.SerialNumber));
-      Assert.That(target2.Timestamp, Is.EqualTo(timeDivider(target.Timestamp)));
-      Assert.That(target2.UnitValue, Is.EqualTo(target.UnitValue));
+      Assert.That(normalizedTimeRegisterValue.TimeRegisterValue, Is.EqualTo(target));
+      Assert.That(normalizedTimeRegisterValue.NormalizedTimestamp, Is.EqualTo(timeDivider(target.Timestamp)));
     }
 
     [Test]

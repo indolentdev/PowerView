@@ -9,6 +9,6 @@ namespace PowerView.Model.Expression
 
     IValueExpressionSet GetValueExpressionSet(LabelProfileSet labelProfileSet, Func<DateTime, DateTime> timeDivider);
 
-    IValueExpressionSet GetValueExpressionSet(LabelSeriesSet labelSeriesSet);
+    IValueExpressionSet GetValueExpressionSet(LabelSeriesSet<NormalizedTimeRegisterValue> labelSeriesSet);
   }
 }
