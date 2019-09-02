@@ -18,10 +18,10 @@ namespace PowerView.Model.Test
       };
 
       // Act & Assert
-      Assert.That(() => new LabelSeries(null, timeRegisterValues), Throws.TypeOf<ArgumentOutOfRangeException>());
-      Assert.That(() => new LabelSeries(string.Empty, timeRegisterValues), Throws.TypeOf<ArgumentOutOfRangeException>());
-      Assert.That(() => new LabelSeries(label, null), Throws.TypeOf<ArgumentNullException>());
-      Assert.That(() => new LabelSeries(label, 
+      Assert.That(() => new LabelSeries<TimeRegisterValue>(null, timeRegisterValues), Throws.TypeOf<ArgumentOutOfRangeException>());
+      Assert.That(() => new LabelSeries<TimeRegisterValue>(string.Empty, timeRegisterValues), Throws.TypeOf<ArgumentOutOfRangeException>());
+      Assert.That(() => new LabelSeries<TimeRegisterValue>(label, null), Throws.TypeOf<ArgumentNullException>());
+      Assert.That(() => new LabelSeries<TimeRegisterValue>(label, 
         new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { "1.2.3.4.5.6", null } }), Throws.TypeOf<ArgumentOutOfRangeException>());
     }
 
@@ -35,7 +35,7 @@ namespace PowerView.Model.Test
       };
 
       // Act
-      var target = new LabelSeries(label, timeRegisterValues);
+      var target = new LabelSeries<TimeRegisterValue>(label, timeRegisterValues);
 
       // Assert
       Assert.That(target.Label, Is.EqualTo(label));
@@ -49,7 +49,7 @@ namespace PowerView.Model.Test
       var timeRegisterValues = new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> {
         { "1.2.3.4.5.6", new [] { new TimeRegisterValue() } }
       };
-      var target = new LabelSeries(label, timeRegisterValues);
+      var target = new LabelSeries<TimeRegisterValue>(label, timeRegisterValues);
 
       // Act
       var obisCodes = target.ToList();
@@ -70,7 +70,7 @@ namespace PowerView.Model.Test
       var timeRegisterValues = new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> {
         { "1.2.3.4.5.6", new [] { sv1, sv2 } }
       };
-      var target = new LabelSeries("label", timeRegisterValues);
+      var target = new LabelSeries<TimeRegisterValue>("label", timeRegisterValues);
 
       // Act
       var containsObisCode = target.ContainsObisCode(obisCode);
@@ -86,7 +86,7 @@ namespace PowerView.Model.Test
       const string label = "label";
       ObisCode obisCode = "1.2.3.4.5.6";
       var timeRegisterValues = new[] { new TimeRegisterValue("sn1", DateTime.UtcNow + TimeSpan.FromHours(1), 11, Unit.WattHour), new TimeRegisterValue("sn1", DateTime.UtcNow, 11, Unit.WattHour) };
-      var target = new LabelSeries(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, timeRegisterValues } });
+      var target = new LabelSeries<TimeRegisterValue>(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, timeRegisterValues } });
 
       // Act
       var timeRegisterValuesIndexer = target[obisCode];
@@ -102,7 +102,7 @@ namespace PowerView.Model.Test
       const string label = "label";
       ObisCode obisCode = "1.2.3.4.5.6";
       var timeRegisterValues = new[] { new TimeRegisterValue("sn1", DateTime.UtcNow, 11, Unit.WattHour) };
-      var target = new LabelSeries(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, timeRegisterValues } });
+      var target = new LabelSeries<TimeRegisterValue>(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, timeRegisterValues } });
 
       // Act & Assert
       var timeRegisterValuesIndexer = target[obisCode];
@@ -117,7 +117,7 @@ namespace PowerView.Model.Test
       // Arrange
       const string label = "label";
       ObisCode obisCode = "1.2.3.4.5.6";
-      var target = new LabelSeries(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>>());
+      var target = new LabelSeries<TimeRegisterValue>(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>>());
 
       // Act
       var timeRegisterValuesIndexer = target[obisCode];
@@ -127,64 +127,44 @@ namespace PowerView.Model.Test
     }
 
     [Test]
-    public void GenerateSeriesFromCumulativeNotCumulative()
+    public void GetCumulativeSeries_Empty()
     {
       // Arrange
       const string label = "label";
-      var obisCode = ObisCode.ElectrActualPowerP14;
-      var utcNow = DateTime.UtcNow;
-      var timeRegisterValues = new[] { new TimeRegisterValue("sn1", utcNow + TimeSpan.FromHours(1), 14, Unit.Watt), new TimeRegisterValue("sn1", utcNow, 11, Unit.Watt) };
-      var target = new LabelSeries(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, timeRegisterValues } });
+      var target = new LabelSeries<TimeRegisterValue>(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>>());
 
       // Act
-      target.GenerateSeriesFromCumulative();
+      var cumulatives = target.GetCumulativeSeries();
 
       // Assert
-      Assert.That(target, Is.EquivalentTo(new ObisCode[] { obisCode }));
+      Assert.That(cumulatives, Is.Empty);
     }
 
     [Test]
-    public void GenerateSeriesFromCumulative()
+    public void GetCumulativeSeries()
     {
       // Arrange
       const string label = "label";
-      var obisCode = ObisCode.ElectrActiveEnergyA14;
-      var utcNow = DateTime.UtcNow;
-      var timeRegisterValues = new[] { new TimeRegisterValue("sn1", utcNow + TimeSpan.FromHours(1), 14, Unit.WattHour), new TimeRegisterValue("sn1", utcNow, 11, Unit.WattHour) };
-      var target = new LabelSeries(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, timeRegisterValues } });
+      var obisCode = ObisCode.ColdWaterVolume1;
+      var target = new LabelSeries<TimeRegisterValue>(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> {
+        { obisCode, new [] { new TimeRegisterValue() } } });
 
       // Act
-      target.GenerateSeriesFromCumulative();
 
       // Assert
-      Assert.That(target, Is.EquivalentTo(new ObisCode[] { obisCode, ObisCode.ElectrActiveEnergyA14Delta, ObisCode.ElectrActiveEnergyA14Period, ObisCode.ElectrActualPowerP14Average }));
-    }
-
-    [Test]
-    [TestCase("1.0.1.8.0.255", "1.67.1.7.0.255")]
-    [TestCase("1.0.2.8.0.255", "1.67.2.7.0.255")]
-    [TestCase("8.0.1.0.0.255", "8.67.2.0.0.255")]
-    [TestCase("6.0.1.0.0.255", "6.67.8.0.0.255")]
-    [TestCase("6.0.2.0.0.255", "6.67.9.0.0.255")]
-    public void GenerateSeriesFromCumulativeAverages(string obisCode, string expectedAverage)
-    {
-      const string label = "label";
-      var utcNow = DateTime.UtcNow;
-      var timeRegisterValues = new[] { new TimeRegisterValue("sn1", utcNow + TimeSpan.FromHours(1), 14, Unit.WattHour), new TimeRegisterValue("sn1", utcNow, 11, Unit.WattHour) };
-      var target = new LabelSeries(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, timeRegisterValues } });
-
-      // Act
-      target.GenerateSeriesFromCumulative();
+      var cumulatives = target.GetCumulativeSeries();
 
       // Assert
-      Assert.That(target, Contains.Item((ObisCode)expectedAverage));
+      Assert.That(cumulatives.Count, Is.EqualTo(1));
+      Assert.That(cumulatives.ContainsKey(obisCode));
+      Assert.That(cumulatives[obisCode], Is.EqualTo(new[] { new TimeRegisterValue() }));
     }
 
     [Test]
     public void NormalizeThrows()
     {
       // Arrange
-      var target = new LabelSeries("label", new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>>());
+      var target = new LabelSeries<TimeRegisterValue>("label", new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>>());
 
       // Act & Assert
       Assert.That(() => target.Normalize(null), Throws.ArgumentNullException);
@@ -205,21 +185,45 @@ namespace PowerView.Model.Test
         new TimeRegisterValue("sn1", baseTime + TimeSpan.FromMinutes(11), 13, Unit.WattHour),
         new TimeRegisterValue("sn1", baseTime + TimeSpan.FromMinutes(16), 14, Unit.WattHour),
         new TimeRegisterValue("sn1", baseTime + TimeSpan.FromMinutes(19), 15, Unit.WattHour),
-        new TimeRegisterValue("sn1", baseTime + TimeSpan.FromMinutes(25), 16, Unit.WattHour),
+        new TimeRegisterValue("sn1", baseTime + TimeSpan.FromMinutes(25), 16, Unit.WattHour)
       };
-      var target = new LabelSeries(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, timeRegisterValues } });
+      var target = new LabelSeries<TimeRegisterValue>(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, timeRegisterValues } });
       var timeDivider = DateTimeResolutionDivider.GetResolutionDivider("10-minutes");
 
       // Act
-      var target2 = target.Normalize(timeDivider);
+      var normalized = target.Normalize(timeDivider);
 
       // Assert
-      Assert.That(target2, Is.EqualTo(target));
-      Assert.That(target2[obisCode], Is.EqualTo(new TimeRegisterValue[] 
+      Assert.That(normalized, Is.EqualTo(target)); // Asserts IEnumerable.
+      Assert.That(normalized[obisCode], Is.EqualTo(new NormalizedTimeRegisterValue[] 
       { 
         timeRegisterValues[0].Normalize(timeDivider), timeRegisterValues[2].Normalize(timeDivider), timeRegisterValues[4].Normalize(timeDivider) 
       }));
     }
+
+    [Test]
+    public void Add()
+    {
+      // Arrange
+      const string label = "label";
+      var target = new LabelSeries<TimeRegisterValue>(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>>());
+
+      ObisCode obisCode = "1.2.3.4.5.6";
+      var baseTime = new DateTime(2019, 7, 30, 18, 2, 12, DateTimeKind.Utc);
+      var timeRegisterValues = new[]
+      {
+        new TimeRegisterValue("sn1", baseTime, 11, Unit.WattHour)
+      };
+      var dict = new Dictionary<ObisCode, IList<TimeRegisterValue>> { { obisCode, timeRegisterValues } };
+
+      // Act
+      target.Add(dict);
+
+      // Assert
+      Assert.That(target, Is.EqualTo(new [] { obisCode }));
+      Assert.That(target[obisCode], Is.EqualTo(timeRegisterValues));
+    }
+
 
   }
 }

@@ -147,34 +147,35 @@ namespace PowerView.Model.Test.Expression
     public void GetValueExpressionSet()
     {
       // Arrange
+      var timeDivider = DateTimeResolutionDivider.GetResolutionDivider("1-days");
       var start = new DateTime(2017, 6, 7, 8, 9, 10, DateTimeKind.Utc);
-      var trv1 = new TimeRegisterValue("1", start, 1, Unit.Watt);
-      var trv2 = new TimeRegisterValue("1", start.AddMonths(4), 2, Unit.Watt);
-      var trv3 = new TimeRegisterValue("1", start.AddMonths(9), 3, Unit.Watt);
-      var timeRegisterValues = new[] { trv1, trv2, trv3 };
-      var labelSeries = new LabelSeries("MyLabel", new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { "1.2.3.4.5.6", timeRegisterValues } });
-      var labelSeriesSet = new LabelSeriesSet(start, start.AddMonths(11), new[] { labelSeries });
-      Func<DateTime, DateTime> timeDivider = dt => new DateTime(dt.Year, 1, 1, 1, 1, 1, dt.Kind);
+      var trv1 = new NormalizedTimeRegisterValue(new TimeRegisterValue("1", start, 1, Unit.Watt), timeDivider(start));
+      var trv2 = new NormalizedTimeRegisterValue(new TimeRegisterValue("1", start.AddMonths(4), 2, Unit.Watt), timeDivider(start.AddMonths(4)));
+      var trv3 = new NormalizedTimeRegisterValue(new TimeRegisterValue("1", start.AddMonths(9), 3, Unit.Watt), timeDivider(start.AddMonths(9)));
+      var normalizedimeRegisterValues = new[] { trv1, trv2, trv3 };
+      var labelSeries = new LabelSeries<NormalizedTimeRegisterValue>("MyLabel", new Dictionary<ObisCode, IEnumerable<NormalizedTimeRegisterValue>> { { "1.2.3.4.5.6", normalizedimeRegisterValues } });
+      var labelSeriesSet = new LabelSeriesSet<NormalizedTimeRegisterValue>(start, start.AddMonths(11), new[] { labelSeries });
       var target = new RegisterTemplateExpression("MyLabel:1.2.3.4.5.6");
 
       // Act
       var valueExpressionSet = target.GetValueExpressionSet(labelSeriesSet);
 
       // Assert
-      Assert.That(valueExpressionSet.Evaluate2(), Is.EqualTo(timeRegisterValues));
+      Assert.That(valueExpressionSet.Evaluate2(), Is.EqualTo(normalizedimeRegisterValues));
     }
 
     [Test]
     public void GetValueExpressionSetWrongLabel()
     {
       // Arrange
+      var timeDivider = DateTimeResolutionDivider.GetResolutionDivider("1-days");
       var start = new DateTime(2017, 6, 7, 8, 9, 10, DateTimeKind.Utc);
-      var trv1 = new TimeRegisterValue("1", start, 1, Unit.Watt);
-      var trv2 = new TimeRegisterValue("1", start.AddMonths(4), 2, Unit.Watt);
-      var trv3 = new TimeRegisterValue("1", start.AddMonths(9), 3, Unit.Watt);
-      var timeRegisterValues = new[] { trv1, trv2, trv3 };
-      var labelSeries = new LabelSeries("MyLabel", new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { "1.2.3.4.5.6", timeRegisterValues } });
-      var labelSeriesSet = new LabelSeriesSet(start, start.AddMonths(11), new[] { labelSeries });
+      var trv1 = new NormalizedTimeRegisterValue(new TimeRegisterValue("1", start, 1, Unit.Watt), timeDivider(start));
+      var trv2 = new NormalizedTimeRegisterValue(new TimeRegisterValue("1", start.AddMonths(4), 2, Unit.Watt), timeDivider(start.AddMonths(4)));
+      var trv3 = new NormalizedTimeRegisterValue(new TimeRegisterValue("1", start.AddMonths(9), 3, Unit.Watt), timeDivider(start.AddMonths(9)));
+      var normalizedimeRegisterValues = new[] { trv1, trv2, trv3 };
+      var labelSeries = new LabelSeries<NormalizedTimeRegisterValue>("MyLabel", new Dictionary<ObisCode, IEnumerable<NormalizedTimeRegisterValue>> { { "1.2.3.4.5.6", normalizedimeRegisterValues } });
+      var labelSeriesSet = new LabelSeriesSet<NormalizedTimeRegisterValue>(start, start.AddMonths(11), new[] { labelSeries });
       var target = new RegisterTemplateExpression("WrongLabel:1.2.3.4.5.6");
 
       // Act & Assert
@@ -185,13 +186,14 @@ namespace PowerView.Model.Test.Expression
     public void GetValueExpressionSetWrongObisCode()
     {
       // Arrange
+      var timeDivider = DateTimeResolutionDivider.GetResolutionDivider("1-days");
       var start = new DateTime(2017, 6, 7, 8, 9, 10, DateTimeKind.Utc);
-      var trv1 = new TimeRegisterValue("1", start, 1, Unit.Watt);
-      var trv2 = new TimeRegisterValue("1", start.AddMonths(4), 2, Unit.Watt);
-      var trv3 = new TimeRegisterValue("1", start.AddMonths(9), 3, Unit.Watt);
-      var timeRegisterValues = new[] { trv1, trv2, trv3 };
-      var labelSeries = new LabelSeries("MyLabel", new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { "1.2.3.4.5.6", timeRegisterValues } });
-      var labelSeriesSet = new LabelSeriesSet(start, start.AddMonths(11), new[] { labelSeries });
+      var trv1 = new NormalizedTimeRegisterValue(new TimeRegisterValue("1", start, 1, Unit.Watt), timeDivider(start));
+      var trv2 = new NormalizedTimeRegisterValue(new TimeRegisterValue("1", start.AddMonths(4), 2, Unit.Watt), timeDivider(start.AddMonths(4)));
+      var trv3 = new NormalizedTimeRegisterValue(new TimeRegisterValue("1", start.AddMonths(9), 3, Unit.Watt), timeDivider(start.AddMonths(9)));
+      var normalizedimeRegisterValues = new[] { trv1, trv2, trv3 };
+      var labelSeries = new LabelSeries<NormalizedTimeRegisterValue>("MyLabel", new Dictionary<ObisCode, IEnumerable<NormalizedTimeRegisterValue>> { { "1.2.3.4.5.6", normalizedimeRegisterValues } });
+      var labelSeriesSet = new LabelSeriesSet<NormalizedTimeRegisterValue>(start, start.AddMonths(11), new[] { labelSeries });
       var target = new RegisterTemplateExpression("MyLabel:255.2.3.4.5.6");
 
       // Act

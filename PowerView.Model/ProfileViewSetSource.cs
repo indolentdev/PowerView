@@ -7,8 +7,8 @@ namespace PowerView.Model
   public class ProfileViewSetSource
   {
     private readonly ICollection<ProfileGraph> profileGraphs;
-    private readonly IDictionary<string, IList<DateTime>> intervalToCategories;
-    private readonly IDictionary<string, IDictionary<SeriesName, IEnumerable<TimeRegisterValue?>>> intervalSeriesNameToValues;
+    private readonly IDictionary<string, Categories> intervalToCategories;
+    private readonly IDictionary<string, IDictionary<SeriesName, IEnumerable<NormalizedTimeRegisterValue?>>> intervalSeriesNameToValues;
 
     public ProfileViewSetSource(IEnumerable<ProfileGraph> profileGraphs, IList<IntervalGroup> intervalGroups)
     {
@@ -30,24 +30,24 @@ namespace PowerView.Model
         }
       }
 
-      intervalToCategories = intervalGroups.ToDictionary(x => x.Interval, x => x.Categories);
+      intervalToCategories = intervalGroups.ToDictionary(x => x.Interval, x => new Categories { UserCategories = x.Categories, NormalizedCategories = x.NormalizedCategories });
       intervalSeriesNameToValues = intervalGroups.ToDictionary(x => x.Interval, GetSeriesNamesAndValues);
     }
 
-    private static IDictionary<SeriesName, IEnumerable<TimeRegisterValue?>> GetSeriesNamesAndValues(IntervalGroup intervalGroup)
+    private static IDictionary<SeriesName, IEnumerable<NormalizedTimeRegisterValue?>> GetSeriesNamesAndValues(IntervalGroup intervalGroup)
     {
-      var result = new Dictionary<SeriesName, IEnumerable<TimeRegisterValue?>>();
+      var result = new Dictionary<SeriesName, IEnumerable<NormalizedTimeRegisterValue?>>();
 
-      var labelSeriesSet = intervalGroup.PreparedLabelSeriesSet;
+      var labelSeriesSet = intervalGroup.NormalizedLabelSeriesSet;
       foreach (var labelSeries in labelSeriesSet)
       {
         foreach (var obisCode in labelSeries)
         {
           var seriesName = new SeriesName(labelSeries.Label, obisCode);
-          var timeRegisterValues = labelSeries[obisCode]
-            .Where(x => x.Timestamp >= labelSeriesSet.Start && x.Timestamp <= labelSeriesSet.End)
-            .Select(x => (TimeRegisterValue?)x);
-          result.Add(seriesName, timeRegisterValues);
+          var normalizedTimeRegisterValues = labelSeries[obisCode]
+            .Where(x => x.TimeRegisterValue.Timestamp >= labelSeriesSet.Start && x.TimeRegisterValue.Timestamp <= labelSeriesSet.End)
+            .Select(x => (NormalizedTimeRegisterValue?)x);
+          result.Add(seriesName, normalizedTimeRegisterValues);
         }
       }
 
@@ -70,9 +70,9 @@ namespace PowerView.Model
           }
 
           var timeRegisterValues = 
-                            (from categoryTimestamp in categories
-                             join timeRegisterValue in intervalSeriesNameToValues[profileGraph.Interval][seriesName]
-                             on categoryTimestamp equals timeRegisterValue.Value.Timestamp 
+                            (from categoryTimestamp in categories.NormalizedCategories
+                             join normalizedTimeRegisterValue in intervalSeriesNameToValues[profileGraph.Interval][seriesName]
+                             on categoryTimestamp equals normalizedTimeRegisterValue.Value.NormalizedTimestamp 
                              into items
                              from timeRegisterValueOrNull in items.DefaultIfEmpty()
                              select timeRegisterValueOrNull)
@@ -80,14 +80,14 @@ namespace PowerView.Model
           var firstTimeRegisterValue = timeRegisterValues.FirstOrDefault(x => x != null);
           if (firstTimeRegisterValue == null) continue;
 
-          var valuesForCategories = timeRegisterValues.Select(x => x == null ? null : (double?)x.Value.UnitValue.Value);
-          var series = new Series(seriesName, firstTimeRegisterValue.Value.UnitValue.Unit, valuesForCategories);
+          var valuesForCategories = timeRegisterValues.Select(x => x == null ? null : (double?)x.Value.TimeRegisterValue.UnitValue.Value);
+          var series = new Series(seriesName, firstTimeRegisterValue.Value.TimeRegisterValue.UnitValue.Unit, valuesForCategories);
           profileGraphSeries.Add(series);
         }
 
         if (profileGraphSeries.Count == 0) continue;
 
-        var seriesSet = new SeriesSet(profileGraph.Title, categories, profileGraphSeries);
+        var seriesSet = new SeriesSet(profileGraph.Title, categories.UserCategories, profileGraphSeries);
         seriesSets.Add(seriesSet);
       }
 
@@ -103,5 +103,10 @@ namespace PowerView.Model
       return profileViewSet;
     }
 
+    private class Categories
+    {
+      public IList<DateTime> UserCategories { get; set; }
+      public IList<DateTime> NormalizedCategories { get; set; }
+    }
   }
 }

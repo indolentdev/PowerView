@@ -128,13 +128,15 @@
     <Compile Include="Repository\DbTestFixtureWithDbFile.cs" />
     <Compile Include="Repository\DbCheckTest.cs" />
     <Compile Include="LabelSeriesTest.cs" />
-    <Compile Include="Repository\LabelSeriesRepositoryTest.cs" />
     <Compile Include="LabelSeriesSetTest.cs" />
     <Compile Include="SeriesGenerators\PeriodSeriesGeneratorTest.cs" />
     <Compile Include="SeriesGenerators\DeltaSeriesGeneratorTest.cs" />
     <Compile Include="SeriesGenerators\AverageActualSeriesGeneratorTest.cs" />
     <Compile Include="IntervalGroupTest.cs" />
     <Compile Include="ProfileViewSetSourceTest.cs" />
+    <Compile Include="NormalizedTimeRegisterValueTest.cs" />
+    <Compile Include="SeriesFromCumulativeGeneratorTest.cs" />
+    <Compile Include="LabelsSeriesFromTemplatesGeneratorTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

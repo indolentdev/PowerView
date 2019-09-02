@@ -15,7 +15,7 @@ namespace PowerView.Model.Test
       // Arrange
       const string interval = "5-minutes";
       var profileGraphs = new List<ProfileGraph>();
-      var labelSeriesSet = new LabelSeriesSet(DateTime.UtcNow, DateTime.UtcNow + TimeSpan.FromDays(1), new LabelSeries[0]);
+      var labelSeriesSet = new LabelSeriesSet<TimeRegisterValue>(DateTime.UtcNow, DateTime.UtcNow + TimeSpan.FromDays(1), new LabelSeries<TimeRegisterValue>[0]);
 
       // Act & Assert
       Assert.That(() => new IntervalGroup(null, profileGraphs, labelSeriesSet), Throws.ArgumentNullException);
@@ -35,8 +35,8 @@ namespace PowerView.Model.Test
       ObisCode obisCode = "1.2.3.4.5.6";
       var profileGraph = new ProfileGraph("day", "The Page", "The Title", interval, 1, new[] { new SeriesName(label, obisCode) });
       var profileGraphs = new List<ProfileGraph> { profileGraph };
-      var labelSeriesSet = new LabelSeriesSet(DateTime.UtcNow, DateTime.UtcNow + TimeSpan.FromDays(1), new[] {
-        new LabelSeries(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, new[] { new TimeRegisterValue() } } })
+      var labelSeriesSet = new LabelSeriesSet<TimeRegisterValue>(DateTime.UtcNow, DateTime.UtcNow + TimeSpan.FromDays(1), new[] {
+        new LabelSeries<TimeRegisterValue>(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, new[] { new TimeRegisterValue() } } })
       });
 
       // Act
@@ -45,10 +45,11 @@ namespace PowerView.Model.Test
       // Assert
       Assert.That(target.Interval, Is.EqualTo(interval));
       Assert.That(target.ProfileGraphs, Is.EqualTo(profileGraphs));
-      Assert.That(target.SourceLabelSeriesSet, Is.SameAs(labelSeriesSet));
+      Assert.That(target.LabelSeriesSet, Is.SameAs(labelSeriesSet));
 
       Assert.That(target.Categories, Is.Null);
-      Assert.That(target.PreparedLabelSeriesSet, Is.Null);
+      Assert.That(target.NormalizedCategories, Is.Null);
+      Assert.That(target.NormalizedLabelSeriesSet, Is.Null);
     }
 
     [Test]
@@ -62,8 +63,8 @@ namespace PowerView.Model.Test
       var profileGraphs = new List<ProfileGraph> { profileGraph };
       var start = new DateTime(2019, 4, 11, 00, 00, 00, DateTimeKind.Utc);
       var end = start.AddDays(1);
-      var labelSeriesSet = new LabelSeriesSet(start, end, new[] {
-        new LabelSeries(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, new[] {
+      var labelSeriesSet = new LabelSeriesSet<TimeRegisterValue>(start, end, new[] {
+        new LabelSeries<TimeRegisterValue>(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, new[] {
         new TimeRegisterValue("SN1", start, 1234, Unit.Watt) } } })
       });
       var target = new IntervalGroup(interval, profileGraphs, labelSeriesSet);
@@ -77,6 +78,9 @@ namespace PowerView.Model.Test
       Assert.That(target.Categories.Count, Is.EqualTo(24));
       Assert.That(target.Categories.First(), Is.EqualTo(start));
       Assert.That(target.Categories.Last(), Is.EqualTo(end.AddHours(-1)));
+      Assert.That(target.NormalizedCategories.Count, Is.EqualTo(24));
+      Assert.That(target.NormalizedCategories.First(), Is.EqualTo(start));
+      Assert.That(target.NormalizedCategories.Last(), Is.EqualTo(end.AddHours(-1)));
     }
 
     [Test]
@@ -90,8 +94,8 @@ namespace PowerView.Model.Test
       var profileGraphs = new List<ProfileGraph> { profileGraph };
       var start = new DateTime(2019, 3, 1, 00, 00, 00, DateTimeKind.Utc);
       var end = start.AddMonths(1);
-      var labelSeriesSet = new LabelSeriesSet(start, end, new[] {
-        new LabelSeries(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, new[] {
+      var labelSeriesSet = new LabelSeriesSet<TimeRegisterValue>(start, end, new[] {
+        new LabelSeries<TimeRegisterValue>(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, new[] {
         new TimeRegisterValue("SN1", start, 1234, Unit.Watt) } } })
       });
       var target = new IntervalGroup(interval, profileGraphs, labelSeriesSet);
@@ -103,8 +107,11 @@ namespace PowerView.Model.Test
 
       // Assert
       Assert.That(target.Categories.Count, Is.EqualTo(31));
-      Assert.That(target.Categories.First(), Is.EqualTo(start.AddHours(12)));
-      Assert.That(target.Categories.Last(), Is.EqualTo(end.AddDays(-1).AddHours(12)));
+      Assert.That(target.Categories.First(), Is.EqualTo(start));
+      Assert.That(target.Categories.Last(), Is.EqualTo(end.AddDays(-1)));
+      Assert.That(target.NormalizedCategories.Count, Is.EqualTo(31));
+      Assert.That(target.NormalizedCategories.First(), Is.EqualTo(start.AddHours(12)));
+      Assert.That(target.NormalizedCategories.Last(), Is.EqualTo(end.AddDays(-1).AddHours(12)));
     }
 
     [Test]
@@ -118,8 +125,8 @@ namespace PowerView.Model.Test
       var profileGraphs = new List<ProfileGraph> { profileGraph };
       var start = new DateTime(2019, 4, 11, 00, 00, 00, DateTimeKind.Utc);
       var end = start.AddDays(1);
-      var labelSeriesSet = new LabelSeriesSet(start, end, new[] {
-        new LabelSeries(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, new[] { 
+      var labelSeriesSet = new LabelSeriesSet<TimeRegisterValue>(start, end, new[] {
+        new LabelSeries<TimeRegisterValue>(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, new[] { 
         new TimeRegisterValue("SN1", start.AddMinutes(2), 1234, Unit.Watt) } } })
       });
       var target = new IntervalGroup(interval, profileGraphs, labelSeriesSet);
@@ -130,11 +137,11 @@ namespace PowerView.Model.Test
       target.Prepare(labelObisCodeTemplates);
 
       // Assert
-      Assert.That(target.PreparedLabelSeriesSet, Is.Not.Null);
-      Assert.That(target.PreparedLabelSeriesSet.Count(), Is.EqualTo(1));
-      var labelSeries = target.PreparedLabelSeriesSet.First();
+      Assert.That(target.NormalizedLabelSeriesSet, Is.Not.Null);
+      Assert.That(target.NormalizedLabelSeriesSet.Count(), Is.EqualTo(1));
+      var labelSeries = target.NormalizedLabelSeriesSet.First();
       Assert.That(labelSeries.Count(), Is.EqualTo(1));
-      Assert.That(labelSeries[labelSeries.First()], Is.EqualTo(new[] { new TimeRegisterValue("SN1", start, 1234, Unit.Watt) }));
+      Assert.That(labelSeries[labelSeries.First()], Is.EqualTo(new[] { new NormalizedTimeRegisterValue(new TimeRegisterValue("SN1", start.AddMinutes(2), 1234, Unit.Watt), start) }));
     }
 
     [Test]
@@ -148,8 +155,8 @@ namespace PowerView.Model.Test
       var profileGraphs = new List<ProfileGraph> { profileGraph };
       var start = new DateTime(2019, 4, 11, 00, 00, 00, DateTimeKind.Utc);
       var end = start.AddDays(1);
-      var labelSeriesSet = new LabelSeriesSet(start, end, new[] {
-        new LabelSeries(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, new[] {
+      var labelSeriesSet = new LabelSeriesSet<TimeRegisterValue>(start, end, new[] {
+        new LabelSeries<TimeRegisterValue>(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, new[] {
         new TimeRegisterValue("SN1", start, 1234, Unit.Watt) } } })
       });
       var target = new IntervalGroup(interval, profileGraphs, labelSeriesSet);
@@ -160,8 +167,8 @@ namespace PowerView.Model.Test
       target.Prepare(labelObisCodeTemplates);
 
       // Assert
-      Assert.That(target.PreparedLabelSeriesSet.Count(), Is.EqualTo(1));
-      Assert.That(target.PreparedLabelSeriesSet.First().Count(), Is.EqualTo(4));
+      Assert.That(target.NormalizedLabelSeriesSet.Count(), Is.EqualTo(1));
+      Assert.That(target.NormalizedLabelSeriesSet.First().Count(), Is.EqualTo(4));
     }
 
     [Test]
@@ -175,8 +182,8 @@ namespace PowerView.Model.Test
       var profileGraphs = new List<ProfileGraph> { profileGraph };
       var start = new DateTime(2019, 4, 11, 00, 00, 00, DateTimeKind.Utc);
       var end = start.AddDays(1);
-      var labelSeriesSet = new LabelSeriesSet(start, end, new[] {
-        new LabelSeries(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, new[] {
+      var labelSeriesSet = new LabelSeriesSet<TimeRegisterValue>(start, end, new[] {
+        new LabelSeries<TimeRegisterValue>(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, new[] {
         new TimeRegisterValue("SN1", start, 1234, Unit.Watt) } } })
       });
       var target = new IntervalGroup(interval, profileGraphs, labelSeriesSet);
@@ -188,7 +195,7 @@ namespace PowerView.Model.Test
       target.Prepare(labelObisCodeTemplates);
 
       // Assert
-      Assert.That(target.PreparedLabelSeriesSet.Count(), Is.EqualTo(2));
+      Assert.That(target.NormalizedLabelSeriesSet.Count(), Is.EqualTo(2));
     }
 
   }

@@ -38,16 +38,21 @@ namespace PowerView.Model.Expression
       return addedValues;
     }
 
-    public ICollection<TimeRegisterValue> Evaluate2()
+    public ICollection<NormalizedTimeRegisterValue> Evaluate2()
     {
       var a1Values = addend1.Evaluate2();
       var a2Values = addend2.Evaluate2();
 
       var addedValues = a1Values
         .Join(a2Values,
-              x => new { x.Timestamp, x.UnitValue.Unit },
-              x => new { x.Timestamp, x.UnitValue.Unit },
-              (a1, a2) => new TimeRegisterValue(TimeRegisterValue.DummySerialNumber, a1.Timestamp, a1.UnitValue + a2.UnitValue))
+              x => new { x.NormalizedTimestamp, x.TimeRegisterValue.UnitValue.Unit },
+              x => new { x.NormalizedTimestamp, x.TimeRegisterValue.UnitValue.Unit },
+              (a1, a2) => new NormalizedTimeRegisterValue(
+                new TimeRegisterValue(TimeRegisterValue.DummySerialNumber,
+                                ValueExpressionSetHelper.GetMeanTimestamp(a1.TimeRegisterValue, a2.TimeRegisterValue),
+                                a1.TimeRegisterValue.UnitValue.Value + a2.TimeRegisterValue.UnitValue.Value,
+                                a1.TimeRegisterValue.UnitValue.Unit),
+                a1.NormalizedTimestamp))
         .ToList();
 
       return addedValues;

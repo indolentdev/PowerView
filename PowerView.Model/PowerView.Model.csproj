@@ -171,15 +171,17 @@
     <Compile Include="Repository\DataStoreCorruptException.cs" />
     <Compile Include="Repository\IDbCheck.cs" />
     <Compile Include="LabelSeries.cs" />
-    <Compile Include="Repository\LabelSeriesRepository.cs" />
     <Compile Include="LabelSeriesSet.cs" />
-    <Compile Include="Repository\ILabelSeriesRepository.cs" />
     <Compile Include="SeriesGenerators\PeriodSeriesGenerator.cs" />
     <Compile Include="SeriesGenerators\ISeriesGenerator.cs" />
     <Compile Include="SeriesGenerators\DeltaSeriesGenerator.cs" />
     <Compile Include="SeriesGenerators\AverageActualSeriesGenerator.cs" />
     <Compile Include="IntervalGroup.cs" />
     <Compile Include="ProfileViewSetSource.cs" />
+    <Compile Include="NormalizedTimeRegisterValue.cs" />
+    <Compile Include="SeriesFromCumulativeGenerator.cs" />
+    <Compile Include="ISeries.cs" />
+    <Compile Include="LabelSeriesFromTemplatesGenerator.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

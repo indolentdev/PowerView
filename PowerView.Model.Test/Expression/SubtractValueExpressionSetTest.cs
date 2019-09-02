@@ -100,23 +100,25 @@ namespace PowerView.Model.Test.Expression
     public void EvaluateCalculation(double v1, double v2, double expected)
     {
       // Arrange
-      var trv1 = new TimeRegisterValue("1", new DateTime(2016, 1, 22, 22, 00, 00, DateTimeKind.Utc), v1, Unit.WattHour);
-      var trv2 = new TimeRegisterValue("2", new DateTime(2016, 1, 22, 22, 00, 00, DateTimeKind.Utc), v2, Unit.WattHour);
+      var utcNow = DateTime.UtcNow;
+      var trv1 = new NormalizedTimeRegisterValue(new TimeRegisterValue("1", new DateTime(2016, 1, 22, 21, 00, 00, DateTimeKind.Utc), v1, Unit.WattHour), utcNow);
+      var trv2 = new NormalizedTimeRegisterValue(new TimeRegisterValue("2", new DateTime(2016, 1, 22, 23, 00, 00, DateTimeKind.Utc), v2, Unit.WattHour), utcNow);
       var target = new SubtractValueExpressionSet(new ValueExpressionSet(new[] { trv1 }), new ValueExpressionSet(new[] { trv2 }));
 
       // Act
       var values = target.Evaluate2();
 
       // Assert
-      Assert.That(values, Is.EqualTo(new[] { new TimeRegisterValue("0", new DateTime(2016, 1, 22, 22, 00, 00, DateTimeKind.Utc), expected, Unit.WattHour) }));
+      Assert.That(values, Is.EqualTo(new[] { new NormalizedTimeRegisterValue(new TimeRegisterValue("0", new DateTime(2016, 1, 22, 22, 00, 00, DateTimeKind.Utc), expected, Unit.WattHour), utcNow) }));
     }
 
     [Test]
     public void EvaluateNoMatching()
     {
       // Arrange
-      var trv1 = new TimeRegisterValue("1", new DateTime(2016, 1, 22, 22, 10, 00, DateTimeKind.Utc), 150, Unit.WattHour);
-      var trv2 = new TimeRegisterValue("2", new DateTime(2016, 1, 22, 22, 00, 00, DateTimeKind.Utc), 100, Unit.WattHour);
+      var utcNow = DateTime.UtcNow;
+      var trv1 = new NormalizedTimeRegisterValue(new TimeRegisterValue("1", new DateTime(2016, 1, 22, 22, 00, 00, DateTimeKind.Utc), 150, Unit.WattHour), utcNow);
+      var trv2 = new NormalizedTimeRegisterValue(new TimeRegisterValue("2", new DateTime(2016, 1, 22, 22, 00, 00, DateTimeKind.Utc), 100, Unit.WattHour), utcNow.AddHours(4));
       var target = new AddValueExpressionSet(new ValueExpressionSet(new[] { trv1 }), new ValueExpressionSet(new[] { trv2 }));
 
       // Act
@@ -130,8 +132,9 @@ namespace PowerView.Model.Test.Expression
     public void EvaluateMatchingMultiple()
     {
       // Arrange
-      var trv1 = new TimeRegisterValue("1", new DateTime(2016, 1, 22, 22, 00, 00, DateTimeKind.Utc), 100, Unit.WattHour);
-      var trv2 = new TimeRegisterValue("2", new DateTime(2016, 1, 22, 22, 10, 00, DateTimeKind.Utc), 150, Unit.WattHour);
+      var utcNow = DateTime.UtcNow;
+      var trv1 = new NormalizedTimeRegisterValue(new TimeRegisterValue("1", new DateTime(2016, 1, 22, 22, 00, 00, DateTimeKind.Utc), 100, Unit.WattHour), utcNow);
+      var trv2 = new NormalizedTimeRegisterValue(new  TimeRegisterValue("2", new DateTime(2016, 1, 22, 22, 10, 00, DateTimeKind.Utc), 150, Unit.WattHour), utcNow.AddHours(1));
       var target = new AddValueExpressionSet(new ValueExpressionSet(new[] { trv1, trv2 }), new ValueExpressionSet(new[] { trv1, trv2 }));
 
       // Act

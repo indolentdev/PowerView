@@ -46,14 +46,13 @@ namespace PowerView.Service.Modules
       sw.Stop();
       if (log.IsDebugEnabled) log.DebugFormat("GetDiff timing - Get: {0}ms", sw.ElapsedMilliseconds);
 
+      var intervalGroup = new IntervalGroup("1-days", new ProfileGraph[0], lss);
       sw.Restart();
-      var normalizedLss = lss.Normalize(DateTimeResolutionDivider.GetResolutionDivider("1-days"));
-      normalizedLss.GenerateSeriesFromCumulative();
-      normalizedLss.GenerateFromTemplates(templateConfigProvider.LabelObisCodeTemplates);
+      intervalGroup.Prepare(templateConfigProvider.LabelObisCodeTemplates);
       sw.Stop();
       if (log.IsDebugEnabled) log.DebugFormat("GetDiff timing - Normalize, generate: {0}ms", sw.ElapsedMilliseconds);
 
-      var registers = MapItems(normalizedLss).ToList();
+      var registers = MapItems(intervalGroup.NormalizedLabelSeriesSet).ToList();
       var r = new {
         From = fromDate.Value.ToString("o"),
         To = toDate.Value.ToString("o"),
@@ -80,23 +79,22 @@ namespace PowerView.Service.Modules
       }
     }
 
-    private static IEnumerable<object> MapItems(LabelSeriesSet labelSeriesSet)
+    private static IEnumerable<object> MapItems(LabelSeriesSet<NormalizedTimeRegisterValue> labelSeriesSet)
     {
       foreach (var labelSeries in labelSeriesSet)
       {
         var periodObisCodes = labelSeries.Where(oc => oc.IsPeriod).ToList();
         foreach (var obisCode in periodObisCodes)
         {
-          var timeRegisterValues = labelSeries[obisCode];
-          if (timeRegisterValues.Count < 2) continue;
-          var timeRegisterValuesOrdered = timeRegisterValues.OrderBy(sv => sv.Timestamp).ToList();
-          var first = timeRegisterValuesOrdered.First();
-          var last = timeRegisterValuesOrdered.Last();
+          var normalizedTimeRegisterValues = labelSeries[obisCode];
+          if (normalizedTimeRegisterValues.Count < 2) continue;
+          var first = normalizedTimeRegisterValues.First();
+          var last = normalizedTimeRegisterValues.Last();
 
           yield return new { labelSeries.Label, ObisCode=obisCode.ToString(),
-            From = first.Timestamp.ToString("o"), To = last.Timestamp.ToString("o"), 
-            Value = ValueAndUnitMapper.Map(last.UnitValue.Value, last.UnitValue.Unit),
-            Unit = ValueAndUnitMapper.Map(last.UnitValue.Unit) };
+            From = first.TimeRegisterValue.Timestamp.ToString("o"), To = last.TimeRegisterValue.Timestamp.ToString("o"), 
+            Value = ValueAndUnitMapper.Map(last.TimeRegisterValue.UnitValue.Value, last.TimeRegisterValue.UnitValue.Unit),
+            Unit = ValueAndUnitMapper.Map(last.TimeRegisterValue.UnitValue.Unit) };
         }
       }
     }

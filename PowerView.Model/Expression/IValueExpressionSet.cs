@@ -6,6 +6,6 @@ namespace PowerView.Model.Expression
   {
     ICollection<CoarseTimeRegisterValue> Evaluate();
 
-    ICollection<TimeRegisterValue> Evaluate2();
+    ICollection<NormalizedTimeRegisterValue> Evaluate2();
   }
 }

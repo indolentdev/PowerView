@@ -57,7 +57,7 @@ namespace PowerView.Service.Modules
       return GetProfile(profileRepository.GetYearProfileSet, "year");
     }
 
-    private dynamic GetProfile(Func<DateTime, DateTime, DateTime, LabelSeriesSet> getLabelSeriesSet, string period)
+    private dynamic GetProfile(Func<DateTime, DateTime, DateTime, LabelSeriesSet<TimeRegisterValue>> getLabelSeriesSet, string period)
     {
       if (!Request.Query.page.HasValue)
       {
@@ -96,7 +96,7 @@ namespace PowerView.Service.Modules
       return Response.AsJson(r);
     }
 
-    private ProfileViewSet GetProfileViewSet(ICollection<ProfileGraph> profileGraphs, Func<DateTime, DateTime, DateTime, LabelSeriesSet> getLabelSeriesSet, DateTime start, string period)
+    private ProfileViewSet GetProfileViewSet(ICollection<ProfileGraph> profileGraphs, Func<DateTime, DateTime, DateTime, LabelSeriesSet<TimeRegisterValue>> getLabelSeriesSet, DateTime start, string period)
     {
       // Distinct intervals
       var distinctIntervals = profileGraphs.GroupBy(x => x.Interval).ToList();

@@ -103,7 +103,7 @@ namespace PowerView.Service.Test.Modules
       var utcNow = DateTime.UtcNow;
       var utcOneDay = utcNow.AddDays(1);
       profileRepository.Setup(dpr => dpr.GetMonthProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
-        .Returns(new LabelSeriesSet(utcNow, utcOneDay, new LabelSeries[0]));
+        .Returns(new LabelSeriesSet<TimeRegisterValue>(utcNow, utcOneDay, new LabelSeries<TimeRegisterValue>[0]));
 
       // Act
       var response = browser.Get(DiffRoute, with =>
@@ -135,7 +135,7 @@ namespace PowerView.Service.Test.Modules
         {"1.0.1.8.0.255", new [] { new TimeRegisterValue("1", t1, 2, 6, Unit.WattHour), new TimeRegisterValue("1", t2, 3, 6, Unit.WattHour) } },
         {"1.0.2.8.0.255", new [] { new TimeRegisterValue("1", t1, 4, 6, Unit.WattHour) } }
       };
-      var lss = new LabelSeriesSet(t1, utcNow, new[] { new LabelSeries("Label1", label1Values), new LabelSeries("Label2", label2Values) });
+      var lss = new LabelSeriesSet<TimeRegisterValue>(t1, utcNow, new[] { new LabelSeries<TimeRegisterValue>("Label1", label1Values), new LabelSeries<TimeRegisterValue>("Label2", label2Values) });
       profileRepository.Setup(pr => pr.GetMonthProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(lss);
 
       // Act
@@ -153,10 +153,9 @@ namespace PowerView.Service.Test.Modules
       Assert.That(json.from, Is.EqualTo(t1.ToString("o")));
       Assert.That(json.to, Is.EqualTo(utcNow.ToString("o")));
 
-      var timeDivider = DateTimeResolutionDivider.GetResolutionDivider("1-days");
       Assert.That(json.registers, Has.Length.EqualTo(2));
-      AssertDiffRegister("Label1", ObisCode.ColdWaterVolume1Period, timeDivider(t1), timeDivider(t2), 100, "m3", json.registers.First());
-      AssertDiffRegister("Label2", ObisCode.ElectrActiveEnergyA14Period, timeDivider(t1), timeDivider(t2), 1000, "kWh", json.registers.Last());
+      AssertDiffRegister("Label1", ObisCode.ColdWaterVolume1Period, t1, t2, 100, "m3", json.registers.First());
+      AssertDiffRegister("Label2", ObisCode.ElectrActiveEnergyA14Period, t1, t2, 1000, "kWh", json.registers.Last());
     }
 
     private static void AssertDiffRegister(string label, ObisCode obisCode, DateTime from, DateTime to, double value, string unit, DiffRegister actual)
