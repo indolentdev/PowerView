@@ -114,7 +114,7 @@ namespace PowerView.Service.Test.Modules
       });
         
       // Assert
-      profileRepository.Verify(dpr => dpr.GetDayProfileSet(It.Is<DateTime>(dt => dt == utcNow.AddMinutes(-5) && dt.Kind == utcNow.Kind),
+      profileRepository.Verify(dpr => dpr.GetDayProfileSet(It.Is<DateTime>(dt => dt == utcNow.AddMinutes(-2.5) && dt.Kind == utcNow.Kind),
         It.Is<DateTime>(dt => dt == utcNow && dt.Kind == utcNow.Kind), It.Is<DateTime>(dt => dt == utcNow.AddDays(1) && dt.Kind == utcNow.Kind)));
     }
 
@@ -285,7 +285,7 @@ namespace PowerView.Service.Test.Modules
       });
 
       // Assert
-      profileRepository.Verify(dpr => dpr.GetMonthProfileSet(It.Is<DateTime>(dt => dt == utcNow.AddDays(-1) && dt.Kind == utcNow.Kind),
+      profileRepository.Verify(dpr => dpr.GetMonthProfileSet(It.Is<DateTime>(dt => dt == utcNow.AddDays(-0.5) && dt.Kind == utcNow.Kind),
         It.Is<DateTime>(dt => dt == utcNow && dt.Kind == utcNow.Kind), It.Is<DateTime>(dt => dt == utcNow.AddMonths(1) && dt.Kind == utcNow.Kind)));
     }
 
@@ -448,7 +448,7 @@ namespace PowerView.Service.Test.Modules
       var profileGraph = new ProfileGraph("month", "thePage", "Import", "1-months", 1,
         new[] { new SeriesName("Label1", "1.0.1.8.0.255"), new SeriesName("Label1", "1.66.1.8.0.255"), new SeriesName("Label1", "1.65.1.8.0.255") });
       StubProfileGraph(profileGraph);
-      var utcNow = DateTime.UtcNow;
+      var utcNow = new DateTime(2019, 06, 15, 0, 0, 0, DateTimeKind.Utc);
       profileRepository.Setup(dpr => dpr.GetYearProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
         .Returns(new LabelSeriesSet<TimeRegisterValue>(utcNow, utcNow.AddMonths(12), new LabelSeries<TimeRegisterValue>[0]));
 
@@ -462,7 +462,7 @@ namespace PowerView.Service.Test.Modules
       });
 
       // Assert
-      profileRepository.Verify(dpr => dpr.GetYearProfileSet(It.Is<DateTime>(dt => dt == utcNow.AddMonths(-1) && dt.Kind == utcNow.Kind),
+      profileRepository.Verify(dpr => dpr.GetYearProfileSet(It.Is<DateTime>(dt => dt == utcNow.AddDays(-15) && dt.Kind == utcNow.Kind),
         It.Is<DateTime>(dt => dt == utcNow && dt.Kind == utcNow.Kind), It.Is<DateTime>(dt => dt == utcNow.AddMonths(12) && dt.Kind == utcNow.Kind)));
     }
 

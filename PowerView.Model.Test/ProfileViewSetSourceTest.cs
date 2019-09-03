@@ -127,7 +127,8 @@ namespace PowerView.Model.Test
       {
         profileGraphs = new[] { GetProfileGraph() };
       }
-      var intervalGroup = new IntervalGroup(profileGraphs.First().Interval, profileGraphs, GetLabelSeriesSet(firstTimestamp, fromFirstCount, start, fromStartCount, interval, baseValue, profileGraphs));
+      if (start == null) start = new DateTime(2019, 8, 26, 0, 0, 0, DateTimeKind.Utc);
+      var intervalGroup = new IntervalGroup(start.Value, profileGraphs.First().Interval, profileGraphs, GetLabelSeriesSet(firstTimestamp, fromFirstCount, start, fromStartCount, interval, baseValue, profileGraphs));
       intervalGroup.Prepare(new LabelObisCodeTemplate[0]);
       return intervalGroup;
     }

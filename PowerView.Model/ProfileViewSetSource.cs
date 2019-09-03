@@ -45,7 +45,7 @@ namespace PowerView.Model
         {
           var seriesName = new SeriesName(labelSeries.Label, obisCode);
           var normalizedTimeRegisterValues = labelSeries[obisCode]
-            .Where(x => x.TimeRegisterValue.Timestamp >= labelSeriesSet.Start && x.TimeRegisterValue.Timestamp <= labelSeriesSet.End)
+            .Where(x => x.TimeRegisterValue.Timestamp >= labelSeriesSet.Start && x.TimeRegisterValue.Timestamp < labelSeriesSet.End)
             .Select(x => (NormalizedTimeRegisterValue?)x);
           result.Add(seriesName, normalizedTimeRegisterValues);
         }
