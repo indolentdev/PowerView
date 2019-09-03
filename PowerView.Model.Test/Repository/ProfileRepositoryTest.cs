@@ -128,7 +128,7 @@ namespace PowerView.Model.Test.Repository
       // Assert
       Assert.That(labelSeriesSet, Is.Not.Null);
       Assert.That(labelSeriesSet.Start, Is.EqualTo(start));
-      Assert.That(labelSeriesSet.End, Is.EqualTo(end.AddHours(1)));
+      Assert.That(labelSeriesSet.End, Is.EqualTo(end));
       Assert.That(labelSeriesSet.Count(), Is.EqualTo(1));
       var labelProfile = labelSeriesSet.First();
       Assert.That(labelProfile.Label, Is.EqualTo(label));

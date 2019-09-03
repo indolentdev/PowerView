@@ -103,7 +103,8 @@ namespace PowerView.Service.Modules
 
       // Find query start and end times based on max interval and period...
       var end = DateTimeResolutionDivider.GetPeriodEnd(period, start);
-      var preStart = distinctIntervals.Select(x => DateTimeResolutionDivider.GetNext(x.Key, false)(start)).Min();
+      var minimumInterval = distinctIntervals.Select(x => DateTimeResolutionDivider.GetNext(x.Key)(start)).Min();
+      var preStart = start.AddTicks((start - minimumInterval).Ticks/2); // .. half an interval back.
 
       // Query db
       var sw = new System.Diagnostics.Stopwatch();
@@ -120,7 +121,7 @@ namespace PowerView.Service.Modules
         var groupInterval = group.Key;
         var groupProfileGraphs = group.ToList();
 
-        var intervalGroup = new IntervalGroup(groupInterval, groupProfileGraphs, labelSeriesSet);
+        var intervalGroup = new IntervalGroup(start, groupInterval, groupProfileGraphs, labelSeriesSet);
         intervalGroup.Prepare(templateConfigProvider.LabelObisCodeTemplates);
         intervalGroups.Add(intervalGroup);
       }

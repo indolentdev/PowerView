@@ -11,9 +11,9 @@ namespace PowerView.Model
     private readonly Func<DateTime, DateTime> timeDivider;
     private readonly Func<DateTime, DateTime> getNext;
 
-    public IntervalGroup(string interval, IList<ProfileGraph> profileGraphs, LabelSeriesSet<TimeRegisterValue> labelSeriesSet)
+    public IntervalGroup(DateTime start, string interval, IList<ProfileGraph> profileGraphs, LabelSeriesSet<TimeRegisterValue> labelSeriesSet)
     {
-      timeDivider = DateTimeResolutionDivider.GetResolutionDivider(interval);
+      timeDivider = DateTimeResolutionDivider.GetResolutionDivider(start, interval);
       getNext = DateTimeResolutionDivider.GetNext(interval);
       if (profileGraphs == null) throw new ArgumentNullException("profileGraphs");
       if (labelSeriesSet == null) throw new ArgumentNullException("labelSeriesSet");
