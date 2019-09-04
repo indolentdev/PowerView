@@ -7,7 +7,7 @@ namespace PowerView.Model
   public class ProfileViewSetSource
   {
     private readonly ICollection<ProfileGraph> profileGraphs;
-    private readonly IDictionary<string, Categories> intervalToCategories;
+    private readonly IDictionary<string, IList<DateTime>> intervalToCategories;
     private readonly IDictionary<string, IDictionary<SeriesName, IEnumerable<NormalizedTimeRegisterValue?>>> intervalSeriesNameToValues;
 
     public ProfileViewSetSource(IEnumerable<ProfileGraph> profileGraphs, IList<IntervalGroup> intervalGroups)
@@ -30,7 +30,7 @@ namespace PowerView.Model
         }
       }
 
-      intervalToCategories = intervalGroups.ToDictionary(x => x.Interval, x => new Categories { UserCategories = x.Categories, NormalizedCategories = x.NormalizedCategories });
+      intervalToCategories = intervalGroups.ToDictionary(x => x.Interval, x => x.Categories);
       intervalSeriesNameToValues = intervalGroups.ToDictionary(x => x.Interval, GetSeriesNamesAndValues);
     }
 
@@ -69,9 +69,10 @@ namespace PowerView.Model
             continue;
           }
 
+          var normalizedTimeRegisterValues = intervalSeriesNameToValues[profileGraph.Interval][seriesName];
           var timeRegisterValues = 
-                            (from categoryTimestamp in categories.NormalizedCategories
-                             join normalizedTimeRegisterValue in intervalSeriesNameToValues[profileGraph.Interval][seriesName]
+                            (from categoryTimestamp in categories
+                             join normalizedTimeRegisterValue in normalizedTimeRegisterValues
                              on categoryTimestamp equals normalizedTimeRegisterValue.Value.NormalizedTimestamp 
                              into items
                              from timeRegisterValueOrNull in items.DefaultIfEmpty()
@@ -87,7 +88,7 @@ namespace PowerView.Model
 
         if (profileGraphSeries.Count == 0) continue;
 
-        var seriesSet = new SeriesSet(profileGraph.Title, categories.UserCategories, profileGraphSeries);
+        var seriesSet = new SeriesSet(profileGraph.Title, categories, profileGraphSeries);
         seriesSets.Add(seriesSet);
       }
 
@@ -103,10 +104,5 @@ namespace PowerView.Model
       return profileViewSet;
     }
 
-    private class Categories
-    {
-      public IList<DateTime> UserCategories { get; set; }
-      public IList<DateTime> NormalizedCategories { get; set; }
-    }
   }
 }

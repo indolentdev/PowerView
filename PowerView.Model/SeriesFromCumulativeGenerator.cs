@@ -5,9 +5,9 @@ namespace PowerView.Model
 {
   public class SeriesFromCumulativeGenerator
   {
-    public IDictionary<ObisCode, IList<TimeRegisterValue>> Generate(IDictionary<ObisCode, IList<TimeRegisterValue>> cumulatives)
+    public IDictionary<ObisCode, IList<NormalizedTimeRegisterValue>> Generate(IDictionary<ObisCode, IList<NormalizedTimeRegisterValue>> cumulatives)
     {
-      var result = new Dictionary<ObisCode, IList<TimeRegisterValue>>(3);
+      var result = new Dictionary<ObisCode, IList<NormalizedTimeRegisterValue>>(3);
 
       foreach (var cumulative in cumulatives)
       {

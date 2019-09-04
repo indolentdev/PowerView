@@ -6,69 +6,72 @@ namespace PowerView.Model.SeriesGenerators
 {
   public class PeriodSeriesGenerator : ISeriesGenerator
   {
-    private readonly List<TimeRegisterValue> snReferenceValues;
-    private readonly Dictionary<string, TimeRegisterValue> snTransitionValues;
-    private readonly List<TimeRegisterValue> generatedValues;
+    private readonly List<NormalizedTimeRegisterValue> snReferenceValues;
+    private readonly Dictionary<string, NormalizedTimeRegisterValue> snTransitionValues;
+    private readonly List<NormalizedTimeRegisterValue> generatedValues;
 
     public PeriodSeriesGenerator()
     {
-      snReferenceValues = new List<TimeRegisterValue>(2);
-      snTransitionValues = new Dictionary<string, TimeRegisterValue>(2);
-      generatedValues = new List<TimeRegisterValue>(300);
+      snReferenceValues = new List<NormalizedTimeRegisterValue>(2);
+      snTransitionValues = new Dictionary<string, NormalizedTimeRegisterValue>(2);
+      generatedValues = new List<NormalizedTimeRegisterValue>(300);
     }
 
-    public void CalculateNext(TimeRegisterValue timeRegisterValue)
+    public void CalculateNext(NormalizedTimeRegisterValue normalizedTimeRegisterValue)
     {
       if (snReferenceValues.Count == 0)
       {
-        snReferenceValues.Add(timeRegisterValue);
+        snReferenceValues.Add(normalizedTimeRegisterValue);
       }
 
       var reference = snReferenceValues[snReferenceValues.Count - 1];
-      if (!string.Equals(reference.SerialNumber, timeRegisterValue.SerialNumber, StringComparison.OrdinalIgnoreCase))
+      if (!string.Equals(reference.TimeRegisterValue.SerialNumber, normalizedTimeRegisterValue.TimeRegisterValue.SerialNumber, StringComparison.OrdinalIgnoreCase))
       {
-        snReferenceValues.Add(timeRegisterValue);
-        reference = timeRegisterValue;
+        snReferenceValues.Add(normalizedTimeRegisterValue);
+        reference = normalizedTimeRegisterValue;
       }
 
-      var value = timeRegisterValue.SubtractValue(reference);
-      snTransitionValues[GetTransitionKey(reference)] = value;
+      var value = normalizedTimeRegisterValue.TimeRegisterValue.SubtractValue(reference.TimeRegisterValue);
+      var normalizedValue = new NormalizedTimeRegisterValue(value, normalizedTimeRegisterValue.NormalizedTimestamp);
+      snTransitionValues[GetTransitionKey(reference)] = normalizedValue;
 
       var generatedValue = Sum(snTransitionValues.Values);
       generatedValues.Add(generatedValue);
     }
 
-    public IList<TimeRegisterValue> GetGenerated()
+    public IList<NormalizedTimeRegisterValue> GetGenerated()
     {
       return generatedValues.AsReadOnly();
     }
 
-    private static string GetTransitionKey(TimeRegisterValue timeRegisterValue)
+    private static string GetTransitionKey(NormalizedTimeRegisterValue normalizedTimeRegisterValue)
     {
-      return string.Format("SN:{0}-RefTime:{1}", timeRegisterValue.SerialNumber, timeRegisterValue.Timestamp.ToString("o"));
+      return string.Format("SN:{0}-RefTime:{1}", normalizedTimeRegisterValue.TimeRegisterValue.SerialNumber, normalizedTimeRegisterValue.TimeRegisterValue.Timestamp.ToString("o"));
     }
 
-    private static TimeRegisterValue Sum(ICollection<TimeRegisterValue> timeRegisterValues)
+    private static NormalizedTimeRegisterValue Sum(ICollection<NormalizedTimeRegisterValue> normalizedTimeRegisterValues)
     {
-      TimeRegisterValue? addend = null;
-      foreach (var timeRegisterValue in timeRegisterValues.OrderBy(x => x.Timestamp))
+      NormalizedTimeRegisterValue? addend = null;
+      foreach (var normalizedTimeRegisterValue in normalizedTimeRegisterValues.OrderBy(x => x.OrderProperty))
       {
         if (addend == null)
         {
-          addend = timeRegisterValue;
+          addend = normalizedTimeRegisterValue;
           continue;
         }
 
-        if (timeRegisterValue.UnitValue.Unit != addend.Value.UnitValue.Unit)
+        if (normalizedTimeRegisterValue.TimeRegisterValue.UnitValue.Unit != addend.Value.TimeRegisterValue.UnitValue.Unit)
         {
           throw new DataMisalignedException("A calculation of a value sum was not possible. Units of values differ. Units:" +
-            timeRegisterValue.UnitValue.Unit + ", " + addend.Value.UnitValue.Unit);
+            normalizedTimeRegisterValue.TimeRegisterValue.UnitValue.Unit + ", " + addend.Value.TimeRegisterValue.UnitValue.Unit);
         }
 
-        var addendSerialNumber = string.Equals(addend.Value.SerialNumber, timeRegisterValue.SerialNumber, StringComparison.InvariantCultureIgnoreCase) ?
-          timeRegisterValue.SerialNumber : TimeRegisterValue.DummySerialNumber;
+        var addendSerialNumber = string.Equals(addend.Value.TimeRegisterValue.SerialNumber, normalizedTimeRegisterValue.TimeRegisterValue.SerialNumber, StringComparison.InvariantCultureIgnoreCase) ?
+          normalizedTimeRegisterValue.TimeRegisterValue.SerialNumber : TimeRegisterValue.DummySerialNumber;
 
-        addend = new TimeRegisterValue(addendSerialNumber, timeRegisterValue.Timestamp, timeRegisterValue.UnitValue.Value + addend.Value.UnitValue.Value, timeRegisterValue.UnitValue.Unit);
+        addend = new NormalizedTimeRegisterValue(
+          new TimeRegisterValue(addendSerialNumber, normalizedTimeRegisterValue.TimeRegisterValue.Timestamp, normalizedTimeRegisterValue.TimeRegisterValue.UnitValue.Value + addend.Value.TimeRegisterValue.UnitValue.Value, normalizedTimeRegisterValue.TimeRegisterValue.UnitValue.Unit),
+          normalizedTimeRegisterValue.NormalizedTimestamp);
       }
       return addend.Value;
     }

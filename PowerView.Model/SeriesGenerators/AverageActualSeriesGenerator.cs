@@ -5,40 +5,46 @@ namespace PowerView.Model.SeriesGenerators
 {
   public class AverageActualSeriesGenerator : ISeriesGenerator
   {
-    private readonly List<TimeRegisterValue> generatedValues;
-    private TimeRegisterValue previous;
+    private readonly List<NormalizedTimeRegisterValue> generatedValues;
+    private NormalizedTimeRegisterValue previous;
 
     public AverageActualSeriesGenerator()
     {
-      generatedValues = new List<TimeRegisterValue>(300);
+      generatedValues = new List<NormalizedTimeRegisterValue>(300);
     }
 
-    public void CalculateNext(TimeRegisterValue timeRegisterValue)
+    public void CalculateNext(NormalizedTimeRegisterValue normalizedTimeRegisterValue)
     {
-      TimeRegisterValue generatedValue;
+      NormalizedTimeRegisterValue generatedValue;
       if (generatedValues.Count == 0)
       {
-        generatedValue = new TimeRegisterValue(timeRegisterValue.SerialNumber, timeRegisterValue.Timestamp, 0, GetActualUnit(timeRegisterValue.UnitValue.Unit));
+        generatedValue = new NormalizedTimeRegisterValue(
+          new TimeRegisterValue(normalizedTimeRegisterValue.TimeRegisterValue.SerialNumber, normalizedTimeRegisterValue.TimeRegisterValue.Timestamp, 0, GetActualUnit(normalizedTimeRegisterValue.TimeRegisterValue.UnitValue.Unit)),
+          normalizedTimeRegisterValue.NormalizedTimestamp);
       }
       else
       {
-        var minutend = timeRegisterValue;
+        var minutend = normalizedTimeRegisterValue;
         var substrahend = previous;
-        if (!string.Equals(minutend.SerialNumber, substrahend.SerialNumber, StringComparison.OrdinalIgnoreCase))
+        if (!string.Equals(minutend.TimeRegisterValue.SerialNumber, substrahend.TimeRegisterValue.SerialNumber, StringComparison.OrdinalIgnoreCase))
         {
-          generatedValue = new TimeRegisterValue(minutend.SerialNumber, minutend.Timestamp, 0, GetActualUnit(timeRegisterValue.UnitValue.Unit));
+          generatedValue = new NormalizedTimeRegisterValue(
+            new TimeRegisterValue(minutend.TimeRegisterValue.SerialNumber, minutend.TimeRegisterValue.Timestamp, 0, GetActualUnit(normalizedTimeRegisterValue.TimeRegisterValue.UnitValue.Unit)),
+            minutend.NormalizedTimestamp);
         }
         else
         {
-          var duration = minutend.Timestamp - substrahend.Timestamp;
-          var unit = GetActualUnit(minutend.UnitValue.Unit);
-          var delta = minutend.SubtractValue(substrahend).UnitValue.Value;
+          var duration = minutend.TimeRegisterValue.Timestamp - substrahend.TimeRegisterValue.Timestamp;
+          var unit = GetActualUnit(minutend.TimeRegisterValue.UnitValue.Unit);
+          var delta = minutend.TimeRegisterValue.SubtractValue(substrahend.TimeRegisterValue).UnitValue.Value;
           var averageActualValue = delta / duration.TotalHours;
-          generatedValue = new TimeRegisterValue(minutend.SerialNumber, minutend.Timestamp, averageActualValue, unit);
+          generatedValue = new NormalizedTimeRegisterValue(
+            new TimeRegisterValue(minutend.TimeRegisterValue.SerialNumber, minutend.TimeRegisterValue.Timestamp, averageActualValue, unit),
+            minutend.NormalizedTimestamp);
         }
       }
 
-      previous = timeRegisterValue;
+      previous = normalizedTimeRegisterValue;
       generatedValues.Add(generatedValue);
     }
 
@@ -56,7 +62,7 @@ namespace PowerView.Model.SeriesGenerators
       return (Unit)250;
     }
 
-    public IList<TimeRegisterValue> GetGenerated()
+    public IList<NormalizedTimeRegisterValue> GetGenerated()
     {
       return generatedValues.AsReadOnly();
     }

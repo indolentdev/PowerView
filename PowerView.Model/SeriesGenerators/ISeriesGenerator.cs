@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace PowerView.Model.SeriesGenerators
 {
   public interface ISeriesGenerator
   {
-    void CalculateNext(TimeRegisterValue timeRegisterValue);
+    void CalculateNext(NormalizedTimeRegisterValue timeRegisterValue);
 
-    IList<TimeRegisterValue> GetGenerated();
+    IList<NormalizedTimeRegisterValue> GetGenerated();
   }
 }
