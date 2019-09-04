@@ -103,8 +103,8 @@ namespace PowerView.Service.Modules
 
       // Find query start and end times based on max interval and period...
       var end = DateTimeResolutionDivider.GetPeriodEnd(period, start);
-      var minimumInterval = distinctIntervals.Select(x => DateTimeResolutionDivider.GetNext(x.Key)(start)).Min();
-      var preStart = start.AddTicks((start - minimumInterval).Ticks/2); // .. half an interval back.
+      var maxInterval = distinctIntervals.Select(x => DateTimeResolutionDivider.GetNext(x.Key)(start)).Max();
+      var preStart = start.AddTicks((start - maxInterval).Ticks/2); // .. half the interval backwards.
 
       // Query db
       var sw = new System.Diagnostics.Stopwatch();

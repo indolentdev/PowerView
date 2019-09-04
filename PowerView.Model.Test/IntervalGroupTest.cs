@@ -51,7 +51,6 @@ namespace PowerView.Model.Test
       Assert.That(target.LabelSeriesSet, Is.SameAs(labelSeriesSet));
 
       Assert.That(target.Categories, Is.Null);
-      Assert.That(target.NormalizedCategories, Is.Null);
       Assert.That(target.NormalizedLabelSeriesSet, Is.Null);
     }
 
@@ -81,9 +80,6 @@ namespace PowerView.Model.Test
       Assert.That(target.Categories.Count, Is.EqualTo(24));
       Assert.That(target.Categories.First(), Is.EqualTo(start));
       Assert.That(target.Categories.Last(), Is.EqualTo(end.AddHours(-1)));
-      Assert.That(target.NormalizedCategories.Count, Is.EqualTo(24));
-      Assert.That(target.NormalizedCategories.First(), Is.EqualTo(start));
-      Assert.That(target.NormalizedCategories.Last(), Is.EqualTo(end.AddHours(-1)));
     }
 
     [Test]
@@ -112,9 +108,6 @@ namespace PowerView.Model.Test
       Assert.That(target.Categories.Count, Is.EqualTo(31));
       Assert.That(target.Categories.First(), Is.EqualTo(start));
       Assert.That(target.Categories.Last(), Is.EqualTo(end.AddDays(-1)));
-      Assert.That(target.NormalizedCategories.Count, Is.EqualTo(31));
-      Assert.That(target.NormalizedCategories.First(), Is.EqualTo(start));
-      Assert.That(target.NormalizedCategories.Last(), Is.EqualTo(end.AddDays(-1)));
     }
 
     [Test]

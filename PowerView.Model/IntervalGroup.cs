@@ -28,18 +28,14 @@ namespace PowerView.Model
     public LabelSeriesSet<TimeRegisterValue> LabelSeriesSet { get; private set; }
 
     public IList<DateTime> Categories { get; private set; }
-    public IList<DateTime> NormalizedCategories { get; private set; }
     public LabelSeriesSet<NormalizedTimeRegisterValue> NormalizedLabelSeriesSet { get; private set; }
 
     public void Prepare(ICollection<LabelObisCodeTemplate> labelObisCodeTemplates)
     {
-      var categories = GetCategories();
-      Categories = new ReadOnlyCollection<DateTime>(categories);
-      NormalizedCategories = new ReadOnlyCollection<DateTime>(categories.Select(timeDivider).ToList());
-
-      GenerateSeriesFromCumulative();
+      Categories = new ReadOnlyCollection<DateTime>(GetCategories());
 
       NormalizedLabelSeriesSet = LabelSeriesSet.Normalize(timeDivider);
+      GenerateSeriesFromCumulative();
       GenerateLabelsFromTemplates(labelObisCodeTemplates);
     }
 
@@ -58,7 +54,7 @@ namespace PowerView.Model
 
     private void GenerateSeriesFromCumulative()
     {
-      foreach (var labelSeries in LabelSeriesSet)
+      foreach (var labelSeries in NormalizedLabelSeriesSet)
       {
         var generator = new SeriesFromCumulativeGenerator();
         labelSeries.Add(generator.Generate(labelSeries.GetCumulativeSeries()));

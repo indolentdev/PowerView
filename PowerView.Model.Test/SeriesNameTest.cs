@@ -32,6 +32,22 @@ namespace PowerView.Model.Test
     }
 
     [Test]
+    public void ToStringTest()
+    {
+      // Arrange
+      const string label = "TheLabel";
+      var obisCode = ObisCode.ColdWaterFlow1;
+      var target = new SeriesName(label, obisCode);
+
+      // Act
+      var s = target.ToString();
+
+      // Assert
+      Assert.That(s, Is.EqualTo("[SeriesName: Label=TheLabel, ObisCode=" + obisCode + "]"));
+    }
+
+
+    [Test]
     public void EqualsAndHashCode()
     {
       // Arrange

@@ -34,29 +34,27 @@ namespace PowerView.Model
       return date.Day != DateTime.DaysInMonth(date.Year, date.Month) ? date.AddMonths(1) : date.AddDays(1).AddMonths(1).AddDays(-1);
     }
 
-    public static Func<DateTime, DateTime> GetNext(string interval, bool forward = true)
+    public static Func<DateTime, DateTime> GetNext(string interval)
     {
       if (interval == null) throw new ArgumentNullException("interval");
 
       var dividerElements = interval.Split(new[] { '-' }, StringSplitOptions.None);
       if (dividerElements.Length != 2) throw new ArgumentOutOfRangeException("interval", interval, "Unknown interval");
 
-      var factor = forward ? 1 : -1;
-
       switch (dividerElements[1])
       {
         case "minutes":
-          var minutes = TimeSpan.FromMinutes(ToDouble(dividerElements[0]) * factor);
+          var minutes = TimeSpan.FromMinutes(ToDouble(dividerElements[0]));
           if (minutes.TotalHours > 1 || (minutes.Hours == 0 && minutes.Minutes == 0) || minutes.Milliseconds != 0) throw new ArgumentOutOfRangeException("interval", interval, "Minute part invalid");
           return dt => dt.Add(minutes);
 
         case "days":
           if (ToInt32(dividerElements[0]) != 1) throw new ArgumentOutOfRangeException("interval", interval, "Day part invalid");
-          return dt => dt.AddDays(1 * factor);
+          return dt => dt.AddDays(1);
 
         case "months":
           if (ToInt32(dividerElements[0]) != 1) throw new ArgumentOutOfRangeException("interval", interval, "Month part invalid");
-          return dt => dt.AddMonths(1 * factor);
+          return dt => NextMonth(dt);
 
         default:
           throw new ArgumentOutOfRangeException("interval", interval, "Unknown interval");
@@ -85,7 +83,26 @@ namespace PowerView.Model
 
         case "months":
           if (ToInt32(dividerElements[0]) != 1) throw new ArgumentOutOfRangeException("interval", interval, "Month part invalid");
-          return dt => new DateTime(dt.Year, dt.Month, 1, 12, 0, 0, 0, dt.Kind);
+          var lastDayOfMonth = origin.Day == DateTime.DaysInMonth(origin.Year, origin.Month);
+          return dt =>
+          {
+            var year = dt.Year;
+            var month = dt.Month;
+            if (dt.TimeOfDay < origin.TimeOfDay)
+            {
+              month--;
+              if (month == 0)
+              {
+                month = 12;
+                year--;
+              }
+            }
+
+            var daysInMonth = DateTime.DaysInMonth(dt.Year, month);
+            var day = lastDayOfMonth ? daysInMonth : Math.Min(origin.Day, daysInMonth);
+
+            return new DateTime(year, month, day, origin.Hour, origin.Minute, origin.Second, origin.Millisecond, dt.Kind);
+          };
 
         default:
           throw new ArgumentOutOfRangeException("interval", interval, "Unknown interval");

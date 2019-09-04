@@ -5,40 +5,44 @@ namespace PowerView.Model.SeriesGenerators
 {
   public class DeltaSeriesGenerator : ISeriesGenerator
   {
-    private readonly List<TimeRegisterValue> generatedValues;
-    private TimeRegisterValue previous;
+    private readonly List<NormalizedTimeRegisterValue> generatedValues;
+    private NormalizedTimeRegisterValue previous;
 
     public DeltaSeriesGenerator()
     {
-      generatedValues = new List<TimeRegisterValue>(300);
+      generatedValues = new List<NormalizedTimeRegisterValue>(300);
     }
 
-    public void CalculateNext(TimeRegisterValue timeRegisterValue)
+    public void CalculateNext(NormalizedTimeRegisterValue normalizedTimeRegisterValue)
     {
-      TimeRegisterValue generatedValue;
+      NormalizedTimeRegisterValue generatedValue;
       if (generatedValues.Count == 0)
       {
-        generatedValue = timeRegisterValue.SubtractValue(timeRegisterValue);
+        generatedValue = new NormalizedTimeRegisterValue(
+          normalizedTimeRegisterValue.TimeRegisterValue.SubtractValue(normalizedTimeRegisterValue.TimeRegisterValue),
+          normalizedTimeRegisterValue.NormalizedTimestamp);
       }
       else
       {
-        var minutend = timeRegisterValue;
+        var minutend = normalizedTimeRegisterValue;
         var substrahend = previous;
-        if (!string.Equals(minutend.SerialNumber, substrahend.SerialNumber, StringComparison.OrdinalIgnoreCase))
+        if (!string.Equals(minutend.TimeRegisterValue.SerialNumber, substrahend.TimeRegisterValue.SerialNumber, StringComparison.OrdinalIgnoreCase))
         {
-          generatedValue = new TimeRegisterValue(minutend.SerialNumber, minutend.Timestamp, 0, minutend.UnitValue.Unit);
+          generatedValue = new NormalizedTimeRegisterValue(
+            new TimeRegisterValue(minutend.TimeRegisterValue.SerialNumber, minutend.TimeRegisterValue.Timestamp, 0, minutend.TimeRegisterValue.UnitValue.Unit),
+            minutend.NormalizedTimestamp);
         }
         else
         {
-          generatedValue = minutend.SubtractValue(substrahend);
+          generatedValue = new NormalizedTimeRegisterValue(minutend.TimeRegisterValue.SubtractValue(substrahend.TimeRegisterValue), minutend.NormalizedTimestamp);
         }
       }
 
-      previous = timeRegisterValue;
+      previous = normalizedTimeRegisterValue;
       generatedValues.Add(generatedValue);
     }
 
-    public IList<TimeRegisterValue> GetGenerated()
+    public IList<NormalizedTimeRegisterValue> GetGenerated()
     {
       return generatedValues.AsReadOnly();
     }
