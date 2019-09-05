@@ -176,7 +176,7 @@ namespace PowerView.Model
         }
 
         var reference = snReferenceValues[snReferenceValues.Count - 1];
-        if (!string.Equals(reference.SerialNumber, timeRegisterValue.SerialNumber, StringComparison.OrdinalIgnoreCase))
+        if (!reference.SerialNumberEquals(timeRegisterValue))
         {
           snReferenceValues.Add(timeRegisterValue);
           reference = timeRegisterValue;
@@ -211,9 +211,7 @@ namespace PowerView.Model
             timeRegisterValue.UnitValue.Unit + ", " + addend.Value.UnitValue.Unit);
         }
 
-        var addendSerialNumber = string.Equals(addend.Value.SerialNumber, timeRegisterValue.SerialNumber, StringComparison.InvariantCultureIgnoreCase) ?
-          timeRegisterValue.SerialNumber : TimeRegisterValue.DummySerialNumber;
-
+        var addendSerialNumber = addend.Value.SerialNumberEquals(timeRegisterValue) ? timeRegisterValue.SerialNumber : TimeRegisterValue.DummySerialNumber;
         addend = new TimeRegisterValue(addendSerialNumber, timeRegisterValue.Timestamp, timeRegisterValue.UnitValue.Value+addend.Value.UnitValue.Value, timeRegisterValue.UnitValue.Unit);
       }
       return addend.Value;

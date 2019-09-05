@@ -27,6 +27,11 @@ namespace PowerView.Model
       throw new NotSupportedException();
     }
 
+    public bool SerialNumberEquals(NormalizedTimeRegisterValue normalizedTimeRegisterValue)
+    {
+      return TimeRegisterValue.SerialNumberEquals(normalizedTimeRegisterValue.TimeRegisterValue);
+    }
+
     public override string ToString()
     {
       return string.Format(System.Globalization.CultureInfo.InvariantCulture, "[timeRegisterValue={0}, normalizedTimestamp={1}]", 

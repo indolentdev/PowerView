@@ -25,7 +25,7 @@ namespace PowerView.Model.SeriesGenerators
       }
 
       var reference = snReferenceValues[snReferenceValues.Count - 1];
-      if (!string.Equals(reference.TimeRegisterValue.SerialNumber, normalizedTimeRegisterValue.TimeRegisterValue.SerialNumber, StringComparison.OrdinalIgnoreCase))
+      if (!reference.SerialNumberEquals(normalizedTimeRegisterValue))
       {
         snReferenceValues.Add(normalizedTimeRegisterValue);
         reference = normalizedTimeRegisterValue;
@@ -66,9 +66,7 @@ namespace PowerView.Model.SeriesGenerators
             normalizedTimeRegisterValue.TimeRegisterValue.UnitValue.Unit + ", " + addend.Value.TimeRegisterValue.UnitValue.Unit);
         }
 
-        var addendSerialNumber = string.Equals(addend.Value.TimeRegisterValue.SerialNumber, normalizedTimeRegisterValue.TimeRegisterValue.SerialNumber, StringComparison.InvariantCultureIgnoreCase) ?
-          normalizedTimeRegisterValue.TimeRegisterValue.SerialNumber : TimeRegisterValue.DummySerialNumber;
-
+        var addendSerialNumber = addend.Value.SerialNumberEquals(normalizedTimeRegisterValue) ? normalizedTimeRegisterValue.TimeRegisterValue.SerialNumber : TimeRegisterValue.DummySerialNumber;
         addend = new NormalizedTimeRegisterValue(
           new TimeRegisterValue(addendSerialNumber, normalizedTimeRegisterValue.TimeRegisterValue.Timestamp, normalizedTimeRegisterValue.TimeRegisterValue.UnitValue.Value + addend.Value.TimeRegisterValue.UnitValue.Value, normalizedTimeRegisterValue.TimeRegisterValue.UnitValue.Unit),
           normalizedTimeRegisterValue.NormalizedTimestamp);
