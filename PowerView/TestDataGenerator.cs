@@ -59,9 +59,9 @@ namespace PowerView
       {
         var profileRepo = scope2.Resolve<IProfileRepository>();
         var now = DateTime.Now;
-        var start = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0, 0, now.Kind);
-        var labelProfile = profileRepo.GetDayProfileSet(start.ToUniversalTime());
-        if (labelProfile.Any())
+        var start = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0, 0, now.Kind).ToUniversalTime();
+        var labelSeriesSet = profileRepo.GetDayProfileSet(start, start, start.AddDays(1));
+        if (labelSeriesSet.Any())
         {
           return;
         }

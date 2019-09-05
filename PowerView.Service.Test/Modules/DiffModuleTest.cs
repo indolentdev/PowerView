@@ -54,7 +54,7 @@ namespace PowerView.Service.Test.Modules
 
       // Assert
       Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
-      profileRepository.Verify(pr => pr.GetCustomProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Never);
+      profileRepository.Verify(pr => pr.GetMonthProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Never);
     }
 
     [Test]
@@ -73,7 +73,7 @@ namespace PowerView.Service.Test.Modules
 
       // Assert
       Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
-      profileRepository.Verify(pr => pr.GetCustomProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Never);
+      profileRepository.Verify(pr => pr.GetMonthProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Never);
     }
 
     [Test]
@@ -93,7 +93,7 @@ namespace PowerView.Service.Test.Modules
 
       // Assert
       Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
-      profileRepository.Verify(pr => pr.GetCustomProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Never);
+      profileRepository.Verify(pr => pr.GetMonthProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Never);
     }
 
     [Test]

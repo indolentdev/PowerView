@@ -51,8 +51,9 @@ namespace PowerView.Service.Test.EventHub
     {
       // Arrange
       var time = new DateTime(2017, 1, 7, 10, 0, 22, DateTimeKind.Utc);
-      var labelProfile = GetLeakProfile(time);
-      profileRepository.Setup(pr => pr.GetDayProfileSet(It.IsAny<DateTime>())).Returns(new LabelProfileSet(time, new [] { labelProfile }));
+      var labelSeries = GetLeakProfile(time);
+      profileRepository.Setup(pr => pr.GetDayProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+        .Returns(new LabelSeriesSet<TimeRegisterValue>(time, time, new [] { labelSeries }));
       meterEventRepository.Setup(mer => mer.GetLatestMeterEventsByLabel()).Returns(new MeterEvent[0]);
 
       // Act
@@ -61,7 +62,7 @@ namespace PowerView.Service.Test.EventHub
       // Assert
       var start = new DateTime(2017, 1, 6, 23, 0, 0, DateTimeKind.Utc);
       var end = new DateTime(2017, 1, 7, 5, 0, 0, DateTimeKind.Utc);
-      meterEventRepository.Verify(mer => mer.AddMeterEvents(ContainsLeak(labelProfile.Label, time, true, start, end)));
+      meterEventRepository.Verify(mer => mer.AddMeterEvents(ContainsLeak(labelSeries.Label, time, true, start, end)));
     }
 
     [Test]
@@ -69,10 +70,11 @@ namespace PowerView.Service.Test.EventHub
     {
       // Arrange
       var time = new DateTime(2017, 1, 7, 10, 0, 22, DateTimeKind.Utc);
-      var labelProfile = GetLeakProfile(time);
-      profileRepository.Setup(pr => pr.GetDayProfileSet(It.IsAny<DateTime>())).Returns(new LabelProfileSet(time, new [] { labelProfile }));
+      var labelSeries = GetLeakProfile(time);
+      profileRepository.Setup(pr => pr.GetDayProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+        .Returns(new LabelSeriesSet<TimeRegisterValue>(time, time, new[] { labelSeries }));
       var oldTime = time.Subtract(TimeSpan.FromDays(4));
-      var meterEvent = new MeterEvent(labelProfile.Label, oldTime, false, new LeakMeterEventAmplification(oldTime, oldTime, new UnitValue()));
+      var meterEvent = new MeterEvent(labelSeries.Label, oldTime, false, new LeakMeterEventAmplification(oldTime, oldTime, new UnitValue()));
       meterEventRepository.Setup(mer => mer.GetLatestMeterEventsByLabel()).Returns(new [] { meterEvent });
 
       // Act
@@ -81,7 +83,7 @@ namespace PowerView.Service.Test.EventHub
       // Assert
       var start = new DateTime(2017, 1, 6, 23, 0, 0, DateTimeKind.Utc);
       var end = new DateTime(2017, 1, 7, 5, 0, 0, DateTimeKind.Utc);
-      meterEventRepository.Verify(mer => mer.AddMeterEvents(ContainsLeak(labelProfile.Label, time, true, start, end)));
+      meterEventRepository.Verify(mer => mer.AddMeterEvents(ContainsLeak(labelSeries.Label, time, true, start, end)));
     }
 
     [Test]
@@ -89,10 +91,11 @@ namespace PowerView.Service.Test.EventHub
     {
       // Arrange
       var time = new DateTime(2017, 1, 7, 10, 0, 22, DateTimeKind.Utc);
-      var labelProfile = GetLeakProfile(time);
-      profileRepository.Setup(pr => pr.GetDayProfileSet(It.IsAny<DateTime>())).Returns(new LabelProfileSet(time, new [] { labelProfile }));
+      var labelSeries = GetLeakProfile(time);
+      profileRepository.Setup(pr => pr.GetDayProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+        .Returns(new LabelSeriesSet<TimeRegisterValue>(time, time, new[] { labelSeries }));
       var oldTime = time.Subtract(TimeSpan.FromDays(4));
-      var meterEvent = new MeterEvent(labelProfile.Label, oldTime, true, new LeakMeterEventAmplification(oldTime, oldTime, new UnitValue()));
+      var meterEvent = new MeterEvent(labelSeries.Label, oldTime, true, new LeakMeterEventAmplification(oldTime, oldTime, new UnitValue()));
       meterEventRepository.Setup(mer => mer.GetLatestMeterEventsByLabel()).Returns(new [] { meterEvent });
 
       // Act
@@ -113,13 +116,14 @@ namespace PowerView.Service.Test.EventHub
         ).Any() );
     }
 
-    private static LabelProfile GetLeakProfile(DateTime time)
+    private static LabelSeries<TimeRegisterValue> GetLeakProfile(DateTime time)
     {
-      var timestamps = Enumerable.Range(0, 23).Select(i => new DateTime(time.Year, time.Month, time.Day, i, 58, 0, DateTimeKind.Utc)).ToArray(); 
-      var values = timestamps.Select(dt => new TimeRegisterValue("1", dt, 1, 1, Unit.CubicMetre)).ToArray();
-      var dict = new Dictionary<ObisCode, ICollection<TimeRegisterValue>> { { ObisCode.ColdWaterVolume1Delta, values } };
-      var labelProfile = new LabelProfile("lbl", timestamps.First(), dict);
-      return labelProfile;
+      var baseTime = new DateTime(time.Year, time.Month, time.Day, 0, 58, 0, DateTimeKind.Utc);
+      var timestamps = Enumerable.Range(-5, 23).Select(i => baseTime.AddHours(i)).ToArray(); 
+      var values = timestamps.Select((dt, i) => new TimeRegisterValue("1", dt, i+3, 1, Unit.CubicMetre)).ToArray();
+      var dict = new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { ObisCode.ColdWaterVolume1, values } };
+      var labelSeries = new LabelSeries<TimeRegisterValue>("lbl", dict);
+      return labelSeries;
     }
 
     private MeterEventDetector CreateTarget()
