@@ -46,6 +46,26 @@ namespace PowerView.Model.Test
     }
 
     [Test]
+    [TestCase("SN", "SN", true)]
+    [TestCase("sn", "SN", true)]
+    [TestCase(null, null, true)]
+    [TestCase("SN", "XX", false)]
+    [TestCase(null, "SN", false)]
+    [TestCase("SN", null, false)]
+    public void SerialNumberEquals(string sn1, string sn2, bool expected)
+    {
+      // Arrange
+      var target1 = new NormalizedTimeRegisterValue(new TimeRegisterValue(sn1, DateTime.UtcNow, 2, Unit.CubicMetre), DateTime.UtcNow);
+      var target2 = new NormalizedTimeRegisterValue(new TimeRegisterValue(sn2, DateTime.UtcNow, 1, Unit.CubicMetre), DateTime.UtcNow);
+
+      // Act
+      var snEquals = target1.SerialNumberEquals(target2);
+
+      // Assert
+      Assert.That(snEquals, Is.EqualTo(expected));
+    }
+
+    [Test]
     public void ToStringTest()
     {
       // Arrange

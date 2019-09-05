@@ -26,7 +26,7 @@ namespace PowerView.Model.SeriesGenerators
       {
         var minutend = normalizedTimeRegisterValue;
         var substrahend = previous;
-        if (!string.Equals(minutend.TimeRegisterValue.SerialNumber, substrahend.TimeRegisterValue.SerialNumber, StringComparison.OrdinalIgnoreCase))
+        if (!minutend.SerialNumberEquals(substrahend))
         {
           generatedValue = new NormalizedTimeRegisterValue(
             new TimeRegisterValue(minutend.TimeRegisterValue.SerialNumber, minutend.TimeRegisterValue.Timestamp, 0, minutend.TimeRegisterValue.UnitValue.Unit),

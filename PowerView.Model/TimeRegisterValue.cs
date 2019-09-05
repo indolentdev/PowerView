@@ -47,7 +47,7 @@ namespace PowerView.Model
       var substractedValue = unitValue - baseValue.unitValue;
       var dValue = substractedValue.Value;
 
-      if (!string.Equals(serialNumber, baseValue.serialNumber, StringComparison.InvariantCultureIgnoreCase))
+      if (!SerialNumberEquals(baseValue))
       {
         var msg = string.Format("A calculation of a subtracted value was not possible. The values originate from different devices (serial numbers). Minuend:{0}, Subtrahend:{1}",
           this, baseValue);
@@ -81,6 +81,11 @@ namespace PowerView.Model
       var longValue = Convert.ToInt64(timeRegisterValue.unitValue.Value);
       var pow = longValue.ToString(System.Globalization.CultureInfo.InvariantCulture).Length;
       return Math.Pow(10, pow);
+    }
+
+    public bool SerialNumberEquals(TimeRegisterValue timeRegisterValue)
+    {
+      return string.Equals(SerialNumber, timeRegisterValue.SerialNumber, StringComparison.InvariantCultureIgnoreCase);
     }
 
     public override string ToString()
