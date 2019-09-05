@@ -28,9 +28,14 @@ namespace PowerView.Service.EventHub
       if (dateTime.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("dateTime", "Must be UTC");
 
       var start = dateTime.Subtract(TimeSpan.FromDays(1));
-      var labelProfileSet = profileRepository.GetDayProfileSet(start);
+      var preStart = start.Subtract(TimeSpan.FromMinutes(30));
+      var labelSeriesSet = profileRepository.GetDayProfileSet(preStart, start, dateTime);
 
-      var meterEventCandidates = GetMeterEventCandidates(dateTime, labelProfileSet).ToArray();
+      var timeDivider = DateTimeResolutionDivider.GetResolutionDivider(start, "5-minutes");
+      var normalizedLabelSeriesSet = labelSeriesSet.Normalize(timeDivider);
+      GenerateSeriesFromCumulative(normalizedLabelSeriesSet);
+          
+      var meterEventCandidates = GetMeterEventCandidates(dateTime, normalizedLabelSeriesSet).ToArray();
       if (meterEventCandidates.Length == 0)
       {
         return;
@@ -47,11 +52,21 @@ namespace PowerView.Service.EventHub
       meterEventRepository.AddMeterEvents(newMeterEvents);
     }
 
-    private IEnumerable<MeterEvent> GetMeterEventCandidates(DateTime timestamp, LabelProfileSet labelProfileSet)
+    private void GenerateSeriesFromCumulative(LabelSeriesSet<NormalizedTimeRegisterValue> labelSeriesSet)
     {
-      foreach (var labelProfile in labelProfileSet)
+      foreach (var labelSeries in labelSeriesSet)
       {
-        if (!labelProfile.GetAllObisCodes().Contains(ObisCode.ColdWaterVolume1Delta))
+        var generator = new SeriesFromCumulativeGenerator();
+        labelSeries.Add(generator.Generate(labelSeries.GetCumulativeSeries()));
+      }
+    }
+
+    private IEnumerable<MeterEvent> GetMeterEventCandidates(DateTime timestamp, LabelSeriesSet<NormalizedTimeRegisterValue> labelSeriesSet)
+    {
+      var coldWaterVolume1Delta = ObisCode.ColdWaterVolume1Delta;
+      foreach (var labelSeries in labelSeriesSet)
+      {
+        if (!labelSeries.Contains(coldWaterVolume1Delta))
         {
           continue;
         }
@@ -60,13 +75,14 @@ namespace PowerView.Service.EventHub
         var start = timeConverter.ChangeTimeZoneToUtc(new DateTime(timestampNonUtc.Year, timestampNonUtc.Month, timestampNonUtc.Day, 0, 0, 0, timestampNonUtc.Kind));
         var end = timeConverter.ChangeTimeZoneToUtc(new DateTime(timestampNonUtc.Year, timestampNonUtc.Month, timestampNonUtc.Day, 6, 0, 0, timestampNonUtc.Kind));
 
-        var leakCharacteristic = labelProfile.GetLeakCharacteristic(ObisCode.ColdWaterVolume1Delta, start, end);
+        var leakChecker = new LeakCharacteristicChecker();
+        var leakCharacteristic = leakChecker.GetLeakCharacteristic(labelSeries, coldWaterVolume1Delta, start, end);
         if (leakCharacteristic == null)
         {
           continue;
         }
 
-        var label = labelProfile.Label;
+        var label = labelSeries.Label;
         var detectTimestamp = timestamp;
         var leakUnitValue = leakCharacteristic.Value;
         var flag = leakUnitValue.Value > 0;

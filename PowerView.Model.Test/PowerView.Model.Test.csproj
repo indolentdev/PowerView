@@ -137,6 +137,7 @@
     <Compile Include="NormalizedTimeRegisterValueTest.cs" />
     <Compile Include="SeriesFromCumulativeGeneratorTest.cs" />
     <Compile Include="LabelsSeriesFromTemplatesGeneratorTest.cs" />
+    <Compile Include="LeakCharacteristicCheckerTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

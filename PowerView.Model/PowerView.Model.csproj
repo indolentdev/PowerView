@@ -182,6 +182,7 @@
     <Compile Include="SeriesFromCumulativeGenerator.cs" />
     <Compile Include="ISeries.cs" />
     <Compile Include="LabelSeriesFromTemplatesGenerator.cs" />
+    <Compile Include="LeakCharacteristicChecker.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

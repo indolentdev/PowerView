@@ -68,7 +68,7 @@ namespace PowerView.Model
       return new LabelSeries<NormalizedTimeRegisterValue>(Label, normalized);
     }
 
-    internal void Add(IDictionary<ObisCode, IList<T>> series)
+    public void Add(IDictionary<ObisCode, IList<T>> series)
     {
       foreach (var s in series)
       {
