@@ -16,7 +16,7 @@
     "profileYear": "Year Profile",
     "recipients": "Recipients",
     "relayControls": "Relay Controls",
-    "serieColors": "Serie Colors",
+    "serieColors": "Series Colors",
     "settings": "Settings",
     "smtp": "SMTP"
   },
@@ -66,7 +66,7 @@
     "relayControlsInfo": "Define relay controls for automated connecting and disconnecting",
     "relayControlsAdd": "Add Relay Control",
     "relayControlsTable": "Relay Controls",
-    "serieColors": "Configure Serie Colors",
+    "serieColors": "Configure Series Colors",
     "smtp": "Configure SMTP Server",
     "smtpInfo": "DO NOT use a personal account for SMTP configuration. The SMTP server must support simple logins. For example for GMail accounts do enable",
     "smtpInfoLink": "less secure app access",
@@ -89,12 +89,12 @@
     "maxAvgDuration": "Max Avg Duration",
     "minAvgDisconnectToConnect": "Min Avg Value To Connect",
     "minAvgConnectToDisconnect": "Min Avg Value To Keep Connected",
-    "monitorSerie": "Monitor Serie",
+    "monitorSerie": "Monitor Series",
     "name": "Name",
     "page": "Page",
     "relayUnit": "Relay Unit",
     "serialNumber": "Serial Number",
-    "serie": "Serie",
+    "serie": "Series",
     "series": "Series",
     "status": "Status",
     "timestamp": "Timestamp",
@@ -202,13 +202,13 @@
         "hintDisconnectToConnectValue": "For example: 1000",
         "hintDuration": "Choose duration",
         "hintRelayName": "Choose relay",
-        "hintSerieName": "Choose serie",
+        "hintSerieName": "Choose series",
         "minutes": "minutes",
         "placeholderConnectToDisconnectValue": "Min Avg Value To Keep Connected",
         "placeholderDisconnectToConnectValue": "Min Avg Value To Connect",
         "placeholderDuration": "Max Avg Duration",
         "placeholderRelayName": "Relay Name",
-        "placeholderSerieName": "Monitor Serie",
+        "placeholderSerieName": "Monitor Series",
         "valErrors": {
           "max_65535": "Maximum value is 65535",
           "min_1": "Minimum value is 1",
@@ -217,9 +217,9 @@
         }
       },
       "serieColors": {
-        "buttonSave": "Save Serie Colors",
-        "confirmSave": "Serie colors saved.",
-        "errorSave": "Save serie colors failed."
+        "buttonSave": "Save Series Colors",
+        "confirmSave": "Series colors saved.",
+        "errorSave": "Save series colors failed."
       },
       "smtp": {
         "buttonSave": "Save Configuration",
