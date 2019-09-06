@@ -81,8 +81,6 @@
     <Compile Include="ProfileViewSet.cs" />
     <Compile Include="Series.cs" />
     <Compile Include="SeriesSet.cs" />
-    <Compile Include="LabelProfile.cs" />
-    <Compile Include="LabelProfileSet.cs" />
     <Compile Include="Repository\IProfileRepository.cs" />
     <Compile Include="Repository\ProfileRepository.cs" />
     <Compile Include="Repository\ReadingPipeRepository.cs" />
@@ -146,7 +144,6 @@
     <Compile Include="DateTimeResolutionDivider.cs" />
     <Compile Include="Expression\IValueExpressionSet.cs" />
     <Compile Include="Expression\AddValueExpressionSet.cs" />
-    <Compile Include="CoarseTimeRegisterValue.cs" />
     <Compile Include="Expression\ValueExpressionSet.cs" />
     <Compile Include="Expression\SubtractValueExpressionSet.cs" />
     <Compile Include="Expression\ObisCodeTemplate.cs" />

@@ -89,61 +89,6 @@ namespace PowerView.Model.Test.Expression
     }
 
     [Test]
-    public void GetValueExpressionSetOld()
-    {
-      // Arrange
-      var start = new DateTime(2017, 6, 7, 8, 9, 10, DateTimeKind.Utc);
-      var trv1 = new TimeRegisterValue("1", start, 1, Unit.Watt);
-      var trv2 = new TimeRegisterValue("1", start.AddMonths(4), 2, Unit.Watt);
-      var trv3 = new TimeRegisterValue("1", start.AddMonths(9), 3, Unit.Watt);
-      var labelProfile = new LabelProfile("MyLabel", start, new Dictionary<ObisCode, ICollection<TimeRegisterValue>> { { "1.2.3.4.5.6", new[] { trv1, trv2, trv3 } } });
-      var labelProfileSet = new LabelProfileSet(start, new[] { labelProfile });
-      Func<DateTime, DateTime> timeDivider = dt => new DateTime(dt.Year, 1, 1, 1, 1, 1, dt.Kind);
-      var target = new RegisterTemplateExpression("MyLabel:1.2.3.4.5.6");
-
-      // Act
-      var valueExpressionSet = target.GetValueExpressionSet(labelProfileSet, timeDivider);
-
-      // Assert
-      Assert.That(valueExpressionSet.Evaluate().Count, Is.EqualTo(2));
-      Assert.That(valueExpressionSet.Evaluate().First(), Is.EqualTo(new CoarseTimeRegisterValue(timeDivider(start), trv2)));
-      Assert.That(valueExpressionSet.Evaluate().Last(), Is.EqualTo(new CoarseTimeRegisterValue(timeDivider(start.AddMonths(9)), trv3)));
-    }
-
-    [Test]
-    public void GetValueExpressionSetWrongLabelOld()
-    {
-      // Arrange
-      var start = DateTime.UtcNow;
-      var timeRegisterValue = new TimeRegisterValue("1", start, 1, Unit.Watt);
-      var labelProfile = new LabelProfile("MyLabel", start, new Dictionary<ObisCode, ICollection<TimeRegisterValue>> { { "1.2.3.4.5.6", new[] { timeRegisterValue } } });
-      var labelProfileSet = new LabelProfileSet(start, new[] { labelProfile });
-      Func<DateTime, DateTime> timeDivider = dt => new DateTime(dt.Year, 1, 1, 1, 1, 1, dt.Kind);
-      var target = new RegisterTemplateExpression("WrongLabel:1.2.3.4.5.6");
-
-      // Act & Assert
-      Assert.That(() => target.GetValueExpressionSet(labelProfileSet, timeDivider), Throws.TypeOf<ValueExpressionSetException>());
-    }
-
-    [Test]
-    public void GetValueExpressionSetWrongObisCodeOld()
-    {
-      // Arrange
-      var start = new DateTime(2017, 6, 7, 8, 9, 10, DateTimeKind.Utc);
-      var trv1 = new TimeRegisterValue("1", start, 1, Unit.Watt);
-      var labelProfile = new LabelProfile("MyLabel", start, new Dictionary<ObisCode, ICollection<TimeRegisterValue>> { { "1.2.3.4.5.6", new[] { trv1 } } });
-      var labelProfileSet = new LabelProfileSet(start, new[] { labelProfile });
-      Func<DateTime, DateTime> timeDivider = dt => new DateTime(dt.Year, 1, 1, 1, 1, 1, dt.Kind);
-      var target = new RegisterTemplateExpression("MyLabel:255.2.3.4.5.6");
-
-      // Act
-      var valueExpressionSet = target.GetValueExpressionSet(labelProfileSet, timeDivider);
-
-      // Assert
-      Assert.That(valueExpressionSet.Evaluate().Count, Is.EqualTo(0));
-    }
-
-    [Test]
     public void GetValueExpressionSet()
     {
       // Arrange
@@ -161,7 +106,7 @@ namespace PowerView.Model.Test.Expression
       var valueExpressionSet = target.GetValueExpressionSet(labelSeriesSet);
 
       // Assert
-      Assert.That(valueExpressionSet.Evaluate2(), Is.EqualTo(normalizedimeRegisterValues));
+      Assert.That(valueExpressionSet.Evaluate(), Is.EqualTo(normalizedimeRegisterValues));
     }
 
     [Test]
@@ -200,7 +145,7 @@ namespace PowerView.Model.Test.Expression
       var valueExpressionSet = target.GetValueExpressionSet(labelSeriesSet);
 
       // Assert
-      Assert.That(valueExpressionSet.Evaluate2(), Is.Empty);
+      Assert.That(valueExpressionSet.Evaluate(), Is.Empty);
     }
 
   }

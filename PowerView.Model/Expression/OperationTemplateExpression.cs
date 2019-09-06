@@ -37,23 +37,6 @@ namespace PowerView.Model.Expression
       return Left.IsSatisfied(labelsAndObisCodes) && Right.IsSatisfied(labelsAndObisCodes);
     }
 
-    public IValueExpressionSet GetValueExpressionSet(LabelProfileSet labelProfileSet, Func<DateTime, DateTime> timeDivider)
-    {
-      var valueExpressionSetLeft = Left.GetValueExpressionSet(labelProfileSet, timeDivider);
-      var valueExpressionSetRight = Right.GetValueExpressionSet(labelProfileSet, timeDivider);
-
-      switch (Operator)
-      {
-      case Plus:
-        return new AddValueExpressionSet(valueExpressionSetLeft, valueExpressionSetRight);
-      case Minus:
-        return new SubtractValueExpressionSet(valueExpressionSetLeft, valueExpressionSetRight);
-
-      default:
-        throw new NotImplementedException("Missing impl of operator:" + Operator);
-      }
-    }
-
     public IValueExpressionSet GetValueExpressionSet(LabelSeriesSet<NormalizedTimeRegisterValue> labelSeriesSet)
     {
       var valueExpressionSetLeft = Left.GetValueExpressionSet(labelSeriesSet);

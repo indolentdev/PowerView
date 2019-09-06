@@ -81,8 +81,6 @@
     <Compile Include="Repository\DbTestFixtureWithSchema.cs" />
     <Compile Include="Repository\LiveReadingRepositoryTest.cs" />
     <Compile Include="TimeRegisterValueTest.cs" />
-    <Compile Include="LabelProfileTest.cs" />
-    <Compile Include="LabelProfileSetTest.cs" />
     <Compile Include="Repository\ProfileRepositoryTest.cs" />
     <Compile Include="Repository\ReadingPipeRepositoryTest.cs" />
     <Compile Include="Repository\TimeConverterTest.cs" />
@@ -115,7 +113,6 @@
     <Compile Include="Repository\SeriesNameRepositoryTest.cs" />
     <Compile Include="ProfileGraphTest.cs" />
     <Compile Include="DateTimeResolutionDividerTest.cs" />
-    <Compile Include="CoarseTimeRegisterValueTest.cs" />
     <Compile Include="Expression\AddValueExpressionSetTest.cs" />
     <Compile Include="Expression\SubtractValueExpressionSetTest.cs" />
     <Compile Include="MqttConfigTest.cs" />
