@@ -64,7 +64,7 @@ namespace PowerView.Model
         try
         {
           var valueExpressionSet = obisCodeTemplate.TemplateExpression.GetValueExpressionSet(labelSeriesSet);
-          var normalizedTimeRegisterValues = valueExpressionSet.Evaluate2();
+          var normalizedTimeRegisterValues = valueExpressionSet.Evaluate();
           obisCodeAndValues.Add(obisCodeTemplate.ObisCode, normalizedTimeRegisterValues);
         }
         catch (ValueExpressionSetException e)

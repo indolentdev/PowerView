@@ -61,20 +61,6 @@ namespace PowerView.Model.Expression
       return true;
     }
 
-    public IValueExpressionSet GetValueExpressionSet(LabelProfileSet labelProfileSet, Func<DateTime, DateTime> timeDivider)
-    {
-      var labelProfile = labelProfileSet.FirstOrDefault(lp => string.Equals(lp.Label, Label, StringComparison.OrdinalIgnoreCase));
-      if (labelProfile == null)
-      {
-        throw new ValueExpressionSetException("Unable to construct. " + Label + " not found");
-      }
-
-      var timeRegisterValues = labelProfile[ObisCode];
-      var timeDividedRegisterValues = timeRegisterValues.GroupBy(x => timeDivider(x.Timestamp), x => x);
-      var coarseTimeRegisterValues = timeDividedRegisterValues.Select(x => new CoarseTimeRegisterValue(x.Key, x.OrderBy(y => y.Timestamp).Last()));
-      return new ValueExpressionSet(coarseTimeRegisterValues);
-    }
-
     public IValueExpressionSet GetValueExpressionSet(LabelSeriesSet<NormalizedTimeRegisterValue> labelSeriesSet)
     {
       var labelSeries = labelSeriesSet.FirstOrDefault(ls => string.Equals(ls.Label, Label, StringComparison.InvariantCultureIgnoreCase));

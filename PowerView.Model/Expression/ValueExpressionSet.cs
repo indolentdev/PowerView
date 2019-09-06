@@ -6,15 +6,7 @@ namespace PowerView.Model.Expression
 {
   public class ValueExpressionSet : IValueExpressionSet
   {
-    private readonly IList<CoarseTimeRegisterValue> coarseTimeRegisterValues;
     private readonly IList<NormalizedTimeRegisterValue> normalizedTimeRegisterValues;
-
-    public ValueExpressionSet(IEnumerable<CoarseTimeRegisterValue> coarseTimeRegisterValues)
-    {
-      if (coarseTimeRegisterValues == null) throw new ArgumentNullException("coarseTimeRegisterValues");
-
-      this.coarseTimeRegisterValues = coarseTimeRegisterValues.ToList();
-    }
 
     public ValueExpressionSet(IEnumerable<NormalizedTimeRegisterValue> normalizedTimeRegisterValues)
     {
@@ -23,12 +15,7 @@ namespace PowerView.Model.Expression
       this.normalizedTimeRegisterValues = normalizedTimeRegisterValues.ToList();
     }
 
-    public ICollection<CoarseTimeRegisterValue> Evaluate()
-    {
-      return coarseTimeRegisterValues;
-    }
-
-    public ICollection<NormalizedTimeRegisterValue> Evaluate2()
+    public ICollection<NormalizedTimeRegisterValue> Evaluate()
     {
       return normalizedTimeRegisterValues;
     }

@@ -83,52 +83,6 @@ namespace PowerView.Model.Test.Expression
     }
 
     [Test]
-    public void GetValueExpressionSetAddOld()
-    {
-      // Arrange
-      var templateExpressionLeft = new Mock<ITemplateExpression>();
-      var templateExpressionRight = new Mock<ITemplateExpression>();
-      const string op = "+";
-      var target = new OperationTemplateExpression(templateExpressionLeft.Object, op, templateExpressionRight.Object);
-      var labelProfileSet = new LabelProfileSet(DateTime.UtcNow, new LabelProfile[0]);
-      Func<DateTime, DateTime> timeDivider = dt => new DateTime(dt.Year, 1, 1, 1, 1, 1, dt.Kind);
-      var valueExpressionSet = new Mock<IValueExpressionSet>();
-      templateExpressionLeft.Setup(te => te.GetValueExpressionSet(It.IsAny<LabelProfileSet>(), It.IsAny<Func<DateTime,DateTime>>())).Returns(valueExpressionSet.Object);
-      templateExpressionRight.Setup(te => te.GetValueExpressionSet(It.IsAny<LabelProfileSet>(), It.IsAny<Func<DateTime, DateTime>>())).Returns(valueExpressionSet.Object);
-
-      // Act
-      var valExprSet = target.GetValueExpressionSet(labelProfileSet, timeDivider);
-
-      // Assert
-      Assert.That(valExprSet, Is.TypeOf<AddValueExpressionSet>());
-      templateExpressionLeft.Verify(te => te.GetValueExpressionSet(labelProfileSet, timeDivider));
-      templateExpressionRight.Verify(te => te.GetValueExpressionSet(labelProfileSet, timeDivider));
-    }
-
-    [Test]
-    public void GetValueExpressionSetSubtractOld()
-    {
-      // Arrange
-      var templateExpressionLeft = new Mock<ITemplateExpression>();
-      var templateExpressionRight = new Mock<ITemplateExpression>();
-      const string op = "-";
-      var target = new OperationTemplateExpression(templateExpressionLeft.Object, op, templateExpressionRight.Object);
-      var labelProfileSet = new LabelProfileSet(DateTime.UtcNow, new LabelProfile[0]);
-      Func<DateTime, DateTime> timeDivider = dt => new DateTime(dt.Year, 1, 1, 1, 1, 1, dt.Kind);
-      var valueExpressionSet = new Mock<IValueExpressionSet>();
-      templateExpressionLeft.Setup(te => te.GetValueExpressionSet(It.IsAny<LabelProfileSet>(), It.IsAny<Func<DateTime, DateTime>>())).Returns(valueExpressionSet.Object);
-      templateExpressionRight.Setup(te => te.GetValueExpressionSet(It.IsAny<LabelProfileSet>(), It.IsAny<Func<DateTime, DateTime>>())).Returns(valueExpressionSet.Object);
-
-      // Act
-      var valExprSet = target.GetValueExpressionSet(labelProfileSet, timeDivider);
-
-      // Assert
-      Assert.That(valExprSet, Is.TypeOf<SubtractValueExpressionSet>());
-      templateExpressionLeft.Verify(te => te.GetValueExpressionSet(labelProfileSet, timeDivider));
-      templateExpressionRight.Verify(te => te.GetValueExpressionSet(labelProfileSet, timeDivider));
-    }
-
-    [Test]
     public void GetValueExpressionSetAdd()
     {
       // Arrange
@@ -176,4 +130,3 @@ namespace PowerView.Model.Test.Expression
 
   }
 }
-

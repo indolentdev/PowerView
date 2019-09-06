@@ -27,21 +27,22 @@ namespace PowerView.Model.Repository
       var dt1 = DateTime.UtcNow.AddMinutes(-10);
       var dt2 = dt1.AddMinutes(5);
       var fakeUnit = Unit.Joule;
-      ICollection<TimeRegisterValue> fakeTimeRegisterValues = new List<TimeRegisterValue> { new TimeRegisterValue("1", dt1, 1, 0, fakeUnit), new TimeRegisterValue("1", dt2, 2, 0, fakeUnit) };
+      IEnumerable<TimeRegisterValue> fakeTimeRegisterValues = new List<TimeRegisterValue> { new TimeRegisterValue("1", dt1, 1, 0, fakeUnit), new TimeRegisterValue("1", dt2, 2, 0, fakeUnit) };
 
       var labelGroups = labelsAndObisCodes.GroupBy(x => (string)x.Label, x => (ObisCode)(long)x.ObisCode);
-      var labelProfiles = new List<LabelProfile>(8);
+      var labelSeries = new List<LabelSeries<TimeRegisterValue>>(8);
       foreach (var labelToObisCodes in labelGroups)
       {
         var fakeObisToTimeRegisterValues = labelToObisCodes.Distinct().ToDictionary(oc => oc, x => fakeTimeRegisterValues);
-        var labelProfile = new LabelProfile(labelToObisCodes.Key, dt1, fakeObisToTimeRegisterValues);
-        labelProfiles.Add(labelProfile);
+        var labelS = new LabelSeries<TimeRegisterValue>(labelToObisCodes.Key, fakeObisToTimeRegisterValues);
+        labelSeries.Add(labelS);
       }
-      var labelProfileSet = new LabelProfileSet(dt1, labelProfiles);
-      labelProfileSet.GenerateFromTemplates(labelObisCodeTemplates, "5-minutes");
+      var labelSeriesSet = new LabelSeriesSet<TimeRegisterValue>(dt1, dt2, labelSeries);
+      var intervalGroup = new IntervalGroup(dt1, "5-minutes", new ProfileGraph[0], labelSeriesSet);
+      intervalGroup.Prepare(labelObisCodeTemplates);
 
-      var seriesNames = labelProfileSet
-        .SelectMany(lp => lp.GetAllObisCodes().Where(oc => !oc.IsCumulative).Select(oc => new SeriesName(lp.Label, oc)))
+      var seriesNames = intervalGroup.NormalizedLabelSeriesSet
+        .SelectMany(ls => ls.Where(oc => !oc.IsCumulative).Select(oc => new SeriesName(ls.Label, oc)))
         .ToList();
       return seriesNames;
     }

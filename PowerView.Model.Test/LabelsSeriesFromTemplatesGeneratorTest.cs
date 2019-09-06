@@ -24,7 +24,7 @@ namespace PowerView.Model.Test
       templateExpression.Setup(te => te.GetValueExpressionSet(It.IsAny<LabelSeriesSet<NormalizedTimeRegisterValue>>())).Returns(valueExpressionSet.Object);
       var ntrv1 = new NormalizedTimeRegisterValue(new TimeRegisterValue("1", baseTime.AddMinutes(1), 7, Unit.WattHour), baseTime);
       var ntrv2 = new NormalizedTimeRegisterValue(new TimeRegisterValue("1", baseTime.AddMinutes(20), 9, Unit.WattHour), baseTime.AddMinutes(10));
-      valueExpressionSet.Setup(sve => sve.Evaluate2()).Returns(new[] { ntrv2, ntrv1 });
+      valueExpressionSet.Setup(sve => sve.Evaluate()).Returns(new[] { ntrv2, ntrv1 });
       var target = new LabelSeriesFromTemplatesGenerator(labelObisCodeTemplates);
 
       // Act
