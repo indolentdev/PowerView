@@ -7,7 +7,6 @@ using System.Reflection;
 using Mono.Data.Sqlite;
 using log4net;
 using Dapper;
-using DapperExtensions;
 
 namespace PowerView.Model.Repository
 {
@@ -43,14 +42,14 @@ namespace PowerView.Model.Repository
       {
         using (var ddlResourceReader = new StreamReader(asm.GetManifestResourceStream(dbUpgradeResource.ResourceName)))
         {
-          var newVersion = new Version { Number = long.MaxValue, Timestamp = DateTime.UtcNow };
-          DbContext.Connection.Insert(newVersion);
+          var newVersion = new { Number = long.MaxValue, Timestamp = DateTime.UtcNow };
+          DbContext.ExecuteTransaction("ApplySchemaUpdates", "INSERT INTO Version (Number, Timestamp) VALUES (@Number, @Timestamp);", newVersion);
 
           log.InfoFormat("Applying database schema update for version {0}", dbUpgradeResource.Version);
           ApplyDdlScript(dbUpgradeResource.ResourceName, ddlResourceReader.ReadToEnd());
 
-          newVersion.Number = dbUpgradeResource.Version;
-          DbContext.Connection.Update(newVersion);
+          DbContext.ExecuteTransaction("ApplySchemaUpdates", "UPDATE Version SET Number = @NewNumber WHERE Number = @OldNumber AND Timestamp = @Timestamp;",
+            new { OldNumber = newVersion.Number, newVersion.Timestamp, NewNumber = dbUpgradeResource.Version });
           log.InfoFormat("Database schema update complete");
         }
       }
@@ -145,13 +144,6 @@ namespace PowerView.Model.Repository
 
       public long Version { get; private set; }
       public string ResourceName { get; private set; }
-    }
-
-    public class Version
-    {
-      public long Id { get; set; }
-      public long Number { get; set; }
-      public DateTime Timestamp { get; set; }
     }
   }
 }
