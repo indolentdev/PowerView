@@ -180,6 +180,8 @@
     <Compile Include="ISeries.cs" />
     <Compile Include="LabelSeriesFromTemplatesGenerator.cs" />
     <Compile Include="LeakCharacteristicChecker.cs" />
+    <Compile Include="Repository\EnvironmentRepository.cs" />
+    <Compile Include="Repository\IEnvironmentRepository.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -1,10 +1,11 @@
 ﻿using System;
+using PowerView.Model.Repository;
 
 namespace PowerView.Service.EventHub
 {
   internal class Tracker : ITracker
   {
-    private readonly TimeSpan minimumDayInterval = TimeSpan.FromDays(2);
+    private readonly TimeSpan minimumDayInterval = TimeSpan.FromDays(1);
 
     private readonly IFactory factory;
 
@@ -33,9 +34,15 @@ namespace PowerView.Service.EventHub
       }
       lastRun = GetDay(dateTime, lastRun);
 
+      string sqliteVersion = null;
+      using (var envRepository = factory.Create<IEnvironmentRepository>())
+      {
+        sqliteVersion = envRepository.Value.GetSqliteVersion();
+      }
+
       using (var usageMonitor = factory.Create<IUsageMonitor>())
       {
-        usageMonitor.Value.TrackDing();
+        usageMonitor.Value.TrackDing(sqliteVersion);
       }
     }
 
