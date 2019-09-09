@@ -23,6 +23,7 @@ namespace PowerView.Model
       containerBuilder.RegisterType<MeterEventRepository>().As<IMeterEventRepository>();
       containerBuilder.RegisterType<GaugeRepository>().As<IGaugeRepository>();
       containerBuilder.RegisterType<DisconnectRuleRepository>().As<IDisconnectRuleRepository>();
+      containerBuilder.RegisterType<EnvironmentRepository>().As<IEnvironmentRepository>();
 
       containerBuilder.RegisterType<ObisColorProvider>().As<IObisColorProvider>();
       containerBuilder.RegisterType<DbCheck>().As<IDbCheck>()
