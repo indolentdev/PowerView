@@ -7,6 +7,6 @@ namespace PowerView.Model.Expression
   {
     bool IsSatisfied(IDictionary<string, ICollection<ObisCode>> labelsAndObisCodes);
 
-    IValueExpressionSet GetValueExpressionSet(LabelProfileSet labelProfileSet, Func<DateTime, DateTime> timeDivider);
+    IValueExpressionSet GetValueExpressionSet(LabelSeriesSet<NormalizedTimeRegisterValue> labelSeriesSet);
   }
 }

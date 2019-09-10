@@ -58,8 +58,8 @@ namespace PowerView.Service.Test.Modules
       var profileGraph = new ProfileGraph("day", "ThePage", "title", "5-minutes", 1, new[] { new SeriesName("Label", ObisCode.ElectrActiveEnergyA14Period) });
       StubProfileGraph(profileGraph);
       var utcNow = DateTime.UtcNow;
-      profileRepository.Setup(dpr => dpr.GetDayProfileSet(It.IsAny<DateTime>()))
-        .Returns(new LabelProfileSet(utcNow, new LabelProfile[0]));
+      profileRepository.Setup(dpr => dpr.GetDayProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+        .Returns(new LabelSeriesSet<TimeRegisterValue>(utcNow, utcNow.AddDays(1), new LabelSeries<TimeRegisterValue>[0]));
 
       // Act
       browser.Get("/api/profile/day", with =>
@@ -91,18 +91,18 @@ namespace PowerView.Service.Test.Modules
       // Assert
       Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
       profileGraphRepository.Verify(pgr => pgr.GetProfileGraphs(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
-      profileRepository.Verify(dpr => dpr.GetDayProfileSet(It.IsAny<DateTime>()), Times.Never);
+      profileRepository.Verify(dpr => dpr.GetDayProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Never);
     }
 
 
     [Test]
-    public void GetDayProfileStartPassedToRepository()
+    public void GetDayProfileDateTimesPassedToRepository()
     {
       // Arrange
       StubProfileGraph();
       var utcNow = DateTime.UtcNow;
-      profileRepository.Setup(dpr => dpr.GetDayProfileSet(It.IsAny<DateTime>()))
-        .Returns(new LabelProfileSet(utcNow, new LabelProfile[0]));
+      profileRepository.Setup(dpr => dpr.GetDayProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+        .Returns(new LabelSeriesSet<TimeRegisterValue>(utcNow, utcNow.AddDays(1), new LabelSeries<TimeRegisterValue>[0]));
 
       // Act
       browser.Get("/api/profile/day", with => 
@@ -114,7 +114,8 @@ namespace PowerView.Service.Test.Modules
       });
         
       // Assert
-      profileRepository.Verify(dpr => dpr.GetDayProfileSet(It.Is<DateTime>(dt => dt == utcNow && dt.Kind == utcNow.Kind)));
+      profileRepository.Verify(dpr => dpr.GetDayProfileSet(It.Is<DateTime>(dt => dt == utcNow.AddMinutes(-2.5) && dt.Kind == utcNow.Kind),
+        It.Is<DateTime>(dt => dt == utcNow && dt.Kind == utcNow.Kind), It.Is<DateTime>(dt => dt == utcNow.AddDays(1) && dt.Kind == utcNow.Kind)));
     }
 
     [Test]
@@ -133,7 +134,7 @@ namespace PowerView.Service.Test.Modules
       // Assert
       Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
       profileGraphRepository.Verify(pgr => pgr.GetProfileGraphs(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
-      profileRepository.Verify(dpr => dpr.GetDayProfileSet(It.IsAny<DateTime>()), Times.Never);
+      profileRepository.Verify(dpr => dpr.GetDayProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Never);
     }
 
     [Test]
@@ -153,7 +154,7 @@ namespace PowerView.Service.Test.Modules
       // Assert
       Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
       profileGraphRepository.Verify(pgr => pgr.GetProfileGraphs(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
-      profileRepository.Verify(dpr => dpr.GetDayProfileSet(It.IsAny<DateTime>()), Times.Never);
+      profileRepository.Verify(dpr => dpr.GetDayProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Never);
     }
 
     [Test]
@@ -166,17 +167,17 @@ namespace PowerView.Service.Test.Modules
         new SeriesName("Label1", "6.0.9.0.0.255")
       });
       StubProfileGraph(profileGraph1);
-      var now = DateTime.UtcNow;
-      var t0 = now-TimeSpan.FromDays(1)-TimeSpan.FromMinutes(4);
-      var t1 = now-TimeSpan.FromDays(1)+TimeSpan.FromMinutes(1);
-      var t2 = now-TimeSpan.FromDays(1)+TimeSpan.FromMinutes(6);
-      var label1Values = new Dictionary<ObisCode, ICollection<TimeRegisterValue>> {
+      var now = new DateTime(2019,8,30,19,00, 0, DateTimeKind.Utc);
+      var t0 = now-TimeSpan.FromMinutes(5);
+      var t1 = now;
+      var t2 = now+TimeSpan.FromMinutes(5);
+      var label1Values = new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> {
         {"6.0.1.0.0.255", new [] { new TimeRegisterValue("1", t0, 1, 6, Unit.WattHour), new TimeRegisterValue("1", t1, 2, 6, Unit.WattHour), new TimeRegisterValue("1", t2, 3, 6, Unit.WattHour) } },
         {"6.0.2.0.0.255", new [] { new TimeRegisterValue("1", t0, 2, 0, Unit.CubicMetre), new TimeRegisterValue("1", t1, 3, 0, Unit.CubicMetre), new TimeRegisterValue("1", t2, 4, 0, Unit.CubicMetre) } },
         {"6.0.9.0.0.255", new [] { new TimeRegisterValue("1", t1, 4, 0, Unit.CubicMetrePrHour), new TimeRegisterValue("1", t2, 5, 0, Unit.CubicMetrePrHour) } }
       };
-      var lps = new LabelProfileSet(t1, new [] {new LabelProfile("Label1", t1, label1Values)} );
-      profileRepository.Setup(dpr => dpr.GetDayProfileSet(It.IsAny<DateTime>())).Returns(lps);
+      var lss = new LabelSeriesSet<TimeRegisterValue>(now, now.AddDays(1), new [] {new LabelSeries<TimeRegisterValue>("Label1", label1Values)} );
+      profileRepository.Setup(dpr => dpr.GetDayProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(lss);
 
       // Act
       var response = browser.Get("/api/profile/day", with => 
@@ -189,21 +190,28 @@ namespace PowerView.Service.Test.Modules
 
       // Assert
       Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-      var resp = response.Body.AsString();
+//      var resp = response.Body.AsString();
       var json = response.Body.DeserializeJson<ViewModelProfileRoot>();
       Assert.That(json.graphs.Length, Is.EqualTo(1));
 
-      var energyImport = new ViewModelProfileGraph { 
+      var energyImport = new ViewModelProfileGraph {
         title = profileGraph1.Title,
-        categories = new [] { ToStringMinute(t1), ToStringMinute(t2) },
+        categories = Enumerable.Range(0, 288).Select(i => now.AddMinutes(i * 5)).Select(ToStringMinute).ToArray(),
         series = new [] {
-          new ViewModelProfileSerie { label = "Label1", obisCode = "6.0.1.0.0.255", unit = "kWh", serietype = "ST_6.0.1.0.0.255", serieyaxis = "YA_6.0.1.0.0.255", seriecolor = "SC_Label1_6.0.1.0.0.255", values = new double?[] { 2000, 3000 } },
-          new ViewModelProfileSerie { label = "Label1", obisCode = "6.0.2.0.0.255", unit = "m3", serietype = "ST_6.0.2.0.0.255", serieyaxis = "YA_6.0.2.0.0.255", seriecolor = "SC_Label1_6.0.2.0.0.255", values = new double?[] { 3, 4 } },
-          new ViewModelProfileSerie { label = "Label1", obisCode = "6.0.9.0.0.255", unit = "l/h", serietype = "ST_6.0.9.0.0.255", serieyaxis = "YA_6.0.9.0.0.255", seriecolor = "SC_Label1_6.0.9.0.0.255", values = new double?[] { 4000, 5000 } },
-          new ViewModelProfileSerie { label = "Label1", obisCode = "6.66.1.0.0.255", unit = "kWh", serietype = "ST_6.66.1.0.0.255", serieyaxis = "YA_6.66.1.0.0.255", seriecolor = "SC_Label1_6.66.1.0.0.255", values = new double?[] { 1000, 2000 } },
-          new ViewModelProfileSerie { label = "Label1", obisCode = "6.66.2.0.0.255", unit = "m3", serietype = "ST_6.66.2.0.0.255", serieyaxis = "YA_6.66.2.0.0.255", seriecolor = "SC_Label1_6.66.2.0.0.255", values = new double?[] { 1, 2 } },
-          new ViewModelProfileSerie { label = "Label1", obisCode = "6.67.8.0.0.255", unit = "W", serietype = "ST_6.67.8.0.0.255", serieyaxis = "YA_6.67.8.0.0.255", seriecolor = "SC_Label1_6.67.8.0.0.255", values = new double?[] { 12000000, 12000000 } },
-          new ViewModelProfileSerie { label = "Label1", obisCode = "6.67.9.0.0.255", unit = "l/h", serietype = "ST_6.67.9.0.0.255", serieyaxis = "YA_6.67.9.0.0.255", seriecolor = "SC_Label1_6.67.9.0.0.255", values = new double?[] { 12000, 12000 } },
+          new ViewModelProfileSerie { label = "Label1", obisCode = "6.0.1.0.0.255", unit = "kWh", serietype = "ST_6.0.1.0.0.255", serieyaxis = "YA_6.0.1.0.0.255", seriecolor = "SC_Label1_6.0.1.0.0.255", 
+            values = new object[] { 2000, 3000 }.Concat(Enumerable.Repeat<object>(null, 286)).ToArray() },
+          new ViewModelProfileSerie { label = "Label1", obisCode = "6.0.2.0.0.255", unit = "m3", serietype = "ST_6.0.2.0.0.255", serieyaxis = "YA_6.0.2.0.0.255", seriecolor = "SC_Label1_6.0.2.0.0.255", 
+            values = new object[] { 3, 4 }.Concat(Enumerable.Repeat<object>(null, 286)).ToArray() },
+          new ViewModelProfileSerie { label = "Label1", obisCode = "6.0.9.0.0.255", unit = "l/h", serietype = "ST_6.0.9.0.0.255", serieyaxis = "YA_6.0.9.0.0.255", seriecolor = "SC_Label1_6.0.9.0.0.255", 
+            values = new object[] { 4000, 5000 }.Concat(Enumerable.Repeat<object>(null, 286)).ToArray() },
+          new ViewModelProfileSerie { label = "Label1", obisCode = "6.66.1.0.0.255", unit = "kWh", serietype = "ST_6.66.1.0.0.255", serieyaxis = "YA_6.66.1.0.0.255", seriecolor = "SC_Label1_6.66.1.0.0.255", 
+            values = new object[] { 1000, 2000 }.Concat(Enumerable.Repeat<object>(null, 286)).ToArray() },
+          new ViewModelProfileSerie { label = "Label1", obisCode = "6.66.2.0.0.255", unit = "m3", serietype = "ST_6.66.2.0.0.255", serieyaxis = "YA_6.66.2.0.0.255", seriecolor = "SC_Label1_6.66.2.0.0.255", 
+            values = new object[] { 1, 2 }.Concat(Enumerable.Repeat<object>(null, 286)).ToArray() },
+          new ViewModelProfileSerie { label = "Label1", obisCode = "6.67.8.0.0.255", unit = "W", serietype = "ST_6.67.8.0.0.255", serieyaxis = "YA_6.67.8.0.0.255", seriecolor = "SC_Label1_6.67.8.0.0.255", 
+            values = new object[] { 12000000, 12000000 }.Concat(Enumerable.Repeat<object>(null, 286)).ToArray() },
+          new ViewModelProfileSerie { label = "Label1", obisCode = "6.67.9.0.0.255", unit = "l/h", serietype = "ST_6.67.9.0.0.255", serieyaxis = "YA_6.67.9.0.0.255", seriecolor = "SC_Label1_6.67.9.0.0.255", 
+            values = new object[] { 12000, 12000 }.Concat(Enumerable.Repeat<object>(null, 286)).ToArray() },
         }
       };
       AssertSerieSet(energyImport, json.graphs.First());
@@ -220,8 +228,8 @@ namespace PowerView.Service.Test.Modules
       var profileGraph = new ProfileGraph("month", "ThePage", "title", "1-days", 1, new[] { new SeriesName("Label", ObisCode.ElectrActiveEnergyA14Period) });
       StubProfileGraph(profileGraph);
       var utcNow = DateTime.UtcNow;
-      profileRepository.Setup(dpr => dpr.GetMonthProfileSet(It.IsAny<DateTime>()))
-        .Returns(new LabelProfileSet(utcNow, new LabelProfile[0]));
+      profileRepository.Setup(dpr => dpr.GetMonthProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+        .Returns(new LabelSeriesSet<TimeRegisterValue>(utcNow, utcNow.AddDays(1), new LabelSeries<TimeRegisterValue>[0]));
 
       // Act
       browser.Get("/api/profile/month", with =>
@@ -253,18 +261,19 @@ namespace PowerView.Service.Test.Modules
       // Assert
       Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
       profileGraphRepository.Verify(pgr => pgr.GetProfileGraphs(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
-      profileRepository.Verify(dpr => dpr.GetDayProfileSet(It.IsAny<DateTime>()), Times.Never);
+      profileRepository.Verify(dpr => dpr.GetDayProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Never);
     }
 
 
     [Test]
-    public void GetMonthProfileStartPassedToRepository()
+    public void GetMonthProfileDateTimesPassedToRepository()
     {
       // Arrange
-      StubProfileGraph();
+      var profileGraph = new ProfileGraph("month", "ThePage", "title", "1-days", 1, new[] { new SeriesName("Label", ObisCode.ElectrActiveEnergyA14Period) });
+      StubProfileGraph(profileGraph);
       var utcNow = DateTime.UtcNow;
-      profileRepository.Setup(dpr => dpr.GetMonthProfileSet(It.IsAny<DateTime>()))
-        .Returns(new LabelProfileSet(utcNow, new LabelProfile[0]));
+      profileRepository.Setup(dpr => dpr.GetMonthProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+        .Returns(new LabelSeriesSet<TimeRegisterValue>(utcNow, utcNow.AddDays(1), new LabelSeries<TimeRegisterValue>[0]));
 
       // Act
       browser.Get("/api/profile/month", with => 
@@ -276,7 +285,8 @@ namespace PowerView.Service.Test.Modules
       });
 
       // Assert
-      profileRepository.Verify(dpr => dpr.GetMonthProfileSet(It.Is<DateTime>(dt => dt == utcNow && dt.Kind == utcNow.Kind)));
+      profileRepository.Verify(dpr => dpr.GetMonthProfileSet(It.Is<DateTime>(dt => dt == utcNow.AddDays(-0.5) && dt.Kind == utcNow.Kind),
+        It.Is<DateTime>(dt => dt == utcNow && dt.Kind == utcNow.Kind), It.Is<DateTime>(dt => dt == utcNow.AddMonths(1) && dt.Kind == utcNow.Kind)));
     }
 
     [Test]
@@ -295,7 +305,7 @@ namespace PowerView.Service.Test.Modules
       // Assert
       Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
       profileGraphRepository.Verify(pgr => pgr.GetProfileGraphs(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
-      profileRepository.Verify(dpr => dpr.GetDayProfileSet(It.IsAny<DateTime>()), Times.Never);
+      profileRepository.Verify(dpr => dpr.GetDayProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Never);
     }
 
     [Test]
@@ -315,7 +325,7 @@ namespace PowerView.Service.Test.Modules
       // Assert
       Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
       profileGraphRepository.Verify(pgr => pgr.GetProfileGraphs(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
-      profileRepository.Verify(dpr => dpr.GetDayProfileSet(It.IsAny<DateTime>()), Times.Never);
+      profileRepository.Verify(dpr => dpr.GetDayProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Never);
     }
 
     [Test]
@@ -327,18 +337,18 @@ namespace PowerView.Service.Test.Modules
       var profileGraph2 = new ProfileGraph("month", "thePage", "Export", "1-days", 2, 
         new[] { new SeriesName("Label0", "1.0.2.8.0.255"), new SeriesName("Label0", "1.66.2.8.0.255"), new SeriesName("Label0", "1.65.2.8.0.255") });
       StubProfileGraph(profileGraph1, profileGraph2);
-      var now = DateTime.UtcNow;
-      var t1 = now-TimeSpan.FromDays(5);
-      var t2 = now-TimeSpan.FromDays(4);
-      var t3 = now-TimeSpan.FromDays(3);
-      var label1Values = new Dictionary<ObisCode, ICollection<TimeRegisterValue>> {
+      var now = new DateTime(2019, 3, 1, 0, 0, 0, DateTimeKind.Utc);
+      var t1 = now;
+      var t2 = now.AddDays(1);
+      var t3 = now.AddDays(2);
+      var label1Values = new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> {
         {"1.0.1.8.0.255", new [] { new TimeRegisterValue("1", t1, 2, 6, Unit.WattHour), new TimeRegisterValue("1", t2, 3, 6, Unit.WattHour) } }
       };
-      var label2Values = new Dictionary<ObisCode, ICollection<TimeRegisterValue>> {
+      var label0Values = new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> {
         {"1.0.2.8.0.255", new [] { new TimeRegisterValue("1", t1, 4, 6, Unit.WattHour), new TimeRegisterValue("1", t3, 6, 6, Unit.WattHour) } }
       };
-      var lps = new LabelProfileSet(t1, new [] {new LabelProfile("Label1", t1, label1Values), new LabelProfile("Label0", t1, label2Values)} );
-      profileRepository.Setup(dpr => dpr.GetMonthProfileSet(It.IsAny<DateTime>())).Returns(lps);
+      var lss = new LabelSeriesSet<TimeRegisterValue>(now, now.AddMonths(1), new [] {new LabelSeries<TimeRegisterValue>("Label1", label1Values), new LabelSeries<TimeRegisterValue>("Label0", label0Values)} );
+      profileRepository.Setup(dpr => dpr.GetMonthProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(lss);
 
       // Act
       var response = browser.Get("/api/profile/month", with => 
@@ -356,22 +366,28 @@ namespace PowerView.Service.Test.Modules
 
       var electricityImport= new ViewModelProfileGraph { 
         title = profileGraph1.Title,
-        categories = new [] { ToStringDay(t1), ToStringDay(t2) },
+        categories = Enumerable.Range(0, 31).Select(i => now.AddDays(i)).Select(ToStringDay).ToArray(),
         series = new [] {
-          new ViewModelProfileSerie { label = "Label1", obisCode = "1.0.1.8.0.255", unit = "kWh", serietype = "ST_1.0.1.8.0.255", serieyaxis = "YA_1.0.1.8.0.255", seriecolor = "SC_Label1_1.0.1.8.0.255", values = new double?[] { 2000, 3000 } },
-          new ViewModelProfileSerie { label = "Label1", obisCode = "1.65.1.8.0.255", unit = "kWh", serietype = "ST_1.65.1.8.0.255", serieyaxis = "YA_1.65.1.8.0.255", seriecolor = "SC_Label1_1.65.1.8.0.255", values = new double?[] { 0, 1000 } }, 
-          new ViewModelProfileSerie { label = "Label1", obisCode = "1.66.1.8.0.255", unit = "kWh", serietype = "ST_1.66.1.8.0.255", serieyaxis = "YA_1.66.1.8.0.255", seriecolor = "SC_Label1_1.66.1.8.0.255", values = new double?[] { 0, 1000 } } 
+          new ViewModelProfileSerie { label = "Label1", obisCode = "1.0.1.8.0.255", unit = "kWh", serietype = "ST_1.0.1.8.0.255", serieyaxis = "YA_1.0.1.8.0.255", seriecolor = "SC_Label1_1.0.1.8.0.255", 
+            values = new object[] { 2000, 3000 }.Concat(Enumerable.Repeat<object>(null, 29)).ToArray() },
+          new ViewModelProfileSerie { label = "Label1", obisCode = "1.65.1.8.0.255", unit = "kWh", serietype = "ST_1.65.1.8.0.255", serieyaxis = "YA_1.65.1.8.0.255", seriecolor = "SC_Label1_1.65.1.8.0.255", 
+            values = new object[] { 0, 1000 }.Concat(Enumerable.Repeat<object>(null, 29)).ToArray() }, 
+          new ViewModelProfileSerie { label = "Label1", obisCode = "1.66.1.8.0.255", unit = "kWh", serietype = "ST_1.66.1.8.0.255", serieyaxis = "YA_1.66.1.8.0.255", seriecolor = "SC_Label1_1.66.1.8.0.255", 
+            values = new object[] { 0, 1000 }.Concat(Enumerable.Repeat<object>(null, 29)).ToArray() } 
         }
       };
       AssertSerieSet(electricityImport, json.graphs.First());
 
       var electricityExport = new ViewModelProfileGraph { 
         title = profileGraph2.Title,
-        categories = new [] { ToStringDay(t1), ToStringDay(t3) },
+        categories = Enumerable.Range(0, 31).Select(i => now.AddDays(i)).Select(ToStringDay).ToArray(),
         series = new [] {
-          new ViewModelProfileSerie { label = "Label0", obisCode = "1.0.2.8.0.255", unit = "kWh", serietype = "ST_1.0.2.8.0.255", serieyaxis = "YA_1.0.2.8.0.255", seriecolor = "SC_Label0_1.0.2.8.0.255", values = new double?[] { 4000, 6000 } },
-          new ViewModelProfileSerie { label = "Label0", obisCode = "1.65.2.8.0.255", unit = "kWh", serietype = "ST_1.65.2.8.0.255", serieyaxis = "YA_1.65.2.8.0.255", seriecolor = "SC_Label0_1.65.2.8.0.255", values = new double?[] { 0, 2000 } }, 
-          new ViewModelProfileSerie { label = "Label0", obisCode = "1.66.2.8.0.255", unit = "kWh", serietype = "ST_1.66.2.8.0.255", serieyaxis = "YA_1.66.2.8.0.255", seriecolor = "SC_Label0_1.66.2.8.0.255", values = new double?[] { 0, 2000 } } 
+          new ViewModelProfileSerie { label = "Label0", obisCode = "1.0.2.8.0.255", unit = "kWh", serietype = "ST_1.0.2.8.0.255", serieyaxis = "YA_1.0.2.8.0.255", seriecolor = "SC_Label0_1.0.2.8.0.255", 
+            values = new object[] { 4000, null, 6000 }.Concat(Enumerable.Repeat<object>(null, 28)).ToArray() },
+          new ViewModelProfileSerie { label = "Label0", obisCode = "1.65.2.8.0.255", unit = "kWh", serietype = "ST_1.65.2.8.0.255", serieyaxis = "YA_1.65.2.8.0.255", seriecolor = "SC_Label0_1.65.2.8.0.255", 
+            values = new object[] { 0, null, 2000 }.Concat(Enumerable.Repeat<object>(null, 28)).ToArray() }, 
+          new ViewModelProfileSerie { label = "Label0", obisCode = "1.66.2.8.0.255", unit = "kWh", serietype = "ST_1.66.2.8.0.255", serieyaxis = "YA_1.66.2.8.0.255", seriecolor = "SC_Label0_1.66.2.8.0.255", 
+            values = new object[] { 0, null, 2000 }.Concat(Enumerable.Repeat<object>(null, 28)).ToArray() } 
         }
       };
       AssertSerieSet(electricityExport, json.graphs.Last());
@@ -389,8 +405,8 @@ namespace PowerView.Service.Test.Modules
       var profileGraph = new ProfileGraph("year", "ThePage", "title", "1-months", 1, new[] { new SeriesName("Label", ObisCode.ElectrActiveEnergyA14Period) });
       StubProfileGraph(profileGraph);
       var utcNow = DateTime.UtcNow;
-      profileRepository.Setup(dpr => dpr.GetYearProfileSet(It.IsAny<DateTime>()))
-        .Returns(new LabelProfileSet(utcNow, new LabelProfile[0]));
+      profileRepository.Setup(dpr => dpr.GetYearProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+        .Returns(new LabelSeriesSet<TimeRegisterValue>(utcNow, utcNow.AddDays(1), new LabelSeries<TimeRegisterValue>[0]));
 
       // Act
       browser.Get("/api/profile/year", with =>
@@ -422,17 +438,19 @@ namespace PowerView.Service.Test.Modules
       // Assert
       Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
       profileGraphRepository.Verify(pgr => pgr.GetProfileGraphs(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
-      profileRepository.Verify(dpr => dpr.GetDayProfileSet(It.IsAny<DateTime>()), Times.Never);
+      profileRepository.Verify(dpr => dpr.GetDayProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Never);
     }
 
     [Test]
-    public void GetYearProfileStartPassedToRepository()
+    public void GetYearProfileDateTimesPassedToRepository()
     {
       // Arrange
-      StubProfileGraph();
-      var utcNow = DateTime.UtcNow;
-      profileRepository.Setup(dpr => dpr.GetYearProfileSet(It.IsAny<DateTime>()))
-        .Returns(new LabelProfileSet(utcNow, new LabelProfile[0]));
+      var profileGraph = new ProfileGraph("month", "thePage", "Import", "1-months", 1,
+        new[] { new SeriesName("Label1", "1.0.1.8.0.255"), new SeriesName("Label1", "1.66.1.8.0.255"), new SeriesName("Label1", "1.65.1.8.0.255") });
+      StubProfileGraph(profileGraph);
+      var utcNow = new DateTime(2019, 06, 15, 0, 0, 0, DateTimeKind.Utc);
+      profileRepository.Setup(dpr => dpr.GetYearProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+        .Returns(new LabelSeriesSet<TimeRegisterValue>(utcNow, utcNow.AddMonths(12), new LabelSeries<TimeRegisterValue>[0]));
 
       // Act
       browser.Get("/api/profile/year", with => 
@@ -444,7 +462,8 @@ namespace PowerView.Service.Test.Modules
       });
 
       // Assert
-      profileRepository.Verify(dpr => dpr.GetYearProfileSet(It.Is<DateTime>(dt => dt == utcNow && dt.Kind == utcNow.Kind)));
+      profileRepository.Verify(dpr => dpr.GetYearProfileSet(It.Is<DateTime>(dt => dt == utcNow.AddDays(-15) && dt.Kind == utcNow.Kind),
+        It.Is<DateTime>(dt => dt == utcNow && dt.Kind == utcNow.Kind), It.Is<DateTime>(dt => dt == utcNow.AddMonths(12) && dt.Kind == utcNow.Kind)));
     }
 
     [Test]
@@ -462,7 +481,7 @@ namespace PowerView.Service.Test.Modules
 
       // Assert
       Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
-      profileRepository.Verify(dpr => dpr.GetYearProfileSet(It.IsAny<DateTime>()), Times.Never);
+      profileRepository.Verify(dpr => dpr.GetYearProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Never);
     }
 
     [Test]
@@ -481,7 +500,7 @@ namespace PowerView.Service.Test.Modules
 
       // Assert
       Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
-      profileRepository.Verify(dpr => dpr.GetYearProfileSet(It.IsAny<DateTime>()), Times.Never);
+      profileRepository.Verify(dpr => dpr.GetYearProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Never);
     }
 
     [Test]
@@ -493,25 +512,25 @@ namespace PowerView.Service.Test.Modules
       var profileGraph2 = new ProfileGraph("month", "thePage", "Export", "1-months", 2,
         new[] { new SeriesName("Label0", "1.0.2.8.0.255"), new SeriesName("Label0", "1.66.2.8.0.255"), new SeriesName("Label0", "1.65.2.8.0.255") });
       StubProfileGraph(profileGraph1, profileGraph2);
-      var t0 = DateTime.UtcNow - TimeSpan.FromDays(365);
-      var t1 = t0.AddMonths(1);
-      var t2 = t0.AddMonths(2);
-      var t3 = t0.AddMonths(3);
-      var label1Values = new Dictionary<ObisCode, ICollection<TimeRegisterValue>> {
+      var now = new DateTime(2019, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+      var t1 = now;
+      var t2 = now.AddMonths(1);
+      var t3 = now.AddMonths(2);
+      var label1Values = new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> {
         {"1.0.1.8.0.255", new [] { new TimeRegisterValue("1", t1, 2, 6, Unit.WattHour), new TimeRegisterValue("1", t2, 3, 6, Unit.WattHour) } }
       };
-      var label2Values = new Dictionary<ObisCode, ICollection<TimeRegisterValue>> {
+      var label2Values = new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> {
         {"1.0.2.8.0.255", new [] { new TimeRegisterValue("1", t1, 4, 6, Unit.WattHour), new TimeRegisterValue("1", t3, 6, 6, Unit.WattHour) } }
       };
-      var lps = new LabelProfileSet(t1, new [] {new LabelProfile("Label1", t1, label1Values), new LabelProfile("Label0", t1, label2Values)} );
-      profileRepository.Setup(dpr => dpr.GetYearProfileSet(It.IsAny<DateTime>())).Returns(lps);
+      var lss = new LabelSeriesSet<TimeRegisterValue>(t1, t1.AddMonths(12), new [] {new LabelSeries<TimeRegisterValue>("Label1", label1Values), new LabelSeries<TimeRegisterValue>("Label0", label2Values)} );
+      profileRepository.Setup(dpr => dpr.GetYearProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(lss);
 
       // Act
       var response = browser.Get("/api/profile/year", with => 
       {
         with.HttpRequest();
         with.HostName("localhost");
-        with.Query("start", t0.AddMonths(5).ToString("o"));
+        with.Query("start", now.ToString("o"));
         with.Query("page", "thePage");
       });
 
@@ -522,22 +541,28 @@ namespace PowerView.Service.Test.Modules
 
       var electricityImport = new ViewModelProfileGraph { 
         title = profileGraph1.Title,
-        categories = new [] { ToStringMonth(t1), ToStringMonth(t2) },
+        categories = Enumerable.Range(0, 12).Select(i => now.AddMonths(i)).Select(ToStringMonth).ToArray(),
         series = new [] {
-          new ViewModelProfileSerie { label = "Label1", obisCode = "1.0.1.8.0.255", unit = "kWh", serietype = "ST_1.0.1.8.0.255", serieyaxis = "YA_1.0.1.8.0.255", seriecolor = "SC_Label1_1.0.1.8.0.255", values = new double?[] { 2000, 3000 } },
-          new ViewModelProfileSerie { label = "Label1", obisCode = "1.65.1.8.0.255", unit = "kWh", serietype = "ST_1.65.1.8.0.255", serieyaxis = "YA_1.65.1.8.0.255", seriecolor = "SC_Label1_1.65.1.8.0.255", values = new double?[] { 0, 1000 } }, 
-          new ViewModelProfileSerie { label = "Label1", obisCode = "1.66.1.8.0.255", unit = "kWh", serietype = "ST_1.66.1.8.0.255", serieyaxis = "YA_1.66.1.8.0.255", seriecolor = "SC_Label1_1.66.1.8.0.255", values = new double?[] { 0, 1000 } } 
+          new ViewModelProfileSerie { label = "Label1", obisCode = "1.0.1.8.0.255", unit = "kWh", serietype = "ST_1.0.1.8.0.255", serieyaxis = "YA_1.0.1.8.0.255", seriecolor = "SC_Label1_1.0.1.8.0.255", 
+            values = new object[] { 2000, 3000 }.Concat(Enumerable.Repeat<object>(null, 10)).ToArray() },
+          new ViewModelProfileSerie { label = "Label1", obisCode = "1.65.1.8.0.255", unit = "kWh", serietype = "ST_1.65.1.8.0.255", serieyaxis = "YA_1.65.1.8.0.255", seriecolor = "SC_Label1_1.65.1.8.0.255", 
+            values = new object[] { 0, 1000 }.Concat(Enumerable.Repeat<object>(null, 10)).ToArray() }, 
+          new ViewModelProfileSerie { label = "Label1", obisCode = "1.66.1.8.0.255", unit = "kWh", serietype = "ST_1.66.1.8.0.255", serieyaxis = "YA_1.66.1.8.0.255", seriecolor = "SC_Label1_1.66.1.8.0.255", 
+            values = new object[] { 0, 1000 }.Concat(Enumerable.Repeat<object>(null, 10)).ToArray() } 
         }
       };
       AssertSerieSet(electricityImport, json.graphs.First());
 
       var electricityExport = new ViewModelProfileGraph { 
         title = profileGraph2.Title,
-        categories = new [] { ToStringMonth(t1), ToStringMonth(t3) },
+        categories = Enumerable.Range(0, 12).Select(i => now.AddMonths(i)).Select(ToStringMonth).ToArray(),
         series = new [] {
-          new ViewModelProfileSerie { label = "Label0", obisCode = "1.0.2.8.0.255", unit = "kWh", serietype = "ST_1.0.2.8.0.255", serieyaxis = "YA_1.0.2.8.0.255", seriecolor = "SC_Label0_1.0.2.8.0.255", values = new double?[] { 4000, 6000 } },
-          new ViewModelProfileSerie { label = "Label0", obisCode = "1.65.2.8.0.255", unit = "kWh", serietype = "ST_1.65.2.8.0.255", serieyaxis = "YA_1.65.2.8.0.255", seriecolor = "SC_Label0_1.65.2.8.0.255", values = new double?[] { 0, 2000 } }, 
-          new ViewModelProfileSerie { label = "Label0", obisCode = "1.66.2.8.0.255", unit = "kWh", serietype = "ST_1.66.2.8.0.255", serieyaxis = "YA_1.66.2.8.0.255", seriecolor = "SC_Label0_1.66.2.8.0.255", values = new double?[] { 0, 2000 } } 
+          new ViewModelProfileSerie { label = "Label0", obisCode = "1.0.2.8.0.255", unit = "kWh", serietype = "ST_1.0.2.8.0.255", serieyaxis = "YA_1.0.2.8.0.255", seriecolor = "SC_Label0_1.0.2.8.0.255", 
+            values = new object[] { 4000, null, 6000 }.Concat(Enumerable.Repeat<object>(null, 9)).ToArray() },
+          new ViewModelProfileSerie { label = "Label0", obisCode = "1.65.2.8.0.255", unit = "kWh", serietype = "ST_1.65.2.8.0.255", serieyaxis = "YA_1.65.2.8.0.255", seriecolor = "SC_Label0_1.65.2.8.0.255", 
+            values = new object[] { 0, null, 2000 }.Concat(Enumerable.Repeat<object>(null, 9)).ToArray() }, 
+          new ViewModelProfileSerie { label = "Label0", obisCode = "1.66.2.8.0.255", unit = "kWh", serietype = "ST_1.66.2.8.0.255", serieyaxis = "YA_1.66.2.8.0.255", seriecolor = "SC_Label0_1.66.2.8.0.255", 
+            values = new object[] { 0, null, 2000 }.Concat(Enumerable.Repeat<object>(null, 9)).ToArray() } 
         }
       };
       AssertSerieSet(electricityExport, json.graphs.Last());
@@ -565,14 +590,14 @@ namespace PowerView.Service.Test.Modules
       return dt.ToString("yyyy-MM-ddTHH:mmZ", CultureInfo.InvariantCulture);
     }
 
-    private static string ToStringDay(IFormattable dt)
+    private static string ToStringDay(DateTime dt)
     {
-      return dt.ToString("yyyy-MM-ddT12:00Z", CultureInfo.InvariantCulture);
+      return dt.ToString("yyyy-MM-ddTHH:mmZ", CultureInfo.InvariantCulture);
     }
 
-    private static string ToStringMonth(IFormattable dt)
+    private static string ToStringMonth(DateTime dt)
     {
-      return dt.ToString("yyyy-MM-01T12:00Z", CultureInfo.InvariantCulture);
+      return dt.ToString("yyyy-MM-ddTHH:mmZ", CultureInfo.InvariantCulture);
     }
 
     private static void AssertSerieSet(ViewModelProfileGraph expected, ViewModelProfileGraph actual)
@@ -639,7 +664,7 @@ namespace PowerView.Service.Test.Modules
       public string serietype { get; set; }
       public string serieyaxis { get; set; }
       public string seriecolor { get; set; }
-      public double?[] values { get; set; }
+      public object[] values { get; set; }
     }
 
     internal class ViewModelProfilePeriodTotal 

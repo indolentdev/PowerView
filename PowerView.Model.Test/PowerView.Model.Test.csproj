@@ -81,8 +81,6 @@
     <Compile Include="Repository\DbTestFixtureWithSchema.cs" />
     <Compile Include="Repository\LiveReadingRepositoryTest.cs" />
     <Compile Include="TimeRegisterValueTest.cs" />
-    <Compile Include="LabelProfileTest.cs" />
-    <Compile Include="LabelProfileSetTest.cs" />
     <Compile Include="Repository\ProfileRepositoryTest.cs" />
     <Compile Include="Repository\ReadingPipeRepositoryTest.cs" />
     <Compile Include="Repository\TimeConverterTest.cs" />
@@ -115,7 +113,6 @@
     <Compile Include="Repository\SeriesNameRepositoryTest.cs" />
     <Compile Include="ProfileGraphTest.cs" />
     <Compile Include="DateTimeResolutionDividerTest.cs" />
-    <Compile Include="CoarseTimeRegisterValueTest.cs" />
     <Compile Include="Expression\AddValueExpressionSetTest.cs" />
     <Compile Include="Expression\SubtractValueExpressionSetTest.cs" />
     <Compile Include="MqttConfigTest.cs" />
@@ -127,6 +124,18 @@
     <Compile Include="SmtpConfigTest.cs" />
     <Compile Include="Repository\DbTestFixtureWithDbFile.cs" />
     <Compile Include="Repository\DbCheckTest.cs" />
+    <Compile Include="LabelSeriesTest.cs" />
+    <Compile Include="LabelSeriesSetTest.cs" />
+    <Compile Include="SeriesGenerators\PeriodSeriesGeneratorTest.cs" />
+    <Compile Include="SeriesGenerators\DeltaSeriesGeneratorTest.cs" />
+    <Compile Include="SeriesGenerators\AverageActualSeriesGeneratorTest.cs" />
+    <Compile Include="IntervalGroupTest.cs" />
+    <Compile Include="ProfileViewSetSourceTest.cs" />
+    <Compile Include="NormalizedTimeRegisterValueTest.cs" />
+    <Compile Include="SeriesFromCumulativeGeneratorTest.cs" />
+    <Compile Include="LabelsSeriesFromTemplatesGeneratorTest.cs" />
+    <Compile Include="LeakCharacteristicCheckerTest.cs" />
+    <Compile Include="Repository\EnvironmentRepositoryTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -141,5 +150,6 @@
   <ItemGroup>
     <Folder Include="Repository\" />
     <Folder Include="Expression\" />
+    <Folder Include="SeriesGenerators\" />
   </ItemGroup>
 </Project>

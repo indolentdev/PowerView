@@ -2,7 +2,7 @@ using System;
 
 namespace PowerView.Model
 {
-  public struct TimeRegisterValue : IEquatable<TimeRegisterValue>
+  public struct TimeRegisterValue : IEquatable<TimeRegisterValue>, ISeries
   {
     public const string DummySerialNumber = "0";
 
@@ -14,22 +14,32 @@ namespace PowerView.Model
     public DateTime Timestamp { get { return timestamp; } }
     public UnitValue UnitValue { get { return unitValue; } }
 
-    public TimeRegisterValue(string serialNumber, DateTime timestamp, int value, short scale, Unit unit)
-    {
-      if ( timestamp.Kind != DateTimeKind.Utc ) throw new ArgumentOutOfRangeException("timestamp", "Must be UTC");
+    public DateTime OrderProperty { get { return Timestamp; } }
 
-      this.serialNumber = serialNumber;
-      this.timestamp = timestamp;
-      unitValue = new UnitValue(value, scale, unit);
+    public TimeRegisterValue(string serialNumber, DateTime timestamp, int value, short scale, Unit unit)
+      : this(serialNumber, timestamp, new UnitValue(value, scale, unit))
+    {
     }
 
     internal TimeRegisterValue(string serialNumber, DateTime timestamp, double value, Unit unit)
+      : this(serialNumber, timestamp, new UnitValue(value, unit))
     {
-      if ( timestamp.Kind != DateTimeKind.Utc ) throw new ArgumentOutOfRangeException("timestamp", "Must be UTC");
+    }
+
+    internal TimeRegisterValue(string serialNumber, DateTime timestamp, UnitValue unitValue)
+    {
+      if (timestamp.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("timestamp", "Must be UTC");
 
       this.serialNumber = serialNumber;
       this.timestamp = timestamp;
-      unitValue = new UnitValue(value, unit);
+      this.unitValue = unitValue;
+    }
+
+    public NormalizedTimeRegisterValue Normalize(Func<DateTime, DateTime> timeDivider)
+    {
+      if (timeDivider == null) throw new ArgumentNullException("timeDivider");
+
+      return new NormalizedTimeRegisterValue(this, timeDivider(Timestamp));
     }
 
     public TimeRegisterValue SubtractValue(TimeRegisterValue baseValue)
@@ -37,7 +47,7 @@ namespace PowerView.Model
       var substractedValue = unitValue - baseValue.unitValue;
       var dValue = substractedValue.Value;
 
-      if (!string.Equals(serialNumber, baseValue.serialNumber, StringComparison.InvariantCultureIgnoreCase))
+      if (!SerialNumberEquals(baseValue))
       {
         var msg = string.Format("A calculation of a subtracted value was not possible. The values originate from different devices (serial numbers). Minuend:{0}, Subtrahend:{1}",
           this, baseValue);
@@ -71,6 +81,11 @@ namespace PowerView.Model
       var longValue = Convert.ToInt64(timeRegisterValue.unitValue.Value);
       var pow = longValue.ToString(System.Globalization.CultureInfo.InvariantCulture).Length;
       return Math.Pow(10, pow);
+    }
+
+    public bool SerialNumberEquals(TimeRegisterValue timeRegisterValue)
+    {
+      return string.Equals(SerialNumber, timeRegisterValue.SerialNumber, StringComparison.InvariantCultureIgnoreCase);
     }
 
     public override string ToString()

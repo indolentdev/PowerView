@@ -4,12 +4,10 @@ namespace PowerView.Model.Repository
 {
   public interface IProfileRepository
   {
-    LabelProfileSet GetDayProfileSet(DateTime start);
+    LabelSeriesSet<TimeRegisterValue> GetDayProfileSet(DateTime preStart, DateTime start, DateTime end);
 
-    LabelProfileSet GetMonthProfileSet(DateTime start);
+    LabelSeriesSet<TimeRegisterValue> GetMonthProfileSet(DateTime preStart, DateTime start, DateTime end);
 
-    LabelProfileSet GetYearProfileSet(DateTime start);
-
-    LabelProfileSet GetCustomProfileSet(DateTime from, DateTime to);
+    LabelSeriesSet<TimeRegisterValue> GetYearProfileSet(DateTime preStart, DateTime start, DateTime end);
   }
 }

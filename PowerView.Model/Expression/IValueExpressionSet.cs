@@ -4,6 +4,6 @@ namespace PowerView.Model.Expression
 {
   public interface IValueExpressionSet
   {
-    ICollection<CoarseTimeRegisterValue> Evaluate();
+    ICollection<NormalizedTimeRegisterValue> Evaluate();
   }
 }

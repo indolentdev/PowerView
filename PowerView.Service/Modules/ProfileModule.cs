@@ -57,7 +57,7 @@ namespace PowerView.Service.Modules
       return GetProfile(profileRepository.GetYearProfileSet, "year");
     }
 
-    private dynamic GetProfile(Func<DateTime, LabelProfileSet> getProfileSet, string period)
+    private dynamic GetProfile(Func<DateTime, DateTime, DateTime, LabelSeriesSet<TimeRegisterValue>> getLabelSeriesSet, string period)
     {
       if (!Request.Query.page.HasValue)
       {
@@ -83,11 +83,12 @@ namespace PowerView.Service.Modules
         return HttpStatusCode.BadRequest;
       }
 
-      var viewSet = GetProfileViewSet(profileGraphs, getProfileSet, start, period);
+      var viewSet = GetProfileViewSet(profileGraphs, getLabelSeriesSet, start, period);
 
-      var r = new { 
-        Page=page,
-        StartTime=DateTimeMapper.Map(start),
+      var r = new
+      {
+        Page = page,
+        StartTime = DateTimeMapper.Map(start),
         Graphs = viewSet.SerieSets.Select(GetGraph).ToList(),
         PeriodTotals = viewSet.PeriodTotals.Select(GetPeriodTotal).ToList()
       };
@@ -95,25 +96,41 @@ namespace PowerView.Service.Modules
       return Response.AsJson(r);
     }
 
-    private ProfileViewSet GetProfileViewSet(ICollection<ProfileGraph> profileGraphs, Func<DateTime, LabelProfileSet> getProfileSet, DateTime start, string period)
+    private ProfileViewSet GetProfileViewSet(ICollection<ProfileGraph> profileGraphs, Func<DateTime, DateTime, DateTime, LabelSeriesSet<TimeRegisterValue>> getLabelSeriesSet, DateTime start, string period)
     {
+      // Distinct intervals
+      var distinctIntervals = profileGraphs.GroupBy(x => x.Interval).ToList();
+
+      // Find query start and end times based on max interval and period...
+      var end = DateTimeResolutionDivider.GetPeriodEnd(period, start);
+      var maxInterval = distinctIntervals.Select(x => DateTimeResolutionDivider.GetNext(x.Key)(start)).Max();
+      var preStart = start.AddTicks((start - maxInterval).Ticks/2); // .. half the interval backwards.
+
+      // Query db
       var sw = new System.Diagnostics.Stopwatch();
       sw.Start();
-      var profileSet = getProfileSet(start);
+      var labelSeriesSet = getLabelSeriesSet(preStart, start, end);
       sw.Stop();
-      if (log.IsDebugEnabled) log.DebugFormat("GetProfile timing - GetProfile: {0}ms", sw.ElapsedMilliseconds);
+      if (log.IsDebugEnabled) log.DebugFormat("GetProfile timing - GetLabelSeriesSet: {0}ms", sw.ElapsedMilliseconds);
 
-      var interval = period == "month" ? "1-days" : (period == "year" ? "1-months" : "5-minutes");
-      if (interval != string.Empty)
+      // group by interval and generate additional series
+      var intervalGroups = new List<IntervalGroup>(distinctIntervals.Count);
+      sw.Restart();
+      foreach (var group in distinctIntervals)
       {
-        sw.Restart();
-        profileSet.GenerateFromTemplates(templateConfigProvider.LabelObisCodeTemplates, interval);
-        sw.Stop();
-        if (log.IsDebugEnabled) log.DebugFormat("GetProfile timing - GenerateFromTemplates: {0}ms", sw.ElapsedMilliseconds);
+        var groupInterval = group.Key;
+        var groupProfileGraphs = group.ToList();
+
+        var intervalGroup = new IntervalGroup(start, groupInterval, groupProfileGraphs, labelSeriesSet);
+        intervalGroup.Prepare(templateConfigProvider.LabelObisCodeTemplates);
+        intervalGroups.Add(intervalGroup);
       }
+      sw.Stop();
+      if (log.IsDebugEnabled) log.DebugFormat("GetProfile timing - Group by intervals and generate: {0}ms", sw.ElapsedMilliseconds);
 
       sw.Restart();
-      var viewSet = profileSet.GetProfileViewSet(profileGraphs);
+      var profileViewSetSource = new ProfileViewSetSource(profileGraphs, intervalGroups);
+      var viewSet = profileViewSetSource.GetProfileViewSet();
       sw.Stop();
       if (log.IsDebugEnabled) log.DebugFormat("GetProfile timing - GetProfileViewSet: {0}ms", sw.ElapsedMilliseconds);
 
@@ -122,14 +139,22 @@ namespace PowerView.Service.Modules
 
     private object GetGraph(SeriesSet serieSet)
     {
-      var series = serieSet.Series.Select(x => new { x.SeriesName.Label, ObisCode=x.SeriesName.ObisCode.ToString(),
-        Unit=ValueAndUnitMapper.Map(x.Unit), SerieType=serieMapper.MapToSerieType(x.SeriesName.ObisCode),
-        SerieYAxis=serieMapper.MapToSerieYAxis(x.SeriesName.ObisCode),
-        SerieColor=serieRepository.GetColorCached(x.SeriesName.Label, x.SeriesName.ObisCode),
-        Values=x.Values.Select(value => ValueAndUnitMapper.Map(value, x.Unit)).ToList() } );
-     
-      return new { Title = serieSet.Title, Categories = serieSet.Categories.Select(x => DateTimeMapper.Map(x)).ToList(), 
-        Series = series.OrderBy(x => x.Label+x.ObisCode).ToList() };
+      var series = serieSet.Series.Select(x => new {
+        x.SeriesName.Label,
+        ObisCode = x.SeriesName.ObisCode.ToString(),
+        Unit = ValueAndUnitMapper.Map(x.Unit),
+        SerieType = serieMapper.MapToSerieType(x.SeriesName.ObisCode),
+        SerieYAxis = serieMapper.MapToSerieYAxis(x.SeriesName.ObisCode),
+        SerieColor = serieRepository.GetColorCached(x.SeriesName.Label, x.SeriesName.ObisCode),
+        Values = x.Values.Select(value => ValueAndUnitMapper.Map(value, x.Unit)).ToList()
+      });
+
+      return new
+      {
+        Title = serieSet.Title,
+        Categories = serieSet.Categories.Select(x => DateTimeMapper.Map(x)).ToList(),
+        Series = series.OrderBy(x => x.Label + x.ObisCode).ToList()
+      };
     }
 
     private object GetPeriodTotal(NamedValue maxValue)

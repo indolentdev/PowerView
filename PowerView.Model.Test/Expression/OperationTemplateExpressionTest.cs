@@ -90,19 +90,19 @@ namespace PowerView.Model.Test.Expression
       var templateExpressionRight = new Mock<ITemplateExpression>();
       const string op = "+";
       var target = new OperationTemplateExpression(templateExpressionLeft.Object, op, templateExpressionRight.Object);
-      var labelProfileSet = new LabelProfileSet(DateTime.UtcNow, new LabelProfile[0]);
-      Func<DateTime, DateTime> timeDivider = dt => new DateTime(dt.Year, 1, 1, 1, 1, 1, dt.Kind);
+      var start = new DateTime(2017, 6, 7, 8, 9, 10, DateTimeKind.Utc);
+      var labelSeriesSet = new LabelSeriesSet<NormalizedTimeRegisterValue>(start, start.AddMonths(11), new LabelSeries<NormalizedTimeRegisterValue>[0]);
       var valueExpressionSet = new Mock<IValueExpressionSet>();
-      templateExpressionLeft.Setup(te => te.GetValueExpressionSet(It.IsAny<LabelProfileSet>(), It.IsAny<Func<DateTime,DateTime>>())).Returns(valueExpressionSet.Object);
-      templateExpressionRight.Setup(te => te.GetValueExpressionSet(It.IsAny<LabelProfileSet>(), It.IsAny<Func<DateTime, DateTime>>())).Returns(valueExpressionSet.Object);
+      templateExpressionLeft.Setup(te => te.GetValueExpressionSet(It.IsAny<LabelSeriesSet<NormalizedTimeRegisterValue>>())).Returns(valueExpressionSet.Object);
+      templateExpressionRight.Setup(te => te.GetValueExpressionSet(It.IsAny<LabelSeriesSet<NormalizedTimeRegisterValue>>())).Returns(valueExpressionSet.Object);
 
       // Act
-      var valExprSet = target.GetValueExpressionSet(labelProfileSet, timeDivider);
+      var valExprSet = target.GetValueExpressionSet(labelSeriesSet);
 
       // Assert
       Assert.That(valExprSet, Is.TypeOf<AddValueExpressionSet>());
-      templateExpressionLeft.Verify(te => te.GetValueExpressionSet(labelProfileSet, timeDivider));
-      templateExpressionRight.Verify(te => te.GetValueExpressionSet(labelProfileSet, timeDivider));
+      templateExpressionLeft.Verify(te => te.GetValueExpressionSet(labelSeriesSet));
+      templateExpressionRight.Verify(te => te.GetValueExpressionSet(labelSeriesSet));
     }
 
     [Test]
@@ -113,21 +113,20 @@ namespace PowerView.Model.Test.Expression
       var templateExpressionRight = new Mock<ITemplateExpression>();
       const string op = "-";
       var target = new OperationTemplateExpression(templateExpressionLeft.Object, op, templateExpressionRight.Object);
-      var labelProfileSet = new LabelProfileSet(DateTime.UtcNow, new LabelProfile[0]);
-      Func<DateTime, DateTime> timeDivider = dt => new DateTime(dt.Year, 1, 1, 1, 1, 1, dt.Kind);
+      var start = new DateTime(2017, 6, 7, 8, 9, 10, DateTimeKind.Utc);
+      var labelSeriesSet = new LabelSeriesSet<NormalizedTimeRegisterValue>(start, start.AddMonths(11), new LabelSeries<NormalizedTimeRegisterValue>[0]);
       var valueExpressionSet = new Mock<IValueExpressionSet>();
-      templateExpressionLeft.Setup(te => te.GetValueExpressionSet(It.IsAny<LabelProfileSet>(), It.IsAny<Func<DateTime, DateTime>>())).Returns(valueExpressionSet.Object);
-      templateExpressionRight.Setup(te => te.GetValueExpressionSet(It.IsAny<LabelProfileSet>(), It.IsAny<Func<DateTime, DateTime>>())).Returns(valueExpressionSet.Object);
+      templateExpressionLeft.Setup(te => te.GetValueExpressionSet(It.IsAny<LabelSeriesSet<NormalizedTimeRegisterValue>>())).Returns(valueExpressionSet.Object);
+      templateExpressionRight.Setup(te => te.GetValueExpressionSet(It.IsAny<LabelSeriesSet<NormalizedTimeRegisterValue>>())).Returns(valueExpressionSet.Object);
 
       // Act
-      var valExprSet = target.GetValueExpressionSet(labelProfileSet, timeDivider);
+      var valExprSet = target.GetValueExpressionSet(labelSeriesSet);
 
       // Assert
       Assert.That(valExprSet, Is.TypeOf<SubtractValueExpressionSet>());
-      templateExpressionLeft.Verify(te => te.GetValueExpressionSet(labelProfileSet, timeDivider));
-      templateExpressionRight.Verify(te => te.GetValueExpressionSet(labelProfileSet, timeDivider));
+      templateExpressionLeft.Verify(te => te.GetValueExpressionSet(labelSeriesSet));
+      templateExpressionRight.Verify(te => te.GetValueExpressionSet(labelSeriesSet));
     }
 
   }
 }
-

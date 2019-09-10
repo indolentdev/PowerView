@@ -20,20 +20,22 @@ namespace PowerView.Model.Expression
 
     #region IValueExpressionSet implementation
 
-    public ICollection<CoarseTimeRegisterValue> Evaluate()
+    public ICollection<NormalizedTimeRegisterValue> Evaluate()
     {
       var a1Values = minuend.Evaluate();
       var a2Values = subtrahend.Evaluate();
 
       var addedValues = a1Values
         .Join(a2Values,
-              x => new { x.CoarseTimestamp, x.TimeRegisterValue.UnitValue.Unit },
-              x => new { x.CoarseTimestamp, x.TimeRegisterValue.UnitValue.Unit },
-              (a1, a2) => new CoarseTimeRegisterValue(a1.CoarseTimestamp,
+              x => new { x.NormalizedTimestamp, x.TimeRegisterValue.UnitValue.Unit },
+              x => new { x.NormalizedTimestamp, x.TimeRegisterValue.UnitValue.Unit },
+              (a1, a2) => new NormalizedTimeRegisterValue(
                 new TimeRegisterValue(TimeRegisterValue.DummySerialNumber,
                                 ValueExpressionSetHelper.GetMeanTimestamp(a1.TimeRegisterValue, a2.TimeRegisterValue),
                                 a1.TimeRegisterValue.UnitValue.Value - a2.TimeRegisterValue.UnitValue.Value,
-                                a1.TimeRegisterValue.UnitValue.Unit))).ToList();
+                                a1.TimeRegisterValue.UnitValue.Unit),
+                a1.NormalizedTimestamp))
+        .ToList();
 
       return addedValues;
     }

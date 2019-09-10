@@ -31,6 +31,33 @@ namespace PowerView.Model.Test
       Assert.That(target.Timestamp, Is.EqualTo(dt));
       Assert.That(target.UnitValue.Value, Is.EqualTo(10000));
       Assert.That(target.UnitValue.Unit, Is.EqualTo(Unit.WattHour));
+      Assert.That(target.OrderProperty, Is.EqualTo(dt));
+    }
+
+    [Test]
+    public void NormalizeThrows()
+    {
+      // Arrange
+      var target = new TimeRegisterValue("1", DateTime.UtcNow, 100, 2, Unit.WattHour);
+
+      // Act & Assert
+      Assert.That(() => target.Normalize(null), Throws.ArgumentNullException);
+    }
+
+    [Test]
+    public void Normalize()
+    {
+      // Arrange
+      var dt = DateTime.UtcNow;
+      var target = new TimeRegisterValue("1", dt, 100, 2, Unit.WattHour);
+      var timeDivider = DateTimeResolutionDivider.GetResolutionDivider("60-minutes");
+
+      // Act
+      var normalizedTimeRegisterValue = target.Normalize(timeDivider);
+
+      // Assert
+      Assert.That(normalizedTimeRegisterValue.TimeRegisterValue, Is.EqualTo(target));
+      Assert.That(normalizedTimeRegisterValue.NormalizedTimestamp, Is.EqualTo(timeDivider(target.Timestamp)));
     }
 
     [Test]
@@ -130,7 +157,27 @@ namespace PowerView.Model.Test
       // Act & Assert
       Assert.That(() => t1.SubtractValue(t2), Throws.TypeOf<DataMisalignedException>()); 
     }
-      
+
+    [Test]
+    [TestCase("SN", "SN", true)]
+    [TestCase("sn", "SN", true)]
+    [TestCase(null, null, true)]
+    [TestCase("SN", "XX", false)]
+    [TestCase(null, "SN", false)]
+    [TestCase("SN", null, false)]
+    public void SerialNumberEquals(string sn1, string sn2, bool expected)
+    {
+      // Arrange
+      var target1 = new TimeRegisterValue(sn1, DateTime.UtcNow, 2, Unit.CubicMetre);
+      var target2 = new TimeRegisterValue(sn2, DateTime.UtcNow, 1, Unit.CubicMetre);
+
+      // Act
+      var snEquals = target1.SerialNumberEquals(target2);
+
+      // Assert
+      Assert.That(snEquals, Is.EqualTo(expected));
+    }
+
     [Test]
     public void ToStringTest()
     {

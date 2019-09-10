@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 
 namespace PowerView.Model
 {
@@ -14,6 +15,11 @@ namespace PowerView.Model
 
     public string Label { get; private set; }
     public ObisCode ObisCode { get; private set; }
+
+    public override string ToString()
+    {
+      return string.Format(CultureInfo.InvariantCulture, "[SeriesName: Label={0}, ObisCode={1}]", Label, ObisCode);
+    }
 
     public override bool Equals(object obj)
     {

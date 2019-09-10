@@ -81,8 +81,6 @@
     <Compile Include="ProfileViewSet.cs" />
     <Compile Include="Series.cs" />
     <Compile Include="SeriesSet.cs" />
-    <Compile Include="LabelProfile.cs" />
-    <Compile Include="LabelProfileSet.cs" />
     <Compile Include="Repository\IProfileRepository.cs" />
     <Compile Include="Repository\ProfileRepository.cs" />
     <Compile Include="Repository\ReadingPipeRepository.cs" />
@@ -146,7 +144,6 @@
     <Compile Include="DateTimeResolutionDivider.cs" />
     <Compile Include="Expression\IValueExpressionSet.cs" />
     <Compile Include="Expression\AddValueExpressionSet.cs" />
-    <Compile Include="CoarseTimeRegisterValue.cs" />
     <Compile Include="Expression\ValueExpressionSet.cs" />
     <Compile Include="Expression\SubtractValueExpressionSet.cs" />
     <Compile Include="Expression\ObisCodeTemplate.cs" />
@@ -170,6 +167,21 @@
     <Compile Include="Repository\DbCheck.cs" />
     <Compile Include="Repository\DataStoreCorruptException.cs" />
     <Compile Include="Repository\IDbCheck.cs" />
+    <Compile Include="LabelSeries.cs" />
+    <Compile Include="LabelSeriesSet.cs" />
+    <Compile Include="SeriesGenerators\PeriodSeriesGenerator.cs" />
+    <Compile Include="SeriesGenerators\ISeriesGenerator.cs" />
+    <Compile Include="SeriesGenerators\DeltaSeriesGenerator.cs" />
+    <Compile Include="SeriesGenerators\AverageActualSeriesGenerator.cs" />
+    <Compile Include="IntervalGroup.cs" />
+    <Compile Include="ProfileViewSetSource.cs" />
+    <Compile Include="NormalizedTimeRegisterValue.cs" />
+    <Compile Include="SeriesFromCumulativeGenerator.cs" />
+    <Compile Include="ISeries.cs" />
+    <Compile Include="LabelSeriesFromTemplatesGenerator.cs" />
+    <Compile Include="LeakCharacteristicChecker.cs" />
+    <Compile Include="Repository\EnvironmentRepository.cs" />
+    <Compile Include="Repository\IEnvironmentRepository.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -193,6 +205,7 @@
     <EmbeddedResource Include="Repository\DbVersion\15\ddl.sql" />
     <EmbeddedResource Include="Repository\DbVersion\16\ddl.sql" />
     <EmbeddedResource Include="Repository\DbVersion\17\ddl.sql" />
+    <EmbeddedResource Include="Repository\DbVersion\18\ddl.sql" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Repository\" />
@@ -213,5 +226,7 @@
     <Folder Include="Repository\DbVersion\15\" />
     <Folder Include="Repository\DbVersion\16\" />
     <Folder Include="Repository\DbVersion\17\" />
+    <Folder Include="SeriesGenerators\" />
+    <Folder Include="Repository\DbVersion\18\" />
   </ItemGroup>
 </Project>
