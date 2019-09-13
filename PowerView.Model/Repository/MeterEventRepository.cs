@@ -115,7 +115,9 @@ namespace PowerView.Model.Repository
       if (newMeterEvents == null) throw new ArgumentNullException("newMeterEvents");
 
       var dbEntities = newMeterEvents.OrderBy(me => me.DetectTimestamp).Select(ToDbEntity);
-      DbContext.InsertTransaction("AddMeterEvents", dbEntities);
+      DbContext.ExecuteTransaction("AddMeterEvents",
+        "INSERT INTO MeterEvent (Label,MeterEventType,DetectTimestamp,Flag,Amplification) VALUES (@Label,@MeterEventType,@DetectTimestamp,@Flag,@Amplification);", 
+        dbEntities);
     }
 
     private static Db.MeterEvent ToDbEntity(MeterEvent meterEvent)

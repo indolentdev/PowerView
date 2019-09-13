@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Mono.Data.Sqlite;
-using DapperExtensions;
+using Dapper;
 
 namespace PowerView.Model.Repository
 {
@@ -33,18 +33,18 @@ namespace PowerView.Model.Repository
       {
         foreach (var item in items)
         {
-          
-          var predicate = Predicates.Field<Db.Setting>(s => s.Name, Operator.Eq, item.Key);
-          var setting = DbContext.Connection.GetList<Db.Setting>(predicate, null, transaction).SingleOrDefault();
+          var setting = DbContext.Connection.QueryFirstOrDefault<Db.Setting>(
+            "SELECT Id, Name, Value FROM Setting WHERE Name = @Name;", new { Name = item.Key }, transaction);
           if (setting != null)
           {
-            setting.Value = item.Value;
-            DbContext.Connection.Update(setting, transaction);
+            DbContext.Connection.Execute(
+              "UPDATE Setting SET Value = @Value WHERE Id = @Id AND Name = @Name;", new { item.Value, setting.Id, setting.Name }, transaction);
           }
           else
           {
             setting = new Db.Setting { Name = item.Key, Value = item.Value };
-            DbContext.Connection.Insert(setting, transaction);
+            DbContext.Connection.Execute(
+              "INSERT INTO Setting (Name, Value) VALUES (@Name, @Value);", setting, transaction);
           }
         }
         transaction.Commit();
@@ -60,38 +60,17 @@ namespace PowerView.Model.Repository
     {
       if (string.IsNullOrEmpty(name)) throw new ArgumentNullException("name");
 
-      var transaction = DbContext.BeginTransaction();
-      try
-      {
-        var predicate = Predicates.Field<Db.Setting>(s => s.Name, Operator.Eq, name);
-        var setting = DbContext.Connection.GetList<Db.Setting>(predicate, null, transaction).SingleOrDefault();
-        transaction.Commit();
-        return setting == null ? null : setting.Value;
-      }
-      catch (SqliteException e)
-      {
-        transaction.Rollback();
-        throw DataStoreExceptionFactory.Create(e);
-      }
+      return DbContext.QueryTransaction<string>("Get", "SELECT Value FROM Setting WHERE Name = @name;", new { name }).FirstOrDefault();
     }
 
     public IList<KeyValuePair<string, string>> Find(string startsWith)
     {
       if (string.IsNullOrEmpty(startsWith)) throw new ArgumentNullException("startsWith");
 
-      var transaction = DbContext.BeginTransaction();
-      try
-      {
-        var predicate = Predicates.Field<Db.Setting>(s => s.Name, Operator.Like, startsWith + "%");
-        var settings = DbContext.Connection.GetList<Db.Setting>(predicate, null, transaction).ToList();
-        transaction.Commit();
-        return new List<KeyValuePair<string, string>>(settings.Select(x => new KeyValuePair<string, string>(x.Name, x.Value)));
-      }
-      catch (SqliteException e)
-      {
-        transaction.Rollback();
-        throw DataStoreExceptionFactory.Create(e);
-      }
+      return DbContext
+        .QueryTransaction<Db.Setting>("Find", "SELECT Id, Name, Value FROM Setting WHERE Name LIKE @StartsWith;", new { StartsWith = startsWith + "%" })
+        .Select(x => new KeyValuePair<string, string>(x.Name, x.Value))
+        .ToList();
     }
 
     public string ProvideInstallationId()

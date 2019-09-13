@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using Mono.Data.Sqlite;
-using DapperExtensions;
+using Dapper;
 using log4net;
 
 namespace PowerView.Model.Repository
@@ -25,20 +25,23 @@ namespace PowerView.Model.Repository
       var transaction = DbContext.BeginTransaction();
       try
       {
-        var predicateLabel = Predicates.Field<Db.DisconnectRule>(x => x.Label, Operator.Eq, disconnectRule.Name.Label);
-        var predicateObisCode = Predicates.Field<Db.DisconnectRule>(x => x.ObisCode, Operator.Eq, (long)disconnectRule.Name.ObisCode);
-        var predicate = Predicates.Group(GroupOperator.And, predicateLabel, predicateObisCode);
-        var dbDisconnectRule = DbContext.Connection.GetList<Db.DisconnectRule>(predicate, null, transaction).SingleOrDefault();
+        var dbDisconnectRule = DbContext.Connection.QueryFirstOrDefault<Db.DisconnectRule>(
+          "SELECT Id,Label,ObisCode,EvaluationLabel,EvaluationObisCode,DurationSeconds,DisconnectToConnectValue,ConnectToDisconnectValue,Unit FROM DisconnectRule WHERE Label = @Label AND ObisCode = @ObisCode;", 
+          new { disconnectRule.Name.Label, ObisCode = (long)disconnectRule.Name.ObisCode }, transaction);
         if (dbDisconnectRule != null)
         {
           MapNonKeyValues(disconnectRule, dbDisconnectRule);
-          DbContext.Connection.Update(dbDisconnectRule, transaction);
+          DbContext.Connection.Execute(
+            "UPDATE DisconnectRule SET EvaluationLabel=@EvaluationLabel,EvaluationObisCode=@EvaluationObisCode,DurationSeconds=@DurationSeconds,DisconnectToConnectValue=@DisconnectToConnectValue,ConnectToDisconnectValue=@ConnectToDisconnectValue,Unit=@Unit WHERE Id = @Id AND Label = @Label AND ObisCode = @ObisCode;", 
+            dbDisconnectRule, transaction);
         }
         else
         {
           dbDisconnectRule = new Db.DisconnectRule { Label = disconnectRule.Name.Label, ObisCode = disconnectRule.Name.ObisCode };
           MapNonKeyValues(disconnectRule, dbDisconnectRule);
-          DbContext.Connection.Insert(dbDisconnectRule, transaction);
+          DbContext.Connection.Execute(
+            "INSERT INTO DisconnectRule (Label,ObisCode,EvaluationLabel,EvaluationObisCode,DurationSeconds,DisconnectToConnectValue,ConnectToDisconnectValue,Unit) VALUES (@Label,@ObisCode,@EvaluationLabel,@EvaluationObisCode,@DurationSeconds,@DisconnectToConnectValue,@ConnectToDisconnectValue,@Unit);", 
+            dbDisconnectRule, transaction);
         }
         transaction.Commit();
       }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Mono.Data.Sqlite;
-using DapperExtensions;
+using Dapper;
 
 namespace PowerView.Model.Repository
 {
@@ -33,18 +33,10 @@ namespace PowerView.Model.Repository
 
     public ICollection<SeriesColor> GetSeriesColors()
     {
-      var transaction = DbContext.Connection.BeginTransaction();
-      try
-      {
-        var serieColors = DbContext.Connection.GetList<Db.SerieColor>(null, null, transaction, buffered: true);
-        transaction.Commit();
-        return serieColors.Select(s => new SeriesColor(new SeriesName(s.Label, s.ObisCode), s.Color)).ToList();
-      }
-      catch (SqliteException e)
-      {
-        transaction.Rollback();
-        throw DataStoreExceptionFactory.Create(e);
-      }
+      return DbContext
+        .QueryTransaction<Db.SerieColor>("GetSeriesColors", @"SELECT Id, Label, ObisCode, Color FROM SerieColor;")
+        .Select(s => new SeriesColor(new SeriesName(s.Label, s.ObisCode), s.Color))
+        .ToList();
     }
 
     public void SetSeriesColors(IEnumerable<SeriesColor> seriesColors)
@@ -74,18 +66,9 @@ namespace PowerView.Model.Repository
     {
       if (seriesColorCache == null)
       {
-        var transaction = DbContext.Connection.BeginTransaction();
-        try
-        {
-          var serieColors = DbContext.Connection.GetList<Db.SerieColor>(null, null, transaction, buffered: true);
-          transaction.Commit();
-          seriesColorCache = serieColors.ToDictionary(s => new SeriesName(s.Label, s.ObisCode), s => s.Color);
-        }
-        catch (SqliteException e)
-        {
-          transaction.Rollback();
-          throw DataStoreExceptionFactory.Create(e);
-        }
+        seriesColorCache = DbContext
+          .QueryTransaction<Db.SerieColor>("GetSeriesColors", @"SELECT Id, Label, ObisCode, Color FROM SerieColor;")
+          .ToDictionary(s => new SeriesName(s.Label, s.ObisCode), s => s.Color);
       }
     }
 
@@ -96,25 +79,27 @@ namespace PowerView.Model.Repository
       {
         foreach (var seriesColor in deleteSeriesColors)
         {
-          var labelPredicate = Predicates.Field<Db.SerieColor>(sc => sc.Label, Operator.Eq, seriesColor.SeriesName.Label);
-          var obisCodePredicate = Predicates.Field<Db.SerieColor>(sc => sc.ObisCode, Operator.Eq, (long)seriesColor.SeriesName.ObisCode);
-          DbContext.Connection.Delete<Db.SerieColor>(Predicates.Group(GroupOperator.And, labelPredicate, obisCodePredicate), transaction, null);
+          DbContext.Connection.Execute(
+            "DELETE FROM SerieColor WHERE Label = @Label AND ObisCode = @ObisCode;", 
+            new { seriesColor.SeriesName.Label, ObisCode = (long)seriesColor.SeriesName.ObisCode }, transaction);
         }
 
         foreach (var seriesColor in upsertSeriesColors)
         {
-          var labelPredicate = Predicates.Field<Db.SerieColor>(sc => sc.Label, Operator.Eq, seriesColor.SeriesName.Label);
-          var obisCodePredicate = Predicates.Field<Db.SerieColor>(sc => sc.ObisCode, Operator.Eq, (long)seriesColor.SeriesName.ObisCode);
-          var dbSeriesColor = DbContext.Connection.GetList<Db.SerieColor>(Predicates.Group(GroupOperator.And, labelPredicate, obisCodePredicate), null, transaction, buffered:true).SingleOrDefault();
+          var dbSeriesColor = DbContext.Connection.QueryFirstOrDefault<Db.SerieColor>(
+            "SELECT Id, Label, ObisCode, Color FROM SerieColor WHERE Label = @Label AND ObisCode = @ObisCode;",
+            new { seriesColor.SeriesName.Label, ObisCode = (long)seriesColor.SeriesName.ObisCode }, transaction);
           if (dbSeriesColor != null)
           {
-            dbSeriesColor.Color = seriesColor.Color;
-            DbContext.Connection.Update(dbSeriesColor, transaction);
+            DbContext.Connection.Execute(
+              "UPDATE SerieColor SET Color = @Color WHERE Id = @Id AND Label = @Lable AND ObisCode = @ObisCode;", 
+              new { seriesColor.Color, dbSeriesColor.Id, dbSeriesColor.Label, dbSeriesColor.ObisCode }, transaction);
           }
           else
           {
             dbSeriesColor = new Db.SerieColor { Label = seriesColor.SeriesName.Label, ObisCode = seriesColor.SeriesName.ObisCode, Color = seriesColor.Color };
-            DbContext.Connection.Insert(dbSeriesColor, transaction);
+            DbContext.Connection.Execute(
+              "INSERT INTO SerieColor (Label, ObisCode, Color) VALUES (@Label, @ObisCode, @Color);", dbSeriesColor, transaction);
           }
         }
 

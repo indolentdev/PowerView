@@ -5,7 +5,6 @@ using System.Linq;
 using System.Reflection;
 using Mono.Data.Sqlite;
 using Dapper;
-using DapperExtensions;
 using log4net;
 
 namespace PowerView.Model.Repository
@@ -15,7 +14,7 @@ namespace PowerView.Model.Repository
     private static ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
     private readonly ITimeConverter timeConverter;
-    private int readingsPerLabel;
+    private readonly int readingsPerLabel;
 
     public ReadingPipeRepository(IDbContext dbContext, ITimeConverter timeConverter)
       : this(dbContext, timeConverter, 9280) // 9280 ~ roughly 32 days with 5 min intervals.)
@@ -75,19 +74,10 @@ namespace PowerView.Model.Repository
       where TDstReading : class, IDbReading
     {
       var streamName = GetTableName<TDstReading>();
-      var transaction = DbContext.BeginTransaction();
-      try
-      {
-        var predicate = Predicates.Field<Db.StreamPosition>(sp => sp.StreamName, Operator.Eq, streamName);
-        var resultSet = DbContext.Connection.GetList<Db.StreamPosition>(predicate, null, transaction, buffered:true).ToArray();
-        transaction.Commit();
-        return resultSet.ToDictionary(sp => sp.Label, sp => sp.Position);
-      }
-      catch (SqliteException e)
-      {
-        transaction.Rollback();
-        throw DataStoreExceptionFactory.Create(e);
-      }
+      var resultSet = DbContext.QueryTransaction<Db.StreamPosition>("GetStreamPositions",
+        "SELECT Id,StreamName,Label,Position FROM StreamPosition WHERE StreamName = @streamName;",
+        new { streamName });
+      return resultSet.ToDictionary(sp => sp.Label, sp => sp.Position);
     }
       
     private IDictionary<string, DateTime> GetLabelMaxTimestamps<TDstReading>()
@@ -98,29 +88,20 @@ namespace PowerView.Model.Repository
 
       log.DebugFormat("Querying for labels from {0}", tableName);
 
-      var transaction = DbContext.BeginTransaction();
-      try
-      {
-        var sqlQuery = @"
+      var sqlQuery = @"
 SELECT Label, MAX(Timestamp) AS MaxTimeStampUnix
 FROM {0}
 GROUP BY Label
 ";
-        sqlQuery = string.Format(CultureInfo.InvariantCulture, sqlQuery, tableName);
-        var resultSet = DbContext.Connection.Query(sqlQuery, null, transaction, buffered: true);
-        transaction.Commit();
-        foreach (dynamic row in resultSet)
-        {
-          string label = row.Label;
-          long maxTimeStampUnix = row.MaxTimeStampUnix;
-          labelToTimeStamp.Add(label, DbContext.GetDateTime(maxTimeStampUnix));
-        }
-      }
-      catch (SqliteException e)
+      sqlQuery = string.Format(CultureInfo.InvariantCulture, sqlQuery, tableName);
+      var resultSet = DbContext.QueryTransaction<dynamic>("GetLabelMaxTimestamps", sqlQuery);
+      foreach (dynamic row in resultSet)
       {
-        transaction.Rollback();
-        throw DataStoreExceptionFactory.Create(e);
+        string label = row.Label;
+        long maxTimeStampUnix = row.MaxTimeStampUnix;
+        labelToTimeStamp.Add(label, DbContext.GetDateTime(maxTimeStampUnix));
       }
+
       log.DebugFormat("Finished query for lables. Got {0}", labelToTimeStamp.Count);
       return labelToTimeStamp;
     }
@@ -154,33 +135,24 @@ GROUP BY Label
       
       var tableName = GetTableName<TSrcReading>();
 
-      var timestamp = DateTime.UtcNow.Subtract(TimeSpan.FromDays(600));
+      var timestamp = DateTime.UtcNow.Subtract(TimeSpan.FromDays(600)); // cap.. max almost two years..
 
       log.DebugFormat("Querying for labels from {0}", tableName);
 
-      var transaction = DbContext.BeginTransaction();
-      try
-      {
-        var sqlQuery = @"
+      var sqlQuery = @"
 SELECT DISTINCT Label
 FROM {0}
 WHERE Timestamp > @Timestamp
 ";
-        sqlQuery = string.Format(CultureInfo.InvariantCulture, sqlQuery, tableName);
-        var resultSet = DbContext.Connection.Query(sqlQuery, new { Timestamp=timestamp }, transaction, buffered: true);
-        transaction.Commit();
-        foreach (dynamic row in resultSet)
-        {
-          string label = row.Label;
-          labels.Add(label);
-        }
-        log.DebugFormat("Finished query for labels. Got {0}", labels.Count);
-      }
-      catch (SqliteException e)
+      sqlQuery = string.Format(CultureInfo.InvariantCulture, sqlQuery, tableName);
+      var resultSet = DbContext.QueryTransaction<dynamic>("GetLabels", sqlQuery, new { Timestamp = timestamp });
+      foreach (dynamic row in resultSet)
       {
-        transaction.Rollback();
-        throw DataStoreExceptionFactory.Create(e);
+        string label = row.Label;
+        labels.Add(label);
       }
+      log.DebugFormat("Finished query for labels. Got {0}", labels.Count);
+
       return labels;
     }
 
@@ -191,29 +163,18 @@ WHERE Timestamp > @Timestamp
 
       log.DebugFormat("Querying for {0} readings from position {1}", label, position);
 
-      var transaction = DbContext.BeginTransaction();
-      try
-      {
-        var sqlQuery = @"
+      var sqlQuery = @"
 SELECT *
 FROM {0}
 WHERE Id > @Position AND Label = @Label
 ORDER BY Id ASC
 LIMIT @Limit 
 ";
-        sqlQuery = string.Format(CultureInfo.InvariantCulture, sqlQuery, tableName);
-        var args = new { Label = label, Position = position, Limit = limit };
-        var resultSet = DbContext.Connection.Query<TSrcReading>(sqlQuery, args, transaction, buffered: true);
-        transaction.Commit();
-        log.Debug("Finished query for readings");
-        var resultSetList = resultSet as IList<TSrcReading>;
-        return resultSetList ?? resultSet.ToArray();
-      }
-      catch (SqliteException e)
-      {
-        transaction.Rollback();
-        throw DataStoreExceptionFactory.Create(e);
-      }
+      sqlQuery = string.Format(CultureInfo.InvariantCulture, sqlQuery, tableName);
+      var args = new { Label = label, Position = position, Limit = limit };
+      var resultSet = DbContext.QueryTransaction<TSrcReading>("GetReadings", sqlQuery, args);
+      log.Debug("Finished query for readings");
+      return resultSet;
     }
 
     private IDictionary<string, IEnumerable<TSrcReading>> GetReadingsToPipeByLabel<TSrcReading, TDstReading>(DateTime maximumDateTime, IDictionary<string, DateTime> existingLabelToTimeStamp, IDictionary<string, IList<TSrcReading>> readingsByLabel)
@@ -354,7 +315,7 @@ LIMIT @Limit
       where TDstReading : class, IDbReading, new()
     {
       var result = false;
-      IDbRegister[] registers;
+      IList<IDbRegister> registers;
       foreach (var labelGrouping in readingsToPipeByLabel)
       {
         var label = labelGrouping.Key;
@@ -379,7 +340,7 @@ LIMIT @Limit
 
         foreach (var reading in readingsToPipe.OrderBy(r => r.Id))
         {
-          var registersForReading = registers.Where(r => r.ReadingId == reading.Id);
+          var registersForReading = registers.Where(r => r.ReadingId == reading.Id).ToList();
 
           InsertReadingAndRegisters<TSrcReading, TDstReading>(label, reading, registersForReading);
 
@@ -389,7 +350,7 @@ LIMIT @Limit
       return result;
     }
 
-    private IDbRegister[] GetRegisters<TSrcReading, TSrcRegister>(string label, IEnumerable<TSrcReading> readingsToPipe) 
+    private IList<IDbRegister> GetRegisters<TSrcReading, TSrcRegister>(string label, IEnumerable<TSrcReading> readingsToPipe)
       where TSrcReading : class, IDbReading
       where TSrcRegister : class, IDbRegister
     {
@@ -397,83 +358,51 @@ LIMIT @Limit
 
       log.DebugFormat("Querying for registers for {0}", label);
 
-      IEnumerable<TSrcRegister> resultSet;
-      var transaction = DbContext.BeginTransaction();
-      try
-      {
-        var sqlQuery = @"
-SELECT *
-FROM {0}
-WHERE ReadingId IN ({1})
-";
-        var ids = string.Join(", ", readingsToPipe.Select(r => r.Id.ToString(CultureInfo.InvariantCulture) ));
-        sqlQuery = string.Format(CultureInfo.InvariantCulture, sqlQuery, tableName, ids);
-        resultSet = DbContext.Connection.Query<TSrcRegister>(sqlQuery, null, transaction, buffered: true);
-        transaction.Commit();
-        log.Debug("Finished query for registers");
-      }
-      catch (SqliteException e)
-      {
-        transaction.Rollback();
-        throw DataStoreExceptionFactory.Create(e);
-      }
-      return resultSet.ToArray();
+      var sqlQuery = "SELECT * FROM {0} WHERE ReadingId IN ({1});";
+      var ids = string.Join(", ", readingsToPipe.Select(r => r.Id.ToString(CultureInfo.InvariantCulture)));
+      sqlQuery = string.Format(CultureInfo.InvariantCulture, sqlQuery, tableName, ids);
+      var resultSet = DbContext.QueryTransaction<TSrcRegister>("GetRegisters", sqlQuery);
+      log.Debug("Finished query for registers");
+      return resultSet.Cast<IDbRegister>().ToList();
     }
 
-    private void InsertReadingAndRegisters<TSrcReading, TDstReading>(string label, TSrcReading reading, IEnumerable<IDbRegister> registers) 
+    private void InsertReadingAndRegisters<TSrcReading, TDstReading>(string label, TSrcReading reading, ICollection<IDbRegister> registers) 
       where TSrcReading : class, IDbReading, new()
       where TDstReading : class, IDbReading, new()
     {
-      int registerCount;
+      var dstReadingTable = GetTableName<TDstReading>();
+      var dstRegisterTable = dstReadingTable.Replace("Reading", "Register");
 
-      var dstName = GetTableName<TDstReading>();
       var transaction = DbContext.BeginTransaction();
       try
       {
+        var sql = "INSERT INTO {0} (Label, SerialNumber, Timestamp) VALUES (@Label, @SerialNumber, @Timestamp); SELECT last_insert_rowid();";
+        sql = string.Format(CultureInfo.InvariantCulture, sql, dstReadingTable);
         var dstReading = ToDstReading<TDstReading>(reading);
-        DbContext.Connection.Insert(dstReading, transaction);
-        if (typeof(TSrcReading) == typeof(Db.LiveReading))
+        dstReading.Id = DbContext.Connection.QueryFirst<long>(sql, dstReading, transaction);
+
+        foreach (var register in registers)
         {
-          var dayRegisters = registers.Select(r => ToDstRegister<Db.DayRegister>(r, dstReading.Id)).ToArray();
-          registerCount = dayRegisters.Length;
-          IEnumerable<Db.DayRegister> dayRegisterEnumerable = dayRegisters;
-          DbContext.Connection.Insert(dayRegisterEnumerable, transaction);
+          register.ReadingId = dstReading.Id;
         }
-        else if (typeof(TSrcReading) == typeof(Db.DayReading))
-        {
-          var monthRegisters = registers.Select(r => ToDstRegister<Db.MonthRegister>(r, dstReading.Id)).ToArray();
-          registerCount = monthRegisters.Length;
-          IEnumerable<Db.MonthRegister> monthRegisterEnumerable = monthRegisters;
-          DbContext.Connection.Insert(monthRegisterEnumerable, transaction);
-        }
-        else if (typeof(TSrcReading) == typeof(Db.MonthReading))
-        {
-          var yearRegisters = registers.Select(r => ToDstRegister<Db.YearRegister>(r, dstReading.Id)).ToArray();
-          registerCount = yearRegisters.Length;
-          IEnumerable<Db.YearRegister> monthRegisterEnumerable = yearRegisters;
-          DbContext.Connection.Insert(monthRegisterEnumerable, transaction);
-        }
-        else
-        {
-          throw new NotSupportedException(typeof(TSrcReading) + " not supported. Extend this method");
-        }
+        sql = "INSERT INTO {0} (ObisCode,Value,Scale,Unit,ReadingId) VALUES (@ObisCode,@Value,@Scale,@Unit,@ReadingId);";
+        sql = string.Format(CultureInfo.InvariantCulture, sql, dstRegisterTable);
+        DbContext.Connection.Execute(sql, registers, transaction);
 
         // Upsert StreamPosition
-        const string sql = @"
-UPDATE StreamPosition
-SET Position=@Position
-WHERE StreamName=@StreamName AND Label=@Label;";
-        var affectedRecords = DbContext.Connection.Execute(sql, new { Position = reading.Id, StreamName = dstName, Label = label }, transaction);
+        sql = "UPDATE StreamPosition SET Position=@Position WHERE StreamName=@StreamName AND Label=@Label;";
+        var affectedRecords = DbContext.Connection.Execute(sql, new { Position = reading.Id, StreamName = dstReadingTable, Label = label }, transaction);
         if (affectedRecords == 0)
         {
-          var streamPosition = new Db.StreamPosition { StreamName = dstName, Label = label, Position = reading.Id };
-          DbContext.Connection.Insert(streamPosition, transaction);
+          var streamPosition = new Db.StreamPosition { StreamName = dstReadingTable, Label = label, Position = reading.Id };
+          sql = "INSERT INTO StreamPosition (StreamName,Label,Position) VALUES (@StreamName, @Label, @Position);";
+          DbContext.Connection.Execute(sql, streamPosition, transaction);
         }
 
         transaction.Commit();
 
         log.DebugFormat("Piped {0}s for {1} time {2} with {3} registers. Set stream position to {4}", 
-          dstName, reading.Label, reading.Timestamp.ToString("o"), registerCount, reading.Id);
+          dstReadingTable, reading.Label, reading.Timestamp.ToString("o"), registers.Count, reading.Id);
       }
       catch (SqliteException e)
       {
@@ -492,20 +421,6 @@ WHERE StreamName=@StreamName AND Label=@Label;";
         Timestamp = srcReading.Timestamp
       };
       return dstReading;
-    }
-
-    private static TDstRegister ToDstRegister<TDstRegister>(IDbRegister srcRegister, long srcReadingId)
-      where TDstRegister : class, IDbRegister, new()
-    {
-      var dstRegister = new TDstRegister
-      { 
-        ObisCode = srcRegister.ObisCode,
-        Value = srcRegister.Value,
-        Scale = srcRegister.Scale,
-        Unit = srcRegister.Unit,
-        ReadingId = srcReadingId
-      };
-      return dstRegister;
     }
 
     private static string GetTableName<T>()

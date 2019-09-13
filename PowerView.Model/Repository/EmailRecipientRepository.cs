@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DapperExtensions;
 
 namespace PowerView.Model.Repository
 {
@@ -16,15 +15,18 @@ namespace PowerView.Model.Repository
 
     public EmailRecipient GetEmailRecipient(string emailAddress)
     {
-      var predicate = Predicates.Field<Db.EmailRecipient>(x => x.EmailAddress, Operator.Eq, emailAddress);
-      return DbContext.GetPage<Db.EmailRecipient>("GetEmailRecipient", 0, 1, predicate)
-                      .Select(ToEmailRecipient).FirstOrDefault();
+      return DbContext.QueryTransaction<Db.EmailRecipient>("GetEmailRecipient",
+          "SELECT Id, Name, EmailAddress FROM EmailRecipient WHERE EmailAddress = @emailAddress;", new { emailAddress })
+        .Select(ToEmailRecipient)
+        .FirstOrDefault();
     }
 
     public IList<EmailRecipient> GetEmailRecipients()
     {
-      var dbEmailRecipients = DbContext.GetPage<Db.EmailRecipient>("GetEmailRecipients", 0, 50);
-      return dbEmailRecipients.Select(ToEmailRecipient).ToArray();
+      return DbContext
+        .QueryTransaction<Db.EmailRecipient>("GetEmailRecipients", "SELECT Id, Name, EmailAddress FROM EmailRecipient ORDER BY Id LIMIT 50;")
+        .Select(ToEmailRecipient)
+        .ToList();
     }
 
     private EmailRecipient ToEmailRecipient(Db.EmailRecipient dbEmailRecipient)

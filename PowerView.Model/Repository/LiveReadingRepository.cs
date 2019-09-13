@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Mono.Data.Sqlite;
-using DapperExtensions;
+using Dapper;
 
 namespace PowerView.Model.Repository
 {
@@ -28,12 +28,18 @@ namespace PowerView.Model.Repository
       var transaction = DbContext.BeginTransaction();
       try
       {
+        // First insert the readings
         foreach (var liveReading in dbLiveReadingsMap.Keys)
         {
-          DbContext.Connection.Insert(liveReading, transaction);
+          liveReading.Id = DbContext.Connection.QueryFirst<long>(
+            "INSERT INTO LiveReading (Label, SerialNumber, Timestamp) VALUES (@Label, @SerialNumber, @Timestamp); SELECT last_insert_rowid();",
+            liveReading, transaction);
         }
+        // then insert the registers
         var dbLiveRegisters = GetDbLiveRegisters(dbLiveReadingsMap);
-        DbContext.Connection.Insert<Db.LiveRegister>(dbLiveRegisters, transaction);
+        DbContext.Connection.Execute(
+          "INSERT INTO LiveRegister (ObisCode, Value, Scale, Unit, ReadingId) VALUES (@ObisCode, @Value, @Scale, @Unit, @ReadingId);",
+          dbLiveRegisters, transaction);
         transaction.Commit();
       }
       catch (SqliteException e)

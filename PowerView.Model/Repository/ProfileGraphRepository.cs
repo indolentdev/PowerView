@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 using Mono.Data.Sqlite;
 using Dapper;
-using DapperExtensions;
 using log4net;
 
 namespace PowerView.Model.Repository
@@ -81,9 +80,14 @@ WHERE Period=@period AND Page=@page;";
         }
         log.DebugFormat("Creating ProfileGraphSerie; Period:{0},Page:{1},Rank:{2}", dbProfileGraph.Period, dbProfileGraph.Page, dbProfileGraph.Rank);
 
-        DbContext.Connection.Insert(dbProfileGraph, transaction);
-        DbContext.Connection.Insert<Db.ProfileGraphSerie>(profileGraph.SerieNames.Select(x => 
-          new Db.ProfileGraphSerie { Label = x.Label, ObisCode = x.ObisCode, ProfileGraphId = dbProfileGraph.Id }), transaction);
+        var profileGraphId = DbContext.Connection.QueryFirstOrDefault<long>(@"
+INSERT INTO ProfileGraph (Period, Page, Title, Interval, Rank) VALUES (@Period, @Page, @Title, @Interval, @Rank);
+SELECT LAST_INSERT_ROWID() AS [Id];", dbProfileGraph, transaction);
+
+        DbContext.Connection.Execute("INSERT INTO ProfileGraphSerie (Label, ObisCode, ProfileGraphId) VALUES (@Label, @ObisCode, @ProfileGraphId);",
+          profileGraph.SerieNames.Select(x =>
+            new Db.ProfileGraphSerie { Label = x.Label, ObisCode = x.ObisCode, ProfileGraphId = profileGraphId }), transaction);
+
         transaction.Commit();
         log.InfoFormat("Created ProfileGraph; Period:{0},Page:{1},Title:{2}. Rows affected:{3}",
                         profileGraph.Period, profileGraph.Page, profileGraph.Title, 1+profileGraph.SerieNames.Count);
