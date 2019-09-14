@@ -2,7 +2,7 @@ using System.Linq;
 
 namespace PowerView.Model.Repository
 {
-  internal class EnvironmentRepository : RepositoryBase//, ISettingRepository
+  internal class EnvironmentRepository : RepositoryBase, IEnvironmentRepository
   {
     //    private static ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
