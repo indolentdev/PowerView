@@ -1,9 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using DapperExtensions;
 using PowerView.Model.Repository;
+using System.Globalization;
 
 namespace PowerView.Model.Test.Repository
 {
@@ -34,7 +33,7 @@ namespace PowerView.Model.Test.Repository
       var pg3 = new Db.ProfileGraph { Period = "day", Page = "p2", Title = "t1", Interval = "5-minutes", Rank = 3 };
       var pg4 = new Db.ProfileGraph { Period = "day", Page = "", Title = "t1", Interval = "5-minutes", Rank = 4 };
       var pg5 = new Db.ProfileGraph { Period = "month", Page = "p2", Title = "t1", Interval = "1-days", Rank = 5 };
-      DbContext.InsertTransaction("", (IEnumerable<Db.ProfileGraph>)new[] { pg1, pg2, pg3, pg4, pg5 });
+      InsertProfileGraphs(pg1, pg2, pg3, pg4, pg5);
       var target = CreateTarget();
 
       // Act
@@ -49,16 +48,12 @@ namespace PowerView.Model.Test.Repository
     {
       // Arrange
       var profileGraphDb1 = new Db.ProfileGraph { Period = "day", Page = "p1", Title = "t1", Interval = "5-minutes", Rank = 1 };
-      DbContext.InsertTransaction("", profileGraphDb1);
+      var profileGraphDb2 = new Db.ProfileGraph { Period = "day", Page = "", Title = "t2", Interval = "5-minutes", Rank = 1 };
+      InsertProfileGraphs(profileGraphDb1, profileGraphDb2);
       var profileGraphSerieDb11 = new Db.ProfileGraphSerie { Label = "l1", ObisCode = ObisCode.ElectrActiveEnergyA14, ProfileGraphId=profileGraphDb1.Id };
       var profileGraphSerieDb12 = new Db.ProfileGraphSerie { Label = "l1", ObisCode = ObisCode.ElectrActiveEnergyA23, ProfileGraphId=profileGraphDb1.Id };
-      var profileGraphSerieDb1 = new[] { profileGraphSerieDb11, profileGraphSerieDb12 };
-      DbContext.InsertTransaction<Db.ProfileGraphSerie>("", profileGraphSerieDb1);
-      var profileGraphDb2 = new Db.ProfileGraph { Period = "day", Page = "", Title = "t2", Interval = "5-minutes", Rank = 1 };
-      DbContext.InsertTransaction("", profileGraphDb2);
       var profileGraphSerieDb21 = new Db.ProfileGraphSerie { Label = "l2", ObisCode = ObisCode.ElectrActiveEnergyA14, ProfileGraphId=profileGraphDb2.Id };
-      var profileGraphSerieDb2 = new[] { profileGraphSerieDb21 };
-      DbContext.InsertTransaction<Db.ProfileGraphSerie>("", profileGraphSerieDb2);
+      InsertProfileGraphSeries(profileGraphSerieDb11, profileGraphSerieDb12, profileGraphSerieDb21);
       var target = CreateTarget();
 
       // Act
@@ -66,8 +61,8 @@ namespace PowerView.Model.Test.Repository
 
       // Assert
       Assert.That(profileGraphs.Count, Is.EqualTo(2));
-      AssertProfileGraph(profileGraphDb1, profileGraphSerieDb1, profileGraphs.First());
-      AssertProfileGraph(profileGraphDb2, profileGraphSerieDb2, profileGraphs.Last());
+      AssertProfileGraph(profileGraphDb1, new[] { profileGraphSerieDb11, profileGraphSerieDb12 } , profileGraphs.First());
+      AssertProfileGraph(profileGraphDb2, new[] { profileGraphSerieDb21 }, profileGraphs.Last());
     }
 
     [Test]
@@ -75,26 +70,16 @@ namespace PowerView.Model.Test.Repository
     {
       // Arrange
       var profileGraphDb1 = new Db.ProfileGraph { Period = "day", Page = "p1", Title = "t1", Interval = "5-minutes", Rank = 1 };
-      DbContext.InsertTransaction("", profileGraphDb1);
+      var profileGraphDb2 = new Db.ProfileGraph { Period = "day", Page = "", Title = "t2", Interval = "5-minutes", Rank = 2 };
+      var profileGraphDb3 = new Db.ProfileGraph { Period = "day", Page = "p1", Title = "t3", Interval = "1-months", Rank = 3 };
+      var profileGraphDb4 = new Db.ProfileGraph { Period = "month", Page = "", Title = "t4", Interval = "1-days", Rank = 4 };
+      InsertProfileGraphs(profileGraphDb1, profileGraphDb2, profileGraphDb3, profileGraphDb4);
       var profileGraphSerieDb11 = new Db.ProfileGraphSerie { Label = "l1", ObisCode = ObisCode.ElectrActiveEnergyA14, ProfileGraphId=profileGraphDb1.Id };
       var profileGraphSerieDb12 = new Db.ProfileGraphSerie { Label = "l1", ObisCode = ObisCode.ElectrActiveEnergyA23, ProfileGraphId=profileGraphDb1.Id };
-      var profileGraphSerieDb1 = new[] { profileGraphSerieDb11, profileGraphSerieDb12 };
-      DbContext.InsertTransaction<Db.ProfileGraphSerie>("", profileGraphSerieDb1);
-      var profileGraphDb2 = new Db.ProfileGraph { Period = "day", Page = "", Title = "t2", Interval = "5-minutes", Rank = 2 };
-      DbContext.InsertTransaction("", profileGraphDb2);
       var profileGraphSerieDb21 = new Db.ProfileGraphSerie { Label = "l2", ObisCode = ObisCode.ElectrActiveEnergyA14, ProfileGraphId=profileGraphDb2.Id };
-      var profileGraphSerieDb2 = new[] { profileGraphSerieDb21 };
-      DbContext.InsertTransaction<Db.ProfileGraphSerie>("", profileGraphSerieDb2);
-      var profileGraphDb3 = new Db.ProfileGraph { Period = "day", Page = "p1", Title = "t3", Interval = "1-months", Rank = 3 };
-      DbContext.InsertTransaction("", profileGraphDb3);
       var profileGraphSerieDb31 = new Db.ProfileGraphSerie { Label = "l2", ObisCode = ObisCode.ElectrActiveEnergyA14, ProfileGraphId=profileGraphDb3.Id };
-      var profileGraphSerieDb3 = new[] { profileGraphSerieDb31 };
-      DbContext.InsertTransaction<Db.ProfileGraphSerie>("", profileGraphSerieDb3);
-      var profileGraphDb4 = new Db.ProfileGraph { Period = "month", Page = "", Title = "t4", Interval = "1-days", Rank = 4 };
-      DbContext.InsertTransaction("", profileGraphDb4);
       var profileGraphSerieDb41 = new Db.ProfileGraphSerie { Label = "l2", ObisCode = ObisCode.ElectrActiveEnergyA14, ProfileGraphId=profileGraphDb4.Id };
-      var profileGraphSerieDb4 = new[] { profileGraphSerieDb41 };
-      DbContext.InsertTransaction<Db.ProfileGraphSerie>("", profileGraphSerieDb4);
+      InsertProfileGraphSeries(profileGraphSerieDb11, profileGraphSerieDb12, profileGraphSerieDb21, profileGraphSerieDb31, profileGraphSerieDb41);
       var target = CreateTarget();
 
       // Act
@@ -102,8 +87,8 @@ namespace PowerView.Model.Test.Repository
 
       // Assert
       Assert.That(profileGraphs.Count, Is.EqualTo(2));
-      AssertProfileGraph(profileGraphDb1, profileGraphSerieDb1, profileGraphs.First());
-      AssertProfileGraph(profileGraphDb3, profileGraphSerieDb3, profileGraphs.Last());
+      AssertProfileGraph(profileGraphDb1, new[] { profileGraphSerieDb11, profileGraphSerieDb12 }, profileGraphs.First());
+      AssertProfileGraph(profileGraphDb3, new[] { profileGraphSerieDb31 }, profileGraphs.Last());
     }
 
     [Test]
@@ -206,7 +191,7 @@ namespace PowerView.Model.Test.Repository
       var profileGraph2 = new Db.ProfileGraph { Period = "day", Page = "p1", Title = "t2", Interval = "5-minutes", Rank = 2 };
       var profileGraph3 = new Db.ProfileGraph { Period = "day", Page = "p2", Title = "t1", Interval = "5-minutes", Rank = 3 };
       var profileGraph4 = new Db.ProfileGraph { Period = "month", Page = "p1", Title = "t1", Interval = "1-days", Rank = 3 };
-      DbContext.InsertTransaction("", (IEnumerable<Db.ProfileGraph>)new [] { profileGraph1, profileGraph2, profileGraph3, profileGraph4 });
+      InsertProfileGraphs(profileGraph1, profileGraph2, profileGraph3, profileGraph4);
       var target = CreateTarget();
 
       // Act
@@ -215,8 +200,7 @@ namespace PowerView.Model.Test.Repository
       // Assert
       AssertProfileGraphExists(profileGraph1.Period, profileGraph1.Page, profileGraph1.Title, profileGraph2.Rank);
       AssertProfileGraphExists(profileGraph2.Period, profileGraph2.Page, profileGraph2.Title, profileGraph1.Rank);
-      var predicateRank = Predicates.Field<Db.ProfileGraph>(x => x.Rank, Operator.Eq, 3);
-      var profileGraphsDb = DbContext.GetPage<Db.ProfileGraph>("", 0, 10, predicateRank);
+      var profileGraphsDb = DbContext.QueryTransaction<Db.ProfileGraph>("", "SELECT * FROM ProfileGraph WHERE Rank=@Rank;", new { Rank = 3 });
       Assert.That(profileGraphsDb.Count, Is.EqualTo(2));
     }
 
@@ -236,41 +220,35 @@ namespace PowerView.Model.Test.Repository
 
     private void AssertProfileGraphExists(string period, string page, string title, long rank, bool not = false)
     {
-      var predicatePeriod = Predicates.Field<Db.ProfileGraph>(x => x.Period, Operator.Eq, period);
-      var predicatePage = Predicates.Field<Db.ProfileGraph>(x => x.Page, Operator.Eq, page);
-      var predicateTitle = Predicates.Field<Db.ProfileGraph>(x => x.Title, Operator.Eq, title);
-      var predicateRank = Predicates.Field<Db.ProfileGraph>(x => x.Rank, Operator.Eq, rank);
-      var predicate = Predicates.Group(GroupOperator.And, predicateTitle, predicatePage, predicatePeriod, predicateRank);
-      var profileGraphsDb = DbContext.GetPage<Db.ProfileGraph>("", 0, 10, predicate);
+      var profileGraphsDb = DbContext.QueryTransaction<Db.ProfileGraph>("",
+        "SELECT * FROM ProfileGraph WHERE Period=@period AND Page=@page AND Title=@title AND Rank=@rank;",
+        new { period, page, title, rank });
       Assert.That(profileGraphsDb.Count, Is.EqualTo(not ? 0 : 1));
     }
 
     private void AssertProfileGraphExists(ProfileGraph profileGraph, bool not = false)
     {
-      var predicatePeriod = Predicates.Field<Db.ProfileGraph>(x => x.Period, Operator.Eq, profileGraph.Period);
-      var predicatePage = Predicates.Field<Db.ProfileGraph>(x => x.Page, Operator.Eq, profileGraph.Page);
-      var predicateTitle = Predicates.Field<Db.ProfileGraph>(x => x.Title, Operator.Eq, profileGraph.Title);
-      var predicateInterval = Predicates.Field<Db.ProfileGraph>(x => x.Interval, Operator.Eq, profileGraph.Interval);
-      var predicateRank = Predicates.Field<Db.ProfileGraph>(x => x.Rank, Operator.Eq, profileGraph.Rank);
+      var sql = "SELECT * FROM ProfileGraph WHERE Period=@Period AND Page=@Page AND Title=@Title AND Interval=@Interval AND Rank{0}@Rank;";
+      var rankOp = "=";
       if (profileGraph.Rank == 0)
       {
-        predicateRank = Predicates.Field<Db.ProfileGraph>(x => x.Rank, Operator.Gt, profileGraph.Rank);
+        rankOp = ">";
       }
-      var predicate = Predicates.Group(GroupOperator.And, predicateTitle, predicatePage, predicatePeriod, predicateInterval, predicateRank);
-      var profileGraphsDb = DbContext.GetPage<Db.ProfileGraph>("", 0, 10, predicate);
+      sql = string.Format(CultureInfo.InvariantCulture, sql, rankOp);
+      var profileGraphsDb = DbContext.QueryTransaction<Db.ProfileGraph>("", sql, profileGraph);
       Assert.That(profileGraphsDb.Count, Is.EqualTo(not ? 0 : 1));
+
       if (!not)
       {
         var profileGraphDb = profileGraphsDb.First();
-        var predicateSerieId = Predicates.Field<Db.ProfileGraphSerie>(x => x.ProfileGraphId, Operator.Eq, profileGraphDb.Id);
-        var profileGraphSeriesDb = DbContext.GetPage<Db.ProfileGraphSerie>("", 0, 100, predicateSerieId);
+        var profileGraphSeriesDb = DbContext.QueryTransaction<Db.ProfileGraphSerie>("", 
+          "SELECT * FROM ProfileGraphSerie WHERE ProfileGraphId=@Id;", new { profileGraphDb.Id });
         Assert.That(profileGraph.SerieNames.Count, Is.EqualTo(profileGraphSeriesDb.Count));
         foreach (var serieName in profileGraph.SerieNames)
         {
-          var predicateLabel = Predicates.Field<Db.ProfileGraphSerie>(x => x.Label, Operator.Eq, serieName.Label);
-          var predicateObisCode = Predicates.Field<Db.ProfileGraphSerie>(x => x.ObisCode, Operator.Eq, (long)serieName.ObisCode);
-          var predicateSerie = Predicates.Group(GroupOperator.And, predicateSerieId, predicateLabel, predicateObisCode);
-          Assert.That(DbContext.Connection.Count<Db.ProfileGraphSerie>(predicateSerie), Is.EqualTo(1));
+          var dbProfileGraphserie = DbContext.QueryTransaction<Db.ProfileGraphSerie>("",
+            "SELECT * FROM ProfileGraphSerie WHERE Label=@Label AND ObisCode=@ObisCode;", new { serieName.Label, Obiscode = (long)serieName.ObisCode });
+          Assert.That(dbProfileGraphserie.Count, Is.EqualTo(1));
         }
       }
     }
@@ -278,6 +256,34 @@ namespace PowerView.Model.Test.Repository
     private ProfileGraphRepository CreateTarget()
     {
       return new ProfileGraphRepository(DbContext);
+    }
+
+    private void InsertProfileGraph(Db.ProfileGraph profileGraph)
+    {
+      InsertProfileGraphs(new Db.ProfileGraph[] { profileGraph });
+    }
+
+    private void InsertProfileGraphs(params Db.ProfileGraph[] profileGraphs)
+    {
+      foreach (var profileGraph in profileGraphs)
+      {
+        var id = DbContext.QueryTransaction<long>("",
+          "INSERT INTO ProfileGraph (Period,Page,Title,Interval,Rank) VALUES (@Period,@Page,@Title,@Interval,@Rank); SELECT last_insert_rowid();",
+          profileGraph).First();
+        profileGraph.Id = id;
+      }
+    }
+
+    private void InsertProfileGraphSerie(Db.ProfileGraphSerie profileGraphSerie)
+    {
+      InsertProfileGraphSeries(new Db.ProfileGraphSerie[] { profileGraphSerie });
+    }
+
+    private void InsertProfileGraphSeries(params Db.ProfileGraphSerie[] profileGraphSeries)
+    {
+      DbContext.ExecuteTransaction("",
+        "INSERT INTO ProfileGraphSerie (Label,ObisCode,ProfileGraphId) VALUES (@Label,@ObisCode,@ProfileGraphId);",
+        profileGraphSeries);
     }
 
   }

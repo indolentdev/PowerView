@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using NUnit.Framework;
-using DapperExtensions;
 using PowerView.Model.Expression;
 using PowerView.Model.Repository;
 
@@ -30,12 +29,12 @@ namespace PowerView.Model.Test.Repository
       ObisCode obisCode1 = "1.2.3.4.5.6";
       ObisCode obisCode2 = "6.5.4.3.2.1";
       ObisCode obisCode3 = "3.4.3.4.3.4";
-      InsertLiveReading(label1, obisCode1);
-      InsertLiveReading(label2, obisCode2);
-      InsertDayReading(label2, obisCode2);
-      InsertDayReading(label3, obisCode3);
-      InsertMonthReading(label3, obisCode3);
-      InsertMonthReading(label1, obisCode1);
+      Insert<Db.LiveReading, Db.LiveRegister>(label1, obisCode1);
+      Insert<Db.LiveReading, Db.LiveRegister>(label2, obisCode2);
+      Insert<Db.DayReading, Db.DayRegister>(label2, obisCode2);
+      Insert<Db.DayReading, Db.DayRegister>(label3, obisCode3);
+      Insert<Db.MonthReading, Db.MonthRegister>(label3, obisCode3);
+      Insert<Db.MonthReading, Db.MonthRegister>(label1, obisCode1);
 
       // Act
       var serieNames = target.GetSeriesNames(new LabelObisCodeTemplate[0]);
@@ -53,7 +52,7 @@ namespace PowerView.Model.Test.Repository
       // Arrange
       var target = CreateTarget();
       const string label = "label";
-      InsertDayReading(label, ObisCode.ElectrActiveEnergyA14);
+      Insert<Db.DayReading, Db.DayRegister>(label, ObisCode.ElectrActiveEnergyA14);
 
       // Act
       var serieColors = target.GetSeriesNames(new LabelObisCodeTemplate[0]);
@@ -74,7 +73,7 @@ namespace PowerView.Model.Test.Repository
       const string label2 = "label2";
       ObisCode obisCode1 = "1.2.3.4.5.6";
       ObisCode obisCode2 = "6.5.4.3.2.1";
-      InsertLiveReading(label1, obisCode1);
+      Insert<Db.LiveReading, Db.LiveRegister>(label1, obisCode1);
       var labelObisCodeTemplats = new[] {
         new LabelObisCodeTemplate(label2, new [] { new ObisCodeTemplate(obisCode2, new RegisterTemplateExpression(label1 + ":" + obisCode1)) }) };
 
@@ -86,40 +85,17 @@ namespace PowerView.Model.Test.Repository
       Assert.That(serieNames.Count(sc => sc.Label==label2 && sc.ObisCode==obisCode2), Is.EqualTo(1));
     }
 
-    private void InsertLiveReading(string label, params ObisCode[] obisCodes)
+    private void Insert<TReading, TRegister>(string label, params ObisCode[] obisCodes)
+      where TReading  : IDbReading,  new()
+      where TRegister : IDbRegister, new()
     {
-      var liveReading = new Db.LiveReading { Label=label, SerialNumber="1", Timestamp=DateTime.UtcNow };
-      DbContext.Connection.Insert(liveReading);
+      var reading = new TReading { Label=label, SerialNumber="1", Timestamp=DateTime.UtcNow };
+      DbContext.InsertReadings(reading);
 
-      foreach (var obisCode in obisCodes)
-      {
-        var LiveRegister = new Db.LiveRegister { ObisCode=obisCode, Value=2, Scale=0, Unit=(byte)Unit.Watt, ReadingId=liveReading.Id };
-        DbContext.Connection.Insert(LiveRegister);
-      }
-    }
-
-    private void InsertDayReading(string label, params ObisCode[] obisCodes)
-    {
-      var dayReading = new Db.DayReading { Label=label, SerialNumber="1", Timestamp=DateTime.UtcNow };
-      DbContext.Connection.Insert(dayReading);
-
-      foreach (var obisCode in obisCodes)
-      {
-        var dayRegister = new Db.DayRegister { ObisCode=obisCode, Value=2, Scale=0, Unit=(byte)Unit.Watt, ReadingId=dayReading.Id };
-        DbContext.Connection.Insert(dayRegister);
-      }
-    }
-
-    private void InsertMonthReading(string label, params ObisCode[] obisCodes)
-    {
-      var dayReading = new Db.MonthReading { Label=label, SerialNumber="1", Timestamp=DateTime.UtcNow };
-      DbContext.Connection.Insert(dayReading);
-
-      foreach (var obisCode in obisCodes)
-      {
-        var dayRegister = new Db.MonthRegister { ObisCode=obisCode, Value=2, Scale=0, Unit=(byte)Unit.Watt, ReadingId=dayReading.Id };
-        DbContext.Connection.Insert(dayRegister);
-      }
+      var registers = obisCodes
+        .Select(oc => (IDbRegister)new TRegister { ObisCode = oc, Value = 2, Scale = 0, Unit = (byte)Unit.Watt, ReadingId = reading.Id })
+        .ToArray();
+      DbContext.InsertRegisters(registers);
     }
 
     private SeriesNameRepository CreateTarget()

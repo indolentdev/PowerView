@@ -41,9 +41,6 @@
     <Reference Include="Mono.Data.Sqlite" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="DapperExtensions">
-      <HintPath>..\packages\DapperExtensions.1.6.3\lib\net45\DapperExtensions.dll</HintPath>
-    </Reference>
     <Reference Include="System.Configuration" />
     <Reference Include="Castle.Core">
       <HintPath>..\packages\Castle.Core.4.4.0\lib\net45\Castle.Core.dll</HintPath>
@@ -136,6 +133,7 @@
     <Compile Include="LabelsSeriesFromTemplatesGeneratorTest.cs" />
     <Compile Include="LeakCharacteristicCheckerTest.cs" />
     <Compile Include="Repository\EnvironmentRepositoryTest.cs" />
+    <Compile Include="Repository\DbContextExtensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -1,9 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using DapperExtensions;
 using PowerView.Model.Repository;
+using PowerView.Model.Test.Repository;
 
 namespace PowerView.Model.Test.Repository
 {
@@ -59,7 +58,7 @@ namespace PowerView.Model.Test.Repository
 
       var dbDisconnectRule = new Db.DisconnectRule { Label = sn1.Label, ObisCode = sn1.ObisCode, EvaluationLabel = sn1.Label, EvaluationObisCode = sn1.ObisCode,
         DurationSeconds = 4, DisconnectToConnectValue = 4, ConnectToDisconnectValue = 3, Unit = 4 };
-      DbContext.InsertTransaction("testdata", dbDisconnectRule);
+      InsertDisconnectRule(dbDisconnectRule);
 
       var sn2 = new SeriesName("label2", ObisCode.ElectrActualPowerP14);
       var disconnectRule = new DisconnectRule(sn1, sn2, TimeSpan.FromMinutes(30), 1500, 200, Unit.Watt);
@@ -74,18 +73,13 @@ namespace PowerView.Model.Test.Repository
 
     private void AssertDisconnectRuleExists(DisconnectRule disconnectRule, bool not = false)
     {
-      var predicateLabel = Predicates.Field<Db.DisconnectRule>(x => x.Label, Operator.Eq, disconnectRule.Name.Label);
-      var predicateObisCode = Predicates.Field<Db.DisconnectRule>(x => x.ObisCode, Operator.Eq, (long)disconnectRule.Name.ObisCode);
-      var predicateEvalLabel = Predicates.Field<Db.DisconnectRule>(x => x.EvaluationLabel, Operator.Eq, disconnectRule.EvaluationName.Label);
-      var predicateEvalObisCode = Predicates.Field<Db.DisconnectRule>(x => x.EvaluationObisCode, Operator.Eq, (long)disconnectRule.EvaluationName.ObisCode);
-      var predicateDuration = Predicates.Field<Db.DisconnectRule>(x => x.DurationSeconds, Operator.Eq, (int)disconnectRule.Duration.TotalSeconds);
-      var predicateDtcValue = Predicates.Field<Db.DisconnectRule>(x => x.DisconnectToConnectValue, Operator.Eq, disconnectRule.DisconnectToConnectValue);
-      var predicateCtdValue = Predicates.Field<Db.DisconnectRule>(x => x.ConnectToDisconnectValue, Operator.Eq, disconnectRule.ConnectToDisconnectValue);
-      var predicateUnit = Predicates.Field<Db.DisconnectRule>(x => x.Unit, Operator.Eq, (byte)disconnectRule.Unit);
-
-      var predicate = Predicates.Group(GroupOperator.And, predicateObisCode, predicateLabel, predicateEvalObisCode, predicateEvalLabel,
-                                       predicateDuration, predicateDtcValue, predicateCtdValue, predicateUnit);
-      var disconnectRulesDb = DbContext.GetPage<Db.DisconnectRule>("", 0, 10, predicate);
+      var disconnectRulesDb = DbContext.QueryTransaction<Db.DisconnectRule>("", @"
+        SELECT * FROM DisconnectRule 
+        WHERE Label=@Label AND ObisCode=@ObisCode AND EvaluationLabel=@EvaluationLabel AND EvaluationObisCode=@EvaluationObisCode AND
+        DurationSeconds=@TotalSeconds AND DisconnectToConnectValue=@DisconnectToConnectValue AND ConnectToDisconnectValue=@ConnectToDisconnectValue AND Unit=@Unit;",
+        new { disconnectRule.Name.Label, ObisCode = (long)disconnectRule.Name.ObisCode, EvaluationLabel = disconnectRule.EvaluationName.Label,
+          EvaluationObisCode = (long)disconnectRule.EvaluationName.ObisCode, TotalSeconds = (int)disconnectRule.Duration.TotalSeconds,
+          disconnectRule.DisconnectToConnectValue, disconnectRule.ConnectToDisconnectValue, Unit = (byte)disconnectRule.Unit });
       Assert.That(disconnectRulesDb.Count, Is.EqualTo(not ? 0 : 1));
     }
 
@@ -124,7 +118,7 @@ namespace PowerView.Model.Test.Repository
       var dbDr3 = new Db.DisconnectRule { Label = "lbl2", ObisCode = (ObisCode)"0.1.96.3.10.255", EvaluationLabel = "lbl33", EvaluationObisCode = 33,
         DurationSeconds = 3333, DisconnectToConnectValue = 33, ConnectToDisconnectValue = 3, Unit = 3 };
 
-      DbContext.InsertTransaction("", (IEnumerable<Db.DisconnectRule>)new[] { dbDr1, dbDr2 });
+      InsertDisconnectRules(dbDr1, dbDr2, dbDr3);
       var sn = new SeriesName("lbl1", "0.1.96.3.10.255");
       var target = CreateTarget();
 
@@ -132,10 +126,8 @@ namespace PowerView.Model.Test.Repository
       target.DeleteDisconnectRule(sn);
 
       // Assert
-      var predicateLabel = Predicates.Field<Db.DisconnectRule>(x => x.Label, Operator.Eq, sn.Label);
-      var predicateObisCode = Predicates.Field<Db.DisconnectRule>(x => x.ObisCode, Operator.Eq, (long)sn.ObisCode);
-      var predicate = Predicates.Group(GroupOperator.And, predicateObisCode, predicateLabel);
-      var disconnectRulesDb = DbContext.GetPage<Db.DisconnectRule>("", 0, 10, predicate);
+      var disconnectRulesDb = DbContext.QueryTransaction<Db.DisconnectRule>("", 
+        "SELECT * FROM DisconnectRule WHERE Label=@Label AND ObisCode=@ObisCode;", new { sn.Label, ObisCode = (long)sn.ObisCode });
       Assert.That(disconnectRulesDb.Count, Is.EqualTo(0));
     }
 
@@ -148,7 +140,7 @@ namespace PowerView.Model.Test.Repository
       var dbDr2 = new Db.DisconnectRule { Label = "lbl2", ObisCode = 2, EvaluationLabel = "lbl22", EvaluationObisCode = 22,
         DurationSeconds = 2222, DisconnectToConnectValue = 22, ConnectToDisconnectValue = 2, Unit = 2 };
 
-      DbContext.InsertTransaction("", (IEnumerable<Db.DisconnectRule>)new[] { dbDr1, dbDr2 });
+      InsertDisconnectRules(dbDr1, dbDr2);
 
       var target = CreateTarget();
 
@@ -172,7 +164,6 @@ namespace PowerView.Model.Test.Repository
       Assert.That(() => target.GetLatestSerieNames(dateTime), Throws.TypeOf<ArgumentOutOfRangeException>());
     }
 
-
     [Test]
     public void GetLatestSerieNamesFromLive()
     {
@@ -180,11 +171,11 @@ namespace PowerView.Model.Test.Repository
       var reading1 = new Db.LiveReading { Label = "lbl", SerialNumber = "SN", Timestamp = DateTime.UtcNow };
       var reading2 = new Db.LiveReading { Label = "lbl-other", SerialNumber = "SN-other", Timestamp = DateTime.UtcNow - TimeSpan.FromDays(3)};
       var reading3 = new Db.LiveReading { Label = "lbl", SerialNumber = "SN", Timestamp = DateTime.UtcNow - TimeSpan.FromDays(1)};
-      Insert(new [] { reading1, reading2, reading3 });
+      DbContext.InsertReadings(reading1, reading2, reading3);
       var register1 = new Db.LiveRegister { ObisCode = ObisCode.ElectrActualPowerP23L2, Unit = (byte)Unit.Watt, ReadingId = reading1.Id };
       var register2 = new Db.LiveRegister { ObisCode = ObisCode.ElectrActualPowerP23L2, Unit = (byte)Unit.Joule, ReadingId = reading2.Id };
       var register3 = new Db.LiveRegister { ObisCode = ObisCode.ElectrActualPowerP23L2, Unit = (byte)Unit.Percentage, ReadingId = reading3.Id };
-      Insert(new[] { register1, register2, register3 });
+      DbContext.InsertRegisters(register1, register2, register3);
       var dateTime = DateTime.UtcNow;
       var target = CreateTarget();
 
@@ -204,11 +195,11 @@ namespace PowerView.Model.Test.Repository
       var reading1 = new Db.DayReading { Label = "lbl", SerialNumber = "SN", Timestamp = DateTime.UtcNow - TimeSpan.FromDays(4) };
       var reading2 = new Db.DayReading { Label = "lbl-other", SerialNumber = "SN-other", Timestamp = DateTime.UtcNow - TimeSpan.FromDays(8) };
       var reading3 = new Db.DayReading { Label = "lbl", SerialNumber = "SN", Timestamp = DateTime.UtcNow - TimeSpan.FromDays(6) };
-      Insert(new[] { reading1, reading2, reading3 });
+      DbContext.InsertReadings(reading1, reading2, reading3);
       var register1 = new Db.DayRegister { ObisCode = ObisCode.ElectrActualPowerP23L2, Unit = (byte)Unit.Watt, ReadingId = reading1.Id };
       var register2 = new Db.DayRegister { ObisCode = ObisCode.ElectrActualPowerP23L2, Unit = (byte)Unit.Joule, ReadingId = reading2.Id };
       var register3 = new Db.DayRegister { ObisCode = ObisCode.ElectrActualPowerP23L2, Unit = (byte)Unit.Percentage, ReadingId = reading3.Id };
-      Insert(new[] { register1, register2, register3 });
+      DbContext.InsertRegisters(register1, register2, register3);
       var dateTime = DateTime.UtcNow;
       var target = CreateTarget();
 
@@ -236,12 +227,16 @@ namespace PowerView.Model.Test.Repository
       return new DisconnectRuleRepository(DbContext);
     }
 
-    private void Insert<TEntity>(IEnumerable<TEntity> items) where TEntity : class, IDbEntity
+    private void InsertDisconnectRule(Db.DisconnectRule disconnectRule)
     {
-      foreach (var item in items)
-      {
-        DbContext.InsertTransaction(string.Empty, item);
-      }
+      InsertDisconnectRules(new Db.DisconnectRule[] { disconnectRule });
+    }
+
+    private void InsertDisconnectRules(params Db.DisconnectRule[] disconnectRules)
+    {
+      DbContext.ExecuteTransaction("",
+        "INSERT INTO DisconnectRule (Label,ObisCode,EvaluationLabel,EvaluationObisCode,DurationSeconds,DisconnectToConnectValue,ConnectToDisconnectValue,Unit) VALUES (@Label,@ObisCode,@EvaluationLabel,@EvaluationObisCode,@DurationSeconds,@DisconnectToConnectValue,@ConnectToDisconnectValue,@Unit);",
+        disconnectRules);
     }
 
   }

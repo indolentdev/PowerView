@@ -14,8 +14,6 @@ namespace PowerView.Model.Repository
     {
       if ( string.IsNullOrEmpty(dbName) ) throw new ArgumentNullException("dbName");
 
-      DapperExtensions.DapperExtensions.SqlDialect = new DapperExtensions.Sql.SqliteDialect();
-
       var builder = new SqliteConnectionStringBuilder();
       builder.BinaryGUID = true;
       builder.DataSource = dbName;

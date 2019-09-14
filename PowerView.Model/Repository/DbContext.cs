@@ -4,7 +4,6 @@ using System.Linq;
 using System.Data;
 using Mono.Data.Sqlite;
 using Dapper;
-using DapperExtensions;
 using log4net;
 using System.Reflection;
 
@@ -35,26 +34,6 @@ namespace PowerView.Model.Repository
     public DateTime GetDateTime(long fieldValue)
     {
       return dateTimeEpoch.AddSeconds(fieldValue);
-    }
-
-    internal IList<TEntity> GetPage<TEntity>(string dbOp, int page, int resultsPerPage, object predicate = null, IList<ISort> sort = null) where TEntity: class, IDbEntity
-    {
-      var theSort = sort;
-      if (theSort == null)
-      {
-        theSort = new[] { Predicates.Sort<TEntity>(e => e.Id, true) };
-      }
-      return InTransaction(transaction => connection.GetPage<TEntity>(predicate, theSort, page, resultsPerPage, transaction, CommandTimeout, false).ToArray(), dbOp);
-    }
-
-    internal void InsertTransaction<TEntity>(string dbOp, TEntity entity) where TEntity: class, IDbEntity
-    {
-      InTransaction(transaction => connection.Insert(entity, transaction, CommandTimeout), dbOp);
-    }
-
-    internal void InsertTransaction<TEntity>(string dbOp, IEnumerable<TEntity> entities) where TEntity : class, IDbEntity
-    {
-      InTransaction(transaction => { connection.Insert(entities, transaction, CommandTimeout); return 0; }, dbOp); // return 0 dummy
     }
 
     internal int ExecuteTransaction(string dbOp, string sql, object param = null)

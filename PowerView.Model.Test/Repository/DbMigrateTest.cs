@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using DapperExtensions;
 using PowerView.Model.Repository;
 
 namespace PowerView.Model.Test.Repository
@@ -23,9 +22,8 @@ namespace PowerView.Model.Test.Repository
       var lr1z = new Db.LiveReading {Label="Label1", SerialNumber="111"};
       var lr2z = new Db.LiveReading {Label="Label2", SerialNumber="222"};
       var lr3z = new Db.LiveReading {Label="Label3"};
-      var liveReadings = new [] { lr1a, lr1b, lr2a, lr2b, lr3a, lr3b, lr1z, lr2z, lr3z };
-      SetTimestamp(liveReadings);
-      Insert(liveReadings);
+      SetTimestamp(new[] { lr1a, lr1b, lr2a, lr2b, lr3a, lr3b, lr1z, lr2z, lr3z });
+      DbContext.InsertReadings(lr1a, lr1b, lr2a, lr2b, lr3a, lr3b, lr1z, lr2z, lr3z);
       var target = CreateTarget();
 
       // Act
@@ -45,20 +43,9 @@ namespace PowerView.Model.Test.Repository
       }
     }
 
-    private void Insert<TEntity>(IEnumerable<TEntity> entities) where TEntity : class, IDbEntity
-    {
-      foreach (var entity in entities)
-      {
-        var id = DbContext.Connection.Insert(entity);
-        entity.Id = id;
-      }
-    }
-
     private void AssertLiveReadings(int expectedCount, string label, string serialNumber)
     {
-      var labelPredicate = Predicates.Field<Db.LiveReading>(f => f.Label, Operator.Eq, label);
-      var serialNumberPredicate = Predicates.Field<Db.LiveReading>(f => f.SerialNumber, Operator.Eq, serialNumber);
-      var result = DbContext.Connection.GetList<Db.LiveReading>(Predicates.Group(GroupOperator.And, labelPredicate, serialNumberPredicate));
+      var result = DbContext.QueryTransaction<Db.LiveReading>("", "SELECT * FROM LiveReading WHERE Label=@label AND SerialNumber=@serialNumber", new { label, serialNumber });
       Assert.That(result.Count(), Is.EqualTo(expectedCount));
     }
 
@@ -66,7 +53,6 @@ namespace PowerView.Model.Test.Repository
     {
       return new DbMigrate(DbContext);
     }
-
 
   }
 }

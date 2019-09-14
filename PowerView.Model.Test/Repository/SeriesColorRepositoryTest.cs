@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using NUnit.Framework;
 using Moq;
-using DapperExtensions;
 using PowerView.Model.Repository;
 
 namespace PowerView.Model.Test.Repository
@@ -68,7 +67,8 @@ namespace PowerView.Model.Test.Repository
       const string label = "label";
       ObisCode obisCode = "1.2.3.4.5.6";
       const string colorBase = "#123456";
-      DbContext.Connection.Insert(new Db.SerieColor { Label = label, ObisCode = obisCode, Color = colorBase });
+      var sc = new Db.SerieColor { Label = label, ObisCode = obisCode, Color = colorBase };
+      InsertSerieColors(sc);
 
       // Act
       var color = target.GetColorCached(label, obisCode);
@@ -88,9 +88,10 @@ namespace PowerView.Model.Test.Repository
       ObisCode obisCode1 = "1.2.3.4.5.6";
       ObisCode obisCode2 = "6.5.4.3.2.1";
       ObisCode obisCode3 = "3.4.3.4.3.4";
-      DbContext.Connection.Insert(new Db.SerieColor{ Label=label1, ObisCode=obisCode1, Color="#111111" });
-      DbContext.Connection.Insert(new Db.SerieColor{ Label=label2, ObisCode=obisCode2, Color="#222222" });
-      DbContext.Connection.Insert(new Db.SerieColor{ Label=label1, ObisCode=obisCode3, Color="#333333" });
+      var sc1 = new Db.SerieColor{ Label=label1, ObisCode=obisCode1, Color="#111111" };
+      var sc2 = new Db.SerieColor{ Label=label2, ObisCode=obisCode2, Color="#222222" };
+      var sc3 = new Db.SerieColor{ Label=label1, ObisCode=obisCode3, Color="#333333" };
+      InsertSerieColors(sc1, sc2, sc3);
 
       // Act
       var seriesColors = target.GetSeriesColors();
@@ -147,7 +148,7 @@ namespace PowerView.Model.Test.Repository
       // Arrange
       var target = CreateTarget();
       var dbSerieColor = new Db.SerieColor { Label = "label", ObisCode = (ObisCode)"1.2.3.4.5.6", Color="#111111" };
-      DbContext.Connection.Insert(dbSerieColor);
+      InsertSerieColors(dbSerieColor);
       var seriesColor = new SeriesColor(new SeriesName(dbSerieColor.Label, dbSerieColor.ObisCode), "#222222");
       obisColorProvider.Setup(ocp => ocp.GetColor(seriesColor.SeriesName.ObisCode)).Returns(seriesColor.Color);
 
@@ -160,16 +161,19 @@ namespace PowerView.Model.Test.Repository
 
     private void AssertSeriesColorExists(SeriesColor serieColor, bool not = false)
     {
-      var predicateLabel = Predicates.Field<Db.SerieColor>(sc => sc.Label, Operator.Eq, serieColor.SeriesName.Label);
-      var predicateObisCode = Predicates.Field<Db.SerieColor>(sc => sc.ObisCode, Operator.Eq, (long)serieColor.SeriesName.ObisCode);
-      var predicateColor = Predicates.Field<Db.SerieColor>(sc => sc.Color, Operator.Eq, serieColor.Color);
-      var predicate = Predicates.Group(GroupOperator.And, predicateLabel, predicateObisCode, predicateColor);
-      Assert.That(DbContext.Connection.Count<Db.SerieColor>(predicate), Is.EqualTo(not ? 0 : 1));
+      var serieColors = DbContext.QueryTransaction<Db.SerieColor>("", "SELECT * FROM SerieColor WHERE Label=@Label AND ObisCode=@ObisCode AND Color=@Color;",
+        new { serieColor.SeriesName.Label, ObisCode = (long)serieColor.SeriesName.ObisCode, serieColor.Color });
+      Assert.That(serieColors.Count, Is.EqualTo(not ? 0 : 1));
     }
 
     private SeriesColorRepository CreateTarget()
     {
       return new SeriesColorRepository(DbContext, obisColorProvider.Object);
+    }
+
+    private void InsertSerieColors(params Db.SerieColor[] serieColors)
+    {
+      DbContext.ExecuteTransaction("", "INSERT INTO SerieColor (Label,ObisCode,Color) VALUES (@Label,@ObisCode,@Color);", serieColors);
     }
 
   }

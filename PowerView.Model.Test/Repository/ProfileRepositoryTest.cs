@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using NUnit.Framework;
-using DapperExtensions;
 using PowerView.Model.Repository;
 
 namespace PowerView.Model.Test.Repository
@@ -205,27 +204,12 @@ namespace PowerView.Model.Test.Repository
       where TReading : class, IDbReading
       where TRegister : class, IDbRegister
     {
-      DbContext.Connection.Insert(reading);
+      DbContext.InsertReadings(reading);
       foreach (var register in registers)
       {
-        object registerAsObject = register;
-        var liveRegister = registerAsObject as Db.LiveRegister;
-        if (liveRegister != null)
-        {
-          liveRegister.ReadingId = reading.Id;
-        }
-        var dayRegister = registerAsObject as Db.DayRegister;
-        if (dayRegister != null)
-        {
-          dayRegister.ReadingId = reading.Id;
-        }
-        var monthRegister = registerAsObject as Db.MonthRegister;
-        if (monthRegister != null)
-        {
-          monthRegister.ReadingId = reading.Id;
-        }
-        DbContext.Connection.Insert(register);
+        register.ReadingId = reading.Id;
       }
+      DbContext.InsertRegisters(registers);
     }
 
     private ProfileRepository CreateTarget()

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
-using DapperExtensions;
 using PowerView.Model.Repository;
 
 namespace PowerView.Model.Test.Repository
@@ -40,10 +40,7 @@ namespace PowerView.Model.Test.Repository
       target.Upsert(name, value);
 
       // Assert
-      var predicateName = Predicates.Field<Db.Setting>(s => s.Name, Operator.Eq, name);
-      var predicateValue = Predicates.Field<Db.Setting>(s => s.Value, Operator.Eq, value);
-      var predicate = Predicates.Group(GroupOperator.And, predicateName, predicateValue);
-      Assert.That(DbContext.Connection.Count<Db.Setting>(predicate), Is.EqualTo(1));
+      AssertExists(name, value);
     }
 
     [Test]
@@ -53,16 +50,13 @@ namespace PowerView.Model.Test.Repository
       var target = CreateTarget();
       const string name = "theName";
       const string value = "theValue";
-      DbContext.Connection.Insert(new Db.Setting {Name=name, Value="old Value"});
+      InsertSettings(new Db.Setting { Name = name, Value = "old Value" });
 
       // Act
       target.Upsert(name, value);
 
       // Assert
-      var predicateName = Predicates.Field<Db.Setting>(s => s.Name, Operator.Eq, name);
-      var predicateValue = Predicates.Field<Db.Setting>(s => s.Value, Operator.Eq, value);
-      var predicate = Predicates.Group(GroupOperator.And, predicateName, predicateValue);
-      Assert.That(DbContext.Connection.Count<Db.Setting>(predicate), Is.EqualTo(1));
+      AssertExists(name, value);
     }
 
     [Test]
@@ -79,14 +73,8 @@ namespace PowerView.Model.Test.Repository
       target.Upsert(new [] { new KeyValuePair<string, string>(name1, value1), new KeyValuePair<string, string>(name2, value2) });
 
       // Assert
-      var predicateName = Predicates.Field<Db.Setting>(s => s.Name, Operator.Eq, name1);
-      var predicateValue = Predicates.Field<Db.Setting>(s => s.Value, Operator.Eq, value1);
-      var predicate = Predicates.Group(GroupOperator.And, predicateName, predicateValue);
-      Assert.That(DbContext.Connection.Count<Db.Setting>(predicate), Is.EqualTo(1));
-      predicateName = Predicates.Field<Db.Setting>(s => s.Name, Operator.Eq, name2);
-      predicateValue = Predicates.Field<Db.Setting>(s => s.Value, Operator.Eq, value2);
-      predicate = Predicates.Group(GroupOperator.And, predicateName, predicateValue);
-      Assert.That(DbContext.Connection.Count<Db.Setting>(predicate), Is.EqualTo(1));
+      AssertExists(name1, value1);
+      AssertExists(name2, value2);
     }
 
     [Test]
@@ -98,21 +86,14 @@ namespace PowerView.Model.Test.Repository
       const string value1 = "theValue1";
       const string name2 = "theName2";
       const string value2 = "theValue2";
-      DbContext.Connection.Insert(new Db.Setting { Name = name1, Value = "old Value1" });
-      DbContext.Connection.Insert(new Db.Setting { Name = name2, Value = "old Value2" });
+      InsertSettings(new Db.Setting { Name = name1, Value = "old Value1" }, new Db.Setting { Name = name2, Value = "old Value2" });
 
       // Act
       target.Upsert(new[] { new KeyValuePair<string, string>(name1, value1), new KeyValuePair<string, string>(name2, value2) });
 
       // Assert
-      var predicateName = Predicates.Field<Db.Setting>(s => s.Name, Operator.Eq, name1);
-      var predicateValue = Predicates.Field<Db.Setting>(s => s.Value, Operator.Eq, value1);
-      var predicate = Predicates.Group(GroupOperator.And, predicateName, predicateValue);
-      Assert.That(DbContext.Connection.Count<Db.Setting>(predicate), Is.EqualTo(1));
-      predicateName = Predicates.Field<Db.Setting>(s => s.Name, Operator.Eq, name2);
-      predicateValue = Predicates.Field<Db.Setting>(s => s.Value, Operator.Eq, value2);
-      predicate = Predicates.Group(GroupOperator.And, predicateName, predicateValue);
-      Assert.That(DbContext.Connection.Count<Db.Setting>(predicate), Is.EqualTo(1));
+      AssertExists(name1, value1);
+      AssertExists(name2, value2);
     }
 
     [Test]
@@ -133,7 +114,7 @@ namespace PowerView.Model.Test.Repository
       var target = CreateTarget();
       const string name = "theName";
       const string value = "theValue";
-      DbContext.Connection.Insert(new Db.Setting {Name=name, Value=value});
+      InsertSettings(new Db.Setting {Name=name, Value=value});
 
       // Act
       var readValue = target.Get(name);
@@ -158,9 +139,10 @@ namespace PowerView.Model.Test.Repository
     {
       // Arrange
       var target = CreateTarget();
-      DbContext.Connection.Insert(new Db.Setting { Name = "A-name1", Value = "A-value1" });
-      DbContext.Connection.Insert(new Db.Setting { Name = "A-name2", Value = "A-value2" });
-      DbContext.Connection.Insert(new Db.Setting { Name = "B-name1", Value = "B-value1" });
+      var s1 = new Db.Setting { Name = "A-name1", Value = "A-value1" };
+      var s2 = new Db.Setting { Name = "A-name2", Value = "A-value2" };
+      var s3 = new Db.Setting { Name = "B-name1", Value = "B-value1" };
+      InsertSettings(s1, s2, s3);
 
       // Act
       var list = target.Find("A-");
@@ -202,9 +184,10 @@ namespace PowerView.Model.Test.Repository
     public void GetMqttConfig()
     {
       // Arrange
-      DbContext.Connection.Insert(new Db.Setting { Name = "MQTT_Server", Value = "TheMqttServer" });
-      DbContext.Connection.Insert(new Db.Setting { Name = "MQTT_Port", Value = "12345" });
-      DbContext.Connection.Insert(new Db.Setting { Name = "MQTT_PublishEnabled", Value = "True" });
+      var s1 = new Db.Setting { Name = "MQTT_Server", Value = "TheMqttServer" };
+      var s2 = new Db.Setting { Name = "MQTT_Port", Value = "12345" };
+      var s3 = new Db.Setting { Name = "MQTT_PublishEnabled", Value = "True" };
+      InsertSettings(s1, s2, s3);
       var target = CreateTarget();
 
       // Act
@@ -257,21 +240,12 @@ namespace PowerView.Model.Test.Repository
 
     private void AssertMqttConfig(string server, string port, string enabled)
     {
-      var predicatePrefix = Predicates.Field<Db.Setting>(s => s.Name, Operator.Like, "MQTT_%");
-      Assert.That(DbContext.Connection.Count<Db.Setting>(predicatePrefix), Is.EqualTo(3));
+      var mqttSettings = DbContext.QueryTransaction<Db.Setting>("", "SELECT * FROM Setting WHERE Name like @mqtt;", new { mqtt = "MQTT_%" });
+      Assert.That(mqttSettings.Count, Is.EqualTo(3));
 
-      var predicateName = Predicates.Field<Db.Setting>(s => s.Name, Operator.Eq, "MQTT_Server");
-      var predicateValue = Predicates.Field<Db.Setting>(s => s.Value, Operator.Eq, server);
-      var predicate = Predicates.Group(GroupOperator.And, predicateName, predicateValue);
-      Assert.That(DbContext.Connection.Count<Db.Setting>(predicate), Is.EqualTo(1));
-      predicateName = Predicates.Field<Db.Setting>(s => s.Name, Operator.Eq, "MQTT_Port");
-      predicateValue = Predicates.Field<Db.Setting>(s => s.Value, Operator.Eq, port);
-      predicate = Predicates.Group(GroupOperator.And, predicateName, predicateValue);
-      Assert.That(DbContext.Connection.Count<Db.Setting>(predicate), Is.EqualTo(1));
-      predicateName = Predicates.Field<Db.Setting>(s => s.Name, Operator.Eq, "MQTT_PublishEnabled");
-      predicateValue = Predicates.Field<Db.Setting>(s => s.Value, Operator.Eq, enabled);
-      predicate = Predicates.Group(GroupOperator.And, predicateName, predicateValue);
-      Assert.That(DbContext.Connection.Count<Db.Setting>(predicate), Is.EqualTo(1));
+      AssertExists("MQTT_Server", server);
+      AssertExists("MQTT_Port", port);
+      AssertExists("MQTT_PublishEnabled", enabled);
     }
 
     [Test]
@@ -315,29 +289,18 @@ namespace PowerView.Model.Test.Repository
 
     private void AssertSmtpConfig(string server, string port, string user)
     {
-      var predicatePrefix = Predicates.Field<Db.Setting>(s => s.Name, Operator.Like, "SMTP_%");
-      Assert.That(DbContext.Connection.Count<Db.Setting>(predicatePrefix), Is.EqualTo(5));
+      var smtpSettings = DbContext.QueryTransaction<Db.Setting>("", "SELECT * FROM Setting WHERE Name like @smtp;", new { smtp = "SMTP_%" });
+      Assert.That(smtpSettings.Count, Is.EqualTo(5));
 
-      var predicateName = Predicates.Field<Db.Setting>(s => s.Name, Operator.Eq, "SMTP_Server");
-      var predicateValue = Predicates.Field<Db.Setting>(s => s.Value, Operator.Eq, server);
-      var predicate = Predicates.Group(GroupOperator.And, predicateName, predicateValue);
-      Assert.That(DbContext.Connection.Count<Db.Setting>(predicate), Is.EqualTo(1));
-      predicateName = Predicates.Field<Db.Setting>(s => s.Name, Operator.Eq, "SMTP_Port");
-      predicateValue = Predicates.Field<Db.Setting>(s => s.Value, Operator.Eq, port);
-      predicate = Predicates.Group(GroupOperator.And, predicateName, predicateValue);
-      Assert.That(DbContext.Connection.Count<Db.Setting>(predicate), Is.EqualTo(1));
-      predicateName = Predicates.Field<Db.Setting>(s => s.Name, Operator.Eq, "SMTP_User");
-      predicateValue = Predicates.Field<Db.Setting>(s => s.Value, Operator.Eq, user);
-      predicate = Predicates.Group(GroupOperator.And, predicateName, predicateValue);
-      Assert.That(DbContext.Connection.Count<Db.Setting>(predicate), Is.EqualTo(1));
-      predicateName = Predicates.Field<Db.Setting>(s => s.Name, Operator.Eq, "SMTP_AuthCrypt");
-      predicateValue = Predicates.Field<Db.Setting>(s => s.Value, Operator.Eq, null, true);
-      predicate = Predicates.Group(GroupOperator.And, predicateName, predicateValue);
-      Assert.That(DbContext.Connection.Count<Db.Setting>(predicate), Is.EqualTo(1));
-      predicateName = Predicates.Field<Db.Setting>(s => s.Name, Operator.Eq, "SMTP_AuthIv");
-      predicateValue = Predicates.Field<Db.Setting>(s => s.Value, Operator.Eq, null, true);
-      predicate = Predicates.Group(GroupOperator.And, predicateName, predicateValue);
-      Assert.That(DbContext.Connection.Count<Db.Setting>(predicate), Is.EqualTo(1));
+      AssertExists("SMTP_Server", server);
+      AssertExists("SMTP_Port", port);
+      AssertExists("SMTP_User", user);
+
+      var smtpAuthSettings = smtpSettings.Where(x => x.Name.StartsWith("SMTP_Auth", StringComparison.InvariantCultureIgnoreCase)).ToList();
+      Assert.That(smtpAuthSettings.Count, Is.EqualTo(2));
+      Assert.That(smtpAuthSettings.Select(x => x.Name).ToArray(), Is.EquivalentTo(new[] { "SMTP_AuthCrypt", "SMTP_AuthIv" }));
+      Assert.That(smtpAuthSettings[0].Value, Is.Not.Null);
+      Assert.That(smtpAuthSettings[1].Value, Is.Not.Null);
     }
 
     [Test]
@@ -360,6 +323,16 @@ namespace PowerView.Model.Test.Repository
     private SettingRepository CreateTarget()
     {
       return new SettingRepository(DbContext);
+    }
+
+    private void InsertSettings(params Db.Setting[] settings)
+    {
+      DbContext.ExecuteTransaction("", "INSERT INTO Setting (Name, Value) VALUES (@name, @Value);", settings);
+    }
+    private void AssertExists(string name, string value)
+    {
+      var settings = DbContext.QueryTransaction<Db.Setting>("", "SELECT * FROM Setting WHERE Name=@name and Value=@value;", new { name, value });
+      Assert.That(settings.Count, Is.EqualTo(1));
     }
 
   }

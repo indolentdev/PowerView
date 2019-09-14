@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using NUnit.Framework;
-using DapperExtensions;
 using PowerView.Model.Repository;
 
 namespace PowerView.Model.Test.Repository
@@ -138,14 +137,10 @@ namespace PowerView.Model.Test.Repository
 
     private void AssertMeterEventExists(MeterEvent meterEvent, bool not = false)
     {
-      var pLabel = Predicates.Field<Db.MeterEvent>(me => me.Label, Operator.Eq, meterEvent.Label);
-      var pMeterEventId = Predicates.Field<Db.MeterEvent>(me => me.MeterEventType, Operator.Eq, meterEvent.Amplification.GetMeterEventType());
-      var pDetectTimestamp = Predicates.Field<Db.MeterEvent>(me => me.DetectTimestamp, Operator.Eq, meterEvent.DetectTimestamp);
-      var pValue = Predicates.Field<Db.MeterEvent>(me => me.Flag, Operator.Eq, meterEvent.Flag);
-      var pAmplification = Predicates.Field<Db.MeterEvent>(me => me.Amplification, Operator.Eq, MeterEventAmplificationSerializer.Serialize(meterEvent.Amplification));
-
-      var predicate = Predicates.Group(GroupOperator.And, pLabel, pMeterEventId, pDetectTimestamp, pValue, pAmplification);
-      Assert.That(DbContext.Connection.Count<Db.MeterEvent>(predicate), Is.EqualTo(not ? 0 : 1));
+      var meterEvents = DbContext.QueryTransaction<Db.MeterEvent>("", 
+        "SELECT * FROM MeterEvent WHERE Label=@Label AND MeterEventType=@MeterEventType AND DetectTimestamp=@DetectTimestamp AND Flag=@Flag AND Amplification=@Amplification;", 
+        new { meterEvent.Label, MeterEventType = meterEvent.Amplification.GetMeterEventType(), meterEvent.DetectTimestamp, meterEvent.Flag, Amplification = MeterEventAmplificationSerializer.Serialize(meterEvent.Amplification) });
+      Assert.That(meterEvents.Count, Is.EqualTo(not ? 0 : 1));
     }
 
     private Db.MeterEvent InsertMeterEvent(string label, DateTime detectTimestamp, bool flag, IMeterEventAmplification amplification)
@@ -157,7 +152,10 @@ namespace PowerView.Model.Test.Repository
         DetectTimestamp = detectTimestamp, Flag = flag, Amplification = ampString
       };
 
-      DbContext.Connection.Insert(dbMeterEvent);
+      var id = DbContext.QueryTransaction<long>("",
+        "INSERT INTO MeterEvent (Label,MeterEventType,DetectTimestamp,Flag,Amplification) VALUES (@Label,@MeterEventType,@DetectTimestamp,@Flag,@Amplification); SELECT last_insert_rowid();", dbMeterEvent)
+        .First();
+      dbMeterEvent.Id = id;
 
       return dbMeterEvent;
     }

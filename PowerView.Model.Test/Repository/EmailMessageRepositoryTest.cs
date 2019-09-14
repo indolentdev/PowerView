@@ -1,7 +1,5 @@
 using System;
-using System.Linq;
 using NUnit.Framework;
-using DapperExtensions;
 using PowerView.Model.Repository;
 
 namespace PowerView.Model.Test.Repository
@@ -48,15 +46,10 @@ namespace PowerView.Model.Test.Repository
       target.AddEmailMessage(frm, to, subject, body);
 
       // Assert
-      var frmName = Predicates.Field<Db.EmailMessage>(x => x.FromName, Operator.Eq, frm.Name);
-      var frmAddr = Predicates.Field<Db.EmailMessage>(x => x.FromEmailAddress, Operator.Eq, frm.EmailAddress);
-      var toName = Predicates.Field<Db.EmailMessage>(x => x.ToName, Operator.Eq, to.Name);
-      var toAddr = Predicates.Field<Db.EmailMessage>(x => x.ToEmailAddress, Operator.Eq, to.EmailAddress);
-      var sub = Predicates.Field<Db.EmailMessage>(x => x.Subject, Operator.Eq, subject);
-      var bdy = Predicates.Field<Db.EmailMessage>(x => x.Body, Operator.Eq, body);
-      var ands = Predicates.Group(GroupOperator.And, frmName, frmAddr, toName, toAddr, sub, bdy);
-      var count = DbContext.Connection.Count<Db.EmailMessage>(ands);
-      Assert.That(count, Is.EqualTo(1));
+      var emailMessages = DbContext.QueryTransaction<Db.EmailMessage>("",
+        "SELECT * FROM EmailMessage WHERE FromName=@fromName AND FromEmailAddress=@fromEmailAddress AND ToName=@toName AND ToEmailAddress=@toEmailAddress AND Subject=@subject AND Body=@body",
+        new { fromName = frm.Name, fromEmailAddress = frm.EmailAddress, toName = to.Name, toEmailAddress = to.EmailAddress, subject, body });
+      Assert.That(emailMessages.Count, Is.EqualTo(1));
     }
 
     private EmailMessageRepository CreateTarget()
