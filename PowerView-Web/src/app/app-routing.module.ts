@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { DefaultComponent } from './default/default.component';
+import { ProfileLast24hComponent } from './profile-last24h/profile-last24h.component';
 import { ProfileDayComponent } from './profile-day/profile-day.component';
 import { ProfileMonthComponent } from './profile-month/profile-month.component';
 import { ProfileYearComponent } from './profile-year/profile-year.component';
@@ -16,6 +17,7 @@ import { SettingsSmtpComponent } from './settings-smtp/settings-smtp.component';
 import { SettingsMqttComponent } from './settings-mqtt/settings-mqtt.component';
 
 const routes: Routes = [
+  { path: 'profile/last24h', component: ProfileLast24hComponent },
   { path: 'profile/day', component: ProfileDayComponent },
   { path: 'profile/month', component: ProfileMonthComponent },
   { path: 'profile/year', component: ProfileYearComponent },

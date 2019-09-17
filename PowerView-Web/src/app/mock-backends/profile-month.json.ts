@@ -29,7 +29,7 @@ export let profileMonth = {
          "series":[
             {
                "label":"Water",
-               "obisCode":"8.1.1.0.0.100",
+               "obisCode":"8.65.1.0.0.255",
                "unit":"m3",
                "serieType":"spline",
                "serieYAxis":"volumeDelta",
@@ -59,10 +59,10 @@ export let profileMonth = {
             },
             {
                "label":"Water",
-               "obisCode":"8.1.1.0.0.200",
+               "obisCode":"8.66.1.0.0.255",
                "unit":"m3",
                "serieType":"areaspline",
-               "serieYAxis":"volumeInterim",
+               "serieYAxis":"volumePeriod",
                "serieColor":"#63d8df",
                "values":[
                   0.242,
@@ -147,7 +147,7 @@ export let profileMonth = {
                "obisCode":"1.210.1.8.0.200",
                "unit":"kWh",
                "serieType":"areaspline",
-               "serieYAxis":"energyInterim",
+               "serieYAxis":"energyPeriod",
                "serieColor":"#ffdfac",
                "values":[
                   10.203,
@@ -205,7 +205,7 @@ export let profileMonth = {
                "obisCode":"1.220.1.8.0.200",
                "unit":"kWh",
                "serieType":"areaspline",
-               "serieYAxis":"energyInterim",
+               "serieYAxis":"energyPeriod",
                "serieColor":"#ffacac",
                "values":[
                   29.823,
@@ -258,7 +258,7 @@ export let profileMonth = {
          "series":[
             {
                "label":"Heater",
-               "obisCode":"1.1.1.8.0.100",
+               "obisCode":"1.65.1.8.0.255",
                "unit":"kWh",
                "serieType":"spline",
                "serieYAxis":"energyDelta",
@@ -288,10 +288,10 @@ export let profileMonth = {
             },
             {
                "label":"Heater",
-               "obisCode":"1.1.1.8.0.200",
+               "obisCode":"1.66.1.8.0.255",
                "unit":"kWh",
                "serieType":"areaspline",
-               "serieYAxis":"energyInterim",
+               "serieYAxis":"energyPeriod",
                "serieColor":"#ffacac",
                "values":[
                   19.62,
@@ -318,7 +318,7 @@ export let profileMonth = {
             },
             {
                "label":"Main",
-               "obisCode":"1.1.1.8.0.100",
+               "obisCode":"1.65.1.8.0.255",
                "unit":"kWh",
                "serieType":"spline",
                "serieYAxis":"energyDelta",
@@ -348,10 +348,10 @@ export let profileMonth = {
             },
             {
                "label":"Main",
-               "obisCode":"1.1.1.8.0.200",
+               "obisCode":"1.66.1.8.0.255",
                "unit":"kWh",
                "serieType":"areaspline",
-               "serieYAxis":"energyInterim",
+               "serieYAxis":"energyPeriod",
                "serieColor":"#ffe57a",
                "values":[
                   27.26,
@@ -405,7 +405,7 @@ export let profileMonth = {
          "series":[
             {
                "label":"Inverter",
-               "obisCode":"1.1.2.8.0.100",
+               "obisCode":"1.65.2.8.0.255",
                "unit":"kWh",
                "serieType":"spline",
                "serieYAxis":"energyDelta",
@@ -435,10 +435,10 @@ export let profileMonth = {
             },
             {
                "label":"Inverter",
-               "obisCode":"1.1.2.8.0.200",
+               "obisCode":"1.66.2.8.0.255",
                "unit":"kWh",
                "serieType":"areaspline",
-               "serieYAxis":"energyInterim",
+               "serieYAxis":"energyPeriod",
                "serieColor":"#CCFF66",
                "values":[
                   5.073,
@@ -465,7 +465,7 @@ export let profileMonth = {
             },
             {
                "label":"Main",
-               "obisCode":"1.1.2.8.0.100",
+               "obisCode":"1.65.2.8.0.255",
                "unit":"kWh",
                "serieType":"spline",
                "serieYAxis":"energyDelta",
@@ -495,10 +495,10 @@ export let profileMonth = {
             },
             {
                "label":"Main",
-               "obisCode":"1.1.2.8.0.200",
+               "obisCode":"1.66.2.8.0.255",
                "unit":"kWh",
                "serieType":"areaspline",
-               "serieYAxis":"energyInterim",
+               "serieYAxis":"energyPeriod",
                "serieColor":"#FFFF00",
                "values":[
                   2.51,
@@ -529,43 +529,31 @@ export let profileMonth = {
    "periodTotals":[
       {
          "label":"Water",
-         "obisCode":"8.1.1.0.0.200",
+         "obisCode":"8.66.1.0.0.255",
          "value":5.82,
          "unit":"m3"
       },
       {
-         "label":"Family",
-         "obisCode":"1.210.1.8.0.200",
-         "value":259.479,
-         "unit":"kWh"
-      },
-      {
-         "label":"Family",
-         "obisCode":"1.220.1.8.0.200",
-         "value":536.289,
-         "unit":"kWh"
-      },
-      {
          "label":"Heater",
-         "obisCode":"1.1.1.8.0.200",
+         "obisCode":"1.66.1.8.0.255",
          "value":276.81,
          "unit":"kWh"
       },
       {
          "label":"Main",
-         "obisCode":"1.1.1.8.0.200",
+         "obisCode":"1.66.1.8.0.255",
          "value":469.18,
          "unit":"kWh"
       },
       {
          "label":"Inverter",
-         "obisCode":"1.1.2.8.0.200",
+         "obisCode":"1.66.2.8.0.255",
          "value":146.659,
          "unit":"kWh"
       },
       {
          "label":"Main",
-         "obisCode":"1.1.2.8.0.200",
+         "obisCode":"1.66.2.8.0.255",
          "value":79.55,
          "unit":"kWh"
       }

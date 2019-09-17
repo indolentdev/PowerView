@@ -10,12 +10,12 @@ import * as moment from 'moment';
   styleUrls: ['./profile-day.component.css']
 })
 export class ProfileDayComponent implements OnInit {
-  maxStartTime: Moment;
+  dpMaxStartTime: Moment;
   defaultStartTime: Moment;
 
   constructor(private log: NGXLogger) { 
     var now = moment();
-    this.maxStartTime = moment();
+    this.dpMaxStartTime = moment();
     this.defaultStartTime = moment([now.year(), now.month(), now.date(), 0, 0, 0, 0]);
   }
 

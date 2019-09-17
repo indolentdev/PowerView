@@ -8,6 +8,7 @@
     "events": "Hændelser",
     "gauges": "Tællerstande",
     "latest": "Seneste",
+    "latest24h": "Seneste 24 Timer",
     "mqtt": "MQTT",
     "profile": "Profil",
     "profileDay": "Dagsprofil",
@@ -41,6 +42,7 @@
     "emailRecipientsInfo": "Registrer e-mail modtagere for at modtage besked om hændelser; vand måler lækage",
     "emailRecipientsTable": "E-mail Modtagere",
     "events": "Hændelser",
+    "last24hProfile": "Seneste 24 Timersprofil",
     "latestGuages": "Seneste Tællerstande",
     "gaugesByDate": "Tællerstande pr. Dato",
     "gauges": {

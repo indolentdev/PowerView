@@ -8,7 +8,7 @@ export let gaugesLatest = {
                 "label":"Water",
                 "serialNumber":"76075690",
                 "timestamp":"2018-12-22T08:43Z",
-                "obisCode":"8.1.1.0.0.255",
+                "obisCode":"8.0.1.0.0.255",
                 "value":227.046,
                 "unit":"m3"
              },
@@ -16,7 +16,7 @@ export let gaugesLatest = {
                 "label":"Heater",
                 "serialNumber":"15906168",
                 "timestamp":"2018-12-22T08:40Z",
-                "obisCode":"1.1.1.8.0.255",
+                "obisCode":"1.0.1.8.0.255",
                 "value":15306.97,
                 "unit":"kWh"
              },
@@ -24,7 +24,7 @@ export let gaugesLatest = {
                 "label":"Main",
                 "serialNumber":"20204093",
                 "timestamp":"2018-12-22T08:40Z",
-                "obisCode":"1.1.1.8.0.255",
+                "obisCode":"1.0.1.8.0.255",
                 "value":17547.93,
                 "unit":"kWh"
              },
@@ -32,7 +32,7 @@ export let gaugesLatest = {
                 "label":"Main",
                 "serialNumber":"20204093",
                 "timestamp":"2018-12-22T08:40Z",
-                "obisCode":"1.1.2.8.0.255",
+                "obisCode":"1.0.2.8.0.255",
                 "value":8969.87,
                 "unit":"kWh"
              },
@@ -40,7 +40,7 @@ export let gaugesLatest = {
                 "label":"Inverter",
                 "serialNumber":"839239879",
                 "timestamp":"2018-12-22T08:40Z",
-                "obisCode":"1.1.2.8.0.255",
+                "obisCode":"1.0.2.8.0.255",
                 "value":15544.452,
                 "unit":"kWh"
              }
@@ -53,7 +53,7 @@ export let gaugesLatest = {
                 "label":"Water",
                 "serialNumber":"76075690",
                 "timestamp":"2018-12-21T22:58Z",
-                "obisCode":"8.1.1.0.0.255",
+                "obisCode":"8.0.1.0.0.255",
                 "value":226.866,
                 "unit":"m3"
              },
@@ -61,7 +61,7 @@ export let gaugesLatest = {
                 "label":"Heater",
                 "serialNumber":"15906168",
                 "timestamp":"2018-12-21T22:55Z",
-                "obisCode":"1.1.1.8.0.255",
+                "obisCode":"1.0.1.8.0.255",
                 "value":15298.8,
                 "unit":"kWh"
              },
@@ -69,7 +69,7 @@ export let gaugesLatest = {
                 "label":"Main",
                 "serialNumber":"20204093",
                 "timestamp":"2018-12-21T22:55Z",
-                "obisCode":"1.1.1.8.0.255",
+                "obisCode":"1.0.1.8.0.255",
                 "value":17536.26,
                 "unit":"kWh"
              },
@@ -77,7 +77,7 @@ export let gaugesLatest = {
                 "label":"Main",
                 "serialNumber":"20204093",
                 "timestamp":"2018-12-21T22:55Z",
-                "obisCode":"1.1.2.8.0.255",
+                "obisCode":"1.0.2.8.0.255",
                 "value":8969.87,
                 "unit":"kWh"
              },
@@ -85,7 +85,7 @@ export let gaugesLatest = {
                 "label":"Inverter",
                 "serialNumber":"839239879",
                 "timestamp":"2018-12-21T14:10Z",
-                "obisCode":"1.1.2.8.0.255",
+                "obisCode":"1.0.2.8.0.255",
                 "value":15544.452,
                 "unit":"kWh"
              }
@@ -98,7 +98,7 @@ export let gaugesLatest = {
                 "label":"Water",
                 "serialNumber":"76075690",
                 "timestamp":"2018-11-30T22:55Z",
-                "obisCode":"8.1.1.0.0.255",
+                "obisCode":"8.0.1.0.0.255",
                 "value":220.652,
                 "unit":"m3"
              },
@@ -106,7 +106,7 @@ export let gaugesLatest = {
                 "label":"Heater",
                 "serialNumber":"15906168",
                 "timestamp":"2018-11-30T22:55Z",
-                "obisCode":"1.1.1.8.0.255",
+                "obisCode":"1.0.1.8.0.255",
                 "value":14983.47,
                 "unit":"kWh"
              },
@@ -114,7 +114,7 @@ export let gaugesLatest = {
                 "label":"Main",
                 "serialNumber":"20204093",
                 "timestamp":"2018-11-30T22:55Z",
-                "obisCode":"1.1.1.8.0.255",
+                "obisCode":"1.0.1.8.0.255",
                 "value":16962.71,
                 "unit":"kWh"
              },
@@ -122,7 +122,7 @@ export let gaugesLatest = {
                 "label":"Main",
                 "serialNumber":"20204093",
                 "timestamp":"2018-11-30T22:55Z",
-                "obisCode":"1.1.2.8.0.255",
+                "obisCode":"1.0.2.8.0.255",
                 "value":8960,
                 "unit":"kWh"
              },
@@ -130,7 +130,7 @@ export let gaugesLatest = {
                 "label":"Inverter",
                 "serialNumber":"839239879",
                 "timestamp":"2018-11-30T14:35Z",
-                "obisCode":"1.1.2.8.0.255",
+                "obisCode":"1.0.2.8.0.255",
                 "value":15523.778,
                 "unit":"kWh"
              }
@@ -143,7 +143,7 @@ export let gaugesLatest = {
                 "label":"Water",
                 "serialNumber":"76075690",
                 "timestamp":"2017-12-31T22:59Z",
-                "obisCode":"8.1.1.0.0.255",
+                "obisCode":"8.0.1.0.0.255",
                 "value":117.006,
                 "unit":"m3"
              },
@@ -151,7 +151,7 @@ export let gaugesLatest = {
                 "label":"Main",
                 "serialNumber":"20204093",
                 "timestamp":"2017-12-31T22:55Z",
-                "obisCode":"1.1.1.8.0.255",
+                "obisCode":"1.0.1.8.0.255",
                 "value":10934.79,
                 "unit":"kWh"
              },
@@ -159,7 +159,7 @@ export let gaugesLatest = {
                 "label":"Main",
                 "serialNumber":"20204093",
                 "timestamp":"2017-12-31T22:55Z",
-                "obisCode":"1.1.2.8.0.255",
+                "obisCode":"1.0.2.8.0.255",
                 "value":5755.07,
                 "unit":"kWh"
              },
@@ -167,7 +167,7 @@ export let gaugesLatest = {
                 "label":"Heater",
                 "serialNumber":"15906168",
                 "timestamp":"2017-12-31T22:55Z",
-                "obisCode":"1.1.1.8.0.255",
+                "obisCode":"1.0.1.8.0.255",
                 "value":11866.14,
                 "unit":"kWh"
              },
@@ -175,7 +175,7 @@ export let gaugesLatest = {
                 "label":"Inverter",
                 "serialNumber":"839239879",
                 "timestamp":"2017-12-31T15:00Z",
-                "obisCode":"1.1.2.8.0.255",
+                "obisCode":"1.0.2.8.0.255",
                 "value":11402.572,
                 "unit":"kWh"
              }

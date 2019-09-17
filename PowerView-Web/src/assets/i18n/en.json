@@ -8,6 +8,7 @@
     "events": "Events",
     "gauges": "Gauges",
     "latest": "Latest",
+    "latest24h": "Latest 24 Hours",
     "mqtt": "MQTT",
     "profile": "Profile",
     "profileDay": "Day Profile",
@@ -41,6 +42,7 @@
     "emailRecipientsInfo": "Register email recipients to receive event notifications; water meter leak",
     "emailRecipientsTable": "Email Recipients",
     "events": "Events",
+    "last24hProfile": "Last 24 Hours Profile",
     "latestGuages": "Latest Gauges",
     "gaugesByDate": "Gauges By Date",
     "gauges": {

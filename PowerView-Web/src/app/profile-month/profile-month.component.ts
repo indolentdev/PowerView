@@ -24,12 +24,12 @@ export class MonthCustomMomentDateAdapter extends MomentDateAdapter {
   ]
 })
 export class ProfileMonthComponent implements OnInit {
-  maxStartTime: Moment;
+  dpMaxStartTime: Moment;
   defaultStartTime: Moment;
 
   constructor(private log: NGXLogger) { 
     var now = moment();
-    this.maxStartTime = moment([now.year(), now.month(), 1, 0, 0, 0, 0]);
+    this.dpMaxStartTime = moment([now.year(), now.month(), 1, 0, 0, 0, 0]);
     this.defaultStartTime = moment([now.year(), now.month(), 1, 0, 0, 0, 0]);
   }
 
