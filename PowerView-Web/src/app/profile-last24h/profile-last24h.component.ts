@@ -15,7 +15,9 @@ export class ProfileLast24hComponent implements OnInit {
 
   constructor(private log: NGXLogger) { 
     var now = moment();
-    var start = now.subtract(1, "days");
+    var start = now.startOf('minute');
+    start = start.set('minute', Math.floor((start.minute() / 10))*10); // truncate down to nearest 10 mins.
+    start = start.subtract(1, "days");
     this.maxStartTime = start;
     this.defaultStartTime = start;
   }
