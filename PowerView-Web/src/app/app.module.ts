@@ -56,6 +56,7 @@ import { SettingsSmtpComponent } from './settings-smtp/settings-smtp.component';
 import { SettingsRecipientsComponent } from './settings-recipients/settings-recipients.component';
 import { SettingsRecipientsTableComponent } from './settings-recipients-table/settings-recipients-table.component';
 import { ProfileLast24hComponent } from './profile-last24h/profile-last24h.component';
+import { ProfileLast12mComponent } from './profile-last12m/profile-last12m.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -111,7 +112,8 @@ if (environment.useMockBackend == true) {
     SettingsSmtpComponent,
     SettingsRecipientsComponent,
     SettingsRecipientsTableComponent,
-    ProfileLast24hComponent
+    ProfileLast24hComponent,
+    ProfileLast12mComponent
   ],
   imports: [
     BrowserModule,

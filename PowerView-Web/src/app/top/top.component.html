@@ -2,9 +2,10 @@
 
 <button mat-raised-button color="primary" [matMenuTriggerFor]="profileMenu">{{ 'menu.profile' | translate }}</button>
 <mat-menu #profileMenu="matMenu">
-  <button mat-menu-item [matMenuTriggerFor]="latest24hMenu">{{ 'menu.latest24h' | translate }}</button>
+  <button mat-menu-item [matMenuTriggerFor]="latest24hMenu">{{ 'menu.last24h' | translate }}</button>
   <button mat-menu-item [matMenuTriggerFor]="profileDayMenu">{{ 'menu.profileDay' | translate }}</button>
   <button mat-menu-item [matMenuTriggerFor]="profileMonthMenu">{{ 'menu.profileMonth' | translate }}</button>
+  <button mat-menu-item [matMenuTriggerFor]="latest12mMenu">{{ 'menu.last12m' | translate }}</button>
   <button mat-menu-item [matMenuTriggerFor]="profileYearMenu">{{ 'menu.profileYear' | translate }}</button>
 </mat-menu>
 
@@ -37,6 +38,17 @@
     </ng-container>
     <ng-container *ngIf="monthProfilePage !== ''">
       <button mat-menu-item [routerLink] ="['/profile/month']" [queryParams]="{page: monthProfilePage }" >{{ monthProfilePage }}</button>
+    </ng-container>
+  </ng-container>
+</mat-menu>
+
+<mat-menu #latest12mMenu="matMenu">
+  <ng-container *ngFor="let yearProfilePage of yearProfilePages">
+    <ng-container *ngIf="yearProfilePage === ''">
+      <button mat-menu-item [routerLink] ="['/profile/last12m']" [queryParams]="{page: ''}" >{{ 'menu.defaultPage' | translate }}</button>
+    </ng-container>
+    <ng-container *ngIf="yearProfilePage !== ''">
+      <button mat-menu-item [routerLink] ="['/profile/last12m']" [queryParams]="{page: yearProfilePage }" >{{ yearProfilePage }}</button>
     </ng-container>
   </ng-container>
 </mat-menu>
