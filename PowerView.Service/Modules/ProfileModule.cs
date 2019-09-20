@@ -19,21 +19,24 @@ namespace PowerView.Service.Modules
     private readonly IProfileRepository profileRepository;
     private readonly ISeriesColorRepository serieRepository;
     private readonly IProfileGraphRepository profileGraphRepository;
+    private readonly ILocationProvider locationProvider;
     private readonly ISerieMapper serieMapper;
     private readonly ITemplateConfigProvider templateConfigProvider;
 
-    public ProfileModule(IProfileRepository profileRepository, ISeriesColorRepository serieRepository, IProfileGraphRepository profileGraphRepository, ISerieMapper serieMapper, ITemplateConfigProvider templateConfigProvider)
+    public ProfileModule(IProfileRepository profileRepository, ISeriesColorRepository serieRepository, IProfileGraphRepository profileGraphRepository, ILocationProvider locationProvider, ISerieMapper serieMapper, ITemplateConfigProvider templateConfigProvider)
       :base("/api/profile")
     {
       if (profileRepository == null) throw new ArgumentNullException("profileRepository");
       if (serieRepository == null) throw new ArgumentNullException("serieRepository");
       if (profileGraphRepository == null) throw new ArgumentNullException("profileGraphRepository");
+      if (locationProvider == null) throw new ArgumentNullException("locationProvider");
       if (serieMapper == null) throw new ArgumentNullException("serieMapper");
       if (templateConfigProvider == null) throw new ArgumentNullException("templateConfigProvider");
 
       this.profileRepository = profileRepository;
       this.serieRepository = serieRepository;
       this.profileGraphRepository = profileGraphRepository;
+      this.locationProvider = locationProvider;
       this.serieMapper = serieMapper;
       this.templateConfigProvider = templateConfigProvider;
 
@@ -85,11 +88,18 @@ namespace PowerView.Service.Modules
 
       var viewSet = GetProfileViewSet(profileGraphs, getLabelSeriesSet, start, period);
 
+      var tzi = locationProvider.GetTimeZone();
+      Func<IEnumerable<DateTime>, IEnumerable<DateTime>> categoryAdjust = x => x;
+      if (period == "month" || period == "year") // TODO: Figure out if the thing works with day values (and DST changes)
+      {
+        categoryAdjust = x => ProfileViewSetSource.XCategories(tzi, x);
+      }
+
       var r = new
       {
         Page = page,
         StartTime = DateTimeMapper.Map(start),
-        Graphs = viewSet.SerieSets.Select(GetGraph).ToList(),
+        Graphs = viewSet.SerieSets.Select(x => GetGraph(x, categoryAdjust)).ToList(),
         PeriodTotals = viewSet.PeriodTotals.Select(GetPeriodTotal).ToList()
       };
 
@@ -137,7 +147,7 @@ namespace PowerView.Service.Modules
       return viewSet;
     }
 
-    private object GetGraph(SeriesSet serieSet)
+    private object GetGraph(SeriesSet serieSet, Func<IEnumerable<DateTime>, IEnumerable<DateTime>> categoryAdjust)
     {
       var series = serieSet.Series.Select(x => new {
         x.SeriesName.Label,
@@ -152,7 +162,7 @@ namespace PowerView.Service.Modules
       return new
       {
         Title = serieSet.Title,
-        Categories = serieSet.Categories.Select(x => DateTimeMapper.Map(x)).ToList(),
+        Categories = categoryAdjust(serieSet.Categories).Select(DateTimeMapper.Map).ToList(),
         Series = series.OrderBy(x => x.Label + x.ObisCode).ToList()
       };
     }

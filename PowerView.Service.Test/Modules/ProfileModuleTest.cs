@@ -21,6 +21,7 @@ namespace PowerView.Service.Test.Modules
     private Mock<IProfileRepository> profileRepository;
     private Mock<ISeriesColorRepository> serieRepository;
     private Mock<IProfileGraphRepository> profileGraphRepository;
+    private Mock<ILocationProvider> locationProvider;
     private Mock<ISerieMapper> serieMapper;
     private Mock<ITemplateConfigProvider> templateConfigProvider;
 
@@ -32,10 +33,12 @@ namespace PowerView.Service.Test.Modules
       profileRepository = new Mock<IProfileRepository>();
       serieRepository = new Mock<ISeriesColorRepository>();
       profileGraphRepository = new Mock<IProfileGraphRepository>();
+      locationProvider = new Mock<ILocationProvider>();
       serieMapper = new Mock<ISerieMapper>();
       templateConfigProvider = new Mock<ITemplateConfigProvider>();
 
       serieRepository.Setup(sr => sr.GetColorCached(It.IsAny<string>(), It.IsAny<ObisCode>())).Returns<string, ObisCode>((l, oc) => "SC_" + l + "_" + oc);
+      locationProvider.Setup(lp => lp.GetTimeZone()).Returns(TimeZoneInfo.Utc); 
       serieMapper.Setup(ocm => ocm.MapToSerieType(It.IsAny<ObisCode>())).Returns<ObisCode>(oc => "ST_" + oc);
       serieMapper.Setup(ocm => ocm.MapToSerieYAxis(It.IsAny<ObisCode>())).Returns<ObisCode>(oc => "YA_" + oc);
       templateConfigProvider.Setup(mcp => mcp.LabelObisCodeTemplates).Returns(new LabelObisCodeTemplate[0]);
@@ -46,6 +49,7 @@ namespace PowerView.Service.Test.Modules
         cfg.Dependency<IProfileRepository>(profileRepository.Object);
         cfg.Dependency<ISeriesColorRepository>(serieRepository.Object);
         cfg.Dependency<IProfileGraphRepository>(profileGraphRepository.Object);
+        cfg.Dependency<ILocationProvider>(locationProvider.Object);
         cfg.Dependency<ISerieMapper>(serieMapper.Object);
         cfg.Dependency<ITemplateConfigProvider>(templateConfigProvider.Object);
       });
