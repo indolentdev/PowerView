@@ -102,35 +102,6 @@ namespace PowerView.Model.Test
       Assert.That(profileViewSet.PeriodTotals.First().UnitValue, Is.EqualTo(new UnitValue(2024, unit)));
     }
 
-    [Test]
-    public void T()
-    {
-      // Arrange
-      var dts = new[]
-      {
-      "2018-08-31T22:00Z",
-      "2018-09-30T22:00Z",
-      "2018-10-31T22:00Z",
-      "2018-11-30T22:00Z",
-      "2018-12-31T22:00Z",
-      "2019-01-31T22:00Z",
-      "2019-02-28T22:00Z",
-      "2019-03-31T22:00Z",
-      "2019-04-30T22:00Z",
-      "2019-05-31T22:00Z",
-      "2019-06-30T22:00Z",
-      "2019-07-31T22:00Z"
-      };
-      var eh = dts.Select(x => DateTime.Parse(x, System.Globalization.CultureInfo.InvariantCulture, 
-      System.Globalization.DateTimeStyles.RoundtripKind)).ToList();
-
-      // Act
-      var xx = ProfileViewSetSource.XCategories(TimeZoneInfo.Local, eh).ToList();
-
-      // Assert
-    }
-
-
     private static ProfileViewSetSource CreateTarget(ProfileGraph profileGraph, IntervalGroup intervalGroup)
     {
       return CreateTarget(new ProfileGraph[] { profileGraph }, new IntervalGroup[] { intervalGroup });

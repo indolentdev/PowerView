@@ -15,9 +15,10 @@ export class ProfileLast12mComponent implements OnInit {
 
   constructor(private log: NGXLogger) { 
     var now = moment();
-    var start = now.startOf('month');
-//    start = start.set('minute', Math.floor((start.minute() / 10))*10); // truncate down to nearest 10 mins.
-    start = start.subtract(1, "years");
+    var month = now.month(); + 1;
+    if (month >= 12) month = 0;
+    var start = moment([now.year()-1, month, 1, 0, 0, 0, 0]);
+
     this.maxStartTime = start;
     this.defaultStartTime = start;
   }

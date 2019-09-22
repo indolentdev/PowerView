@@ -188,7 +188,7 @@ namespace PowerView.Model.Test
         new TimeRegisterValue("sn1", baseTime + TimeSpan.FromMinutes(25), 16, Unit.WattHour)
       };
       var target = new LabelSeries<TimeRegisterValue>(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, timeRegisterValues } });
-      var timeDivider = DateTimeResolutionDivider.GetResolutionDivider("10-minutes");
+      var timeDivider = DateTimeResolutionDivider.GetResolutionDivider(new DateTime(2019, 7, 30, 18, 0, 0, DateTimeKind.Utc), "10-minutes");
 
       // Act
       var normalized = target.Normalize(timeDivider);

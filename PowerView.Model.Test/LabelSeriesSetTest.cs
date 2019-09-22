@@ -83,7 +83,7 @@ namespace PowerView.Model.Test
       };
       var labelSeries = new LabelSeries<TimeRegisterValue>(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, timeRegisterValues } });
       var target = new LabelSeriesSet<TimeRegisterValue>(baseTime, baseTime + TimeSpan.FromMinutes(30), new[] { labelSeries });
-      var timeDivider = DateTimeResolutionDivider.GetResolutionDivider("10-minutes");
+      var timeDivider = DateTimeResolutionDivider.GetResolutionDivider(new DateTime(2019, 7, 30, 18, 0, 0, DateTimeKind.Utc), "10-minutes");
 
       // Act
       var target2 = target.Normalize(timeDivider);

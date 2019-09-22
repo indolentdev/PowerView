@@ -89,17 +89,12 @@ namespace PowerView.Service.Modules
       var viewSet = GetProfileViewSet(profileGraphs, getLabelSeriesSet, start, period);
 
       var tzi = locationProvider.GetTimeZone();
-      Func<IEnumerable<DateTime>, IEnumerable<DateTime>> categoryAdjust = x => x;
-      if (period == "month" || period == "year") // TODO: Figure out if the thing works with day values (and DST changes)
-      {
-        categoryAdjust = x => ProfileViewSetSource.XCategories(tzi, x);
-      }
 
       var r = new
       {
         Page = page,
         StartTime = DateTimeMapper.Map(start),
-        Graphs = viewSet.SerieSets.Select(x => GetGraph(x, categoryAdjust)).ToList(),
+        Graphs = viewSet.SerieSets.Select(x => GetGraph(x)).ToList(),
         PeriodTotals = viewSet.PeriodTotals.Select(GetPeriodTotal).ToList()
       };
 
@@ -147,7 +142,7 @@ namespace PowerView.Service.Modules
       return viewSet;
     }
 
-    private object GetGraph(SeriesSet serieSet, Func<IEnumerable<DateTime>, IEnumerable<DateTime>> categoryAdjust)
+    private object GetGraph(SeriesSet serieSet)
     {
       var series = serieSet.Series.Select(x => new {
         x.SeriesName.Label,
@@ -162,7 +157,7 @@ namespace PowerView.Service.Modules
       return new
       {
         Title = serieSet.Title,
-        Categories = categoryAdjust(serieSet.Categories).Select(DateTimeMapper.Map).ToList(),
+        Categories = serieSet.Categories.Select(DateTimeMapper.Map).ToList(),
         Series = series.OrderBy(x => x.Label + x.ObisCode).ToList()
       };
     }

@@ -106,35 +106,5 @@ namespace PowerView.Model
       return profileViewSet;
     }
 
-    public static IEnumerable<DateTime> XCategories(TimeZoneInfo tzi, IEnumerable<DateTime> categories)
-    {
-      TimeSpan? firstOffset = null;
-      foreach (var category in categories)
-      {
-        if (firstOffset == null)
-        {
-          firstOffset = tzi.GetUtcOffset(category);
-          yield return category;
-          continue;
-        }
-
-        var offset = tzi.GetUtcOffset(category);
-        if (offset == firstOffset.Value)
-        {
-          yield return category;
-          continue;
-        }
-
-        if (offset > firstOffset.Value)
-        {
-          yield return category.Subtract(offset - firstOffset.Value);
-        }
-        else
-        {
-          yield return category.Add(firstOffset.Value - offset);
-        }
-      }
-    }
-
   }
 }

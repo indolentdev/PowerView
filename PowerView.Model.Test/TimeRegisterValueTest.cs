@@ -50,7 +50,7 @@ namespace PowerView.Model.Test
       // Arrange
       var dt = DateTime.UtcNow;
       var target = new TimeRegisterValue("1", dt, 100, 2, Unit.WattHour);
-      var timeDivider = DateTimeResolutionDivider.GetResolutionDivider("60-minutes");
+      var timeDivider = DateTimeResolutionDivider.GetResolutionDivider(dt, "60-minutes");
 
       // Act
       var normalizedTimeRegisterValue = target.Normalize(timeDivider);
