@@ -134,6 +134,7 @@
     <Compile Include="LeakCharacteristicCheckerTest.cs" />
     <Compile Include="Repository\EnvironmentRepositoryTest.cs" />
     <Compile Include="Repository\DbContextExtensions.cs" />
+    <Compile Include="DateTimeHelperTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
