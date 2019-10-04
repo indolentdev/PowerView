@@ -32,7 +32,7 @@ namespace PowerView.Model.Repository
 
       if (integrityCheckResult.Count != 1 || integrityCheckResult[0].integrity_check != "ok")
       {
-        log.WarnFormat("Database integrity corrupted. Issues:" + string.Join(Environment.NewLine, integrityCheckResult));
+        log.Warn("Database integrity corrupted. Issues:" + Environment.NewLine + string.Join(Environment.NewLine, integrityCheckResult));
         throw new DataStoreCorruptException("Database integrity corrupted. Restore a previous backup.");
       }
     }
