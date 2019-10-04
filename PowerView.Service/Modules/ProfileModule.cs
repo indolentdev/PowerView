@@ -88,13 +88,11 @@ namespace PowerView.Service.Modules
 
       var viewSet = GetProfileViewSet(profileGraphs, getLabelSeriesSet, start, period);
 
-      var tzi = locationProvider.GetTimeZone();
-
       var r = new
       {
         Page = page,
         StartTime = DateTimeMapper.Map(start),
-        Graphs = viewSet.SerieSets.Select(x => GetGraph(x)).ToList(),
+        Graphs = viewSet.SerieSets.Select(GetGraph).ToList(),
         PeriodTotals = viewSet.PeriodTotals.Select(GetPeriodTotal).ToList()
       };
 
@@ -107,8 +105,10 @@ namespace PowerView.Service.Modules
       var distinctIntervals = profileGraphs.GroupBy(x => x.Interval).ToList();
 
       // Find query start and end times based on max interval and period...
-      var end = DateTimeResolutionDivider.GetPeriodEnd(period, start);
-      var maxInterval = distinctIntervals.Select(x => DateTimeResolutionDivider.GetNext(x.Key)(start)).Max();
+      var timeZoneInfo = locationProvider.GetTimeZone();
+      var dateTimeHelper = new DateTimeHelper(timeZoneInfo, start);
+      var end = dateTimeHelper.GetPeriodEnd(period);
+      var maxInterval = distinctIntervals.Select(x => dateTimeHelper.GetNext(x.Key)(start)).Max();
       var preStart = start.AddTicks((start - maxInterval).Ticks/2); // .. half the interval backwards.
 
       // Query db
@@ -126,7 +126,7 @@ namespace PowerView.Service.Modules
         var groupInterval = group.Key;
         var groupProfileGraphs = group.ToList();
 
-        var intervalGroup = new IntervalGroup(start, groupInterval, groupProfileGraphs, labelSeriesSet);
+        var intervalGroup = new IntervalGroup(timeZoneInfo, start, groupInterval, groupProfileGraphs, labelSeriesSet);
         intervalGroup.Prepare(templateConfigProvider.LabelObisCodeTemplates);
         intervalGroups.Add(intervalGroup);
       }

@@ -13,7 +13,6 @@ namespace PowerView.Model
       if (page == null) throw new ArgumentNullException("page");
       if (string.IsNullOrEmpty(title)) throw new ArgumentNullException("title");
       if (string.IsNullOrEmpty(interval)) throw new ArgumentNullException("interval");
-      DateTimeResolutionDivider.GetResolutionDivider(DateTime.UtcNow, interval);
       if (serieNames == null) throw new ArgumentNullException("serieNames");
       if (serieNames.Any(gv => gv == null)) throw new ArgumentNullException("serieNames", "Items must not be null");
       if (serieNames.Count == 0) throw new ArgumentException("Must have at least one serie", "serieNames");

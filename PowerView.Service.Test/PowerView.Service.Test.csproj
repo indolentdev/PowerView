@@ -142,6 +142,7 @@
     <Compile Include="Modules\SettingsSmtpModuleTest.cs" />
     <Compile Include="ExitSignalTest.cs" />
     <Compile Include="EventHub\HealthCheckTest.cs" />
+    <Compile Include="TimeZoneHelper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

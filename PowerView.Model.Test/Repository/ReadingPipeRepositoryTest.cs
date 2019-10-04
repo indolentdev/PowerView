@@ -690,7 +690,7 @@ namespace PowerView.Model.Test.Repository
 
     private ReadingPipeRepository CreateTarget(int readingsPerLabel = 5)
     {
-      var tzi = TimeZoneInfo.FindSystemTimeZoneById("Europe/Copenhagen");
+      var tzi = TimeZoneHelper.GetTimeZoneInfo();
       var lp = new Mock<ILocationProvider>();
       lp.Setup(x => x.GetTimeZone()).Returns(tzi);
       return new ReadingPipeRepository(DbContext, new TimeConverter(lp.Object), readingsPerLabel);

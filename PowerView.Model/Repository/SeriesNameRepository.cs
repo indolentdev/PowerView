@@ -20,12 +20,14 @@ namespace PowerView.Model.Repository
     {
     }
 
-    public IList<SeriesName> GetSeriesNames(ICollection<LabelObisCodeTemplate> labelObisCodeTemplates)
+    public IList<SeriesName> GetSeriesNames(TimeZoneInfo timeZoneInfo, ICollection<LabelObisCodeTemplate> labelObisCodeTemplates)
     {
       var labelsAndObisCodes = GetLabelsAndObisCodes();
 
-      var dt1 = DateTime.UtcNow.AddMinutes(-10);
-      var dt2 = dt1.AddMinutes(5);
+      var nowLocal = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, timeZoneInfo);
+      var midnight = new DateTime(nowLocal.Year, nowLocal.Month, nowLocal.Day, 0, 0, 0, nowLocal.Kind).ToUniversalTime();
+      var dt1 = midnight.AddMinutes(-10);
+      var dt2 = midnight.AddMinutes(5);
       var fakeUnit = Unit.Joule;
       IEnumerable<TimeRegisterValue> fakeTimeRegisterValues = new List<TimeRegisterValue> { new TimeRegisterValue("1", dt1, 1, 0, fakeUnit), new TimeRegisterValue("1", dt2, 2, 0, fakeUnit) };
 
@@ -38,7 +40,7 @@ namespace PowerView.Model.Repository
         labelSeries.Add(labelS);
       }
       var labelSeriesSet = new LabelSeriesSet<TimeRegisterValue>(dt1, dt2, labelSeries);
-      var intervalGroup = new IntervalGroup(dt1, "5-minutes", new ProfileGraph[0], labelSeriesSet);
+      var intervalGroup = new IntervalGroup(timeZoneInfo, midnight, "5-minutes", new ProfileGraph[0], labelSeriesSet);
       intervalGroup.Prepare(labelObisCodeTemplates);
 
       var seriesNames = intervalGroup.NormalizedLabelSeriesSet

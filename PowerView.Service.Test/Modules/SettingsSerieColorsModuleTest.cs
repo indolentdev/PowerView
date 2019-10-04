@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -21,6 +22,7 @@ namespace PowerView.Service.Test.Modules
     private Mock<ISeriesNameRepository> seriesNameRepository;
     private Mock<IObisColorProvider> obisColorProvider;
     private Mock<ITemplateConfigProvider> templateConfigProvider;
+    private Mock<ILocationProvider> locationProvider;
 
     private Browser browser;
 
@@ -33,6 +35,7 @@ namespace PowerView.Service.Test.Modules
       seriesNameRepository = new Mock<ISeriesNameRepository>();
       obisColorProvider = new Mock<IObisColorProvider>();
       templateConfigProvider = new Mock<ITemplateConfigProvider>();
+      locationProvider = new Mock<ILocationProvider>();
 
       browser = new Browser(cfg =>
       {
@@ -41,6 +44,7 @@ namespace PowerView.Service.Test.Modules
         cfg.Dependency<ISeriesNameRepository>(seriesNameRepository.Object);
         cfg.Dependency<IObisColorProvider>(obisColorProvider.Object);
         cfg.Dependency<ITemplateConfigProvider>(templateConfigProvider.Object);
+        cfg.Dependency<ILocationProvider>(locationProvider.Object);
       });
     }
 
@@ -48,6 +52,7 @@ namespace PowerView.Service.Test.Modules
     public void GetSeriesColors()
     {
       // Arrange
+      var timeZoneInfo = SetupLocationProvider();
       var sc1 = new SeriesColor(new SeriesName("label1", "1.2.3.4.5.6"), "#123456");
       var sc2 = new SeriesColor(new SeriesName("label2", "6.5.4.3.2.1"), "#654321");
       var serieColorsDb = new[] { sc2, sc1 };
@@ -55,7 +60,7 @@ namespace PowerView.Service.Test.Modules
       var sn3 = new SeriesName("label1", "1.2.3.4.5.6");
       var sn4 = new SeriesName("label3", "1.2.3.4.5.6");
       var serieNames = new[] { sn4, sn3 };
-      seriesNameRepository.Setup(snr => snr.GetSeriesNames(It.IsAny<ICollection<LabelObisCodeTemplate>>())).Returns(serieNames);
+      seriesNameRepository.Setup(snr => snr.GetSeriesNames(It.IsAny<TimeZoneInfo>(), It.IsAny<ICollection<LabelObisCodeTemplate>>())).Returns(serieNames);
       obisColorProvider.Setup(ocp => ocp.GetColor(It.IsAny<ObisCode>())).Returns("#222222");
       var labelObisCodeTemplates = new LabelObisCodeTemplate[0];
       templateConfigProvider.Setup(tcp => tcp.LabelObisCodeTemplates).Returns(labelObisCodeTemplates);
@@ -75,7 +80,7 @@ namespace PowerView.Service.Test.Modules
       AssertSeriesColor(sc1, json.items.First());
       AssertSeriesColor(sc2, json.items.Skip(1).First());
       AssertSeriesColor(new SeriesColor(new SeriesName(sn4.Label, sn4.ObisCode), "#222222"), json.items.Last());
-      seriesNameRepository.Verify(snr => snr.GetSeriesNames(labelObisCodeTemplates));
+      seriesNameRepository.Verify(snr => snr.GetSeriesNames(timeZoneInfo, labelObisCodeTemplates));
     }
 
     private static void AssertSeriesColor(SeriesColor expected, TestSeriesColorDto actual)
@@ -163,6 +168,13 @@ namespace PowerView.Service.Test.Modules
       Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
       seriesColorRepository.Verify(scr => scr.SetSeriesColors(It.Is<IEnumerable<SeriesColor>>(sc => sc.Count() == 1 &&
            sc.First().SeriesName.Label == sc1.label && sc.First().SeriesName.ObisCode == sc1.obisCode && sc.First().Color == sc1.color)));
+    }
+
+    private TimeZoneInfo SetupLocationProvider()
+    {
+      var timeZoneInfo = TimeZoneHelper.GetDenmarkTimeZoneInfo();
+      locationProvider.Setup(x => x.GetTimeZone()).Returns(timeZoneInfo);
+      return timeZoneInfo;
     }
 
     private static string ToJson(object obj)

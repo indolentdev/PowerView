@@ -13,26 +13,29 @@ namespace PowerView.Model.Test
     public void ConstructorThrows()
     {
       // Arrange
-      var start = DateTime.UtcNow;
+      var timeZoneInfo = TimeZoneInfo.Local;
+      var start = DateTime.Today.ToUniversalTime();
       const string interval = "5-minutes";
       var profileGraphs = new List<ProfileGraph>();
       var labelSeriesSet = new LabelSeriesSet<TimeRegisterValue>(DateTime.UtcNow, DateTime.UtcNow + TimeSpan.FromDays(1), new LabelSeries<TimeRegisterValue>[0]);
 
       // Act & Assert
-      Assert.That(() => new IntervalGroup(DateTime.Now, interval, profileGraphs, labelSeriesSet), Throws.TypeOf<ArgumentOutOfRangeException>());
-      Assert.That(() => new IntervalGroup(start, null, profileGraphs, labelSeriesSet), Throws.ArgumentNullException);
-      Assert.That(() => new IntervalGroup(start, interval, null, labelSeriesSet), Throws.ArgumentNullException);
-      Assert.That(() => new IntervalGroup(start, interval, profileGraphs, null), Throws.ArgumentNullException);
+      Assert.That(() => new IntervalGroup(null, start, interval, profileGraphs, labelSeriesSet), Throws.TypeOf<ArgumentNullException>());
+      Assert.That(() => new IntervalGroup(timeZoneInfo, DateTime.Now, interval, profileGraphs, labelSeriesSet), Throws.TypeOf<ArgumentOutOfRangeException>());
+      Assert.That(() => new IntervalGroup(timeZoneInfo, start, null, profileGraphs, labelSeriesSet), Throws.ArgumentNullException);
+      Assert.That(() => new IntervalGroup(timeZoneInfo, start, interval, null, labelSeriesSet), Throws.ArgumentNullException);
+      Assert.That(() => new IntervalGroup(timeZoneInfo, start, interval, profileGraphs, null), Throws.ArgumentNullException);
 
-      Assert.That(() => new IntervalGroup(start, string.Empty, profileGraphs, labelSeriesSet), Throws.TypeOf<ArgumentOutOfRangeException>());
-      Assert.That(() => new IntervalGroup(start, "whatnot", profileGraphs, labelSeriesSet), Throws.TypeOf<ArgumentOutOfRangeException>());
+      Assert.That(() => new IntervalGroup(timeZoneInfo, start, string.Empty, profileGraphs, labelSeriesSet), Throws.TypeOf<ArgumentOutOfRangeException>());
+      Assert.That(() => new IntervalGroup(timeZoneInfo, start, "whatnot", profileGraphs, labelSeriesSet), Throws.TypeOf<ArgumentOutOfRangeException>());
     }
 
     [Test]
     public void ConstructorAndProperties()
     {
       // Arrange
-      var start = DateTime.UtcNow;
+      var timeZoneInfo = TimeZoneInfo.Local;
+      var start = DateTime.Today.ToUniversalTime();
       const string label = "label";
       const string interval = "5-minutes";
       ObisCode obisCode = "1.2.3.4.5.6";
@@ -43,7 +46,7 @@ namespace PowerView.Model.Test
       });
 
       // Act
-      var target = new IntervalGroup(start, interval, profileGraphs, labelSeriesSet);
+      var target = new IntervalGroup(timeZoneInfo, start, interval, profileGraphs, labelSeriesSet);
 
       // Assert
       Assert.That(target.Interval, Is.EqualTo(interval));
@@ -63,13 +66,14 @@ namespace PowerView.Model.Test
       ObisCode obisCode = "1.2.3.4.5.6";
       var profileGraph = new ProfileGraph("day", "The Page", "The Title", interval, 1, new[] { new SeriesName(label, obisCode) });
       var profileGraphs = new List<ProfileGraph> { profileGraph };
-      var start = new DateTime(2019, 4, 11, 00, 00, 00, DateTimeKind.Utc);
+      var timeZoneInfo = TimeZoneInfo.Local;
+      var start = DateTime.Today.ToUniversalTime();
       var end = start.AddDays(1);
       var labelSeriesSet = new LabelSeriesSet<TimeRegisterValue>(start, end, new[] {
         new LabelSeries<TimeRegisterValue>(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, new[] {
         new TimeRegisterValue("SN1", start, 1234, Unit.Watt) } } })
       });
-      var target = new IntervalGroup(start, interval, profileGraphs, labelSeriesSet);
+      var target = new IntervalGroup(timeZoneInfo, start, interval, profileGraphs, labelSeriesSet);
       var labelObisCodeTemplate = new LabelObisCodeTemplate("newTemplate", new ObisCodeTemplate[0]);
       var labelObisCodeTemplates = new[] { labelObisCodeTemplate };
 
@@ -91,13 +95,14 @@ namespace PowerView.Model.Test
       ObisCode obisCode = "1.2.3.4.5.6";
       var profileGraph = new ProfileGraph("month", "The Page", "The Title", interval, 1, new[] { new SeriesName(label, obisCode) });
       var profileGraphs = new List<ProfileGraph> { profileGraph };
+      var timeZoneInfo = TimeZoneInfo.Utc;
       var start = new DateTime(2019, 3, 1, 00, 00, 00, DateTimeKind.Utc);
       var end = start.AddMonths(1);
       var labelSeriesSet = new LabelSeriesSet<TimeRegisterValue>(start, end, new[] {
         new LabelSeries<TimeRegisterValue>(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, new[] {
         new TimeRegisterValue("SN1", start, 1234, Unit.Watt) } } })
       });
-      var target = new IntervalGroup(start, interval, profileGraphs, labelSeriesSet);
+      var target = new IntervalGroup(timeZoneInfo, start, interval, profileGraphs, labelSeriesSet);
       var labelObisCodeTemplate = new LabelObisCodeTemplate("newTemplate", new ObisCodeTemplate[0]);
       var labelObisCodeTemplates = new[] { labelObisCodeTemplate };
 
@@ -119,13 +124,14 @@ namespace PowerView.Model.Test
       ObisCode obisCode = "1.2.3.4.5.6";
       var profileGraph = new ProfileGraph("day", "The Page", "The Title", interval, 1, new[] { new SeriesName(label, obisCode) });
       var profileGraphs = new List<ProfileGraph> { profileGraph };
-      var start = new DateTime(2019, 4, 11, 00, 00, 00, DateTimeKind.Utc);
+      var timeZoneInfo = TimeZoneInfo.Local;
+      var start = DateTime.Today.ToUniversalTime();
       var end = start.AddDays(1);
       var labelSeriesSet = new LabelSeriesSet<TimeRegisterValue>(start, end, new[] {
         new LabelSeries<TimeRegisterValue>(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, new[] { 
         new TimeRegisterValue("SN1", start.AddMinutes(2), 1234, Unit.Watt) } } })
       });
-      var target = new IntervalGroup(start, interval, profileGraphs, labelSeriesSet);
+      var target = new IntervalGroup(timeZoneInfo, start, interval, profileGraphs, labelSeriesSet);
       var labelObisCodeTemplate = new LabelObisCodeTemplate("newTemplate", new ObisCodeTemplate[0]);
       var labelObisCodeTemplates = new[] { labelObisCodeTemplate };
 
@@ -149,13 +155,14 @@ namespace PowerView.Model.Test
       ObisCode obisCode = ObisCode.ElectrActiveEnergyA14;
       var profileGraph = new ProfileGraph("day", "The Page", "The Title", interval, 1, new[] { new SeriesName(label, obisCode) });
       var profileGraphs = new List<ProfileGraph> { profileGraph };
-      var start = new DateTime(2019, 4, 11, 00, 00, 00, DateTimeKind.Utc);
+      var timeZoneInfo = TimeZoneInfo.Local;
+      var start = DateTime.Today.ToUniversalTime();
       var end = start.AddDays(1);
       var labelSeriesSet = new LabelSeriesSet<TimeRegisterValue>(start, end, new[] {
         new LabelSeries<TimeRegisterValue>(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, new[] {
         new TimeRegisterValue("SN1", start, 1234, Unit.Watt) } } })
       });
-      var target = new IntervalGroup(start, interval, profileGraphs, labelSeriesSet);
+      var target = new IntervalGroup(timeZoneInfo, start, interval, profileGraphs, labelSeriesSet);
       var labelObisCodeTemplate = new LabelObisCodeTemplate("newTemplate", new ObisCodeTemplate[0]);
       var labelObisCodeTemplates = new[] { labelObisCodeTemplate };
 
@@ -176,13 +183,14 @@ namespace PowerView.Model.Test
       ObisCode obisCode = "1.2.3.4.5.6";
       var profileGraph = new ProfileGraph("day", "The Page", "The Title", interval, 1, new[] { new SeriesName(label, obisCode) });
       var profileGraphs = new List<ProfileGraph> { profileGraph };
-      var start = new DateTime(2019, 4, 11, 00, 00, 00, DateTimeKind.Utc);
+      var timeZoneInfo = TimeZoneInfo.Local;
+      var start = DateTime.Today.ToUniversalTime();
       var end = start.AddDays(1);
       var labelSeriesSet = new LabelSeriesSet<TimeRegisterValue>(start, end, new[] {
         new LabelSeries<TimeRegisterValue>(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, new[] {
         new TimeRegisterValue("SN1", start, 1234, Unit.Watt) } } })
       });
-      var target = new IntervalGroup(start, interval, profileGraphs, labelSeriesSet);
+      var target = new IntervalGroup(timeZoneInfo, start, interval, profileGraphs, labelSeriesSet);
       var obisCodeTemplate = new ObisCodeTemplate("6.5.4.3.2.1", new RegisterTemplateExpression(label + ":" + obisCode));
       var labelObisCodeTemplate = new LabelObisCodeTemplate("new-label", new[] { obisCodeTemplate });
       var labelObisCodeTemplates = new[] { labelObisCodeTemplate };

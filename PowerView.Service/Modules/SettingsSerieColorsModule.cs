@@ -20,19 +20,22 @@ namespace PowerView.Service.Modules
     private readonly ISeriesNameRepository serieNameRepository;
     private readonly IObisColorProvider obisColorProvider;
     private readonly ITemplateConfigProvider templateConfigProvider;
+    private readonly ILocationProvider locationProvider;
 
-    public SettingsSerieColorsModule(ISeriesColorRepository serieColorRepository, ISeriesNameRepository serieNameRepository, IObisColorProvider obisColorProvider, ITemplateConfigProvider templateConfigProvider)
+    public SettingsSerieColorsModule(ISeriesColorRepository serieColorRepository, ISeriesNameRepository serieNameRepository, IObisColorProvider obisColorProvider, ITemplateConfigProvider templateConfigProvider, ILocationProvider locationProvider)
       : base("/api/settings/seriecolors")
     {
       if (serieColorRepository == null) throw new ArgumentNullException("serieColorRepository");
       if (serieNameRepository == null) throw new ArgumentNullException("serieNameRepository");
       if (obisColorProvider == null) throw new ArgumentNullException("obisColorProvider");
       if (templateConfigProvider == null) throw new ArgumentNullException("templateConfigProvider");
+      if (locationProvider == null) throw new ArgumentNullException("locationProvider");
 
       this.serieColorRepository = serieColorRepository;
       this.serieNameRepository = serieNameRepository;
       this.obisColorProvider = obisColorProvider;
       this.templateConfigProvider = templateConfigProvider;
+      this.locationProvider = locationProvider;
 
       Get[""] = GetSeriesColors;
       Put[""] = PutSeriesColors;
@@ -41,7 +44,8 @@ namespace PowerView.Service.Modules
     private dynamic GetSeriesColors(dynamic param)
     {
       var seriesColorsDb = serieColorRepository.GetSeriesColors();
-      var seriesColors = serieNameRepository.GetSeriesNames(templateConfigProvider.LabelObisCodeTemplates)
+      var timeZoneInfo = locationProvider.GetTimeZone();
+      var seriesColors = serieNameRepository.GetSeriesNames(timeZoneInfo, templateConfigProvider.LabelObisCodeTemplates)
         .ToDictionary(sn => sn, sn => new SeriesColor(new SeriesName(sn.Label, sn.ObisCode), obisColorProvider.GetColor(sn.ObisCode)));
 
       foreach (var seriesColor in seriesColorsDb)

@@ -109,7 +109,6 @@
     <Compile Include="SeriesNameTest.cs" />
     <Compile Include="Repository\SeriesNameRepositoryTest.cs" />
     <Compile Include="ProfileGraphTest.cs" />
-    <Compile Include="DateTimeResolutionDividerTest.cs" />
     <Compile Include="Expression\AddValueExpressionSetTest.cs" />
     <Compile Include="Expression\SubtractValueExpressionSetTest.cs" />
     <Compile Include="MqttConfigTest.cs" />
@@ -135,6 +134,7 @@
     <Compile Include="Repository\EnvironmentRepositoryTest.cs" />
     <Compile Include="Repository\DbContextExtensions.cs" />
     <Compile Include="DateTimeHelperTest.cs" />
+    <Compile Include="TimeZoneHelper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

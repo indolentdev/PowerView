@@ -127,17 +127,17 @@ namespace PowerView.Model.Test
       {
         profileGraphs = new[] { GetProfileGraph() };
       }
-      if (start == null) start = new DateTime(2019, 8, 26, 0, 0, 0, DateTimeKind.Utc);
-      var intervalGroup = new IntervalGroup(start.Value, profileGraphs.First().Interval, profileGraphs, GetLabelSeriesSet(firstTimestamp, fromFirstCount, start, fromStartCount, interval, baseValue, profileGraphs));
+      if (start == null) start = new DateTime(2019, 8, 26, 0, 0, 0, DateTimeKind.Local).ToUniversalTime();
+      var intervalGroup = new IntervalGroup(TimeZoneInfo.Local, start.Value, profileGraphs.First().Interval, profileGraphs, GetLabelSeriesSet(firstTimestamp, fromFirstCount, start, fromStartCount, interval, baseValue, profileGraphs));
       intervalGroup.Prepare(new LabelObisCodeTemplate[0]);
       return intervalGroup;
     }
 
     private static LabelSeriesSet<TimeRegisterValue> GetLabelSeriesSet(DateTime? firstTimestamp, int? fromFirstCount, DateTime? start, int? fromStartCount, TimeSpan? interval, int? baseValue, IEnumerable<ProfileGraph> profileGraphs)
     {
-      if (firstTimestamp == null) firstTimestamp = new DateTime(2019, 8, 25, 23, 5, 0, DateTimeKind.Utc);
+      if (firstTimestamp == null) firstTimestamp = new DateTime(2019, 8, 25, 23, 5, 0, DateTimeKind.Local).ToUniversalTime();
       if (fromFirstCount == null) fromFirstCount = 25;
-      if (start == null) start = new DateTime(2019, 8, 26, 0, 0, 0, DateTimeKind.Utc);
+      if (start == null) start = new DateTime(2019, 8, 26, 0, 0, 0, DateTimeKind.Local).ToUniversalTime();
       if (fromStartCount == null) fromStartCount = 24;
       if (interval == null) interval = TimeSpan.FromMinutes(60);
       if (baseValue == null) baseValue = 1200;

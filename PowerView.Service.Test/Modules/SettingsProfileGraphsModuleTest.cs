@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using PowerView.Model;
 using PowerView.Model.Expression;
@@ -18,6 +19,7 @@ namespace PowerView.Service.Test.Modules
     private Mock<ISeriesNameRepository> serieNameRepository;
     private Mock<IProfileGraphRepository> profileGraphRepository;
     private Mock<ITemplateConfigProvider> templateConfigProvider;
+    private Mock<ILocationProvider> locationProvider;
 
     private Browser browser;
 
@@ -32,6 +34,7 @@ namespace PowerView.Service.Test.Modules
       serieNameRepository= new Mock<ISeriesNameRepository>();
       profileGraphRepository = new Mock<IProfileGraphRepository>();
       templateConfigProvider = new Mock<ITemplateConfigProvider>();
+      locationProvider = new Mock<ILocationProvider>();
 
       browser = new Browser(cfg =>
       {
@@ -39,6 +42,7 @@ namespace PowerView.Service.Test.Modules
         cfg.Dependency<ISeriesNameRepository>(serieNameRepository.Object);
         cfg.Dependency<IProfileGraphRepository>(profileGraphRepository.Object);
         cfg.Dependency<ITemplateConfigProvider>(templateConfigProvider.Object);
+        cfg.Dependency<ILocationProvider>(locationProvider.Object);
       });
     }
 
@@ -48,9 +52,10 @@ namespace PowerView.Service.Test.Modules
       // Arrange
       const string label = "label";
       var serieNames = new[] { new SeriesName(label, ObisCode.ElectrActiveEnergyA14Delta), new SeriesName(label, ObisCode.ElectrActiveEnergyA14Period), new SeriesName(label, ObisCode.ElectrActualPowerP14) };
-      serieNameRepository.Setup(snr => snr.GetSeriesNames(It.IsAny<ICollection<LabelObisCodeTemplate>>())).Returns(serieNames);
+      serieNameRepository.Setup(snr => snr.GetSeriesNames(It.IsAny<TimeZoneInfo>(), It.IsAny<ICollection<LabelObisCodeTemplate>>())).Returns(serieNames);
       var labelObisCodeTemplates = new LabelObisCodeTemplate[0];
       templateConfigProvider.Setup(tcp => tcp.LabelObisCodeTemplates).Returns(labelObisCodeTemplates);
+      var timeZoneInfo = SetupLocationProvider();
 
       // Act
       var response = browser.Get(ProfileGraphsSeriesRoute, with =>
@@ -70,7 +75,7 @@ namespace PowerView.Service.Test.Modules
       AssertProfileGraphSerie("month", label, ObisCode.ElectrActiveEnergyA14Period, json.items[3]);
       AssertProfileGraphSerie("year", label, ObisCode.ElectrActiveEnergyA14Delta, json.items[4]);
       AssertProfileGraphSerie("year", label, ObisCode.ElectrActiveEnergyA14Period, json.items[5]);
-      serieNameRepository.Verify(snr => snr.GetSeriesNames(labelObisCodeTemplates));
+      serieNameRepository.Verify(snr => snr.GetSeriesNames(timeZoneInfo, labelObisCodeTemplates));
     }
 
     [Test]
@@ -310,6 +315,13 @@ namespace PowerView.Service.Test.Modules
 
       // Assert
       Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Conflict));
+    }
+
+    private TimeZoneInfo SetupLocationProvider()
+    {
+      var timeZoneInfo = TimeZoneHelper.GetDenmarkTimeZoneInfo();
+      locationProvider.Setup(x => x.GetTimeZone()).Returns(timeZoneInfo);
+      return timeZoneInfo;
     }
 
     private void AssertProfileGraphSerie(string period, string label, ObisCode obisCode, TestProfileGraphSerieDto profileGraphSerie)

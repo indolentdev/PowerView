@@ -155,6 +155,7 @@ namespace PowerView.Model.Test
     }
 
     [Test]
+
     [TestCase("2017-11-30T23:00:00.000Z", "2-minutes", "2017-12-30T02:32:16.123Z", "2017-12-30T02:32:00.000Z")]
     [TestCase("2017-11-30T23:00:00.000Z", "2-minutes", "2017-12-30T02:37:16.123Z", "2017-12-30T02:36:00.000Z")]
     [TestCase("2017-11-30T23:00:00.000Z", "2.5-minutes", "2017-12-30T02:32:16.123Z", "2017-12-30T02:30:00.000Z")]
@@ -200,7 +201,10 @@ namespace PowerView.Model.Test
     [TestCase("2019-02-28T23:00:00.000Z", "1-months", "2019-03-31T23:01:00.000Z", "2019-03-31T22:00:00.000Z")] // Norm -> DST
     [TestCase("2019-03-31T22:00:00.000Z", "1-months", "2019-04-30T22:01:00.000Z", "2019-04-30T22:00:00.000Z")] // After Norm -> DST
     [TestCase("2019-08-31T22:00:00.000Z", "1-months", "2019-09-30T22:01:00.000Z", "2019-09-30T22:00:00.000Z")] // Before DST -> Norm
+    [TestCase("2019-09-30T22:00:00.000Z", "1-months", "2019-10-31T21:55:00.000Z", "2019-09-30T22:00:00.000Z")] // Before DST -> Norm
+    [TestCase("2019-09-30T22:00:00.000Z", "1-months", "2019-10-31T22:55:00.000Z", "2019-09-30T22:00:00.000Z")] // Before DST -> Norm
     [TestCase("2019-09-30T22:00:00.000Z", "1-months", "2019-10-31T23:01:00.000Z", "2019-10-31T23:00:00.000Z")] // DST -> Norm
+    [TestCase("2019-09-30T22:00:00.000Z", "1-months", "2019-11-30T22:55:00.000Z", "2019-10-31T23:00:00.000Z")] // After DST -> Norm
     [TestCase("2019-10-31T23:00:00.000Z", "1-months", "2019-11-30T23:01:00.000Z", "2019-11-30T23:00:00.000Z")] // After DST -> Norm
     public void GetDivider(string originString, string interval, string inDateTimeString, string outDateTimeString)
     {
@@ -220,16 +224,9 @@ namespace PowerView.Model.Test
     }
 
 
-
     private static TimeZoneInfo GetTimeZoneInfo()
     {
-      var timeZones = TimeZoneInfo.GetSystemTimeZones();
-      var linuxTzi = timeZones.FirstOrDefault(x => x.Id == "Europe/Copenhagen");
-      if (linuxTzi != null) return linuxTzi;
-      var windowsTzi = timeZones.FirstOrDefault(x => x.Id == "Romance Standard Time");
-      if (windowsTzi != null) return windowsTzi;
-
-      throw new NotImplementedException("Stuff is missing...");
+      return TimeZoneHelper.GetTimeZoneInfo();
     }
 
   }

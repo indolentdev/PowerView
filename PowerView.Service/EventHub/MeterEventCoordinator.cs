@@ -32,7 +32,7 @@ namespace PowerView.Service.EventHub
         return;
       }
 
-      var dateTimeUtc = dateTime.ToUniversalTime();
+      var dateTimeUtc = dateTime.Date.ToUniversalTime();
 
       using (var ownedMeterEventDetector = factory.Create<IMeterEventDetector>())
       {

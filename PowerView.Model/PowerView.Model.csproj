@@ -138,7 +138,6 @@
     <Compile Include="SeriesName.cs" />
     <Compile Include="ProfileGraph.cs" />
     <Compile Include="NamedValue.cs" />
-    <Compile Include="DateTimeResolutionDivider.cs" />
     <Compile Include="Expression\IValueExpressionSet.cs" />
     <Compile Include="Expression\AddValueExpressionSet.cs" />
     <Compile Include="Expression\ValueExpressionSet.cs" />

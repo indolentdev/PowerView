@@ -133,7 +133,8 @@ namespace PowerView.Model
           {
             var year = dt.Year;
             var month = dt.Month;
-            if (dt.TimeOfDay < origin.TimeOfDay)
+            if (dt.TimeOfDay < origin.TimeOfDay || 
+                (dt.TimeOfDay < origin.TimeOfDay + TimeSpan.FromHours(1) && !timeZoneInfo.IsDaylightSavingTime(dt) && timeZoneInfo.IsDaylightSavingTime(origin)) )
             {
               month--;
               if (month == 0)
@@ -143,18 +144,18 @@ namespace PowerView.Model
               }
             }
 
-            var daysInMonth = DateTime.DaysInMonth(dt.Year, month);
+            var daysInMonth = DateTime.DaysInMonth(year, month);
             var day = lastDayOfMonth ? daysInMonth : Math.Min(origin.Day, daysInMonth);
 
             var divided = new DateTime(year, month, day, origin.Hour, origin.Minute, origin.Second, origin.Millisecond, dt.Kind);
-            return AdjustForDst(timeZoneInfo, origin, divided);
+            var adjusted = AdjustForDst(timeZoneInfo, origin, divided);
+            return adjusted;
           };
 
         default:
           throw new ArgumentOutOfRangeException("interval", interval, "Unknown interval");
       }
     }
-
 
     private static string[] SplitInterval(string interval)
     {

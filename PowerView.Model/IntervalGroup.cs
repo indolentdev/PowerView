@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using PowerView.Model.Expression;
 
 namespace PowerView.Model
@@ -11,10 +10,11 @@ namespace PowerView.Model
     private readonly Func<DateTime, DateTime> timeDivider;
     private readonly Func<DateTime, DateTime> getNext;
 
-    public IntervalGroup(DateTime start, string interval, IList<ProfileGraph> profileGraphs, LabelSeriesSet<TimeRegisterValue> labelSeriesSet)
+    public IntervalGroup(TimeZoneInfo timeZoneinfo, DateTime start, string interval, IList<ProfileGraph> profileGraphs, LabelSeriesSet<TimeRegisterValue> labelSeriesSet)
     {
-      timeDivider = DateTimeResolutionDivider.GetResolutionDivider(start, interval);
-      getNext = DateTimeResolutionDivider.GetNext(interval);
+      var dateTimeHelper = new DateTimeHelper(timeZoneinfo, start);
+      timeDivider = dateTimeHelper.GetDivider(interval);
+      getNext = dateTimeHelper.GetNext(interval);
       if (profileGraphs == null) throw new ArgumentNullException("profileGraphs");
       if (labelSeriesSet == null) throw new ArgumentNullException("labelSeriesSet");
 
