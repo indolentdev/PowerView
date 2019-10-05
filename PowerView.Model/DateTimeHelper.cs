@@ -12,8 +12,6 @@ namespace PowerView.Model
     {
       if (timeZoneInfo == null) throw new ArgumentNullException("timeZoneInfo");
       if (origin.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("origin", "Must be UTC");
-      var originAtTimeZone = TimeZoneInfo.ConvertTimeFromUtc(origin, timeZoneInfo);
-      if (originAtTimeZone.TimeOfDay != TimeSpan.Zero) throw new ArgumentOutOfRangeException("origin", "Must be midnight for timezone. Was:" + originAtTimeZone.ToString("o"));
 
       this.timeZoneInfo = timeZoneInfo;
       this.origin = origin;

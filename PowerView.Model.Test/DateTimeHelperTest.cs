@@ -18,7 +18,6 @@ namespace PowerView.Model.Test
       // Act & Assert
       Assert.That(() => new DateTimeHelper(null, origin), Throws.TypeOf<ArgumentNullException>());
       Assert.That(() => new DateTimeHelper(timeZoneInfo, DateTime.SpecifyKind(origin, DateTimeKind.Local)), Throws.TypeOf<ArgumentOutOfRangeException>());
-      Assert.That(() => new DateTimeHelper(timeZoneInfo, origin.AddMilliseconds(1)), Throws.TypeOf<ArgumentOutOfRangeException>());
     }
 
     [Test]
