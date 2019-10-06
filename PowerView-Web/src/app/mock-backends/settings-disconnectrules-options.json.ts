@@ -12,17 +12,17 @@ export let settingsDisconnectrulesOptions = {
    "evaluationItems":[
       {
          "label":"Main",
-         "obisCode":"1.1.22.7.0.255",
+         "obisCode":"1.0.22.7.0.255",
          "unit":"W"
       },
       {
          "label":"Main",
-         "obisCode":"1.1.42.7.0.255",
+         "obisCode":"1.0.42.7.0.255",
          "unit":"W"
       },
       {
          "label":"Main",
-         "obisCode":"1.1.62.7.0.255",
+         "obisCode":"1.0.62.7.0.255",
          "unit":"W"
       }
    ]

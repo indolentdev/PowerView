@@ -37,7 +37,7 @@ namespace PowerView.Service.EventHub
 
     public void Signal(IList<LiveReading> liveReadings)
     {
-      var now = DateTime.Now;
+      var now = DateTime.Now; // Hmm.. this actually depends on the host box having the correct time zone setup... :/
       eventQueue.Enqueue(() => mqttPublisherFactory.Publish(liveReadings));
       eventQueue.Enqueue(() => disconnectControlFactory.Process(liveReadings));
 

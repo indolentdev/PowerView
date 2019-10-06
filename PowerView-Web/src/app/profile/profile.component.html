@@ -6,10 +6,10 @@
   <h3>{{ page }}</h3>
 </div>
 
-<div class="divCenterOuter">
+<div class="divCenterOuter" *ngIf="dpShow">
   <div class="divCenterInner">
     <mat-form-field>
-      <input matInput [min]="minStartTime" [max]="maxStartTime" [matDatepicker]="dp" placeholder="{{ choose | translate }}" 
+      <input matInput [min]="dpMinStartTime" [max]="dpMaxStartTime" [matDatepicker]="dp" placeholder="{{ dpChooseResource | translate }}" 
         (dateChange)="startTimeChangeEvent($event)" [formControl]="fcStartTime" />
       <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
       <mat-datepicker #dp [startView]="dpStartView" (monthSelected)="monthSelected($event)" (yearSelected)="yearSelected($event)"></mat-datepicker>

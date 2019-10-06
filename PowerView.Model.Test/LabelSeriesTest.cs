@@ -177,7 +177,8 @@ namespace PowerView.Model.Test
       // Arrange
       const string label = "label";
       ObisCode obisCode = "1.2.3.4.5.6";
-      var baseTime = new DateTime(2019, 7, 30, 18, 2, 12, DateTimeKind.Utc);
+      var now = DateTime.UtcNow;
+      var baseTime = new DateTime(now.Year, now.Month, now.Day, 18, 2, 12, DateTimeKind.Utc);
       var timeRegisterValues = new[] 
       { 
         new TimeRegisterValue("sn1", baseTime, 11, Unit.WattHour), 
@@ -188,7 +189,7 @@ namespace PowerView.Model.Test
         new TimeRegisterValue("sn1", baseTime + TimeSpan.FromMinutes(25), 16, Unit.WattHour)
       };
       var target = new LabelSeries<TimeRegisterValue>(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, timeRegisterValues } });
-      var timeDivider = DateTimeResolutionDivider.GetResolutionDivider("10-minutes");
+      var timeDivider = new DateTimeHelper(TimeZoneInfo.Local, DateTime.Today.ToUniversalTime()).GetDivider("10-minutes");
 
       // Act
       var normalized = target.Normalize(timeDivider);

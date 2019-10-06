@@ -46,7 +46,7 @@ namespace PowerView.Service.Test.EventHub
 
       // Assert
       factory.Verify(f => f.Create<IMeterEventDetector>());
-      meterEventDetector.Verify(med => med.DetectMeterEvents(It.Is<DateTime>(x => x == dateTime.ToUniversalTime() && x.Kind == DateTimeKind.Utc)));
+      meterEventDetector.Verify(med => med.DetectMeterEvents(It.Is<DateTime>(x => x == dateTime.Date.ToUniversalTime() && x.Kind == DateTimeKind.Utc)));
       medDisposable.Verify(x => x.Dispose());
       factory.Verify(f => f.Create<IMeterEventNotifier>());
       meterEventNotifier.Verify(men => men.NotifyEmailRecipients());

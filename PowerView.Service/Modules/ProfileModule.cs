@@ -19,21 +19,24 @@ namespace PowerView.Service.Modules
     private readonly IProfileRepository profileRepository;
     private readonly ISeriesColorRepository serieRepository;
     private readonly IProfileGraphRepository profileGraphRepository;
+    private readonly ILocationProvider locationProvider;
     private readonly ISerieMapper serieMapper;
     private readonly ITemplateConfigProvider templateConfigProvider;
 
-    public ProfileModule(IProfileRepository profileRepository, ISeriesColorRepository serieRepository, IProfileGraphRepository profileGraphRepository, ISerieMapper serieMapper, ITemplateConfigProvider templateConfigProvider)
+    public ProfileModule(IProfileRepository profileRepository, ISeriesColorRepository serieRepository, IProfileGraphRepository profileGraphRepository, ILocationProvider locationProvider, ISerieMapper serieMapper, ITemplateConfigProvider templateConfigProvider)
       :base("/api/profile")
     {
       if (profileRepository == null) throw new ArgumentNullException("profileRepository");
       if (serieRepository == null) throw new ArgumentNullException("serieRepository");
       if (profileGraphRepository == null) throw new ArgumentNullException("profileGraphRepository");
+      if (locationProvider == null) throw new ArgumentNullException("locationProvider");
       if (serieMapper == null) throw new ArgumentNullException("serieMapper");
       if (templateConfigProvider == null) throw new ArgumentNullException("templateConfigProvider");
 
       this.profileRepository = profileRepository;
       this.serieRepository = serieRepository;
       this.profileGraphRepository = profileGraphRepository;
+      this.locationProvider = locationProvider;
       this.serieMapper = serieMapper;
       this.templateConfigProvider = templateConfigProvider;
 
@@ -102,8 +105,10 @@ namespace PowerView.Service.Modules
       var distinctIntervals = profileGraphs.GroupBy(x => x.Interval).ToList();
 
       // Find query start and end times based on max interval and period...
-      var end = DateTimeResolutionDivider.GetPeriodEnd(period, start);
-      var maxInterval = distinctIntervals.Select(x => DateTimeResolutionDivider.GetNext(x.Key)(start)).Max();
+      var timeZoneInfo = locationProvider.GetTimeZone();
+      var dateTimeHelper = new DateTimeHelper(timeZoneInfo, start);
+      var end = dateTimeHelper.GetPeriodEnd(period);
+      var maxInterval = distinctIntervals.Select(x => dateTimeHelper.GetNext(x.Key)(start)).Max();
       var preStart = start.AddTicks((start - maxInterval).Ticks/2); // .. half the interval backwards.
 
       // Query db
@@ -121,7 +126,7 @@ namespace PowerView.Service.Modules
         var groupInterval = group.Key;
         var groupProfileGraphs = group.ToList();
 
-        var intervalGroup = new IntervalGroup(start, groupInterval, groupProfileGraphs, labelSeriesSet);
+        var intervalGroup = new IntervalGroup(timeZoneInfo, start, groupInterval, groupProfileGraphs, labelSeriesSet);
         intervalGroup.Prepare(templateConfigProvider.LabelObisCodeTemplates);
         intervalGroups.Add(intervalGroup);
       }
@@ -152,7 +157,7 @@ namespace PowerView.Service.Modules
       return new
       {
         Title = serieSet.Title,
-        Categories = serieSet.Categories.Select(x => DateTimeMapper.Map(x)).ToList(),
+        Categories = serieSet.Categories.Select(DateTimeMapper.Map).ToList(),
         Series = series.OrderBy(x => x.Label + x.ObisCode).ToList()
       };
     }

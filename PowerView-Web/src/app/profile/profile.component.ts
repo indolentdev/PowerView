@@ -21,7 +21,7 @@ const startTimeParam = "startTime";
 })
 export class ProfileComponent implements OnInit {
   page: string;
-  minStartTime = moment("2010-01-01T00:00:00Z");
+  dpMinStartTime = moment("2010-01-01T00:00:00Z");
   fcStartTime = new FormControl(null);
 
   profileSet: ProfilePage;
@@ -31,11 +31,13 @@ export class ProfileComponent implements OnInit {
 
   @Input('profilePeriod') profilePeriod: string;
   @Input('profileHeading') profileHeading: string;
-  @Input('choose') choose: string;
-  @Input('dpStartView') dpStartView: string;
-  @Input('maxStartTime') maxStartTime: Moment;
-  @Input('defaultStartTime') defaultStartTime: Moment;
   @Input('timeFormat') timeFormat: string;
+  @Input('defaultStartTime') defaultStartTime: Moment;
+
+  @Input('dpShow') dpShow: boolean;
+  @Input('dpChooseResource') dpChooseResource: string;
+  @Input('dpStartView') dpStartView: string;
+  @Input('dpMaxStartTime') dpMaxStartTime: Moment;
 
   constructor(private log: NGXLogger, private router: Router, private route: ActivatedRoute, private profileService: ProfileService) { 
   }

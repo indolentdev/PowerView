@@ -138,7 +138,6 @@
     <Compile Include="SeriesName.cs" />
     <Compile Include="ProfileGraph.cs" />
     <Compile Include="NamedValue.cs" />
-    <Compile Include="DateTimeResolutionDivider.cs" />
     <Compile Include="Expression\IValueExpressionSet.cs" />
     <Compile Include="Expression\AddValueExpressionSet.cs" />
     <Compile Include="Expression\ValueExpressionSet.cs" />
@@ -179,6 +178,7 @@
     <Compile Include="LeakCharacteristicChecker.cs" />
     <Compile Include="Repository\EnvironmentRepository.cs" />
     <Compile Include="Repository\IEnvironmentRepository.cs" />
+    <Compile Include="DateTimeHelper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

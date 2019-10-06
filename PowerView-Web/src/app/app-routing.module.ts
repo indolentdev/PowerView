@@ -1,8 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { DefaultComponent } from './default/default.component';
+import { ProfileLast24hComponent } from './profile-last24h/profile-last24h.component';
+import { ProfileLast31dComponent } from './profile-last31d/profile-last31d.component';
 import { ProfileDayComponent } from './profile-day/profile-day.component';
 import { ProfileMonthComponent } from './profile-month/profile-month.component';
+import { ProfileLast12mComponent } from './profile-last12m/profile-last12m.component';
 import { ProfileYearComponent } from './profile-year/profile-year.component';
 import { DiffBydatesComponent } from './diff-bydates/diff-bydates.component';
 import { GaugesLatestComponent } from './gauges-latest/gauges-latest.component';
@@ -16,8 +19,11 @@ import { SettingsSmtpComponent } from './settings-smtp/settings-smtp.component';
 import { SettingsMqttComponent } from './settings-mqtt/settings-mqtt.component';
 
 const routes: Routes = [
+  { path: 'profile/last24h', component: ProfileLast24hComponent },
   { path: 'profile/day', component: ProfileDayComponent },
+  { path: 'profile/last31d', component: ProfileLast31dComponent },
   { path: 'profile/month', component: ProfileMonthComponent },
+  { path: 'profile/last12m', component: ProfileLast12mComponent },
   { path: 'profile/year', component: ProfileYearComponent },
   { path: 'diff/bydates', component: DiffBydatesComponent },
   { path: 'gauges/latest', component: GaugesLatestComponent },

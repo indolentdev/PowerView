@@ -14,12 +14,14 @@ namespace PowerView.Service.Test.EventHub
   {
     private Mock<IProfileRepository> profileRepository;
     private Mock<IMeterEventRepository> meterEventRepository;
+    private Mock<ILocationProvider> locationProvider;
 
     [SetUp]
     public void SetUp()
     {
       profileRepository = new Mock<IProfileRepository>();
       meterEventRepository = new Mock<IMeterEventRepository>();
+      locationProvider = new Mock<ILocationProvider>();
     }
 
     [Test]
@@ -29,9 +31,10 @@ namespace PowerView.Service.Test.EventHub
       var timeConverter = new Mock<ITimeConverter>();
 
       // Act & Assert
-      Assert.That(() => new MeterEventDetector(null, profileRepository.Object, meterEventRepository.Object), Throws.TypeOf<ArgumentNullException>());
-      Assert.That(() => new MeterEventDetector(timeConverter.Object, null, meterEventRepository.Object), Throws.TypeOf<ArgumentNullException>());
-      Assert.That(() => new MeterEventDetector(timeConverter.Object, profileRepository.Object, null), Throws.TypeOf<ArgumentNullException>());
+      Assert.That(() => new MeterEventDetector(null, profileRepository.Object, meterEventRepository.Object, locationProvider.Object), Throws.TypeOf<ArgumentNullException>());
+      Assert.That(() => new MeterEventDetector(timeConverter.Object, null, meterEventRepository.Object, locationProvider.Object), Throws.TypeOf<ArgumentNullException>());
+      Assert.That(() => new MeterEventDetector(timeConverter.Object, profileRepository.Object, null, locationProvider.Object), Throws.TypeOf<ArgumentNullException>());
+      Assert.That(() => new MeterEventDetector(timeConverter.Object, profileRepository.Object, meterEventRepository.Object, null), Throws.TypeOf<ArgumentNullException>());
     }
 
     [Test]
@@ -50,7 +53,7 @@ namespace PowerView.Service.Test.EventHub
     public void DetectMeterEventsLeak()
     {
       // Arrange
-      var time = new DateTime(2017, 1, 7, 10, 0, 22, DateTimeKind.Utc);
+      var time = TimeZoneHelper.GetDenmarkTodayAsUtc();
       var labelSeries = GetLeakProfile(time);
       profileRepository.Setup(pr => pr.GetDayProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
         .Returns(new LabelSeriesSet<TimeRegisterValue>(time, time, new [] { labelSeries }));
@@ -60,16 +63,14 @@ namespace PowerView.Service.Test.EventHub
       CreateTarget().DetectMeterEvents(time);
 
       // Assert
-      var start = new DateTime(2017, 1, 6, 23, 0, 0, DateTimeKind.Utc);
-      var end = new DateTime(2017, 1, 7, 5, 0, 0, DateTimeKind.Utc);
-      meterEventRepository.Verify(mer => mer.AddMeterEvents(ContainsLeak(labelSeries.Label, time, true, start, end)));
+      meterEventRepository.Verify(mer => mer.AddMeterEvents(ContainsLeak(labelSeries.Label, time, true, time, time.AddHours(6))));
     }
 
     [Test]
     public void DetectMeterEventsChangedEvent()
     {
       // Arrange
-      var time = new DateTime(2017, 1, 7, 10, 0, 22, DateTimeKind.Utc);
+      var time = TimeZoneHelper.GetDenmarkTodayAsUtc();
       var labelSeries = GetLeakProfile(time);
       profileRepository.Setup(pr => pr.GetDayProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
         .Returns(new LabelSeriesSet<TimeRegisterValue>(time, time, new[] { labelSeries }));
@@ -81,16 +82,14 @@ namespace PowerView.Service.Test.EventHub
       CreateTarget().DetectMeterEvents(time);
 
       // Assert
-      var start = new DateTime(2017, 1, 6, 23, 0, 0, DateTimeKind.Utc);
-      var end = new DateTime(2017, 1, 7, 5, 0, 0, DateTimeKind.Utc);
-      meterEventRepository.Verify(mer => mer.AddMeterEvents(ContainsLeak(labelSeries.Label, time, true, start, end)));
+      meterEventRepository.Verify(mer => mer.AddMeterEvents(ContainsLeak(labelSeries.Label, time, true, time, time.AddHours(6))));
     }
 
     [Test]
     public void DetectMeterEventsRedundantEvent()
     {
       // Arrange
-      var time = new DateTime(2017, 1, 7, 10, 0, 22, DateTimeKind.Utc);
+      var time = TimeZoneHelper.GetDenmarkTodayAsUtc();
       var labelSeries = GetLeakProfile(time);
       profileRepository.Setup(pr => pr.GetDayProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
         .Returns(new LabelSeriesSet<TimeRegisterValue>(time, time, new[] { labelSeries }));
@@ -108,18 +107,18 @@ namespace PowerView.Service.Test.EventHub
     public static IEnumerable<MeterEvent> ContainsLeak(string label, DateTime timestamp, bool flag, DateTime start, DateTime end) 
     { 
       return Match.Create<IEnumerable<MeterEvent>>(
-        x => x.Where(me => 
+        x => x.Any(me =>
           me.Label == label && me.DetectTimestamp == timestamp && me.Flag == flag &&
           me.Amplification is LeakMeterEventAmplification &&
           ((LeakMeterEventAmplification)me.Amplification).Start == start &&
           ((LeakMeterEventAmplification)me.Amplification).End == end
-        ).Any() );
+        ));
     }
 
     private static LabelSeries<TimeRegisterValue> GetLeakProfile(DateTime time)
     {
-      var baseTime = new DateTime(time.Year, time.Month, time.Day, 0, 58, 0, DateTimeKind.Utc);
-      var timestamps = Enumerable.Range(-5, 23).Select(i => baseTime.AddHours(i)).ToArray(); 
+      var baseTime = TimeZoneHelper.GetDenmarkTodayAsUtc().AddMinutes(58);
+      var timestamps = Enumerable.Range(-1, 25).Select(i => baseTime.AddHours(i)).ToArray(); 
       var values = timestamps.Select((dt, i) => new TimeRegisterValue("1", dt, i+3, 1, Unit.CubicMetre)).ToArray();
       var dict = new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { ObisCode.ColdWaterVolume1, values } };
       var labelSeries = new LabelSeries<TimeRegisterValue>("lbl", dict);
@@ -129,10 +128,9 @@ namespace PowerView.Service.Test.EventHub
     private MeterEventDetector CreateTarget()
     {
       var tzi = TimeZoneInfo.FindSystemTimeZoneById("Europe/Copenhagen");
-      var lp = new Mock<ILocationProvider>();
-      lp.Setup(x => x.GetTimeZone()).Returns(tzi);
-      var timeConverter = new TimeConverter(lp.Object);
-      return new MeterEventDetector(timeConverter, profileRepository.Object, meterEventRepository.Object);
+      locationProvider.Setup(x => x.GetTimeZone()).Returns(tzi);
+      var timeConverter = new TimeConverter(locationProvider.Object);
+      return new MeterEventDetector(timeConverter, profileRepository.Object, meterEventRepository.Object, locationProvider.Object);
     }
   }
 }

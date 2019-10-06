@@ -13,72 +13,72 @@ export let settingsProfileGraphsSeries = {
       {
          "period":"day",
          "label":"Heater",
-         "obisCode":"1.1.1.7.0.255"
+         "obisCode":"1.0.1.7.0.255"
       },
       {
          "period":"day",
          "label":"Heater",
-         "obisCode":"1.1.1.8.0.200"
+         "obisCode":"1.66.1.8.0.255"
       },
       {
          "period":"day",
          "label":"Inverter",
-         "obisCode":"1.1.2.7.0.255"
+         "obisCode":"1.0.2.7.0.255"
       },
       {
          "period":"day",
          "label":"Inverter",
-         "obisCode":"1.1.2.8.0.200"
+         "obisCode":"1.66.2.8.0.255"
       },
       {
          "period":"day",
          "label":"Main",
-         "obisCode":"1.1.1.7.0.255"
+         "obisCode":"1.0.1.7.0.255"
       },
       {
          "period":"day",
          "label":"Main",
-         "obisCode":"1.1.1.8.0.200"
+         "obisCode":"1.66.1.8.0.255"
       },
       {
          "period":"day",
          "label":"Main",
-         "obisCode":"1.1.2.7.0.255"
+         "obisCode":"1.0.2.7.0.255"
       },
       {
          "period":"day",
          "label":"Main",
-         "obisCode":"1.1.2.8.0.200"
+         "obisCode":"1.66.2.8.0.255"
       },
       {
          "period":"day",
          "label":"Main",
-         "obisCode":"1.1.21.7.0.255"
+         "obisCode":"1.0.21.7.0.255"
       },
       {
          "period":"day",
          "label":"Main",
-         "obisCode":"1.1.22.7.0.255"
+         "obisCode":"1.0.22.7.0.255"
       },
       {
          "period":"day",
          "label":"Main",
-         "obisCode":"1.1.41.7.0.255"
+         "obisCode":"1.0.41.7.0.255"
       },
       {
          "period":"day",
          "label":"Main",
-         "obisCode":"1.1.42.7.0.255"
+         "obisCode":"1.0.42.7.0.255"
       },
       {
          "period":"day",
          "label":"Main",
-         "obisCode":"1.1.61.7.0.255"
+         "obisCode":"1.0.61.7.0.255"
       },
       {
          "period":"day",
          "label":"Main",
-         "obisCode":"1.1.62.7.0.255"
+         "obisCode":"1.0.62.7.0.255"
       },
       {
          "period":"day",
@@ -88,162 +88,112 @@ export let settingsProfileGraphsSeries = {
       {
          "period":"day",
          "label":"Water",
-         "obisCode":"8.1.1.0.0.200"
+         "obisCode":"8.66.1.0.0.255"
       },
       {
          "period":"day",
          "label":"Water",
-         "obisCode":"8.1.2.0.0.255"
-      },
-      {
-         "period":"day",
-         "label":"Family",
-         "obisCode":"1.210.1.8.0.200"
-      },
-      {
-         "period":"day",
-         "label":"Family",
-         "obisCode":"1.220.1.8.0.200"
+         "obisCode":"8.0.2.0.0.255"
       },
       {
          "period":"month",
          "label":"Heater",
-         "obisCode":"1.1.1.8.0.200"
+         "obisCode":"1.66.1.8.0.255"
       },
       {
          "period":"month",
          "label":"Heater",
-         "obisCode":"1.1.1.8.0.100"
+         "obisCode":"1.65.1.8.0.255"
       },
       {
          "period":"month",
          "label":"Inverter",
-         "obisCode":"1.1.2.8.0.200"
+         "obisCode":"1.66.2.8.0.255"
       },
       {
          "period":"month",
          "label":"Inverter",
-         "obisCode":"1.1.2.8.0.100"
+         "obisCode":"1.65.2.8.0.255"
       },
       {
          "period":"month",
          "label":"Main",
-         "obisCode":"1.1.1.8.0.200"
+         "obisCode":"1.66.1.8.0.255"
       },
       {
          "period":"month",
          "label":"Main",
-         "obisCode":"1.1.1.8.0.100"
+         "obisCode":"1.65.1.8.0.255"
       },
       {
          "period":"month",
          "label":"Main",
-         "obisCode":"1.1.2.8.0.200"
+         "obisCode":"1.66.2.8.0.255"
       },
       {
          "period":"month",
          "label":"Main",
-         "obisCode":"1.1.2.8.0.100"
+         "obisCode":"1.65.2.8.0.255"
       },
       {
          "period":"month",
          "label":"Water",
-         "obisCode":"8.1.1.0.0.200"
+         "obisCode":"8.66.1.0.0.255"
       },
       {
          "period":"month",
          "label":"Water",
-         "obisCode":"8.1.1.0.0.100"
-      },
-      {
-         "period":"month",
-         "label":"Family",
-         "obisCode":"1.210.1.8.0.200"
-      },
-      {
-         "period":"month",
-         "label":"Family",
-         "obisCode":"1.210.1.8.0.100"
-      },
-      {
-         "period":"month",
-         "label":"Family",
-         "obisCode":"1.220.1.8.0.200"
-      },
-      {
-         "period":"month",
-         "label":"Family",
-         "obisCode":"1.220.1.8.0.100"
+         "obisCode":"8.65.1.0.0.255"
       },
       {
          "period":"year",
          "label":"Heater",
-         "obisCode":"1.1.1.8.0.200"
+         "obisCode":"1.66.1.8.0.255"
       },
       {
          "period":"year",
          "label":"Heater",
-         "obisCode":"1.1.1.8.0.100"
+         "obisCode":"1.65.1.8.0.255"
       },
       {
          "period":"year",
          "label":"Inverter",
-         "obisCode":"1.1.2.8.0.200"
+         "obisCode":"1.66.2.8.0.255"
       },
       {
          "period":"year",
          "label":"Inverter",
-         "obisCode":"1.1.2.8.0.100"
+         "obisCode":"1.65.2.8.0.255"
       },
       {
          "period":"year",
          "label":"Main",
-         "obisCode":"1.1.1.8.0.200"
+         "obisCode":"1.66.1.8.0.255"
       },
       {
          "period":"year",
          "label":"Main",
-         "obisCode":"1.1.1.8.0.100"
+         "obisCode":"1.65.1.8.0.255"
       },
       {
          "period":"year",
          "label":"Main",
-         "obisCode":"1.1.2.8.0.200"
+         "obisCode":"1.66.2.8.0.255"
       },
       {
          "period":"year",
          "label":"Main",
-         "obisCode":"1.1.2.8.0.100"
+         "obisCode":"1.65.2.8.0.255"
       },
       {
          "period":"year",
          "label":"Water",
-         "obisCode":"8.1.1.0.0.200"
+         "obisCode":"8.66.1.0.0.255"
       },
       {
          "period":"year",
          "label":"Water",
-         "obisCode":"8.1.1.0.0.100"
-      },
-      {
-         "period":"year",
-         "label":"Family",
-         "obisCode":"1.210.1.8.0.200"
-      },
-      {
-         "period":"year",
-         "label":"Family",
-         "obisCode":"1.210.1.8.0.100"
-      },
-      {
-         "period":"year",
-         "label":"Family",
-         "obisCode":"1.220.1.8.0.200"
-      },
-      {
-         "period":"year",
-         "label":"Family",
-         "obisCode":"1.220.1.8.0.100"
+         "obisCode":"8.65.1.0.0.255"
       }
    ]
 }

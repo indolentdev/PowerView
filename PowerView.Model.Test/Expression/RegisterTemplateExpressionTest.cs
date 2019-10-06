@@ -92,8 +92,8 @@ namespace PowerView.Model.Test.Expression
     public void GetValueExpressionSet()
     {
       // Arrange
-      var timeDivider = DateTimeResolutionDivider.GetResolutionDivider("1-days");
-      var start = new DateTime(2017, 6, 7, 8, 9, 10, DateTimeKind.Utc);
+      var start = DateTime.Today.ToUniversalTime();
+      var timeDivider = new DateTimeHelper(TimeZoneInfo.Local, start).GetDivider("1-days");
       var trv1 = new NormalizedTimeRegisterValue(new TimeRegisterValue("1", start, 1, Unit.Watt), timeDivider(start));
       var trv2 = new NormalizedTimeRegisterValue(new TimeRegisterValue("1", start.AddMonths(4), 2, Unit.Watt), timeDivider(start.AddMonths(4)));
       var trv3 = new NormalizedTimeRegisterValue(new TimeRegisterValue("1", start.AddMonths(9), 3, Unit.Watt), timeDivider(start.AddMonths(9)));
@@ -113,8 +113,8 @@ namespace PowerView.Model.Test.Expression
     public void GetValueExpressionSetWrongLabel()
     {
       // Arrange
-      var timeDivider = DateTimeResolutionDivider.GetResolutionDivider("1-days");
-      var start = new DateTime(2017, 6, 7, 8, 9, 10, DateTimeKind.Utc);
+      var start = DateTime.Today.ToUniversalTime();
+      var timeDivider = new DateTimeHelper(TimeZoneInfo.Local, start).GetDivider("1-days");
       var trv1 = new NormalizedTimeRegisterValue(new TimeRegisterValue("1", start, 1, Unit.Watt), timeDivider(start));
       var trv2 = new NormalizedTimeRegisterValue(new TimeRegisterValue("1", start.AddMonths(4), 2, Unit.Watt), timeDivider(start.AddMonths(4)));
       var trv3 = new NormalizedTimeRegisterValue(new TimeRegisterValue("1", start.AddMonths(9), 3, Unit.Watt), timeDivider(start.AddMonths(9)));
@@ -131,8 +131,8 @@ namespace PowerView.Model.Test.Expression
     public void GetValueExpressionSetWrongObisCode()
     {
       // Arrange
-      var timeDivider = DateTimeResolutionDivider.GetResolutionDivider("1-days");
-      var start = new DateTime(2017, 6, 7, 8, 9, 10, DateTimeKind.Utc);
+      var start = DateTime.Today.ToUniversalTime();
+      var timeDivider = new DateTimeHelper(TimeZoneInfo.Local, start).GetDivider("1-days");
       var trv1 = new NormalizedTimeRegisterValue(new TimeRegisterValue("1", start, 1, Unit.Watt), timeDivider(start));
       var trv2 = new NormalizedTimeRegisterValue(new TimeRegisterValue("1", start.AddMonths(4), 2, Unit.Watt), timeDivider(start.AddMonths(4)));
       var trv3 = new NormalizedTimeRegisterValue(new TimeRegisterValue("1", start.AddMonths(9), 3, Unit.Watt), timeDivider(start.AddMonths(9)));

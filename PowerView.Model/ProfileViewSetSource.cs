@@ -88,6 +88,8 @@ namespace PowerView.Model
 
         if (profileGraphSeries.Count == 0) continue;
 
+
+
         var seriesSet = new SeriesSet(profileGraph.Title, categories, profileGraphSeries);
         seriesSets.Add(seriesSet);
       }

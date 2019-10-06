@@ -60,7 +60,8 @@ namespace PowerView.Model.Test
 
     private static NormalizedTimeRegisterValue Normalize(TimeRegisterValue timeRegisterValue, string interval = "60-minutes")
     {
-      var timeDivider = DateTimeResolutionDivider.GetResolutionDivider(timeRegisterValue.Timestamp.Date, interval);
+      var dateTimeHelper = new DateTimeHelper(TimeZoneInfo.Local, DateTime.Today.ToUniversalTime());
+      var timeDivider = dateTimeHelper.GetDivider(interval);
       return new NormalizedTimeRegisterValue(timeRegisterValue, timeDivider(timeRegisterValue.Timestamp));
     }
 

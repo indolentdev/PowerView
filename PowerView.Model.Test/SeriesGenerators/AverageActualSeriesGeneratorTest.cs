@@ -212,7 +212,8 @@ namespace PowerView.Model.Test.SeriesGenerators
 
     private static NormalizedTimeRegisterValue Normalize(TimeRegisterValue timeRegisterValue, string interval = "5-minutes")
     {
-      var timeDivider = DateTimeResolutionDivider.GetResolutionDivider(timeRegisterValue.Timestamp.Date, interval);
+      var dateTimeHelper = new DateTimeHelper(TimeZoneInfo.Local, new DateTime(2015, 02, 13, 00, 00, 00, DateTimeKind.Local).ToUniversalTime());
+      var timeDivider = dateTimeHelper.GetDivider(interval);
       return new NormalizedTimeRegisterValue(timeRegisterValue, timeDivider(timeRegisterValue.Timestamp));
     }
 

@@ -11,113 +11,93 @@ export let settingsSerieColors = {
           "color":"#d66aff"
        },
        {
-          "label":"Family",
-          "obisCode":"1.210.1.8.0.100",
-          "color":"#ffb200"
-       },
-       {
-          "label":"Family",
-          "obisCode":"1.210.1.8.0.200",
-          "color":"#ffdfac"
-       },
-       {
-          "label":"Family",
-          "obisCode":"1.220.1.8.0.100",
-          "color":"#ff0000"
-       },
-       {
-          "label":"Family",
-          "obisCode":"1.220.1.8.0.200",
-          "color":"#ffacac"
-       },
-       {
           "label":"Heater",
-          "obisCode":"1.1.1.7.0.255",
+          "obisCode":"1.0.1.7.0.255",
           "color":"#ff0000"
        },
        {
           "label":"Heater",
-          "obisCode":"1.1.1.8.0.100",
+          "obisCode":"1.65.1.8.0.255",
           "color":"#ff0000"
        },
        {
           "label":"Heater",
-          "obisCode":"1.1.1.8.0.200",
+          "obisCode":"1.66.1.8.0.255",
           "color":"#ffacac"
        },
        {
           "label":"Inverter",
-          "obisCode":"1.1.2.7.0.255",
+          "obisCode":"1.0.2.7.0.255",
           "color":"#339933"
        },
        {
           "label":"Inverter",
-          "obisCode":"1.1.2.8.0.100",
+          "obisCode":"1.65.2.8.0.255",
           "color":"#339933"
        },
        {
           "label":"Inverter",
-          "obisCode":"1.1.2.8.0.200",
+          "obisCode":"1.66.2.8.0.255",
           "color":"#CCFF66"
        },
        {
           "label":"Main",
-          "obisCode":"1.1.1.7.0.255",
+          "obisCode":"1.0.1.7.0.255",
           "color":"#FFCC00"
        },
        {
           "label":"Main",
-          "obisCode":"1.1.1.8.0.100",
+          "obisCode":"1.65.1.8.0.255",
           "color":"#FFCC00"
        },
        {
           "label":"Main",
-          "obisCode":"1.1.1.8.0.200",
+          "obisCode":"1.66.1.8.0.255",
           "color":"#ffe57a"
        },
        {
           "label":"Main",
-          "obisCode":"1.1.2.7.0.255",
+          "obisCode":"1.0.2.7.0.255",
           "color":"#FF9900"
        },
        {
           "label":"Main",
-          "obisCode":"1.1.2.8.0.100",
+          "obisCode":"1.65.2.8.0.255",
           "color":"#FF9900"
        },
        {
           "label":"Main",
-          "obisCode":"1.1.2.8.0.200",
+          "obisCode":"1.66.2.8.0.255",
           "color":"#FFFF00"
        },
        {
           "label":"Main",
-          "obisCode":"1.1.21.7.0.255",
+          "obisCode":"1.0.21.7.0.255",
           "color":"#ff0000"
        },
        {
           "label":"Main",
-          "obisCode":"1.1.22.7.0.255",
+          "obisCode":"1.0.22.7.0.255",
           "color":"#ff8989"
        },
        {
           "label":"Main",
-          "obisCode":"1.1.41.7.0.255",
+          "obisCode":"1.0.41.7.0.255",
           "color":"#00ffdd"
        },
        {
           "label":"Main",
-          "obisCode":"1.1.42.7.0.255",
+          "obisCode":"1.0.42.7.0.255",
           "color":"#a9fff4"
        },
        {
           "label":"Main",
-          "obisCode":"1.1.61.7.0.255",
+          "obisCode":"1.0.61.7.0.255",
           "color":"#0007ff"
        },
        {
           "label":"Main",
-          "obisCode":"1.1.62.7.0.255",
+          "obisCode":"1.0.62.7.0.255",
           "color":"#a9acff"
        },
        {
@@ -127,17 +107,17 @@ export let settingsSerieColors = {
        },
        {
           "label":"Water",
-          "obisCode":"8.1.1.0.0.100",
+          "obisCode":"8.65.1.0.0.255",
           "color":"#330066"
        },
        {
           "label":"Water",
-          "obisCode":"8.1.1.0.0.200",
+          "obisCode":"8.66.1.0.0.255",
           "color":"#63d8df"
        },
        {
           "label":"Water",
-          "obisCode":"8.1.2.0.0.255",
+          "obisCode":"8.0.2.0.0.255",
           "color":"#330066"
        }
     ]

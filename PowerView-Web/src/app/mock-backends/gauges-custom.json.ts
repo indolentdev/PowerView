@@ -8,7 +8,7 @@ export let gaugesCustom = {
                "label":"Water",
                "serialNumber":"76075690",
                "timestamp":"2019-02-01T22:55Z",
-               "obisCode":"8.1.1.0.0.255",
+               "obisCode":"8.0.1.0.0.255",
                "value":240.486,
                "unit":"m3"
             },
@@ -16,7 +16,7 @@ export let gaugesCustom = {
                "label":"Heater",
                "serialNumber":"15906168",
                "timestamp":"2019-02-01T22:55Z",
-               "obisCode":"1.1.1.8.0.255",
+               "obisCode":"1.0.1.8.0.255",
                "value":16056.32,
                "unit":"kWh"
             },
@@ -24,7 +24,7 @@ export let gaugesCustom = {
                "label":"Main",
                "serialNumber":"20204093",
                "timestamp":"2019-02-01T22:55Z",
-               "obisCode":"1.1.1.8.0.255",
+               "obisCode":"1.0.1.8.0.255",
                "value":18796.93,
                "unit":"kWh"
             },
@@ -32,7 +32,7 @@ export let gaugesCustom = {
                "label":"Main",
                "serialNumber":"20204093",
                "timestamp":"2019-02-01T22:55Z",
-               "obisCode":"1.1.2.8.0.255",
+               "obisCode":"1.0.2.8.0.255",
                "value":9011.58,
                "unit":"kWh"
             },
@@ -40,7 +40,7 @@ export let gaugesCustom = {
                "label":"Inverter",
                "serialNumber":"839239879",
                "timestamp":"2019-02-01T15:50Z",
-               "obisCode":"1.1.2.8.0.255",
+               "obisCode":"1.0.2.8.0.255",
                "value":15624.22,
                "unit":"kWh"
             }

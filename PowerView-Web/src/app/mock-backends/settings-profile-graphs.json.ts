@@ -9,11 +9,11 @@ export let settingsProfileGraphs = {
          "series":[
             {
                "label":"Water",
-               "obisCode":"8.1.1.0.0.200"
+               "obisCode":"8.66.1.0.0.255"
             },
             {
                "label":"Water",
-               "obisCode":"8.1.2.0.0.255"
+               "obisCode":"8.0.2.0.0.255"
             }
          ]
       },
@@ -26,19 +26,19 @@ export let settingsProfileGraphs = {
          "series":[
             {
                "label":"Heater",
-               "obisCode":"1.1.1.7.0.255"
+               "obisCode":"1.0.1.7.0.255"
             },
             {
                "label":"Heater",
-               "obisCode":"1.1.1.8.0.200"
+               "obisCode":"1.66.1.8.0.255"
             },
             {
                "label":"Main",
-               "obisCode":"1.1.1.7.0.255"
+               "obisCode":"1.0.1.7.0.255"
             },
             {
                "label":"Main",
-               "obisCode":"1.1.1.8.0.200"
+               "obisCode":"1.66.1.8.0.255"
             }
          ]
       },
@@ -51,19 +51,19 @@ export let settingsProfileGraphs = {
          "series":[
             {
                "label":"Inverter",
-               "obisCode":"1.1.2.7.0.255"
+               "obisCode":"1.0.2.7.0.255"
             },
             {
                "label":"Inverter",
-               "obisCode":"1.1.2.8.0.200"
+               "obisCode":"1.66.2.8.0.255"
             },
             {
                "label":"Main",
-               "obisCode":"1.1.2.7.0.255"
+               "obisCode":"1.0.2.7.0.255"
             },
             {
                "label":"Main",
-               "obisCode":"1.1.2.8.0.200"
+               "obisCode":"1.66.2.8.0.255"
             }
          ]
       },
@@ -76,36 +76,11 @@ export let settingsProfileGraphs = {
          "series":[
             {
                "label":"Water",
-               "obisCode":"8.1.1.0.0.200"
+               "obisCode":"8.66.1.0.0.255"
             },
             {
                "label":"Water",
-               "obisCode":"8.1.1.0.0.100"
-            }
-         ]
-      },
-      {
-         "period":"month",
-         "page":"",
-         "title":"El Net",
-         "interval":"1-days",
-         "rank":10,
-         "series":[
-            {
-               "label":"Family",
-               "obisCode":"1.210.1.8.0.200"
-            },
-            {
-               "label":"Family",
-               "obisCode":"1.210.1.8.0.100"
-            },
-            {
-               "label":"Family",
-               "obisCode":"1.220.1.8.0.200"
-            },
-            {
-               "label":"Family",
-               "obisCode":"1.220.1.8.0.100"
+               "obisCode":"8.65.1.0.0.255"
             }
          ]
       },
@@ -118,19 +93,19 @@ export let settingsProfileGraphs = {
          "series":[
             {
                "label":"Heater",
-               "obisCode":"1.1.1.8.0.200"
+               "obisCode":"1.66.1.8.0.255"
             },
             {
                "label":"Heater",
-               "obisCode":"1.1.1.8.0.100"
+               "obisCode":"1.65.1.8.0.255"
             },
             {
                "label":"Main",
-               "obisCode":"1.1.1.8.0.200"
+               "obisCode":"1.66.1.8.0.255"
             },
             {
                "label":"Main",
-               "obisCode":"1.1.1.8.0.100"
+               "obisCode":"1.65.1.8.0.255"
             }
          ]
       },
@@ -143,19 +118,19 @@ export let settingsProfileGraphs = {
          "series":[
             {
                "label":"Inverter",
-               "obisCode":"1.1.2.8.0.200"
+               "obisCode":"1.66.2.8.0.255"
             },
             {
                "label":"Inverter",
-               "obisCode":"1.1.2.8.0.100"
+               "obisCode":"1.65.2.8.0.255"
             },
             {
                "label":"Main",
-               "obisCode":"1.1.2.8.0.200"
+               "obisCode":"1.66.2.8.0.255"
             },
             {
                "label":"Main",
-               "obisCode":"1.1.2.8.0.100"
+               "obisCode":"1.65.2.8.0.255"
             }
          ]
       },
@@ -168,36 +143,11 @@ export let settingsProfileGraphs = {
          "series":[
             {
                "label":"Water",
-               "obisCode":"8.1.1.0.0.200"
+               "obisCode":"8.66.1.0.0.255"
             },
             {
                "label":"Water",
-               "obisCode":"8.1.1.0.0.100"
-            }
-         ]
-      },
-      {
-         "period":"year",
-         "page":"",
-         "title":"El Net",
-         "interval":"1-months",
-         "rank":14,
-         "series":[
-            {
-               "label":"Family",
-               "obisCode":"1.210.1.8.0.200"
-            },
-            {
-               "label":"Family",
-               "obisCode":"1.210.1.8.0.100"
-            },
-            {
-               "label":"Family",
-               "obisCode":"1.220.1.8.0.200"
-            },
-            {
-               "label":"Family",
-               "obisCode":"1.220.1.8.0.100"
+               "obisCode":"8.65.1.0.0.255"
             }
          ]
       },
@@ -210,19 +160,19 @@ export let settingsProfileGraphs = {
          "series":[
             {
                "label":"Heater",
-               "obisCode":"1.1.1.8.0.200"
+               "obisCode":"1.66.1.8.0.255"
             },
             {
                "label":"Heater",
-               "obisCode":"1.1.1.8.0.100"
+               "obisCode":"1.65.1.8.0.255"
             },
             {
                "label":"Main",
-               "obisCode":"1.1.1.8.0.200"
+               "obisCode":"1.66.1.8.0.255"
             },
             {
                "label":"Main",
-               "obisCode":"1.1.1.8.0.100"
+               "obisCode":"1.65.1.8.0.255"
             }
          ]
       },
@@ -235,19 +185,19 @@ export let settingsProfileGraphs = {
          "series":[
             {
                "label":"Inverter",
-               "obisCode":"1.1.2.8.0.200"
+               "obisCode":"1.66.2.8.0.255"
             },
             {
                "label":"Inverter",
-               "obisCode":"1.1.2.8.0.100"
+               "obisCode":"1.65.2.8.0.255"
             },
             {
                "label":"Main",
-               "obisCode":"1.1.2.8.0.200"
+               "obisCode":"1.66.2.8.0.255"
             },
             {
                "label":"Main",
-               "obisCode":"1.1.2.8.0.100"
+               "obisCode":"1.65.2.8.0.255"
             }
          ]
       },
@@ -260,11 +210,11 @@ export let settingsProfileGraphs = {
          "series":[
             {
                "label":"Heater",
-               "obisCode":"1.1.1.7.0.255"
+               "obisCode":"1.0.1.7.0.255"
             },
             {
                "label":"Main",
-               "obisCode":"1.1.62.7.0.255"
+               "obisCode":"1.0.62.7.0.255"
             },
             {
                "label":"Relay",
@@ -281,23 +231,23 @@ export let settingsProfileGraphs = {
          "series":[
             {
                "label":"Main",
-               "obisCode":"1.1.21.7.0.255"
+               "obisCode":"1.0.21.7.0.255"
             },
             {
                "label":"Main",
-               "obisCode":"1.1.22.7.0.255"
+               "obisCode":"1.0.22.7.0.255"
             },
             {
                "label":"Main",
-               "obisCode":"1.1.41.7.0.255"
+               "obisCode":"1.0.41.7.0.255"
             },
             {
                "label":"Main",
-               "obisCode":"1.1.61.7.0.255"
+               "obisCode":"1.0.61.7.0.255"
             },
             {
                "label":"Main",
-               "obisCode":"1.1.62.7.0.255"
+               "obisCode":"1.0.62.7.0.255"
             }
          ]
       },

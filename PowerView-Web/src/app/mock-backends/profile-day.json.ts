@@ -233,10 +233,10 @@ export let profileDay = {
           "series":[
              {
                 "label":"Water",
-                "obisCode":"8.1.1.0.0.200",
+                "obisCode":"8.66.1.0.0.255",
                 "unit":"m3",
                 "serieType":"areaspline",
-                "serieYAxis":"volumeInterim",
+                "serieYAxis":"volumePeriod",
                 "serieColor":"#63d8df",
                 "values":[
                    0,
@@ -467,7 +467,7 @@ export let profileDay = {
              },
              {
                 "label":"Water",
-                "obisCode":"8.1.2.0.0.255",
+                "obisCode":"8.0.2.0.0.255",
                 "unit":"l/h",
                 "serieType":"spline",
                 "serieYAxis":"flow",
@@ -933,7 +933,7 @@ export let profileDay = {
           "series":[
              {
                 "label":"Heater",
-                "obisCode":"1.1.1.7.0.255",
+                "obisCode":"1.0.1.7.0.255",
                 "unit":"W",
                 "serieType":"spline",
                 "serieYAxis":"power",
@@ -1168,10 +1168,10 @@ export let profileDay = {
              },
              {
                 "label":"Heater",
-                "obisCode":"1.1.1.8.0.200",
+                "obisCode":"1.66.1.8.0.255",
                 "unit":"kWh",
                 "serieType":"areaspline",
-                "serieYAxis":"energyInterim",
+                "serieYAxis":"energyPeriod",
                 "serieColor":"#ffacac",
                 "values":[
                    0.01,
@@ -1403,7 +1403,7 @@ export let profileDay = {
              },
              {
                 "label":"Main",
-                "obisCode":"1.1.1.7.0.255",
+                "obisCode":"1.0.1.7.0.255",
                 "unit":"W",
                 "serieType":"spline",
                 "serieYAxis":"power",
@@ -1638,10 +1638,10 @@ export let profileDay = {
              },
              {
                 "label":"Main",
-                "obisCode":"1.1.1.8.0.200",
+                "obisCode":"1.66.1.8.0.255",
                 "unit":"kWh",
                 "serieType":"areaspline",
-                "serieYAxis":"energyInterim",
+                "serieYAxis":"energyPeriod",
                 "serieColor":"#ffe57a",
                 "values":[
                    0.03,
@@ -2105,7 +2105,7 @@ export let profileDay = {
           "series":[
              {
                 "label":"Inverter",
-                "obisCode":"1.1.2.7.0.255",
+                "obisCode":"1.0.2.7.0.255",
                 "unit":"W",
                 "serieType":"spline",
                 "serieYAxis":"power",
@@ -2340,10 +2340,10 @@ export let profileDay = {
              },
              {
                 "label":"Inverter",
-                "obisCode":"1.1.2.8.0.200",
+                "obisCode":"1.66.2.8.0.255",
                 "unit":"kWh",
                 "serieType":"areaspline",
-                "serieYAxis":"energyInterim",
+                "serieYAxis":"energyPeriod",
                 "serieColor":"#CCFF66",
                 "values":[
                    null,
@@ -2575,7 +2575,7 @@ export let profileDay = {
              },
              {
                 "label":"Main",
-                "obisCode":"1.1.2.7.0.255",
+                "obisCode":"1.0.2.7.0.255",
                 "unit":"W",
                 "serieType":"spline",
                 "serieYAxis":"power",
@@ -2810,10 +2810,10 @@ export let profileDay = {
              },
              {
                 "label":"Main",
-                "obisCode":"1.1.2.8.0.200",
+                "obisCode":"1.66.2.8.0.255",
                 "unit":"kWh",
                 "serieType":"areaspline",
-                "serieYAxis":"energyInterim",
+                "serieYAxis":"energyPeriod",
                 "serieColor":"#FFFF00",
                 "values":[
                    0,
@@ -3277,7 +3277,7 @@ export let profileDay = {
           "series":[
              {
                 "label":"Main",
-                "obisCode":"1.1.21.7.0.255",
+                "obisCode":"1.0.21.7.0.255",
                 "unit":"W",
                 "serieType":"spline",
                 "serieYAxis":"power",
@@ -3512,7 +3512,7 @@ export let profileDay = {
              },
              {
                 "label":"Main",
-                "obisCode":"1.1.22.7.0.255",
+                "obisCode":"1.0.22.7.0.255",
                 "unit":"W",
                 "serieType":"spline",
                 "serieYAxis":"power",
@@ -3747,7 +3747,7 @@ export let profileDay = {
              },
              {
                 "label":"Main",
-                "obisCode":"1.1.41.7.0.255",
+                "obisCode":"1.0.41.7.0.255",
                 "unit":"W",
                 "serieType":"spline",
                 "serieYAxis":"power",
@@ -3982,7 +3982,7 @@ export let profileDay = {
              },
              {
                 "label":"Main",
-                "obisCode":"1.1.42.7.0.255",
+                "obisCode":"1.0.42.7.0.255",
                 "unit":"W",
                 "serieType":"spline",
                 "serieYAxis":"power",
@@ -4217,7 +4217,7 @@ export let profileDay = {
              },
              {
                 "label":"Main",
-                "obisCode":"1.1.61.7.0.255",
+                "obisCode":"1.0.61.7.0.255",
                 "unit":"W",
                 "serieType":"spline",
                 "serieYAxis":"power",
@@ -4919,7 +4919,7 @@ export let profileDay = {
           "series":[
              {
                 "label":"Main",
-                "obisCode":"1.1.22.7.0.255",
+                "obisCode":"1.0.22.7.0.255",
                 "unit":"W",
                 "serieType":"spline",
                 "serieYAxis":"power",
@@ -5154,7 +5154,7 @@ export let profileDay = {
              },
              {
                 "label":"Main",
-                "obisCode":"1.1.42.7.0.255",
+                "obisCode":"1.0.42.7.0.255",
                 "unit":"W",
                 "serieType":"spline",
                 "serieYAxis":"power",
@@ -5389,7 +5389,7 @@ export let profileDay = {
              },
              {
                 "label":"Main",
-                "obisCode":"1.1.62.7.0.255",
+                "obisCode":"1.0.62.7.0.255",
                 "unit":"W",
                 "serieType":"spline",
                 "serieYAxis":"power",
@@ -6237,31 +6237,31 @@ export let profileDay = {
     "periodTotals":[
        {
           "label":"Water",
-          "obisCode":"8.1.1.0.0.200",
+          "obisCode":"8.66.1.0.0.255",
           "value":0.242,
           "unit":"m3"
        },
        {
           "label":"Heater",
-          "obisCode":"1.1.1.8.0.200",
+          "obisCode":"1.66.1.8.0.255",
           "value":13.57,
           "unit":"kWh"
        },
        {
           "label":"Main",
-          "obisCode":"1.1.1.8.0.200",
+          "obisCode":"1.66.1.8.0.255",
           "value":15.67,
           "unit":"kWh"
        },
        {
           "label":"Inverter",
-          "obisCode":"1.1.2.8.0.200",
+          "obisCode":"1.66.2.8.0.255",
           "value":13.326,
           "unit":"kWh"
        },
        {
           "label":"Main",
-          "obisCode":"1.1.2.8.0.200",
+          "obisCode":"1.66.2.8.0.255",
           "value":9.06,
           "unit":"kWh"
        }

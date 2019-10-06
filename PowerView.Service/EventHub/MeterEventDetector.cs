@@ -11,31 +11,35 @@ namespace PowerView.Service.EventHub
     private ITimeConverter timeConverter;
     private readonly IProfileRepository profileRepository;
     private readonly IMeterEventRepository meterEventRepository;
+    private readonly ILocationProvider locationProvider;
 
-    public MeterEventDetector(ITimeConverter timeConverter, IProfileRepository profileRepository, IMeterEventRepository meterEventRepository)
+    public MeterEventDetector(ITimeConverter timeConverter, IProfileRepository profileRepository, IMeterEventRepository meterEventRepository, ILocationProvider locationProvider)
     {
       if (timeConverter == null) throw new ArgumentNullException("timeConverter");
       if (profileRepository == null) throw new ArgumentNullException("profileRepository");
       if (meterEventRepository == null) throw new ArgumentNullException("meterEventRepository");
+      if (locationProvider == null) throw new ArgumentNullException("locationProvider");
 
       this.timeConverter = timeConverter;
       this.profileRepository = profileRepository;
       this.meterEventRepository = meterEventRepository;
+      this.locationProvider = locationProvider;
     }
 
-    public void DetectMeterEvents(DateTime dateTime)
+    public void DetectMeterEvents(DateTime midnight)
     {
-      if (dateTime.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("dateTime", "Must be UTC");
+      if (midnight.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("midnight", "Must be UTC");
 
-      var start = dateTime.Subtract(TimeSpan.FromDays(1));
-      var preStart = start.Subtract(TimeSpan.FromMinutes(30));
-      var labelSeriesSet = profileRepository.GetDayProfileSet(preStart, start, dateTime);
+      var end = midnight.AddDays(1);
+      var preStart = midnight.Subtract(TimeSpan.FromMinutes(30));
+      var labelSeriesSet = profileRepository.GetDayProfileSet(preStart, midnight, end);
 
-      var timeDivider = DateTimeResolutionDivider.GetResolutionDivider(start, "5-minutes");
+      var timeZoneInfo = locationProvider.GetTimeZone();
+      var timeDivider = new DateTimeHelper(timeZoneInfo, midnight).GetDivider("5-minutes");
       var normalizedLabelSeriesSet = labelSeriesSet.Normalize(timeDivider);
       GenerateSeriesFromCumulative(normalizedLabelSeriesSet);
           
-      var meterEventCandidates = GetMeterEventCandidates(dateTime, normalizedLabelSeriesSet).ToArray();
+      var meterEventCandidates = GetMeterEventCandidates(midnight, normalizedLabelSeriesSet).ToArray();
       if (meterEventCandidates.Length == 0)
       {
         return;

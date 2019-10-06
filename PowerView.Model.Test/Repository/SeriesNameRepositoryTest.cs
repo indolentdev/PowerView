@@ -37,7 +37,7 @@ namespace PowerView.Model.Test.Repository
       Insert<Db.MonthReading, Db.MonthRegister>(label1, obisCode1);
 
       // Act
-      var serieNames = target.GetSeriesNames(new LabelObisCodeTemplate[0]);
+      var serieNames = target.GetSeriesNames(TimeZoneInfo.Local, new LabelObisCodeTemplate[0]);
 
       // Assert
       Assert.That(serieNames.Count, Is.EqualTo(3));
@@ -55,7 +55,7 @@ namespace PowerView.Model.Test.Repository
       Insert<Db.DayReading, Db.DayRegister>(label, ObisCode.ElectrActiveEnergyA14);
 
       // Act
-      var serieColors = target.GetSeriesNames(new LabelObisCodeTemplate[0]);
+      var serieColors = target.GetSeriesNames(TimeZoneInfo.Local, new LabelObisCodeTemplate[0]);
 
       // Assert
       Assert.That(serieColors.Count, Is.EqualTo(3));
@@ -78,7 +78,7 @@ namespace PowerView.Model.Test.Repository
         new LabelObisCodeTemplate(label2, new [] { new ObisCodeTemplate(obisCode2, new RegisterTemplateExpression(label1 + ":" + obisCode1)) }) };
 
       // Act
-      var serieNames = target.GetSeriesNames(labelObisCodeTemplats);
+      var serieNames = target.GetSeriesNames(TimeZoneInfo.Local, labelObisCodeTemplats);
 
       // Assert
       Assert.That(serieNames.Count, Is.EqualTo(2));

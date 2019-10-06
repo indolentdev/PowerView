@@ -17,6 +17,7 @@ namespace PowerView.Service.Test.Modules
   {
     private Mock<IProfileRepository> profileRepository;
     private Mock<ITemplateConfigProvider> templateConfigProvider;
+    private Mock<ILocationProvider> locationProvider;
 
     private Browser browser;
 
@@ -27,6 +28,7 @@ namespace PowerView.Service.Test.Modules
     {
       profileRepository = new Mock<IProfileRepository>();
       templateConfigProvider = new Mock<ITemplateConfigProvider>();
+      locationProvider = new Mock<ILocationProvider>();
 
       templateConfigProvider.Setup(mcp => mcp.LabelObisCodeTemplates).Returns(new LabelObisCodeTemplate[0]);
 
@@ -35,6 +37,7 @@ namespace PowerView.Service.Test.Modules
         cfg.Module<DiffModule>();
         cfg.Dependency<IProfileRepository>(profileRepository.Object);
         cfg.Dependency<ITemplateConfigProvider>(templateConfigProvider.Object);
+        cfg.Dependency<ILocationProvider>(locationProvider.Object);
       });
     }
 
@@ -42,14 +45,14 @@ namespace PowerView.Service.Test.Modules
     public void GetDiffFromAbsent()
     {
       // Arrange
-      var utcNow = DateTime.UtcNow;
+      var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
 
       // Act
       var response = browser.Get(DiffRoute, with =>
       {
         with.HttpRequest();
         with.HostName("localhost");
-        with.Query("to", utcNow.ToString("o"));
+        with.Query("to", today.ToString("o"));
       });
 
       // Assert
@@ -61,14 +64,14 @@ namespace PowerView.Service.Test.Modules
     public void GetDiffToAbsent()
     {
       // Arrange
-      var utcNow = DateTime.UtcNow;
+      var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
 
       // Act
       var response = browser.Get(DiffRoute, with =>
       {
         with.HttpRequest();
         with.HostName("localhost");
-        with.Query("from", utcNow.ToString("o"));
+        with.Query("from", today.ToString("o"));
       });
 
       // Assert
@@ -80,14 +83,14 @@ namespace PowerView.Service.Test.Modules
     public void GetDiffToBadFormat()
     {
       // Arrange
-      var utcNow = DateTime.UtcNow;
+      var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
 
       // Act
       var response = browser.Get(DiffRoute, with =>
       {
         with.HttpRequest();
         with.HostName("localhost");
-        with.Query("from", utcNow.ToString("o"));
+        with.Query("from", today.ToString("o"));
         with.Query("to", "BadFormat");
       });
 
@@ -100,34 +103,35 @@ namespace PowerView.Service.Test.Modules
     public void GetDiffFromAndToPresent()
     {
       // Arrange
-      var utcNow = DateTime.UtcNow;
-      var utcOneDay = utcNow.AddDays(1);
+      var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
+      var utcOneDay = today.AddDays(1);
       profileRepository.Setup(dpr => dpr.GetMonthProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
-        .Returns(new LabelSeriesSet<TimeRegisterValue>(utcNow, utcOneDay, new LabelSeries<TimeRegisterValue>[0]));
+        .Returns(new LabelSeriesSet<TimeRegisterValue>(today, utcOneDay, new LabelSeries<TimeRegisterValue>[0]));
+      SetupLocationProvider();
 
       // Act
       var response = browser.Get(DiffRoute, with =>
       {
         with.HttpRequest();
         with.HostName("localhost");
-        with.Query("from", utcNow.ToString("o"));
+        with.Query("from", today.ToString("o"));
         with.Query("to", utcOneDay.ToString("o"));
       });
 
       // Assert
       Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-      profileRepository.Verify(pr => pr.GetMonthProfileSet(It.Is<DateTime>(dt => dt == utcNow.AddHours(-12) && dt.Kind == utcNow.Kind),
-                                                           It.Is<DateTime>(dt => dt == utcNow && dt.Kind == utcNow.Kind), 
-                                                           It.Is<DateTime>(dt => dt == utcOneDay && dt.Kind == utcNow.Kind)));
+      profileRepository.Verify(pr => pr.GetMonthProfileSet(It.Is<DateTime>(dt => dt == today.AddHours(-12) && dt.Kind == today.Kind),
+                                                           It.Is<DateTime>(dt => dt == today && dt.Kind == today.Kind), 
+                                                           It.Is<DateTime>(dt => dt == utcOneDay && dt.Kind == today.Kind)));
     }
 
     [Test]
     public void Get()
     {
       // Arrange
-      var utcNow = DateTime.UtcNow;
-      var t1 = utcNow-TimeSpan.FromDays(2);
-      var t2 = utcNow-TimeSpan.FromDays(1);
+      var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
+      var t1 = today-TimeSpan.FromDays(2);
+      var t2 = today-TimeSpan.FromDays(1);
       var label1Values = new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> {
         {"8.0.1.0.0.255", new [] { new TimeRegisterValue("1", t1, 2, 2, Unit.CubicMetre), new TimeRegisterValue("1", t2, 3, 2, Unit.CubicMetre) } }
       };
@@ -135,8 +139,9 @@ namespace PowerView.Service.Test.Modules
         {"1.0.1.8.0.255", new [] { new TimeRegisterValue("1", t1, 2, 6, Unit.WattHour), new TimeRegisterValue("1", t2, 3, 6, Unit.WattHour) } },
         {"1.0.2.8.0.255", new [] { new TimeRegisterValue("1", t1, 4, 6, Unit.WattHour) } }
       };
-      var lss = new LabelSeriesSet<TimeRegisterValue>(t1, utcNow, new[] { new LabelSeries<TimeRegisterValue>("Label1", label1Values), new LabelSeries<TimeRegisterValue>("Label2", label2Values) });
+      var lss = new LabelSeriesSet<TimeRegisterValue>(t1, today, new[] { new LabelSeries<TimeRegisterValue>("Label1", label1Values), new LabelSeries<TimeRegisterValue>("Label2", label2Values) });
       profileRepository.Setup(pr => pr.GetMonthProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(lss);
+      SetupLocationProvider();
 
       // Act
       var response = browser.Get(DiffRoute, with =>
@@ -144,18 +149,25 @@ namespace PowerView.Service.Test.Modules
         with.HttpRequest();
         with.HostName("localhost");
         with.Query("from", t1.ToString("o"));
-        with.Query("to", utcNow.ToString("o"));
+        with.Query("to", today.ToString("o"));
       });
 
       // Assert
       Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
       var json = response.Body.DeserializeJson<DiffRoot>();
       Assert.That(json.from, Is.EqualTo(t1.ToString("o")));
-      Assert.That(json.to, Is.EqualTo(utcNow.ToString("o")));
+      Assert.That(json.to, Is.EqualTo(today.ToString("o")));
 
       Assert.That(json.registers, Has.Length.EqualTo(2));
       AssertDiffRegister("Label1", ObisCode.ColdWaterVolume1Period, t1, t2, 100, "m3", json.registers.First());
       AssertDiffRegister("Label2", ObisCode.ElectrActiveEnergyA14Period, t1, t2, 1000, "kWh", json.registers.Last());
+    }
+
+    private TimeZoneInfo SetupLocationProvider()
+    {
+      var timeZoneInfo = TimeZoneHelper.GetDenmarkTimeZoneInfo();
+      locationProvider.Setup(x => x.GetTimeZone()).Returns(timeZoneInfo);
+      return timeZoneInfo;
     }
 
     private static void AssertDiffRegister(string label, ObisCode obisCode, DateTime from, DateTime to, double value, string unit, DiffRegister actual)
