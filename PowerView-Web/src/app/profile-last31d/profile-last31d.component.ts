@@ -15,8 +15,8 @@ export class ProfileLast31dComponent implements OnInit {
 
   constructor(private log: NGXLogger) { 
     var now = moment();
-    var rewindDate = now.subtract(32, "days");
-    var start = moment([rewindDate.year(), rewindDate.month(), rewindDate.day(), 0, 0, 0, 0]);
+    var rewindDate = now.subtract(1, "months");
+    var start = moment([rewindDate.year(), rewindDate.month(), rewindDate.date(), 0, 0, 0, 0]);
 
     this.maxStartTime = start;
     this.defaultStartTime = start;
