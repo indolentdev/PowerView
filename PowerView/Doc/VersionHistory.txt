@@ -2,6 +2,7 @@ PowerView version 0.0.28 - Xxxx 2019
 - Improved graph series to always illustrate the full period.
 - Calculated power and flow series are actually average values. Now they are 
   explicitly named as such, for clarity.
+- Added last 24 hours, 31 days and 12 months period graphs.  
 - Perform database integrity checks daily and at application start to reduce 
   loss of readings in case of database file corruption.
 - Minor stability improvements.
