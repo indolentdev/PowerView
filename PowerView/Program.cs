@@ -1,5 +1,6 @@
 using System;
 using System.Configuration;
+using System.Globalization;
 using System.Reflection;
 using System.Threading;
 using System.Xml;
@@ -118,7 +119,7 @@ namespace PowerView
       var integrityCheckCommandTimeout = dbConfig.IntegrityCheckCommandTimeout.GetValueAsInt();
       var configuredTimeZoneId = dbConfig.TimeZone == null ? (string)null : (string.IsNullOrEmpty(dbConfig.TimeZone.Value) ? (string)null : dbConfig.TimeZone.Value);
       var configuredCultureInfoName = dbConfig.CultureInfo == null ? (string)null : (string.IsNullOrEmpty(dbConfig.CultureInfo.Value) ? (string)null : dbConfig.CultureInfo.Value);
-      PowerView.Model.ContainerConfiguration.Register(containerBuilder, dbConfig.Name.Value, minBackupInterval, maxBackupCount, integrityCheckCommandTimeout, configuredTimeZoneId, configuredCultureInfoName);
+      Model.ContainerConfiguration.Register(containerBuilder, dbConfig.Name.Value, minBackupInterval, maxBackupCount, integrityCheckCommandTimeout, configuredTimeZoneId, configuredCultureInfoName);
 
       ContainerConfiguration.Register(containerBuilder, serviceConfig.BaseUrl.GetValueAsUri(), serviceConfig.PvOutputFacade.PvOutputAddStatusUrl.GetValueAsUri(), 
         serviceConfig.PvOutputFacade.PvDeviceLabel.Value, serviceConfig.PvOutputFacade.PvDeviceSerialNumber.Value,
@@ -138,14 +139,24 @@ namespace PowerView
       {
         SetupDatabase(scope, dbConfig);
 
-        var locationResolver = scope.Resolve<ILocationResolver>();
-        locationResolver.Resolve();
+        LocationSetup(scope);
 
         GenerateTestDataIfDebug(scope);
       }
 
       var serviceHost = container.Resolve<IServiceHost>();
       serviceHost.Start();
+    }
+
+    private static void LocationSetup(ILifetimeScope setupScope)
+    {
+      setupScope.Resolve<ILocationResolver>().Resolve();
+      var locationProvider = setupScope.Resolve<ILocationProvider>();
+      var timeZoneInfo = locationProvider.GetTimeZone();
+      var cultureInfo = locationProvider.GetCultureInfo();
+      setupScope.Resolve<ApplicationConfiguration>().Setup(timeZoneInfo, cultureInfo);
+      log.InfoFormat(CultureInfo.InvariantCulture, "Applying time zone {0}:{1} and culture info {2}:{3}",
+        timeZoneInfo.Id, timeZoneInfo.DisplayName, cultureInfo.Name, cultureInfo.EnglishName);
     }
 
     private static void SetupDatabase(ILifetimeScope scope, DatabaseSection dbConfig)

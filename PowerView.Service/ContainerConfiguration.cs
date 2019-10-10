@@ -90,6 +90,7 @@ namespace PowerView.Service
       containerBuilder.RegisterType<Translation>().As<ITranslation>();
 
       // "Root"
+      containerBuilder.RegisterType<ApplicationConfiguration>().As<IApplicationConfiguraiton>().As<ApplicationConfiguration>().SingleInstance();
       containerBuilder.RegisterType<UrlProvider>().As<IUrlProvider>()
         .WithParameter(new ResolvedParameter(
           (pi, ctx) => pi.Position == 0 && pi.ParameterType == typeof(Uri),

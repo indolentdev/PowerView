@@ -182,6 +182,8 @@
     <Compile Include="ExitSignal.cs" />
     <Compile Include="EventHub\HealthCheck.cs" />
     <Compile Include="EventHub\IHealthCheck.cs" />
+    <Compile Include="IApplicationConfiguraiton.cs" />
+    <Compile Include="ApplicationConfiguration.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
