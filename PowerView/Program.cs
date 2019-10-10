@@ -154,7 +154,7 @@ namespace PowerView
       var locationProvider = setupScope.Resolve<ILocationProvider>();
       var timeZoneInfo = locationProvider.GetTimeZone();
       var cultureInfo = locationProvider.GetCultureInfo();
-      setupScope.Resolve<ApplicationConfiguration>().Setup(timeZoneInfo, cultureInfo);
+      setupScope.Resolve<LocationContext>().Setup(timeZoneInfo, cultureInfo);
       log.InfoFormat(CultureInfo.InvariantCulture, "Applying time zone {0}:{1} and culture info {2}:{3}",
         timeZoneInfo.Id, timeZoneInfo.DisplayName, cultureInfo.Name, cultureInfo.EnglishName);
     }

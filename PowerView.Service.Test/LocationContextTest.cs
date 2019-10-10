@@ -5,7 +5,7 @@ using NUnit.Framework;
 namespace PowerView.Service.Test
 {
   [TestFixture]
-  public class ApplicationConfigurationTest
+  public class LocationContextTest
   {
     [Test]
     public void SetupThrows()
@@ -13,7 +13,7 @@ namespace PowerView.Service.Test
       // Arrange
       var timeZoneInfo = TimeZoneInfo.Local;
       var cultureInfo = CultureInfo.CurrentCulture;
-      var target = new ApplicationConfiguration();
+      var target = new LocationContext();
 
       // Act & Assert
       Assert.That(() => target.Setup(null, cultureInfo), Throws.ArgumentNullException);
@@ -26,7 +26,7 @@ namespace PowerView.Service.Test
       // Arrange
       var timeZoneInfo = TimeZoneInfo.Local;
       var cultureInfo = CultureInfo.CurrentCulture;
-      var target = new ApplicationConfiguration();
+      var target = new LocationContext();
 
       // Act
       target.Setup(timeZoneInfo, cultureInfo);

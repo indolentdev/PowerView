@@ -3,7 +3,7 @@ using System.Globalization;
 
 namespace PowerView.Service
 {
-  public class ApplicationConfiguration : IApplicationConfiguraiton
+  public class LocationContext : ILocationContext
   {
     public void Setup(TimeZoneInfo timeZoneInfo, CultureInfo cultureInfo)
     {
