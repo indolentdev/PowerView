@@ -14,15 +14,15 @@ namespace PowerView.Service.EventHub
     private static readonly Uri uri = new Uri("http://ip-api.com/json/");
 
     private readonly IHttpWebRequestFactory webRequestFactory;
-    private readonly IFactory repositoryFactory;
+    private readonly ISettingRepository settingRepository;
 
-    public LocationResolver(IHttpWebRequestFactory webRequestFactory, IFactory repositoryFactory)
+    public LocationResolver(IHttpWebRequestFactory webRequestFactory, ISettingRepository settingRepository)
     {
       if (webRequestFactory == null) throw new ArgumentNullException("webRequestFactory");
-      if (repositoryFactory == null) throw new ArgumentNullException("repositoryFactory");
+      if (settingRepository == null) throw new ArgumentNullException("settingRepository");
 
       this.webRequestFactory = webRequestFactory;
-      this.repositoryFactory = repositoryFactory;
+      this.settingRepository = settingRepository;
     }
 
     public void Resolve()
@@ -42,19 +42,16 @@ namespace PowerView.Service.EventHub
         return;
       }
 
-      using (var ownedRepo = repositoryFactory.Create<ISettingRepository>())
+      if (!string.IsNullOrEmpty(timeZoneId))
       {
-        if (!string.IsNullOrEmpty(timeZoneId))
-        {
-          ownedRepo.Value.Upsert(Settings.TimeZoneId, timeZoneId);
-        }
-        if (!string.IsNullOrEmpty(cultureInfoName))
-        {
-          ownedRepo.Value.Upsert(Settings.CultureInfoName, cultureInfoName);
-        }
+        settingRepository.Upsert(Settings.TimeZoneId, timeZoneId);
+      }
+      if (!string.IsNullOrEmpty(cultureInfoName))
+      {
+        settingRepository.Upsert(Settings.CultureInfoName, cultureInfoName);
       }
 
-      log.InfoFormat("Resolved time zone:{0} and culture info:{1}", timeZoneId, cultureInfoName);
+      log.DebugFormat("Resolved time zone:{0} and culture info:{1}", timeZoneId, cultureInfoName);
     }
 
     private string GetCultureInfoName(LocationDto locationDto)

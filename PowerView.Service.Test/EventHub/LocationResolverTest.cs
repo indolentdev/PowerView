@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Text;
-using Autofac.Features.OwnedInstances;
 using NUnit.Framework;
 using Moq;
 using PowerView.Service.EventHub;
@@ -12,16 +11,12 @@ namespace PowerView.Service.Test.EventHub
   public class LocationResolverTest
   {
     private Mock<IHttpWebRequestFactory> httpWebRequestFactory;
-    private Mock<IFactory> repositoryFactory;
-
     private Mock<ISettingRepository> settingRepository;
 
     [SetUp]
     public void SetUp()
     {
       httpWebRequestFactory = new Mock<IHttpWebRequestFactory>();
-      repositoryFactory = new Mock<IFactory>();
-
       settingRepository = new Mock<ISettingRepository>();
     }
 
@@ -31,7 +26,7 @@ namespace PowerView.Service.Test.EventHub
       // Arrange
 
       // Act & Assert
-      Assert.That(() => new LocationResolver(null, repositoryFactory.Object), Throws.TypeOf<ArgumentNullException>());
+      Assert.That(() => new LocationResolver(null, settingRepository.Object), Throws.TypeOf<ArgumentNullException>());
       Assert.That(() => new LocationResolver(httpWebRequestFactory.Object, null), Throws.TypeOf<ArgumentNullException>());
     }
 
@@ -48,7 +43,7 @@ namespace PowerView.Service.Test.EventHub
       target.Resolve();
 
       // Assert
-      repositoryFactory.Verify(f => f.Create<ISettingRepository>(), Times.Never);
+      settingRepository.Verify(x => x.Upsert(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
     }
 
     [Test]
@@ -62,9 +57,9 @@ namespace PowerView.Service.Test.EventHub
       target.Resolve();
 
       // Assert
-      repositoryFactory.Verify(f => f.Create<ISettingRepository>(), Times.Never);
+      settingRepository.Verify(x => x.Upsert(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
     }
-      
+
     [Test]
     public void ResolveEmptyContentError()
     {
@@ -76,7 +71,7 @@ namespace PowerView.Service.Test.EventHub
       target.Resolve();
 
       // Assert
-      repositoryFactory.Verify(f => f.Create<ISettingRepository>(), Times.Never);
+      settingRepository.Verify(x => x.Upsert(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
     }
 
     [Test]
@@ -90,7 +85,7 @@ namespace PowerView.Service.Test.EventHub
       target.Resolve();
 
       // Assert
-      repositoryFactory.Verify(f => f.Create<ISettingRepository>(), Times.Never);
+      settingRepository.Verify(x => x.Upsert(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
     }
 
     [Test]
@@ -104,7 +99,7 @@ namespace PowerView.Service.Test.EventHub
       target.Resolve();
 
       // Assert
-      repositoryFactory.Verify(f => f.Create<ISettingRepository>(), Times.Never);
+      settingRepository.Verify(x => x.Upsert(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
     }
 
     [Test]
@@ -113,7 +108,6 @@ namespace PowerView.Service.Test.EventHub
       // Arrange
       var timeZoneId = "TheTimeZone";
       SetupHttpFactory("{\"status\":\"success\",\"timezone\":\"" + timeZoneId + "\"}");
-      SetupRepositoryFactory();
 
       var target = CreateTarget();
 
@@ -121,7 +115,6 @@ namespace PowerView.Service.Test.EventHub
       target.Resolve();
 
       // Assert
-      repositoryFactory.Verify(f => f.Create<ISettingRepository>());
       settingRepository.Verify(r => r.Upsert(Settings.TimeZoneId, timeZoneId));
     }
 
@@ -130,7 +123,6 @@ namespace PowerView.Service.Test.EventHub
     {
       // Arrange
       SetupHttpFactory("{\"status\":\"success\",\"country\":\"Denmark\"}");
-      SetupRepositoryFactory();
 
       var target = CreateTarget();
 
@@ -138,7 +130,6 @@ namespace PowerView.Service.Test.EventHub
       target.Resolve();
 
       // Assert
-      repositoryFactory.Verify(f => f.Create<ISettingRepository>());
       settingRepository.Verify(r => r.Upsert(Settings.CultureInfoName, "da-DK"));
     }
 
@@ -147,7 +138,6 @@ namespace PowerView.Service.Test.EventHub
     {
       // Arrange
       SetupHttpFactory("{\"status\":\"success\",\"country\":\"CountryThatDoesNotExist\"}");
-      SetupRepositoryFactory();
 
       var target = CreateTarget();
 
@@ -155,7 +145,7 @@ namespace PowerView.Service.Test.EventHub
       target.Resolve();
 
       // Assert
-      repositoryFactory.Verify(f => f.Create<ISettingRepository>(), Times.Never);
+      settingRepository.Verify(x => x.Upsert(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
     }
 
     [Test]
@@ -163,7 +153,6 @@ namespace PowerView.Service.Test.EventHub
     {
       // Arrange
       SetupHttpFactory("{\"status\":\"success\",\"country\":\"United States\"}");
-      SetupRepositoryFactory();
 
       var target = CreateTarget();
 
@@ -171,7 +160,7 @@ namespace PowerView.Service.Test.EventHub
       target.Resolve();
 
       // Assert
-      repositoryFactory.Verify(f => f.Create<ISettingRepository>(), Times.Never);
+      settingRepository.Verify(x => x.Upsert(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
     }
 
     private void SetupHttpFactory(string responseContent)
@@ -183,15 +172,9 @@ namespace PowerView.Service.Test.EventHub
       httpWebRequestFactory.Setup(f => f.Create(It.IsAny<Uri>())).Returns(request);
     }
 
-    private void SetupRepositoryFactory()
-    {
-      var owned = new Owned<ISettingRepository>(settingRepository.Object, new Mock<IDisposable>().Object);
-      repositoryFactory.Setup(f => f.Create<ISettingRepository>()).Returns(owned);
-    }
-
     private LocationResolver CreateTarget()
     {
-      return new LocationResolver(httpWebRequestFactory.Object, repositoryFactory.Object);
+      return new LocationResolver(httpWebRequestFactory.Object, settingRepository.Object);
     }
 
   }
