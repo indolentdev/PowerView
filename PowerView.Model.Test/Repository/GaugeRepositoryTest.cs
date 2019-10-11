@@ -41,13 +41,13 @@ namespace PowerView.Model.Test.Repository
       // Assert
       Assert.That(values.Count, Is.EqualTo(4));
       Assert.That(values.First().Name, Is.EqualTo(GaugeSetName.Latest));
-      Assert.That(values.First().GuageValues.Count, Is.EqualTo(1));
+      Assert.That(values.First().GaugeValues.Count, Is.EqualTo(1));
       Assert.That(values.Skip(1).First().Name, Is.EqualTo(GaugeSetName.LatestDay));
-      Assert.That(values.Skip(1).First().GuageValues.Count, Is.EqualTo(1));
+      Assert.That(values.Skip(1).First().GaugeValues.Count, Is.EqualTo(1));
       Assert.That(values.Skip(2).First().Name, Is.EqualTo(GaugeSetName.LatestMonth));
-      Assert.That(values.Skip(2).First().GuageValues.Count, Is.EqualTo(1));
+      Assert.That(values.Skip(2).First().GaugeValues.Count, Is.EqualTo(1));
       Assert.That(values.Last().Name, Is.EqualTo(GaugeSetName.LatestYear));
-      Assert.That(values.Last().GuageValues.Count, Is.EqualTo(1));
+      Assert.That(values.Last().GaugeValues.Count, Is.EqualTo(1));
     }
 
     [Test]
@@ -72,7 +72,7 @@ namespace PowerView.Model.Test.Repository
 
       // Assert
       Assert.That(values.Count, Is.EqualTo(1));
-      Assert.That(values.First().GuageValues.Count, Is.EqualTo(4));
+      Assert.That(values.First().GaugeValues.Count, Is.EqualTo(4));
     }
 
     [Test]
@@ -128,7 +128,7 @@ namespace PowerView.Model.Test.Repository
       // Assert
       Assert.That(values.Count, Is.EqualTo(1));
       Assert.That(values.First().Name, Is.EqualTo(GaugeSetName.Custom));
-      Assert.That(values.First().GuageValues.Count, Is.EqualTo(1));
+      Assert.That(values.First().GaugeValues.Count, Is.EqualTo(1));
     }
 
     [Test]
@@ -153,7 +153,7 @@ namespace PowerView.Model.Test.Repository
 
       // Assert
       Assert.That(values.Count, Is.EqualTo(1));
-      Assert.That(values.First().GuageValues.Count, Is.EqualTo(4));
+      Assert.That(values.First().GaugeValues.Count, Is.EqualTo(4));
     }
 
     [Test]

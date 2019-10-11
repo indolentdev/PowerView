@@ -12,7 +12,7 @@ using PowerView.Service.Mappers;
 namespace PowerView.Service.Test.Modules
 {
   [TestFixture]
-  public class GuageModuleTest
+  public class GaugeModuleTest
   {
     private Mock<IGaugeRepository> gaugeRepository;
 

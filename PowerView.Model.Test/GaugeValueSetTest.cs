@@ -4,7 +4,7 @@ using NUnit.Framework;
 namespace PowerView.Model.Test
 {
   [TestFixture]
-  public class GuageValueSetTest
+  public class GaugeValueSetTest
   {
     [Test]
     public void ConstructorThrows()
@@ -31,7 +31,7 @@ namespace PowerView.Model.Test
 
       // Assert
       Assert.That(target.Name, Is.EqualTo(name));
-      Assert.That(target.GuageValues, Is.EqualTo(values));
+      Assert.That(target.GaugeValues, Is.EqualTo(values));
     }
   }
 }

@@ -82,7 +82,7 @@ namespace PowerView.Service.Modules
       return new
       {
         Name = gaugeValueSet.Name.ToString(),
-        Registers = gaugeValueSet.GuageValues.Select(MapGaugeValue).ToArray()
+        Registers = gaugeValueSet.GaugeValues.Select(MapGaugeValue).ToArray()
       };
     }
 

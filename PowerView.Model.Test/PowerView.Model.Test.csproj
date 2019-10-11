@@ -100,7 +100,7 @@
     <Compile Include="MeterEventTest.cs" />
     <Compile Include="Repository\EntityDeserializerTest.cs" />
     <Compile Include="GaugeValueTest.cs" />
-    <Compile Include="GuageValueSetTest.cs" />
+    <Compile Include="GaugeValueSetTest.cs" />
     <Compile Include="Repository\GaugeRepositoryTest.cs" />
     <Compile Include="Repository\EmailMessageRepositoryTest.cs" />
     <Compile Include="EmailRecipientTest.cs" />
