@@ -5,34 +5,27 @@ namespace PowerView.Service.EventHub
 {
   internal class Tracker : ITracker
   {
-    private readonly TimeSpan minimumDayInterval = TimeSpan.FromDays(1);
-
+    private readonly IIntervalTrigger intervalTrigger;
     private readonly IFactory factory;
 
-    private DateTime lastRun;
-
-    public Tracker(IFactory factory)
-      : this(factory, DateTime.Now)
+    public Tracker(IIntervalTrigger intervalTrigger, IFactory factory)
     {
-    }
-
-    internal Tracker(IFactory factory, DateTime dateTime)
-    {
+      if (intervalTrigger == null) throw new ArgumentNullException("intervalTrigger");
       if (factory == null) throw new ArgumentNullException("factory");
-      if (dateTime.Kind != DateTimeKind.Local) throw new ArgumentOutOfRangeException("dateTime");
 
+      this.intervalTrigger = intervalTrigger;
       this.factory = factory;
 
-      lastRun = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, 12, 0, 0, 0, dateTime.Kind);
+      this.intervalTrigger.Setup(new TimeSpan(12, 0, 0), TimeSpan.FromDays(1));
     }
 
     public void Track(DateTime dateTime)
     {
-      if (dateTime < lastRun + minimumDayInterval)
+      if (!intervalTrigger.IsTriggerTime(dateTime))
       {
         return;
       }
-      lastRun = GetDay(dateTime, lastRun);
+      intervalTrigger.Advance(dateTime);
 
       string sqliteVersion = null;
       using (var envRepository = factory.Create<IEnvironmentRepository>())
@@ -44,16 +37,6 @@ namespace PowerView.Service.EventHub
       {
         usageMonitor.Value.TrackDing(sqliteVersion);
       }
-    }
-
-    private static DateTime GetDay(DateTime dt, DateTime lastRun)
-    {
-      var day = TimeSpan.FromDays(1);
-      while (lastRun.Date < dt.Date)
-      {
-        lastRun += day;
-      }
-      return lastRun;
     }
 
   }

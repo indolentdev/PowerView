@@ -60,6 +60,23 @@ namespace PowerView.Service.Test.EventHub
     }
 
     [Test]
+    public void DailyCheckNoTrigger()
+    {
+      // Arrange
+      var dateTime = DateTime.UtcNow;
+      var target = CreateTarget();
+      intervalTrigger.Setup(it => it.IsTriggerTime(It.IsAny<DateTime>())).Returns(false);
+
+      // Act
+      target.DailyCheck(dateTime);
+
+      // Assert
+      intervalTrigger.Verify(it => it.IsTriggerTime(dateTime));
+      factory.Verify(f => f.Create<IDbCheck>(), Times.Never);
+      intervalTrigger.Verify(it => it.Advance(dateTime), Times.Never);
+    }
+
+    [Test]
     public void DailyCheckSignalsExitOnCorruptionError()
     {
       // Arrange
