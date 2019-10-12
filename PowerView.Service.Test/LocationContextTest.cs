@@ -36,5 +36,34 @@ namespace PowerView.Service.Test
       Assert.That(target.CultureInfo, Is.SameAs(cultureInfo));
     }
 
+    [Test]
+    public void ChangeTimeZoneFromUtcThrows()
+    {
+      // Arrange
+      var target = new LocationContext();
+      target.Setup(TimeZoneHelper.GetDenmarkTimeZoneInfo(), CultureInfo.CurrentCulture);
+      var dateTimeUnspecified = new DateTime(2015, 12, 30, 17, 31, 45, DateTimeKind.Unspecified);
+
+      // Act & Assert
+      Assert.That(() => target.ConvertTimeFromUtc(dateTimeUnspecified), Throws.TypeOf<ArgumentOutOfRangeException>());
+      Assert.That(() => target.ConvertTimeFromUtc(DateTime.Now), Throws.TypeOf<ArgumentOutOfRangeException>());
+    }
+
+    [Test]
+    public void ChangeTimeZoneFromUtc()
+    {
+      // Arrange
+      var target = new LocationContext();
+      target.Setup(TimeZoneHelper.GetDenmarkTimeZoneInfo(), CultureInfo.CurrentCulture);
+      var dateTime = new DateTime(2015, 12, 30, 17, 31, 45, DateTimeKind.Utc);
+
+      // Act
+      var changedDateTime = target.ConvertTimeFromUtc(dateTime);
+
+      // Assert
+      Assert.That(changedDateTime, Is.EqualTo(new DateTime(2015, 12, 30, 18, 31, 45)));
+      Assert.That(changedDateTime.Kind, Is.EqualTo(DateTimeKind.Unspecified));
+    }
+
   }
 }

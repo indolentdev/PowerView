@@ -10,6 +10,7 @@ namespace PowerView.Service.Test.EventHub
   [TestFixture]
   public class HealthCheckTest
   {
+    private Mock<IIntervalTrigger> intervalTrigger;
     private Mock<IFactory> factory;
     private Mock<IDbCheck> dbCheck;
     private Mock<IExitSignalProvider> exitSignalProvider;
@@ -17,6 +18,7 @@ namespace PowerView.Service.Test.EventHub
     [SetUp]
     public void SetUp()
     {
+      intervalTrigger = new Mock<IIntervalTrigger>();
       factory = new Mock<IFactory>();
       dbCheck = new Mock<IDbCheck>();
       exitSignalProvider = new Mock<IExitSignalProvider>();
@@ -26,76 +28,58 @@ namespace PowerView.Service.Test.EventHub
     }
 
     [Test]
+    public void Constructor()
+    {
+      // Arrange
+
+      // Act
+      var target = CreateTarget();
+
+      // Assert
+      intervalTrigger.Verify(it => it.Setup(TimeSpan.FromMinutes(15), TimeSpan.FromDays(1)));
+    }
+
+
+    [Test]
     public void DailyCheck()
     {
       // Arrange
-      var dateTime = new DateTime(2016, 6, 19, 14, 52, 31, 0, DateTimeKind.Local);
-      var target = CreateTarget(dateTime - TimeSpan.FromDays(1));
+      var dateTime = DateTime.UtcNow;
+      var target = CreateTarget();
+      intervalTrigger.Setup(it => it.IsTriggerTime(It.IsAny<DateTime>())).Returns(true);
 
       // Act
       target.DailyCheck(dateTime);
 
       // Assert
+      intervalTrigger.Verify(it => it.IsTriggerTime(dateTime));
       factory.Verify(f => f.Create<IDbCheck>());
       dbCheck.Verify(dc => dc.CheckDatabase());
       factory.Verify(f => f.Create<IExitSignalProvider>(), Times.Never);
+      intervalTrigger.Verify(it => it.Advance(dateTime));
     }
 
     [Test]
     public void DailyCheckSignalsExitOnCorruptionError()
     {
       // Arrange
-      var dateTime = new DateTime(2016, 6, 19, 14, 52, 31, 0, DateTimeKind.Local);
-      var target = CreateTarget(dateTime - TimeSpan.FromDays(1));
+      var dateTime = DateTime.UtcNow;
+      var target = CreateTarget();
+      intervalTrigger.Setup(it => it.IsTriggerTime(It.IsAny<DateTime>())).Returns(true);
       dbCheck.Setup(dc => dc.CheckDatabase()).Throws(new DataStoreCorruptException());
 
       // Act
       target.DailyCheck(dateTime);
 
       // Assert
-      factory.Verify(f => f.Create<IDbCheck>());
       dbCheck.Verify(dc => dc.CheckDatabase());
       factory.Verify(f => f.Create<IExitSignalProvider>());
       exitSignalProvider.Verify(esp => esp.FireExitEvent());
     }
 
-    [Test]
-    public void DailyCheckSuccessiveBeforeInterval()
+    private HealthCheck CreateTarget()
     {
-      // Arrange
-      var now = DateTime.Now;
-      var target = CreateTarget(now);
-      var dateTime = new DateTime(now.Year, now.Month, now.Day, 0, 14, 0, 0, now.Kind);
-
-      // Act
-      target.DailyCheck(dateTime+TimeSpan.FromDays(1));
-      target.DailyCheck(dateTime+TimeSpan.FromDays(2));
-
-      // Assert
-      factory.Verify(f => f.Create<IDbCheck>(), Times.Once);
-      dbCheck.Verify(dc => dc.CheckDatabase(), Times.Once);
-    }
-
-    [Test]
-    public void DailyCheckSuccessiveAfterInterval()
-    {
-      // Arrange
-      var now = DateTime.Now;
-      var target = CreateTarget(now);
-      var dateTime = new DateTime(now.Year, now.Month, now.Day, 0, 16, 0, 0, now.Kind);
-
-      // Act
-      target.DailyCheck(dateTime + TimeSpan.FromDays(1));
-      target.DailyCheck(dateTime + TimeSpan.FromDays(2));
-
-      // Assert
-      factory.Verify(f => f.Create<IDbCheck>(), Times.Exactly(2));
-      dbCheck.Verify(dc => dc.CheckDatabase(), Times.Exactly(2));
-    }
-
-    private HealthCheck CreateTarget(DateTime dateTime)
-    {
-      return new HealthCheck(factory.Object, dateTime);
+      return new HealthCheck(intervalTrigger.Object, factory.Object);
     }
   }
 }

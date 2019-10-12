@@ -23,5 +23,11 @@ namespace PowerView.Service.Test
       return timeZoneNow.Date.ToUniversalTime();
     }
 
+    public static ILocationContext GetDenmarkLocationContext()
+    {
+      var locationContext = new LocationContext();
+      locationContext.Setup(GetDenmarkTimeZoneInfo(), new System.Globalization.CultureInfo("da-DK"));
+      return locationContext;
+    }
   }
 }

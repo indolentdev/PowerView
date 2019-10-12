@@ -10,28 +10,23 @@ namespace PowerView.Service.EventHub
     private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
     private readonly TimeSpan minimumDayInterval = TimeSpan.FromDays(1);
 
+    private readonly IIntervalTrigger intervalTrigger;
     private readonly IFactory factory;
 
-    private DateTime lastRunDay;
-
-    public HealthCheck(IFactory factory)
-      : this(factory, DateTime.Now)
+    public HealthCheck(IIntervalTrigger intervalTrigger, IFactory factory)
     {
-    }
-
-    internal HealthCheck(IFactory factory, DateTime dateTime)
-    {
+      if (intervalTrigger == null) throw new ArgumentNullException("intervalTrigger");
       if (factory == null) throw new ArgumentNullException("factory");
-      if (dateTime.Kind != DateTimeKind.Local) throw new ArgumentOutOfRangeException("dateTime");
 
+      this.intervalTrigger = intervalTrigger;
       this.factory = factory;
 
-      lastRunDay = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, 0, 15, 0, 0, dateTime.Kind);
+      this.intervalTrigger.Setup(new TimeSpan(0, 15, 0), TimeSpan.FromDays(1));
     }
 
     public void DailyCheck(DateTime dateTime)
     {
-      if (dateTime < lastRunDay + minimumDayInterval)
+      if (!intervalTrigger.IsTriggerTime(dateTime))
       {
         return;
       }
@@ -48,23 +43,14 @@ namespace PowerView.Service.EventHub
           log.Error("Database check detected issue(s)", e);
           using (var ownedExitSignalProvider = factory.Create<IExitSignalProvider>())
           {
-            ownedExitSignalProvider.Value.FireExitEvent();
+             ownedExitSignalProvider.Value.FireExitEvent();
           }
         }
       }
 
-      lastRunDay = GetDay(dateTime, lastRunDay);
+      intervalTrigger.Advance(dateTime);
     }
 
-    private static DateTime GetDay(DateTime dt, DateTime lastRun)
-    {
-      var day = TimeSpan.FromDays(1);
-      while (lastRun.Date < dt.Date)
-      {
-        lastRun += day;
-      }
-      return lastRun;
-    }
   }
 }
 

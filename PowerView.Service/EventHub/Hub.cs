@@ -37,11 +37,12 @@ namespace PowerView.Service.EventHub
 
     public void Signal(IList<LiveReading> liveReadings)
     {
-      var now = DateTime.Now; // Hmm.. this actually depends on the host box having the correct time zone setup... :/
       eventQueue.Enqueue(() => mqttPublisherFactory.Publish(liveReadings));
       eventQueue.Enqueue(() => disconnectControlFactory.Process(liveReadings));
 
-      eventQueue.Enqueue(() => healthCheck.DailyCheck(now));
+      var now = DateTime.Now; // Hmm.. this actually depends on the host box having the correct time zone setup... :/
+      var utcNow = DateTime.UtcNow;
+      eventQueue.Enqueue(() => healthCheck.DailyCheck(utcNow));
       eventQueue.Enqueue(() => piper.PipeLiveReadings(now));
       eventQueue.Enqueue(() => piper.PipeDayReadings(now));
       eventQueue.Enqueue(() => piper.PipeMonthReadings(now));

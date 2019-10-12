@@ -7,5 +7,7 @@ namespace PowerView.Service
   {
     TimeZoneInfo TimeZoneInfo { get; }
     CultureInfo CultureInfo { get; }
+
+    DateTime ConvertTimeFromUtc(DateTime dateTime);
   }
 }

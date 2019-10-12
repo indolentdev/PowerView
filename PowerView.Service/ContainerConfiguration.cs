@@ -26,7 +26,8 @@ namespace PowerView.Service
 
       // EventHub
       containerBuilder.RegisterType<Hub>().As<IHub>().SingleInstance();
-      containerBuilder.RegisterType<ReadingPiper>().As<IReadingPiper>().SingleInstance();
+      containerBuilder.RegisterType<IntervalTrigger>().As<IIntervalTrigger>();
+      containerBuilder.RegisterType<ReadingPiper>().As<IReadingPiper>();
       containerBuilder.RegisterType<LocationResolver>().As<ILocationResolver>();  
       containerBuilder.RegisterType<Factory>().As<IFactory>();
       containerBuilder.RegisterType<MeterEventCoordinator>().As<IMeterEventCoordinator>();
