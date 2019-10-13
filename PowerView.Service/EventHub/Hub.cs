@@ -46,7 +46,7 @@ namespace PowerView.Service.EventHub
       eventQueue.Enqueue(() => piper.PipeLiveReadings(now));
       eventQueue.Enqueue(() => piper.PipeDayReadings(now));
       eventQueue.Enqueue(() => piper.PipeMonthReadings(now));
-      eventQueue.Enqueue(() => meterEventCoordinator.DetectAndNotify(now));
+      eventQueue.Enqueue(() => meterEventCoordinator.DetectAndNotify(utcNow));
       eventQueue.Enqueue(() => tracker.Track(utcNow));
     }
 

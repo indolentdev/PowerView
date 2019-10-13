@@ -9,11 +9,13 @@ namespace PowerView.Service.Test.EventHub
   [TestFixture]
   public class MeterEventCoordinatorTest
   {
+    private Mock<IIntervalTrigger> intervalTrigger;
     private Mock<IFactory> factory;
 
     [SetUp]
     public void SetUp()
     {
+      intervalTrigger = new Mock<IIntervalTrigger>();
       factory = new Mock<IFactory>();
     }
     
@@ -21,56 +23,72 @@ namespace PowerView.Service.Test.EventHub
     public void ConstructorThrows()
     {
       // Arrange
-      var dateTime = DateTime.Now;
 
       // Act & Assert
-      Assert.That(() => new MeterEventCoordinator(null, dateTime), Throws.ArgumentNullException);
-      Assert.That(() => new MeterEventCoordinator(factory.Object, DateTime.UtcNow), Throws.TypeOf<ArgumentOutOfRangeException>());
+      Assert.That(() => new MeterEventCoordinator(null, factory.Object), Throws.ArgumentNullException);
+      Assert.That(() => new MeterEventCoordinator(intervalTrigger.Object, null), Throws.ArgumentNullException);
+    }
+
+    [Test]
+    public void Constructor()
+    {
+      // Arrange
+
+      // Act
+      var target = CreateTarget();
+
+      // Assert
+      intervalTrigger.Verify(it => it.Setup(new TimeSpan(6, 0, 0), TimeSpan.FromDays(1)));
     }
 
     [Test]
     public void DetectAndNotify()
     {
       // Arrange
+      intervalTrigger.Setup(it => it.IsTriggerTime(It.IsAny<DateTime>())).Returns(true);
       var meterEventDetector = new Mock<IMeterEventDetector>();
       var medDisposable = new Mock<IDisposable>();
       factory.Setup(f => f.Create<IMeterEventDetector>()).Returns(new Owned<IMeterEventDetector>(meterEventDetector.Object, medDisposable.Object));
       var meterEventNotifier = new Mock<IMeterEventNotifier>();
       var menDisposable = new Mock<IDisposable>();
       factory.Setup(f => f.Create<IMeterEventNotifier>()).Returns(new Owned<IMeterEventNotifier>(meterEventNotifier.Object, menDisposable.Object));
-      var dateTime = new DateTime(2017, 8, 29, 19, 53, 0, DateTimeKind.Local);
-      var target = CreateTarget(dateTime.Subtract(TimeSpan.FromHours(48)));
+      var dateTime = DateTime.UtcNow;
+      var target = CreateTarget();
 
       // Act
       target.DetectAndNotify(dateTime);
 
       // Assert
+      intervalTrigger.Verify(it => it.IsTriggerTime(dateTime));
       factory.Verify(f => f.Create<IMeterEventDetector>());
       meterEventDetector.Verify(med => med.DetectMeterEvents(It.Is<DateTime>(x => x == dateTime.Date.ToUniversalTime() && x.Kind == DateTimeKind.Utc)));
       medDisposable.Verify(x => x.Dispose());
       factory.Verify(f => f.Create<IMeterEventNotifier>());
       meterEventNotifier.Verify(men => men.NotifyEmailRecipients());
       menDisposable.Verify(x => x.Dispose());
+      intervalTrigger.Verify(it => it.Advance(dateTime));
     }
 
     [Test]
-    public void DetectAndNotifyBeforeMinimumTimeSpan()
+    public void DetectAndNotifyNoTrigger()
     {
       // Arrange
-      var dateTime = new DateTime(2017, 8, 29, 19, 53, 0, DateTimeKind.Local);
-      var target = CreateTarget(dateTime);
+      intervalTrigger.Setup(it => it.IsTriggerTime(It.IsAny<DateTime>())).Returns(false);
+      var dateTime = DateTime.UtcNow;
+      var target = CreateTarget();
 
       // Act
       target.DetectAndNotify(dateTime);
 
       // Assert
-      factory.Verify(f => f.Create<IMeterEventDetector>(), Times.Never());
-      factory.Verify(f => f.Create<IMeterEventNotifier>(), Times.Never());
+      intervalTrigger.Verify(it => it.IsTriggerTime(dateTime));
+      factory.Verify(f => f.Create<IMeterEventDetector>(), Times.Never);
+      intervalTrigger.Verify(it => it.Advance(dateTime), Times.Never);
     }
 
-    private MeterEventCoordinator CreateTarget(DateTime dateTime)
+    private MeterEventCoordinator CreateTarget()
     {
-      return new MeterEventCoordinator(factory.Object, dateTime);
+      return new MeterEventCoordinator(intervalTrigger.Object, factory.Object);
     }
 
   }
