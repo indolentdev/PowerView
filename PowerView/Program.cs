@@ -191,10 +191,10 @@ namespace PowerView
     {
 #if DEBUG
       var readingPiper = scope.Resolve<IReadingPiper>();
-      var now = DateTime.Now + TimeSpan.FromDays(1);
-      readingPiper.PipeLiveReadings(now);
-      readingPiper.PipeDayReadings(now);
-      readingPiper.PipeMonthReadings(now);
+      var utcNow = DateTime.UtcNow + TimeSpan.FromDays(1);
+      readingPiper.PipeLiveReadings(utcNow);
+      readingPiper.PipeDayReadings(utcNow);
+      readingPiper.PipeMonthReadings(utcNow);
 
       new TestDataGenerator(scope).Invoke();
 #endif

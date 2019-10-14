@@ -10,12 +10,18 @@ namespace PowerView.Service.Test.EventHub
   [TestFixture]
   public class ReadingPiperTest
   {
+    private Mock<IIntervalTrigger> dayTrigger;
+    private Mock<IIntervalTrigger> monthTrigger;
+    private Mock<IIntervalTrigger> yearTrigger;
     private Mock<IFactory> factory;
     private Mock<IReadingPipeRepository> readingPipeRepository;
 
     [SetUp]
     public void SetUp()
     {
+      dayTrigger = new Mock<IIntervalTrigger>();
+      monthTrigger = new Mock<IIntervalTrigger>();
+      yearTrigger = new Mock<IIntervalTrigger>();
       factory = new Mock<IFactory>();
       readingPipeRepository = new Mock<IReadingPipeRepository>();
 
@@ -23,80 +29,82 @@ namespace PowerView.Service.Test.EventHub
     }
 
     [Test]
+    public void Constructor()
+    {
+      // Arrange
+
+      // Act
+      var target = CreateTarget();
+
+      // Assert
+      dayTrigger.Verify(dt => dt.Setup(new TimeSpan(0, 45, 0), TimeSpan.FromDays(1)));
+      monthTrigger.Verify(mt => mt.Setup(new TimeSpan(0, 45, 0), TimeSpan.FromDays(1)));
+      yearTrigger.Verify(yt => yt.Setup(new TimeSpan(0, 45, 0), TimeSpan.FromDays(1)));
+    }
+
+    [Test]
     public void PipeLiveReadings()
     {
       // Arrange
-      var dateTime = new DateTime(2016, 6, 19, 14, 52, 31, 0, DateTimeKind.Local);
-      var target = CreateTarget(dateTime - TimeSpan.FromDays(1));
+      var dateTime = DateTime.Now;
+      var target = CreateTarget();
+      dayTrigger.Setup(dt => dt.IsTriggerTime(It.IsAny<DateTime>())).Returns(true);
 
       // Act
       target.PipeLiveReadings(dateTime);
 
       // Assert
+      dayTrigger.Verify(dt => dt.IsTriggerTime(dateTime));
       factory.Verify(f => f.Create<IReadingPipeRepository>());
-      readingPipeRepository.Verify(rpr => rpr.PipeLiveReadingsToDayReadings(dateTime.ToUniversalTime()));
+      readingPipeRepository.Verify(rpr => rpr.PipeLiveReadingsToDayReadings(dateTime));
+      dayTrigger.Verify(dt => dt.Advance(dateTime));
+    }
+
+    [Test]
+    public void PipeLiveReadingsNoTrigger()
+    {
+      // Arrange
+      var dateTime = DateTime.Now;
+      var target = CreateTarget();
+      dayTrigger.Setup(dt => dt.IsTriggerTime(It.IsAny<DateTime>())).Returns(false);
+
+      // Act
+      target.PipeLiveReadings(dateTime);
+
+      // Assert
+      dayTrigger.Verify(dt => dt.IsTriggerTime(dateTime));
+      factory.Verify(f => f.Create<IReadingPipeRepository>(), Times.Never);
+      dayTrigger.Verify(dt => dt.Advance(It.IsAny<DateTime>()), Times.Never);
     }
 
     [Test]
     public void PipeLiveReadingsCanRepeat()
     {
       // Arrange
-      var dateTime = new DateTime(2016, 6, 19, 14, 52, 31, 0, DateTimeKind.Local);
-      var target = CreateTarget(dateTime - TimeSpan.FromDays(1));
+      var dateTime = DateTime.Now;
+      var target = CreateTarget();
+      dayTrigger.Setup(dt => dt.IsTriggerTime(It.IsAny<DateTime>())).Returns(true);
       readingPipeRepository.Setup(rpr => rpr.PipeLiveReadingsToDayReadings(It.IsAny<DateTime>())).Returns(true);
 
       // Act
       target.PipeLiveReadings(dateTime);
 
       // Assert
-      readingPipeRepository.Verify(rpr => rpr.PipeLiveReadingsToDayReadings(dateTime.ToUniversalTime()), Times.Exactly(10)) ;
-    }
-
-    [Test]
-    public void PipeLiveReadingsSuccessiveBeforeInterval()
-    {
-      // Arrange
-      var now = DateTime.Now;
-      var target = CreateTarget(now);
-      var dateTime = new DateTime(now.Year, now.Month, now.Day, 0, 44, 0, 0, now.Kind);
-
-      // Act
-      target.PipeLiveReadings(dateTime+TimeSpan.FromDays(1));
-      target.PipeLiveReadings(dateTime+TimeSpan.FromDays(2));
-
-      // Assert
-      factory.Verify(f => f.Create<IReadingPipeRepository>(), Times.Once);
-      readingPipeRepository.Verify(rpr => rpr.PipeLiveReadingsToDayReadings(It.IsAny<DateTime>()), Times.Once);
-    }
-
-    [Test]
-    public void PipeLiveReadingsSuccessiveAfterInterval()
-    {
-      // Arrange
-      var now = DateTime.Now;
-      var target = CreateTarget(now);
-      var dateTime = new DateTime(now.Year, now.Month, now.Day, 0, 46, 0, 0, now.Kind);
-
-      // Act
-      target.PipeLiveReadings(dateTime+TimeSpan.FromDays(1));
-      target.PipeLiveReadings(dateTime+TimeSpan.FromDays(2));
-
-      // Assert
-      factory.Verify(f => f.Create<IReadingPipeRepository>(), Times.Exactly(2));
-      readingPipeRepository.Verify(rpr => rpr.PipeLiveReadingsToDayReadings(It.IsAny<DateTime>()), Times.Exactly(2));
+      readingPipeRepository.Verify(rpr => rpr.PipeLiveReadingsToDayReadings(dateTime), Times.Exactly(10)) ;
     }
 
     [Test]
     public void PipeDayReadingsWithoutPriorPipeReadingsToHead()
     {
       // Arrange
-      var dateTime = new DateTime(2016, 6, 19, 14, 52, 31, 0, DateTimeKind.Local);
-      var target = CreateTarget(dateTime);
+      var dateTime = DateTime.Now;
+      var target = CreateTarget();
 
       // Act
-      target.PipeDayReadings(dateTime.AddMonths(1));
+      target.PipeDayReadings(dateTime);
 
       // Assert
+      monthTrigger.Verify(mt => mt.IsTriggerTime(It.IsAny<DateTime>()), Times.Never );
       factory.Verify(f => f.Create<IReadingPipeRepository>(), Times.Never);
     }
 
@@ -104,94 +112,70 @@ namespace PowerView.Service.Test.EventHub
     public void PipeDayReadings()
     {
       // Arrange
-      var dateTime = new DateTime(2016, 6, 19, 14, 52, 31, 0, DateTimeKind.Local);
-      var target = CreateTarget(dateTime);
-      target.PipeLiveReadings(dateTime + TimeSpan.FromDays(1));
+      var dateTime = DateTime.Now;
+      var target = CreateTarget();
+      dayTrigger.Setup(dt => dt.IsTriggerTime(It.IsAny<DateTime>())).Returns(true);
+      target.PipeLiveReadings(dateTime);
+      monthTrigger.Setup(mt => mt.IsTriggerTime(It.IsAny<DateTime>())).Returns(true);
 
       // Act
-      target.PipeDayReadings(dateTime.AddMonths(1));
+      target.PipeDayReadings(dateTime);
 
       // Assert
-      readingPipeRepository.Verify(rpr => rpr.PipeDayReadingsToMonthReadings(dateTime.AddMonths(1).ToUniversalTime()));
+      monthTrigger.Verify(mt => mt.IsTriggerTime(dateTime));
+      readingPipeRepository.Verify(rpr => rpr.PipeDayReadingsToMonthReadings(dateTime));
+      monthTrigger.Verify(mt => mt.Advance(dateTime));
+    }
+
+    [Test]
+    public void PipeDayReadingsNoTrigger()
+    {
+      // Arrange
+      var dateTime = DateTime.Now;
+      var target = CreateTarget();
+      dayTrigger.Setup(dt => dt.IsTriggerTime(It.IsAny<DateTime>())).Returns(true);
+      target.PipeLiveReadings(dateTime);
+      monthTrigger.Setup(mt => mt.IsTriggerTime(It.IsAny<DateTime>())).Returns(false);
+
+      // Act
+      target.PipeDayReadings(dateTime);
+
+      // Assert
+      monthTrigger.Verify(mt => mt.IsTriggerTime(dateTime));
+      readingPipeRepository.Verify(rpr => rpr.PipeDayReadingsToMonthReadings(It.IsAny<DateTime>()), Times.Never);
+      monthTrigger.Verify(mt => mt.Advance(dateTime), Times.Never);
     }
 
     [Test]
     public void PipeDayReadingsCanRepeat()
     {
       // Arrange
-      var dateTime = new DateTime(2016, 6, 19, 14, 52, 31, 0, DateTimeKind.Local);
-      var target = CreateTarget(dateTime);
-      target.PipeLiveReadings(dateTime + TimeSpan.FromDays(1));
+      var dateTime = DateTime.Now;
+      var target = CreateTarget();
+      dayTrigger.Setup(dt => dt.IsTriggerTime(It.IsAny<DateTime>())).Returns(true);
+      target.PipeLiveReadings(dateTime);
+      monthTrigger.Setup(mt => mt.IsTriggerTime(It.IsAny<DateTime>())).Returns(true);
       readingPipeRepository.Setup(rpr => rpr.PipeDayReadingsToMonthReadings(It.IsAny<DateTime>())).Returns(true);
 
       // Act
-      target.PipeDayReadings(dateTime.AddMonths(1));
+      target.PipeDayReadings(dateTime);
 
       // Assert
-      readingPipeRepository.Verify(rpr => rpr.PipeDayReadingsToMonthReadings(dateTime.AddMonths(1).ToUniversalTime()), Times.Exactly(2));
-    }
-
-    [Test]
-    public void PipeDayReadingsBeforeInterval()
-    {
-      const DateTimeKind dtk = DateTimeKind.Local;
-      var timePairs = new [] 
-      { 
-        new { Construct=new DateTime(2016, 6, 19, 14, 52, 31, 0, dtk), Invoke=new DateTime(2016, 6, 19, 14, 52, 31, 0, dtk) }, 
-        new { Construct=new DateTime(2016, 6, 19, 14, 52, 31, 0, dtk), Invoke=new DateTime(2016, 6, 19, 23, 59, 59, 0, dtk) }, 
-      };
-
-      foreach (var item in timePairs)
-      {
-        // Arrange
-        var target = CreateTarget(item.Construct);
-        target.PipeLiveReadings(item.Construct + TimeSpan.FromDays(1));
-
-        // Act
-        target.PipeDayReadings(item.Invoke);
-
-        // Assert
-        readingPipeRepository.Verify(rpr => rpr.PipeDayReadingsToMonthReadings(It.IsAny<DateTime>()), Times.Never);
-      }
-    }
-
-    [Test]
-    public void PipeDayReadingsAfterInterval()
-    {
-      const DateTimeKind dtk = DateTimeKind.Local;
-      var timePairs = new [] 
-      { 
-        new { Construct=new DateTime(2016, 6, 30, 23, 59, 59, 0, dtk), Invoke=new DateTime(2016, 7, 1, 0, 46, 00, 0, dtk) }, 
-        new { Construct=new DateTime(2016, 6, 19, 14, 52, 31, 0, dtk), Invoke=new DateTime(2016, 7, 1, 0, 46, 00, 0, dtk) }, 
-        new { Construct=new DateTime(2016, 6, 19, 14, 52, 31, 0, dtk), Invoke=new DateTime(2016, 8, 1, 0, 46, 00, 0, dtk) }, 
-        new { Construct=new DateTime(2016, 7, 1, 0, 0, 1, 0, dtk), Invoke=new DateTime(2016, 7, 1, 0, 44, 59, 0, dtk) },  // Ideally this wouldn't fire..
-      };
-
-      foreach (var item in timePairs)
-      {
-        // Arrange
-        var target = CreateTarget(item.Construct);
-        target.PipeLiveReadings(item.Construct + TimeSpan.FromDays(1));
-
-        // Act
-        target.PipeDayReadings(item.Invoke);
-
-        // Assert
-        readingPipeRepository.Verify(rpr => rpr.PipeDayReadingsToMonthReadings(It.IsAny<DateTime>()));
-      }
+      readingPipeRepository.Verify(rpr => rpr.PipeDayReadingsToMonthReadings(dateTime), Times.Exactly(2));
     }
 
     [Test]
     public void PipeMonthReadingsWithoutPriorPipeReadingsToHead()
     {
       // Arrange
-      var dateTime = new DateTime(2016, 6, 19, 14, 52, 31, 0, DateTimeKind.Local);
-      var target = CreateTarget(dateTime);
+      var dateTime = DateTime.Now;
+      var target = CreateTarget();
 
       // Act
       target.PipeMonthReadings(dateTime.AddMonths(1));
 
       // Assert
+      yearTrigger.Verify(yt => yt.IsTriggerTime(It.IsAny<DateTime>()), Times.Never);
       factory.Verify(f => f.Create<IReadingPipeRepository>(), Times.Never);
     }
 
@@ -199,73 +183,47 @@ namespace PowerView.Service.Test.EventHub
     public void PipeMonthReadings()
     {
       // Arrange
-      var dateTime = new DateTime(2016, 6, 19, 14, 52, 31, 0, DateTimeKind.Local);
-      var target = CreateTarget(dateTime);
-      target.PipeLiveReadings(dateTime + TimeSpan.FromDays(1));
-      target.PipeDayReadings(dateTime.AddMonths(1));
+      var dateTime = DateTime.Now;
+      var target = CreateTarget();
+      dayTrigger.Setup(dt => dt.IsTriggerTime(It.IsAny<DateTime>())).Returns(true);
+      target.PipeLiveReadings(dateTime);
+      monthTrigger.Setup(mt => mt.IsTriggerTime(It.IsAny<DateTime>())).Returns(true);
+      target.PipeDayReadings(dateTime);
+      yearTrigger.Setup(yt => yt.IsTriggerTime(It.IsAny<DateTime>())).Returns(true);
 
       // Act
-      target.PipeMonthReadings(dateTime.AddMonths(1));
+      target.PipeMonthReadings(dateTime);
 
       // Assert
-      readingPipeRepository.Verify(rpr => rpr.PipeMonthReadingsToYearReadings(dateTime.AddMonths(1).ToUniversalTime()));
+      yearTrigger.Verify(yt => yt.IsTriggerTime(dateTime));
+      readingPipeRepository.Verify(rpr => rpr.PipeMonthReadingsToYearReadings(dateTime));
+      yearTrigger.Verify(yt => yt.Advance(dateTime));
     }
 
     [Test]
-    public void PipeMonthReadingsBeforeInterval()
+    public void PipeMonthReadingsNoTrigger()
     {
-      const DateTimeKind dtk = DateTimeKind.Local;
-      var timePairs = new[]
-      {
-        new { Construct=new DateTime(2016, 6, 19, 14, 52, 31, 0, dtk), Invoke=new DateTime(2016, 6, 19, 14, 52, 31, 0, dtk) },
-        new { Construct=new DateTime(2016, 6, 19, 14, 52, 31, 0, dtk), Invoke=new DateTime(2016, 6, 19, 23, 59, 59, 0, dtk) },
-      };
+      // Arrange
+      var dateTime = DateTime.Now;
+      var target = CreateTarget();
+      dayTrigger.Setup(dt => dt.IsTriggerTime(It.IsAny<DateTime>())).Returns(true);
+      target.PipeLiveReadings(dateTime);
+      monthTrigger.Setup(mt => mt.IsTriggerTime(It.IsAny<DateTime>())).Returns(true);
+      target.PipeDayReadings(dateTime);
+      yearTrigger.Setup(yt => yt.IsTriggerTime(It.IsAny<DateTime>())).Returns(false);
 
-      foreach (var item in timePairs)
-      {
-        // Arrange
-        var target = CreateTarget(item.Construct);
-        target.PipeLiveReadings(item.Construct + TimeSpan.FromDays(1));
-        target.PipeDayReadings(item.Construct.AddMonths(1));
+      // Act
+      target.PipeMonthReadings(dateTime);
 
-        // Act
-        target.PipeMonthReadings(item.Invoke);
-
-        // Assert
-        readingPipeRepository.Verify(rpr => rpr.PipeMonthReadingsToYearReadings(It.IsAny<DateTime>()), Times.Never);
-      }
+      // Assert
+      yearTrigger.Verify(yt => yt.IsTriggerTime(dateTime));
+      readingPipeRepository.Verify(rpr => rpr.PipeMonthReadingsToYearReadings(It.IsAny<DateTime>()), Times.Never);
+      yearTrigger.Verify(yt => yt.Advance(It.IsAny<DateTime>()), Times.Never);
     }
 
-    [Test]
-    public void PipeMonthReadingsAfterInterval()
+    private ReadingPiper CreateTarget()
     {
-      const DateTimeKind dtk = DateTimeKind.Local;
-      var timePairs = new[]
-      {
-        new { Construct=new DateTime(2016, 6, 30, 23, 59, 59, 0, dtk), Invoke=new DateTime(2016, 7, 1, 0, 46, 00, 0, dtk) },
-        new { Construct=new DateTime(2016, 6, 19, 14, 52, 31, 0, dtk), Invoke=new DateTime(2016, 7, 1, 0, 46, 00, 0, dtk) },
-        new { Construct=new DateTime(2016, 6, 19, 14, 52, 31, 0, dtk), Invoke=new DateTime(2016, 8, 1, 0, 46, 00, 0, dtk) },
-        new { Construct=new DateTime(2016, 7, 1, 0, 0, 1, 0, dtk), Invoke=new DateTime(2016, 7, 1, 0, 44, 59, 0, dtk) },  // Ideally this wouldn't fire..
-      };
-
-      foreach (var item in timePairs)
-      {
-        // Arrange
-        var target = CreateTarget(item.Construct);
-        target.PipeLiveReadings(item.Construct + TimeSpan.FromDays(1));
-        target.PipeDayReadings(item.Construct.AddMonths(1));
-
-        // Act
-        target.PipeMonthReadings(item.Invoke);
-
-        // Assert
-        readingPipeRepository.Verify(rpr => rpr.PipeMonthReadingsToYearReadings(It.IsAny<DateTime>()));
-      }
-    }
-
-    private ReadingPiper CreateTarget(DateTime dateTime)
-    {
-      return new ReadingPiper(factory.Object, dateTime);
+      return new ReadingPiper(dayTrigger.Object, monthTrigger.Object, yearTrigger.Object, factory.Object);
     }
   }
 }

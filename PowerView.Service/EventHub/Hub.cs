@@ -40,12 +40,11 @@ namespace PowerView.Service.EventHub
       eventQueue.Enqueue(() => mqttPublisherFactory.Publish(liveReadings));
       eventQueue.Enqueue(() => disconnectControlFactory.Process(liveReadings));
 
-      var now = DateTime.Now; // Hmm.. this actually depends on the host box having the correct time zone setup... :/
       var utcNow = DateTime.UtcNow;
       eventQueue.Enqueue(() => healthCheck.DailyCheck(utcNow));
-      eventQueue.Enqueue(() => piper.PipeLiveReadings(now));
-      eventQueue.Enqueue(() => piper.PipeDayReadings(now));
-      eventQueue.Enqueue(() => piper.PipeMonthReadings(now));
+      eventQueue.Enqueue(() => piper.PipeLiveReadings(utcNow));
+      eventQueue.Enqueue(() => piper.PipeDayReadings(utcNow));
+      eventQueue.Enqueue(() => piper.PipeMonthReadings(utcNow));
       eventQueue.Enqueue(() => meterEventCoordinator.DetectAndNotify(utcNow));
       eventQueue.Enqueue(() => tracker.Track(utcNow));
     }

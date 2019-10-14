@@ -9,33 +9,31 @@ namespace PowerView.Service.EventHub
   {
     private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-    private readonly TimeSpan minimumDayInterval = TimeSpan.FromDays(1);
-
+    private readonly IIntervalTrigger dayTrigger;
+    private readonly IIntervalTrigger monthTrigger;
+    private readonly IIntervalTrigger yearTrigger;
     private readonly IFactory factory;
 
-    private DateTime lastRunDay;
-
     private bool monthRunAllowed;
-    private DateTime lastRunMonth;
-
     private bool yearRunAllowed;
-    private DateTime lastRunYear;
 
-    public ReadingPiper(IFactory factory)
-      : this(factory, DateTime.Now)
+    public ReadingPiper(IIntervalTrigger dayTrigger, IIntervalTrigger monthTrigger, IIntervalTrigger yearTrigger, IFactory factory)
     {
-    }
-
-    internal ReadingPiper(IFactory factory, DateTime dateTime)
-    {
+      if (dayTrigger == null) throw new ArgumentNullException("dayTrigger");
+      if (monthTrigger == null) throw new ArgumentNullException("monthTrigger");
+      if (yearTrigger == null) throw new ArgumentNullException("yearTrigger");
       if (factory == null) throw new ArgumentNullException("factory");
-      if (dateTime.Kind != DateTimeKind.Local) throw new ArgumentOutOfRangeException("dateTime");
 
+      this.dayTrigger = dayTrigger;
+      this.monthTrigger = monthTrigger;
+      this.yearTrigger = yearTrigger;
       this.factory = factory;
 
-      lastRunDay = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, 0, 45, 0, 0, dateTime.Kind);
-      lastRunMonth = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, 0, 45, 0, 0, dateTime.Kind);
-      lastRunYear = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, 0, 45, 0, 0, dateTime.Kind);
+      var triggerTimeOfDay = new TimeSpan(0, 45, 0);
+      var dayInterval = TimeSpan.FromDays(1);
+      this.dayTrigger.Setup(triggerTimeOfDay, dayInterval);
+      this.monthTrigger.Setup(triggerTimeOfDay, dayInterval);
+      this.yearTrigger.Setup(triggerTimeOfDay, dayInterval);
     }
 
     #region IReadingPiper implementation
@@ -44,7 +42,7 @@ namespace PowerView.Service.EventHub
     {
       monthRunAllowed = false; // ensure day to month piping only takes place when live to day is "at HEAD"
 
-      if (dateTime < lastRunDay + minimumDayInterval)
+      if (!dayTrigger.IsTriggerTime(dateTime))
       {
         return;
       }
@@ -55,7 +53,7 @@ namespace PowerView.Service.EventHub
       {
         for (var i = 0; i < 10; i++)
         {
-          var pipedSomething = ownedRepo.Value.PipeLiveReadingsToDayReadings(dateTime.ToUniversalTime());
+          var pipedSomething = ownedRepo.Value.PipeLiveReadingsToDayReadings(dateTime);
           if (!pipedSomething)
           {
             monthRunAllowed = true; // live to day piping is complete for now. Allow day to month piping.
@@ -64,7 +62,7 @@ namespace PowerView.Service.EventHub
         }
       }
 
-      lastRunDay = GetDay(dateTime, lastRunDay);
+      dayTrigger.Advance(dateTime);
     }
 
     public void PipeDayReadings(DateTime dateTime)
@@ -76,7 +74,7 @@ namespace PowerView.Service.EventHub
         return;
       }
 
-      if (dateTime < lastRunMonth + minimumDayInterval)
+      if (!monthTrigger.IsTriggerTime(dateTime))
       {
         return;
       }
@@ -87,7 +85,7 @@ namespace PowerView.Service.EventHub
       {
         for (var i = 0; i < 2; i++)
         {
-          var pipedSomething = ownedRepo.Value.PipeDayReadingsToMonthReadings(dateTime.ToUniversalTime());
+          var pipedSomething = ownedRepo.Value.PipeDayReadingsToMonthReadings(dateTime);
           if (!pipedSomething)
           {
             yearRunAllowed = true; // day to month piping is complete for now. Allow month to year piping.
@@ -96,7 +94,7 @@ namespace PowerView.Service.EventHub
         }
       }
 
-      lastRunMonth = GetDay(dateTime, lastRunMonth);
+      monthTrigger.Advance(dateTime);
     }
 
     public void PipeMonthReadings(DateTime dateTime)
@@ -106,7 +104,7 @@ namespace PowerView.Service.EventHub
         return;
       }
 
-      if (dateTime < lastRunYear + minimumDayInterval)
+      if (!yearTrigger.IsTriggerTime(dateTime))
       {
         return;
       }
@@ -115,23 +113,14 @@ namespace PowerView.Service.EventHub
 
       using (var ownedRepo = factory.Create<IReadingPipeRepository>())
       {
-        ownedRepo.Value.PipeMonthReadingsToYearReadings(dateTime.ToUniversalTime());
+        ownedRepo.Value.PipeMonthReadingsToYearReadings(dateTime);
       }
 
-      lastRunYear = GetDay(dateTime, lastRunYear);
+      yearTrigger.Advance(dateTime);
     }
 
     #endregion
 
-    private static DateTime GetDay(DateTime dt, DateTime lastRun)
-    {
-      var day = TimeSpan.FromDays(1);
-      while (lastRun.Date < dt.Date)
-      {
-        lastRun += day;
-      }
-      return lastRun;
-    }
   }
 }
 
