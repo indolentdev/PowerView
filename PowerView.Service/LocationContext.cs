@@ -24,5 +24,13 @@ namespace PowerView.Service
       return TimeZoneInfo.ConvertTimeFromUtc(dateTime, TimeZoneInfo);
     }
 
+    public DateTime ConvertTimeToUtc(DateTime dateTime)
+    {
+      if (dateTime.Kind != DateTimeKind.Unspecified) throw new ArgumentOutOfRangeException("dateTime", "Must be Unspecified");
+
+      return TimeZoneInfo.ConvertTimeToUtc(dateTime, TimeZoneInfo);
+    }
+
+
   }
 }

@@ -8,22 +8,19 @@ namespace PowerView.Service.EventHub
 {
   public class MeterEventDetector : IMeterEventDetector
   {
-    private ITimeConverter timeConverter;
     private readonly IProfileRepository profileRepository;
     private readonly IMeterEventRepository meterEventRepository;
-    private readonly ILocationProvider locationProvider;
+    private readonly ILocationContext locationContext;
 
-    public MeterEventDetector(ITimeConverter timeConverter, IProfileRepository profileRepository, IMeterEventRepository meterEventRepository, ILocationProvider locationProvider)
+    public MeterEventDetector(IProfileRepository profileRepository, IMeterEventRepository meterEventRepository, ILocationContext locationContext)
     {
-      if (timeConverter == null) throw new ArgumentNullException("timeConverter");
       if (profileRepository == null) throw new ArgumentNullException("profileRepository");
       if (meterEventRepository == null) throw new ArgumentNullException("meterEventRepository");
-      if (locationProvider == null) throw new ArgumentNullException("locationProvider");
+      if (locationContext == null) throw new ArgumentNullException("locationContext");
 
-      this.timeConverter = timeConverter;
       this.profileRepository = profileRepository;
       this.meterEventRepository = meterEventRepository;
-      this.locationProvider = locationProvider;
+      this.locationContext = locationContext;
     }
 
     public void DetectMeterEvents(DateTime midnight)
@@ -34,8 +31,7 @@ namespace PowerView.Service.EventHub
       var preStart = midnight.Subtract(TimeSpan.FromMinutes(30));
       var labelSeriesSet = profileRepository.GetDayProfileSet(preStart, midnight, end);
 
-      var timeZoneInfo = locationProvider.GetTimeZone();
-      var timeDivider = new DateTimeHelper(timeZoneInfo, midnight).GetDivider("5-minutes");
+      var timeDivider = new DateTimeHelper(locationContext.TimeZoneInfo, midnight).GetDivider("5-minutes");
       var normalizedLabelSeriesSet = labelSeriesSet.Normalize(timeDivider);
       GenerateSeriesFromCumulative(normalizedLabelSeriesSet);
           
@@ -75,9 +71,9 @@ namespace PowerView.Service.EventHub
           continue;
         }
 
-        var timestampNonUtc = timeConverter.ChangeTimeZoneFromUtc(timestamp);
-        var start = timeConverter.ChangeTimeZoneToUtc(new DateTime(timestampNonUtc.Year, timestampNonUtc.Month, timestampNonUtc.Day, 0, 0, 0, timestampNonUtc.Kind));
-        var end = timeConverter.ChangeTimeZoneToUtc(new DateTime(timestampNonUtc.Year, timestampNonUtc.Month, timestampNonUtc.Day, 6, 0, 0, timestampNonUtc.Kind));
+        var timestampNonUtc = locationContext.ConvertTimeFromUtc(timestamp);
+        var start = locationContext.ConvertTimeToUtc(new DateTime(timestampNonUtc.Year, timestampNonUtc.Month, timestampNonUtc.Day, 0, 0, 0, timestampNonUtc.Kind));
+        var end = locationContext.ConvertTimeToUtc(new DateTime(timestampNonUtc.Year, timestampNonUtc.Month, timestampNonUtc.Day, 6, 0, 0, timestampNonUtc.Kind));
 
         var leakChecker = new LeakCharacteristicChecker();
         var leakCharacteristic = leakChecker.GetLeakCharacteristic(labelSeries, coldWaterVolume1Delta, start, end);

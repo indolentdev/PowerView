@@ -14,14 +14,14 @@ namespace PowerView.Service.Test.EventHub
   {
     private Mock<IProfileRepository> profileRepository;
     private Mock<IMeterEventRepository> meterEventRepository;
-    private Mock<ILocationProvider> locationProvider;
+    private ILocationContext locationContext;
 
     [SetUp]
     public void SetUp()
     {
       profileRepository = new Mock<IProfileRepository>();
       meterEventRepository = new Mock<IMeterEventRepository>();
-      locationProvider = new Mock<ILocationProvider>();
+      locationContext = TimeZoneHelper.GetDenmarkLocationContext();
     }
 
     [Test]
@@ -31,10 +31,9 @@ namespace PowerView.Service.Test.EventHub
       var timeConverter = new Mock<ITimeConverter>();
 
       // Act & Assert
-      Assert.That(() => new MeterEventDetector(null, profileRepository.Object, meterEventRepository.Object, locationProvider.Object), Throws.TypeOf<ArgumentNullException>());
-      Assert.That(() => new MeterEventDetector(timeConverter.Object, null, meterEventRepository.Object, locationProvider.Object), Throws.TypeOf<ArgumentNullException>());
-      Assert.That(() => new MeterEventDetector(timeConverter.Object, profileRepository.Object, null, locationProvider.Object), Throws.TypeOf<ArgumentNullException>());
-      Assert.That(() => new MeterEventDetector(timeConverter.Object, profileRepository.Object, meterEventRepository.Object, null), Throws.TypeOf<ArgumentNullException>());
+      Assert.That(() => new MeterEventDetector(null, meterEventRepository.Object, locationContext), Throws.TypeOf<ArgumentNullException>());
+      Assert.That(() => new MeterEventDetector(profileRepository.Object, null, locationContext), Throws.TypeOf<ArgumentNullException>());
+      Assert.That(() => new MeterEventDetector(profileRepository.Object, meterEventRepository.Object, null), Throws.TypeOf<ArgumentNullException>());
     }
 
     [Test]
@@ -127,10 +126,7 @@ namespace PowerView.Service.Test.EventHub
 
     private MeterEventDetector CreateTarget()
     {
-      var tzi = TimeZoneInfo.FindSystemTimeZoneById("Europe/Copenhagen");
-      locationProvider.Setup(x => x.GetTimeZone()).Returns(tzi);
-      var timeConverter = new TimeConverter(locationProvider.Object);
-      return new MeterEventDetector(timeConverter, profileRepository.Object, meterEventRepository.Object, locationProvider.Object);
+      return new MeterEventDetector(profileRepository.Object, meterEventRepository.Object, locationContext);
     }
   }
 }

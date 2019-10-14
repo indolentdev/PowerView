@@ -37,7 +37,7 @@ namespace PowerView.Service.Test
     }
 
     [Test]
-    public void ChangeTimeZoneFromUtcThrows()
+    public void ConvertTimeZoneFromUtcThrows()
     {
       // Arrange
       var target = new LocationContext();
@@ -50,7 +50,7 @@ namespace PowerView.Service.Test
     }
 
     [Test]
-    public void ChangeTimeZoneFromUtc()
+    public void ConvertTimeZoneFromUtc()
     {
       // Arrange
       var target = new LocationContext();
@@ -63,6 +63,35 @@ namespace PowerView.Service.Test
       // Assert
       Assert.That(changedDateTime, Is.EqualTo(new DateTime(2015, 12, 30, 18, 31, 45)));
       Assert.That(changedDateTime.Kind, Is.EqualTo(DateTimeKind.Unspecified));
+    }
+
+    [Test]
+    public void ConvertTimeZoneToUtcThrows()
+    {
+      // Arrange
+      var target = new LocationContext();
+      target.Setup(TimeZoneHelper.GetDenmarkTimeZoneInfo(), CultureInfo.CurrentCulture);
+      var dateTimeLocal = new DateTime(2015, 12, 30, 17, 31, 45, DateTimeKind.Local);
+
+      // Act & Assert
+      Assert.That(() => target.ConvertTimeToUtc(dateTimeLocal), Throws.TypeOf<ArgumentOutOfRangeException>());
+      Assert.That(() => target.ConvertTimeToUtc(DateTime.UtcNow), Throws.TypeOf<ArgumentOutOfRangeException>());
+    }
+
+    [Test]
+    public void ConvertTimeToUtc()
+    {
+      // Arrange
+      var target = new LocationContext();
+      target.Setup(TimeZoneHelper.GetDenmarkTimeZoneInfo(), CultureInfo.CurrentCulture);
+      var dateTime = new DateTime(2015, 12, 30, 17, 31, 45, DateTimeKind.Unspecified);
+
+      // Act
+      var changedDateTime = target.ConvertTimeToUtc(dateTime);
+
+      // Assert
+      Assert.That(changedDateTime, Is.EqualTo(new DateTime(2015, 12, 30, 16, 31, 45)));
+      Assert.That(changedDateTime.Kind, Is.EqualTo(DateTimeKind.Utc));
     }
 
   }
