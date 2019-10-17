@@ -25,6 +25,8 @@ namespace PowerView.Model
       containerBuilder.RegisterType<DisconnectRuleRepository>().As<IDisconnectRuleRepository>();
       containerBuilder.RegisterType<EnvironmentRepository>().As<IEnvironmentRepository>();
 
+      containerBuilder.RegisterType<LocationContext>().As<ILocationContext>().As<LocationContext>().SingleInstance();
+
       containerBuilder.RegisterType<ObisColorProvider>().As<IObisColorProvider>();
       containerBuilder.RegisterType<DbCheck>().As<IDbCheck>()
         .WithParameter(new ResolvedParameter(

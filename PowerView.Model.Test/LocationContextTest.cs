@@ -2,7 +2,7 @@
 using System.Globalization;
 using NUnit.Framework;
 
-namespace PowerView.Service.Test
+namespace PowerView.Model.Test
 {
   [TestFixture]
   public class LocationContextTest

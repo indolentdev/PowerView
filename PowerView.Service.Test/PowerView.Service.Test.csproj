@@ -143,7 +143,6 @@
     <Compile Include="ExitSignalTest.cs" />
     <Compile Include="EventHub\HealthCheckTest.cs" />
     <Compile Include="TimeZoneHelper.cs" />
-    <Compile Include="LocationContextTest.cs" />
     <Compile Include="IntervalTriggerTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

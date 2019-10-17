@@ -5,7 +5,7 @@ namespace PowerView.Model.Test
 {
   public static class TimeZoneHelper
   {
-    public static TimeZoneInfo GetTimeZoneInfo()
+    public static TimeZoneInfo GetDenmarkTimeZoneInfo()
     {
       var timeZones = TimeZoneInfo.GetSystemTimeZones();
       var linuxTzi = timeZones.FirstOrDefault(x => x.Id == "Europe/Copenhagen");
@@ -14,6 +14,20 @@ namespace PowerView.Model.Test
       if (windowsTzi != null) return windowsTzi;
 
       throw new NotImplementedException("Stuff is missing...");
+    }
+
+    public static DateTime GetDenmarkTodayAsUtc()
+    {
+      var utcNow = DateTime.UtcNow;
+      var timeZoneNow = TimeZoneInfo.ConvertTimeFromUtc(utcNow, GetDenmarkTimeZoneInfo());
+      return timeZoneNow.Date.ToUniversalTime();
+    }
+
+    public static ILocationContext GetDenmarkLocationContext()
+    {
+      var locationContext = new LocationContext();
+      locationContext.Setup(GetDenmarkTimeZoneInfo(), new System.Globalization.CultureInfo("da-DK"));
+      return locationContext;
     }
 
   }

@@ -179,6 +179,8 @@
     <Compile Include="Repository\EnvironmentRepository.cs" />
     <Compile Include="Repository\IEnvironmentRepository.cs" />
     <Compile Include="DateTimeHelper.cs" />
+    <Compile Include="ILocationContext.cs" />
+    <Compile Include="LocationContext.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

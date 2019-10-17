@@ -135,6 +135,7 @@
     <Compile Include="Repository\DbContextExtensions.cs" />
     <Compile Include="DateTimeHelperTest.cs" />
     <Compile Include="TimeZoneHelper.cs" />
+    <Compile Include="LocationContextTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

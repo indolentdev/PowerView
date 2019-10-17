@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using PowerView.Model;
 
 namespace PowerView.Service.Test
 {

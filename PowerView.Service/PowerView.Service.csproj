@@ -182,8 +182,6 @@
     <Compile Include="ExitSignal.cs" />
     <Compile Include="EventHub\HealthCheck.cs" />
     <Compile Include="EventHub\IHealthCheck.cs" />
-    <Compile Include="ILocationContext.cs" />
-    <Compile Include="LocationContext.cs" />
     <Compile Include="EventHub\IntervalTrigger.cs" />
     <Compile Include="EventHub\IIntervalTrigger.cs" />
   </ItemGroup>

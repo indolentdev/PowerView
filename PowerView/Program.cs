@@ -8,6 +8,7 @@ using Autofac;
 using log4net;
 using log4net.Config;
 using PowerView.Configuration;
+using PowerView.Model;
 using PowerView.Model.Repository;
 using PowerView.Service;
 using PowerView.Service.EventHub;
@@ -121,7 +122,7 @@ namespace PowerView
       var configuredCultureInfoName = dbConfig.CultureInfo == null ? (string)null : (string.IsNullOrEmpty(dbConfig.CultureInfo.Value) ? (string)null : dbConfig.CultureInfo.Value);
       Model.ContainerConfiguration.Register(containerBuilder, dbConfig.Name.Value, minBackupInterval, maxBackupCount, integrityCheckCommandTimeout, configuredTimeZoneId, configuredCultureInfoName);
 
-      ContainerConfiguration.Register(containerBuilder, serviceConfig.BaseUrl.GetValueAsUri(), serviceConfig.PvOutputFacade.PvOutputAddStatusUrl.GetValueAsUri(), 
+      Service.ContainerConfiguration.Register(containerBuilder, serviceConfig.BaseUrl.GetValueAsUri(), serviceConfig.PvOutputFacade.PvOutputAddStatusUrl.GetValueAsUri(), 
         serviceConfig.PvOutputFacade.PvDeviceLabel.Value, serviceConfig.PvOutputFacade.PvDeviceSerialNumber.Value,
         serviceConfig.PvOutputFacade.PvDeviceSerialNumberParam.Value, serviceConfig.PvOutputFacade.ActualPowerP23L1Param.Value,
         serviceConfig.PvOutputFacade.ActualPowerP23L1Param.Value, serviceConfig.PvOutputFacade.ActualPowerP23L1Param.Value,

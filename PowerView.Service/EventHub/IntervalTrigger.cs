@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using log4net;
+using PowerView.Model;
 
 namespace PowerView.Service.EventHub
 {

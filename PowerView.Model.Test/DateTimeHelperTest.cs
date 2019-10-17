@@ -225,7 +225,7 @@ namespace PowerView.Model.Test
 
     private static TimeZoneInfo GetTimeZoneInfo()
     {
-      return TimeZoneHelper.GetTimeZoneInfo();
+      return TimeZoneHelper.GetDenmarkTimeZoneInfo();
     }
 
   }

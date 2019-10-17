@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 
-namespace PowerView.Service
+namespace PowerView.Model
 {
   /// <summary>
   /// Location/region info as a cheap dependency.
