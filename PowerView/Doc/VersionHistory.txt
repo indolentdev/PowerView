@@ -1,6 +1,6 @@
 PowerView version 0.0.28 - Xxxx 2019
 - Improved graph series to always show the full period - even
-  when values are missing.
+  if values are missing.
 - Calculated power and flow series are actually average values. Now they are 
   explicitly named as such, for clarity.
 - Added last 24 hours, "31" days and 12 months period graphs.  
