@@ -17,7 +17,6 @@ namespace PowerView.Service.Test.Modules
   {
     private Mock<IProfileRepository> profileRepository;
     private Mock<ITemplateConfigProvider> templateConfigProvider;
-    private Mock<ILocationProvider> locationProvider;
 
     private Browser browser;
 
@@ -28,7 +27,6 @@ namespace PowerView.Service.Test.Modules
     {
       profileRepository = new Mock<IProfileRepository>();
       templateConfigProvider = new Mock<ITemplateConfigProvider>();
-      locationProvider = new Mock<ILocationProvider>();
 
       templateConfigProvider.Setup(mcp => mcp.LabelObisCodeTemplates).Returns(new LabelObisCodeTemplate[0]);
 
@@ -37,7 +35,7 @@ namespace PowerView.Service.Test.Modules
         cfg.Module<DiffModule>();
         cfg.Dependency<IProfileRepository>(profileRepository.Object);
         cfg.Dependency<ITemplateConfigProvider>(templateConfigProvider.Object);
-        cfg.Dependency<ILocationProvider>(locationProvider.Object);
+        cfg.Dependency<ILocationContext>(TimeZoneHelper.GetDenmarkLocationContext());
       });
     }
 
@@ -107,7 +105,6 @@ namespace PowerView.Service.Test.Modules
       var utcOneDay = today.AddDays(1);
       profileRepository.Setup(dpr => dpr.GetMonthProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
         .Returns(new LabelSeriesSet<TimeRegisterValue>(today, utcOneDay, new LabelSeries<TimeRegisterValue>[0]));
-      SetupLocationProvider();
 
       // Act
       var response = browser.Get(DiffRoute, with =>
@@ -141,7 +138,6 @@ namespace PowerView.Service.Test.Modules
       };
       var lss = new LabelSeriesSet<TimeRegisterValue>(t1, today, new[] { new LabelSeries<TimeRegisterValue>("Label1", label1Values), new LabelSeries<TimeRegisterValue>("Label2", label2Values) });
       profileRepository.Setup(pr => pr.GetMonthProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(lss);
-      SetupLocationProvider();
 
       // Act
       var response = browser.Get(DiffRoute, with =>
@@ -161,13 +157,6 @@ namespace PowerView.Service.Test.Modules
       Assert.That(json.registers, Has.Length.EqualTo(2));
       AssertDiffRegister("Label1", ObisCode.ColdWaterVolume1Period, t1, t2, 100, "m3", json.registers.First());
       AssertDiffRegister("Label2", ObisCode.ElectrActiveEnergyA14Period, t1, t2, 1000, "kWh", json.registers.Last());
-    }
-
-    private TimeZoneInfo SetupLocationProvider()
-    {
-      var timeZoneInfo = TimeZoneHelper.GetDenmarkTimeZoneInfo();
-      locationProvider.Setup(x => x.GetTimeZone()).Returns(timeZoneInfo);
-      return timeZoneInfo;
     }
 
     private static void AssertDiffRegister(string label, ObisCode obisCode, DateTime from, DateTime to, double value, string unit, DiffRegister actual)

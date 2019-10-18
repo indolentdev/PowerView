@@ -4,7 +4,7 @@ using System.Linq;
 using NUnit.Framework;
 using Moq;
 using PowerView.Service.Translations;
-using PowerView.Model.Repository;
+using PowerView.Model;
 
 namespace PowerView.Service.Test.Translations
 {
@@ -110,9 +110,9 @@ namespace PowerView.Service.Test.Translations
     {
       var cultureInfo = CultureInfo.GetCultures(CultureTypes.SpecificCultures)
                                    .Single(ci => ci.Name == cultureInfoName);
-      var lp = new Mock<ILocationProvider>();
-      lp.Setup(x => x.GetCultureInfo()).Returns(cultureInfo);
-      return new Translation(lp.Object);
+      var lc = new Mock<ILocationContext>();
+      lc.Setup(x => x.CultureInfo).Returns(cultureInfo);
+      return new Translation(lc.Object);
     }
 
   }

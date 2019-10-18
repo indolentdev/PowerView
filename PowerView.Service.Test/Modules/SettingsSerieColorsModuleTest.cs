@@ -22,7 +22,7 @@ namespace PowerView.Service.Test.Modules
     private Mock<ISeriesNameRepository> seriesNameRepository;
     private Mock<IObisColorProvider> obisColorProvider;
     private Mock<ITemplateConfigProvider> templateConfigProvider;
-    private Mock<ILocationProvider> locationProvider;
+    private ILocationContext locationContext;
 
     private Browser browser;
 
@@ -35,7 +35,7 @@ namespace PowerView.Service.Test.Modules
       seriesNameRepository = new Mock<ISeriesNameRepository>();
       obisColorProvider = new Mock<IObisColorProvider>();
       templateConfigProvider = new Mock<ITemplateConfigProvider>();
-      locationProvider = new Mock<ILocationProvider>();
+      locationContext = TimeZoneHelper.GetDenmarkLocationContext();
 
       browser = new Browser(cfg =>
       {
@@ -44,7 +44,7 @@ namespace PowerView.Service.Test.Modules
         cfg.Dependency<ISeriesNameRepository>(seriesNameRepository.Object);
         cfg.Dependency<IObisColorProvider>(obisColorProvider.Object);
         cfg.Dependency<ITemplateConfigProvider>(templateConfigProvider.Object);
-        cfg.Dependency<ILocationProvider>(locationProvider.Object);
+        cfg.Dependency<ILocationContext>(locationContext);
       });
     }
 
@@ -52,7 +52,7 @@ namespace PowerView.Service.Test.Modules
     public void GetSeriesColors()
     {
       // Arrange
-      var timeZoneInfo = SetupLocationProvider();
+      var timeZoneInfo = locationContext.TimeZoneInfo;
       var sc1 = new SeriesColor(new SeriesName("label1", "1.2.3.4.5.6"), "#123456");
       var sc2 = new SeriesColor(new SeriesName("label2", "6.5.4.3.2.1"), "#654321");
       var serieColorsDb = new[] { sc2, sc1 };
@@ -168,13 +168,6 @@ namespace PowerView.Service.Test.Modules
       Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
       seriesColorRepository.Verify(scr => scr.SetSeriesColors(It.Is<IEnumerable<SeriesColor>>(sc => sc.Count() == 1 &&
            sc.First().SeriesName.Label == sc1.label && sc.First().SeriesName.ObisCode == sc1.obisCode && sc.First().Color == sc1.color)));
-    }
-
-    private TimeZoneInfo SetupLocationProvider()
-    {
-      var timeZoneInfo = TimeZoneHelper.GetDenmarkTimeZoneInfo();
-      locationProvider.Setup(x => x.GetTimeZone()).Returns(timeZoneInfo);
-      return timeZoneInfo;
     }
 
     private static string ToJson(object obj)

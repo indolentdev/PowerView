@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.IO;
-using PowerView.Model.Repository;
+using PowerView.Model;
 using PowerView.Service.Modules;
 using Moq;
 using Nancy;
@@ -14,7 +14,7 @@ namespace PowerView.Service.Test.Modules
   [TestFixture]
   public class SettingsApplicationModuleTest
   {
-    private Mock<ILocationProvider> locationProvider;
+    private Mock<ILocationContext> locationContext;
 
     private Browser browser;
 
@@ -23,12 +23,12 @@ namespace PowerView.Service.Test.Modules
     [SetUp]
     public void SetUp()
     {
-      locationProvider = new Mock<ILocationProvider>();
+      locationContext = new Mock<ILocationContext>();
 
       browser = new Browser(cfg =>
       {
         cfg.Module<SettingsApplicationModule>();
-        cfg.Dependency<ILocationProvider>(locationProvider.Object);
+        cfg.Dependency<ILocationContext>(locationContext.Object);
       });
     }
 
@@ -37,9 +37,9 @@ namespace PowerView.Service.Test.Modules
     {
       // Arrange
       var timeZoneInfo = TimeZoneInfo.Local;
-      locationProvider.Setup(lp => lp.GetTimeZone()).Returns(timeZoneInfo);
+      locationContext.Setup(lc => lc.TimeZoneInfo).Returns(timeZoneInfo);
       var cultureInfo = new CultureInfo("de-DE");
-      locationProvider.Setup(lp => lp.GetCultureInfo()).Returns(cultureInfo);
+      locationContext.Setup(lc => lc.CultureInfo).Returns(cultureInfo);
 
       // Act
       var response = browser.Get(ApplicationRoute, with =>

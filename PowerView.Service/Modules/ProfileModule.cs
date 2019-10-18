@@ -19,24 +19,24 @@ namespace PowerView.Service.Modules
     private readonly IProfileRepository profileRepository;
     private readonly ISeriesColorRepository serieRepository;
     private readonly IProfileGraphRepository profileGraphRepository;
-    private readonly ILocationProvider locationProvider;
+    private readonly ILocationContext locationContext;
     private readonly ISerieMapper serieMapper;
     private readonly ITemplateConfigProvider templateConfigProvider;
 
-    public ProfileModule(IProfileRepository profileRepository, ISeriesColorRepository serieRepository, IProfileGraphRepository profileGraphRepository, ILocationProvider locationProvider, ISerieMapper serieMapper, ITemplateConfigProvider templateConfigProvider)
+    public ProfileModule(IProfileRepository profileRepository, ISeriesColorRepository serieRepository, IProfileGraphRepository profileGraphRepository, ILocationContext locationContext, ISerieMapper serieMapper, ITemplateConfigProvider templateConfigProvider)
       :base("/api/profile")
     {
       if (profileRepository == null) throw new ArgumentNullException("profileRepository");
       if (serieRepository == null) throw new ArgumentNullException("serieRepository");
       if (profileGraphRepository == null) throw new ArgumentNullException("profileGraphRepository");
-      if (locationProvider == null) throw new ArgumentNullException("locationProvider");
+      if (locationContext == null) throw new ArgumentNullException("locationContext");
       if (serieMapper == null) throw new ArgumentNullException("serieMapper");
       if (templateConfigProvider == null) throw new ArgumentNullException("templateConfigProvider");
 
       this.profileRepository = profileRepository;
       this.serieRepository = serieRepository;
       this.profileGraphRepository = profileGraphRepository;
-      this.locationProvider = locationProvider;
+      this.locationContext = locationContext;
       this.serieMapper = serieMapper;
       this.templateConfigProvider = templateConfigProvider;
 
@@ -105,7 +105,7 @@ namespace PowerView.Service.Modules
       var distinctIntervals = profileGraphs.GroupBy(x => x.Interval).ToList();
 
       // Find query start and end times based on max interval and period...
-      var timeZoneInfo = locationProvider.GetTimeZone();
+      var timeZoneInfo = locationContext.TimeZoneInfo;
       var dateTimeHelper = new DateTimeHelper(timeZoneInfo, start);
       var end = dateTimeHelper.GetPeriodEnd(period);
       var maxInterval = distinctIntervals.Select(x => dateTimeHelper.GetNext(x.Key)(start)).Max();

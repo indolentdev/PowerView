@@ -1,19 +1,20 @@
 ﻿using System;
 using Nancy;
+using PowerView.Model;
 using PowerView.Model.Repository;
 
 namespace PowerView.Service.Modules
 {
   public class SettingsApplicationModule : CommonNancyModule
   {
-    private readonly ILocationProvider locationProvider;
+    private readonly ILocationContext locationContext;
 
-    public SettingsApplicationModule(ILocationProvider locationProvider)
+    public SettingsApplicationModule(ILocationContext locationContext)
       : base("/api/settings/application")
     {
-      if (locationProvider == null) throw new ArgumentNullException("locationProvider");
+      if (locationContext == null) throw new ArgumentNullException("locationContext");
 
-      this.locationProvider = locationProvider;
+      this.locationContext = locationContext;
 
       Get[""] = GetProps;
     }
@@ -21,8 +22,8 @@ namespace PowerView.Service.Modules
     private dynamic GetProps(dynamic param)
     {
       var version = GetVersion();
-      var cultureInfo = locationProvider.GetCultureInfo();
-      var timeZone = locationProvider.GetTimeZone();
+      var cultureInfo = locationContext.CultureInfo;
+      var timeZone = locationContext.TimeZoneInfo;
 
       var r = new { Version = version, Culture = cultureInfo.NativeName, TimeZone = timeZone.DisplayName };
 

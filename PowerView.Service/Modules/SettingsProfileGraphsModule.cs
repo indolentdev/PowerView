@@ -18,20 +18,20 @@ namespace PowerView.Service.Modules
     private readonly ISeriesNameRepository serieNameRepository;
     private readonly IProfileGraphRepository profileGraphRepository;
     private readonly ITemplateConfigProvider templateConfigProvider;
-    private readonly ILocationProvider locationProvider;
+    private readonly ILocationContext locationContext;
 
-    public SettingsProfileGraphsModule(ISeriesNameRepository serieNameRepository, IProfileGraphRepository profileGraphRepository, ITemplateConfigProvider templateConfigProvider, ILocationProvider locationProvider)
+    public SettingsProfileGraphsModule(ISeriesNameRepository serieNameRepository, IProfileGraphRepository profileGraphRepository, ITemplateConfigProvider templateConfigProvider, ILocationContext locationContext)
       : base("/api/settings/profilegraphs")
     {
       if (serieNameRepository == null) throw new ArgumentNullException("serieNameRepository");
       if (profileGraphRepository == null) throw new ArgumentNullException("profileGraphRepository");
       if (templateConfigProvider == null) throw new ArgumentNullException("templateConfigProvider");
-      if (locationProvider == null) throw new ArgumentNullException("locationProvider");
+      if (locationContext == null) throw new ArgumentNullException("locationContext");
 
       this.serieNameRepository = serieNameRepository;
       this.profileGraphRepository = profileGraphRepository;
       this.templateConfigProvider = templateConfigProvider;
-      this.locationProvider = locationProvider;
+      this.locationContext = locationContext;
 
       Get["series"] = GetProfileGraphSeries;
       Get["pages"] = GetProfileGraphPages;
@@ -43,7 +43,7 @@ namespace PowerView.Service.Modules
 
     private dynamic GetProfileGraphSeries(dynamic param)
     {
-      var timeZoneInfo = locationProvider.GetTimeZone();
+      var timeZoneInfo = locationContext.TimeZoneInfo;
       var serieNames = serieNameRepository.GetSeriesNames(timeZoneInfo, templateConfigProvider.LabelObisCodeTemplates);
 
       var day = serieNames.Where(sn => !sn.ObisCode.IsDelta)

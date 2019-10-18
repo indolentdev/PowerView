@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Resources;
-using PowerView.Model.Repository;
+using PowerView.Model;
 
 namespace PowerView.Service.Translations
 {
@@ -12,9 +12,9 @@ namespace PowerView.Service.Translations
 
     private readonly CultureInfo cultureInfo;
     
-    public Translation(ILocationProvider locationProvider)
+    public Translation(ILocationContext locationContext)
     {
-      cultureInfo = locationProvider.GetCultureInfo();
+      cultureInfo = locationContext.CultureInfo;
     }
 
     public string Get(ResId resId)
