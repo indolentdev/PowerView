@@ -13,20 +13,20 @@ namespace PowerView.Model.Repository
   {
     private static ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-    private readonly ITimeConverter timeConverter;
+    private readonly ILocationContext locationContext;
     private readonly int readingsPerLabel;
 
-    public ReadingPipeRepository(IDbContext dbContext, ITimeConverter timeConverter)
-      : this(dbContext, timeConverter, 9280) // 9280 ~ roughly 32 days with 5 min intervals.)
+    public ReadingPipeRepository(IDbContext dbContext, ILocationContext locationContext)
+      : this(dbContext, locationContext, 9280) // 9280 ~ roughly 32 days with 5 min intervals.)
     {
     }
 
-    internal ReadingPipeRepository(IDbContext dbContext, ITimeConverter timeConverter, int readingsPerLabel)
+    internal ReadingPipeRepository(IDbContext dbContext, ILocationContext locationContext, int readingsPerLabel)
       : base(dbContext)
     {
-      if (timeConverter == null) throw new ArgumentNullException("timeConverter");
+      if (locationContext == null) throw new ArgumentNullException("locationContext");
 
-      this.timeConverter = timeConverter;
+      this.locationContext = locationContext;
       this.readingsPerLabel = readingsPerLabel;
     }
 
@@ -262,9 +262,10 @@ LIMIT @Limit
     private DateTime ChangeTimeZoneAndReduce<TDstReading>(DateTime dateTime)
       where TDstReading : class, IDbReading
     {
-      var changedDateTime = timeConverter.ChangeTimeZoneFromUtc(dateTime);
       var tableName = GetTableName<TDstReading>();
-      return timeConverter.Reduce(changedDateTime, MapResolution(tableName));
+      var resolution = MapResolution(tableName);
+      var zonedDateTime = locationContext.ConvertTimeFromUtc(dateTime);
+      return TimeConverter.Reduce(resolution, zonedDateTime);
     }
 
     private bool IsTimestampSatisfactory<TDstReading>(DateTime dateTime)
@@ -272,7 +273,8 @@ LIMIT @Limit
       var tableName = GetTableName<TDstReading>();
       var resolution = MapResolution(tableName);
       var fraction = GetFraction(resolution);
-      return timeConverter.IsGreaterThanResolutionFraction(resolution, fraction, dateTime);
+      var zonedDateTime = locationContext.ConvertTimeFromUtc(dateTime);
+      return TimeConverter.IsGreaterThanResolutionFraction(resolution, fraction, zonedDateTime);
     }
 
     private static DateTimeResolution MapResolution(string tablename)

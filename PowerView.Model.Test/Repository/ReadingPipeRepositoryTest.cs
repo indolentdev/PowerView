@@ -690,10 +690,7 @@ namespace PowerView.Model.Test.Repository
 
     private ReadingPipeRepository CreateTarget(int readingsPerLabel = 5)
     {
-      var tzi = TimeZoneHelper.GetDenmarkTimeZoneInfo();
-      var lp = new Mock<ILocationProvider>();
-      lp.Setup(x => x.GetTimeZone()).Returns(tzi);
-      return new ReadingPipeRepository(DbContext, new TimeConverter(lp.Object), readingsPerLabel);
+      return new ReadingPipeRepository(DbContext, TimeZoneHelper.GetDenmarkLocationContext(), readingsPerLabel);
     }
 
     private static DateTime GetDateTime(int month, int day, int hour, int minute, int second)

@@ -57,7 +57,6 @@ namespace PowerView.Model
           (pi, ctx) => pi.Position == 2 && pi.ParameterType == typeof(string),
           (pi, ctx) => configuredCultureInfoName
         ));
-      containerBuilder.RegisterType<TimeConverter>().As<ITimeConverter>();
     }
 
     public static void RegisterIDbContextServiceSingleInstance(ContainerBuilder builder)

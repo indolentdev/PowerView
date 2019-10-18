@@ -28,7 +28,6 @@ namespace PowerView.Service.Test.EventHub
     public void ConstructorThrows()
     {
       // Arrange
-      var timeConverter = new Mock<ITimeConverter>();
 
       // Act & Assert
       Assert.That(() => new MeterEventDetector(null, meterEventRepository.Object, locationContext), Throws.TypeOf<ArgumentNullException>());

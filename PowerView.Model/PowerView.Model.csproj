@@ -81,7 +81,6 @@
     <Compile Include="Repository\IProfileRepository.cs" />
     <Compile Include="Repository\ProfileRepository.cs" />
     <Compile Include="Repository\ReadingPipeRepository.cs" />
-    <Compile Include="Repository\ITimeConverter.cs" />
     <Compile Include="Repository\TimeConverter.cs" />
     <Compile Include="Repository\IReadingPipeRepository.cs" />
     <Compile Include="Expression\ValueExpressionSetException.cs" />
