@@ -80,7 +80,7 @@
     <Compile Include="TimeRegisterValueTest.cs" />
     <Compile Include="Repository\ProfileRepositoryTest.cs" />
     <Compile Include="Repository\ReadingPipeRepositoryTest.cs" />
-    <Compile Include="Repository\TimeConverterTest.cs" />
+    <Compile Include="Repository\ReadingPipeRepositoryHelperTest.cs" />
     <Compile Include="Expression\RegisterTemplateExpressionTest.cs" />
     <Compile Include="Expression\OperationTemplateExpressionTest.cs" />
     <Compile Include="Expression\TemplateExpressionFactoryTest.cs" />

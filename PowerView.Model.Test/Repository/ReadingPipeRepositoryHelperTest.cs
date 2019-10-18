@@ -5,9 +5,8 @@ using PowerView.Model.Repository;
 namespace PowerView.Model.Test.Repository
 {
   [TestFixture]
-  public class TimeConverterTest
+  public class ReadingPipeRepositoryHelperTest
   {
-  
     [Test]
     public void ReduceDay()
     {
@@ -15,7 +14,7 @@ namespace PowerView.Model.Test.Repository
       var dateTime = new DateTime(2015, 12, 30, 17, 31, 45, DateTimeKind.Unspecified);
 
       // Act
-      var changedDateTime = TimeConverter.Reduce(DateTimeResolution.Day, dateTime);
+      var changedDateTime = ReadingPipeRepositoryHelper.Reduce<Db.DayReading>(dateTime);
 
       // Assert
       Assert.That(changedDateTime, Is.EqualTo(new DateTime(2015, 12, 30, 0, 0, 0)));
@@ -29,7 +28,7 @@ namespace PowerView.Model.Test.Repository
       var dateTime = new DateTime(2015, 12, 30, 17, 31, 45, DateTimeKind.Unspecified);
 
       // Act
-      var changedDateTime = TimeConverter.Reduce(DateTimeResolution.Month, dateTime);
+      var changedDateTime = ReadingPipeRepositoryHelper.Reduce<Db.MonthReading>(dateTime);
 
       // Assert
       Assert.That(changedDateTime, Is.EqualTo(new DateTime(2015, 12, 1, 0, 0, 0)));
@@ -43,7 +42,7 @@ namespace PowerView.Model.Test.Repository
       var dateTime = new DateTime(2015, 12, 30, 17, 31, 45, DateTimeKind.Unspecified);
 
       // Act
-      var changedDateTime = TimeConverter.Reduce(DateTimeResolution.Year, dateTime);
+      var changedDateTime = ReadingPipeRepositoryHelper.Reduce<Db.YearReading>(dateTime);
 
       // Assert
       Assert.That(changedDateTime, Is.EqualTo(new DateTime(2015, 1, 1, 0, 0, 0)));
@@ -54,12 +53,11 @@ namespace PowerView.Model.Test.Repository
     public void IsGreaterThanResolutionFraction()
     {
       // Arrange
-      var resolution = DateTimeResolution.Day;
       var fraction = 1.0;
 
       // Act & Assert
-      Assert.That(() => TimeConverter.IsGreaterThanResolutionFraction(resolution, fraction, DateTime.UtcNow), Throws.TypeOf<ArgumentOutOfRangeException>());
-      Assert.That(() => TimeConverter.IsGreaterThanResolutionFraction(resolution, fraction, DateTime.Now), Throws.TypeOf<ArgumentOutOfRangeException>());
+      Assert.That(() => ReadingPipeRepositoryHelper.IsGreaterThanResolutionFraction<Db.DayReading>(fraction, DateTime.UtcNow), Throws.TypeOf<ArgumentOutOfRangeException>());
+      Assert.That(() => ReadingPipeRepositoryHelper.IsGreaterThanResolutionFraction<Db.DayReading>(fraction, DateTime.Now), Throws.TypeOf<ArgumentOutOfRangeException>());
     }
 
     [Test]
@@ -70,7 +68,7 @@ namespace PowerView.Model.Test.Repository
       var fraction = 14.5d / 24d; // 14:30 out of 24 hours..
 
       // Act
-      var result = TimeConverter.IsGreaterThanResolutionFraction(DateTimeResolution.Day, fraction, dateTime);
+      var result = ReadingPipeRepositoryHelper.IsGreaterThanResolutionFraction<Db.DayReading>(fraction, dateTime);
 
       // Assert
       Assert.That(result, Is.True);
@@ -84,7 +82,7 @@ namespace PowerView.Model.Test.Repository
       var fraction = 14.5d / 24d; // 14:30 out of 24 hours..
 
       // Act
-      var result = TimeConverter.IsGreaterThanResolutionFraction(DateTimeResolution.Day, fraction, dateTime);
+      var result = ReadingPipeRepositoryHelper.IsGreaterThanResolutionFraction<Db.DayReading>(fraction, dateTime);
 
       // Assert
       Assert.That(result, Is.False);
@@ -98,7 +96,7 @@ namespace PowerView.Model.Test.Repository
       var fraction = 17d / 31d; // 17 out of 31 days..
 
       // Act
-      var result = TimeConverter.IsGreaterThanResolutionFraction(DateTimeResolution.Month, fraction, dateTime);
+      var result = ReadingPipeRepositoryHelper.IsGreaterThanResolutionFraction<Db.MonthReading>(fraction, dateTime);
 
       // Assert
       Assert.That(result, Is.True);
@@ -112,7 +110,7 @@ namespace PowerView.Model.Test.Repository
       var fraction = 18d / 31d; // 18 out of 31 days..
 
       // Act
-      var result = TimeConverter.IsGreaterThanResolutionFraction(DateTimeResolution.Month, fraction, dateTime);
+      var result = ReadingPipeRepositoryHelper.IsGreaterThanResolutionFraction<Db.MonthReading>(fraction, dateTime);
 
       // Assert
       Assert.That(result, Is.False);
@@ -126,7 +124,7 @@ namespace PowerView.Model.Test.Repository
       var fraction = 10d / 12d; // 10 out of 12 months..
 
       // Act
-      var result = TimeConverter.IsGreaterThanResolutionFraction(DateTimeResolution.Year, fraction, dateTime);
+      var result = ReadingPipeRepositoryHelper.IsGreaterThanResolutionFraction<Db.YearReading>(fraction, dateTime);
 
       // Assert
       Assert.That(result, Is.True);
@@ -140,7 +138,7 @@ namespace PowerView.Model.Test.Repository
       var fraction = 10d / 12d; // 10 out of 12 months..
 
       // Act
-      var result = TimeConverter.IsGreaterThanResolutionFraction(DateTimeResolution.Year, fraction, dateTime);
+      var result = ReadingPipeRepositoryHelper.IsGreaterThanResolutionFraction<Db.YearReading>(fraction, dateTime);
 
       // Assert
       Assert.That(result, Is.False);

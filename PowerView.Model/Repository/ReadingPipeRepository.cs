@@ -262,53 +262,32 @@ LIMIT @Limit
     private DateTime ChangeTimeZoneAndReduce<TDstReading>(DateTime dateTime)
       where TDstReading : class, IDbReading
     {
-      var tableName = GetTableName<TDstReading>();
-      var resolution = MapResolution(tableName);
       var zonedDateTime = locationContext.ConvertTimeFromUtc(dateTime);
-      return TimeConverter.Reduce(resolution, zonedDateTime);
+      return ReadingPipeRepositoryHelper.Reduce<TDstReading>(zonedDateTime);
     }
 
     private bool IsTimestampSatisfactory<TDstReading>(DateTime dateTime)
+      where TDstReading : class, IDbReading
     {
-      var tableName = GetTableName<TDstReading>();
-      var resolution = MapResolution(tableName);
-      var fraction = GetFraction(resolution);
+      var fraction = GetFraction<TDstReading>();
       var zonedDateTime = locationContext.ConvertTimeFromUtc(dateTime);
-      return TimeConverter.IsGreaterThanResolutionFraction(resolution, fraction, zonedDateTime);
+      return ReadingPipeRepositoryHelper.IsGreaterThanResolutionFraction<TDstReading>(fraction, zonedDateTime);
     }
 
-    private static DateTimeResolution MapResolution(string tablename)
+    private static double GetFraction<TDstReading>()
+      where TDstReading : class, IDbReading
     {
-      if (tablename == "DayReading")
+      var typeName = typeof(TDstReading).Name;
+      switch (typeName)
       {
-        return DateTimeResolution.Day;
-      }
-
-      if (tablename == "MonthReading")
-      {
-        return DateTimeResolution.Month;
-      }
-
-      if (tablename == "YearReading")
-      {
-        return DateTimeResolution.Year;
-      }
-
-      throw new NotSupportedException("Resolution not supported: " + tablename);
-    }
-
-    private static double GetFraction(DateTimeResolution resolution)
-    { 
-      switch (resolution)
-      {
-        case DateTimeResolution.Day:
+        case "DayReading":
           return 0.625; // Represents 15:00 within a 24 hour clock.
-        case DateTimeResolution.Month:
+        case "MonthReading":
           return 0.98; // 27.44 days for 28 day month and 30.38 for 31 day month.
-        case DateTimeResolution.Year:
+        case "YearReading":
           return 0.83; // 9.96 months
         default:
-          throw new NotSupportedException("Resolution not supported: " + resolution);
+          throw new NotSupportedException("Resolution not supported: " + typeName);
       }
     }
 
