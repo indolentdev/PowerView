@@ -184,6 +184,7 @@
     <Compile Include="EventHub\IHealthCheck.cs" />
     <Compile Include="EventHub\IntervalTrigger.cs" />
     <Compile Include="EventHub\IIntervalTrigger.cs" />
+    <Compile Include="EnvironmentHelper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

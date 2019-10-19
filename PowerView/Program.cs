@@ -225,14 +225,14 @@ namespace PowerView
       log.Info("============================================================================================================================");
       log.InfoFormat("Starting {0}. Version:{1}, CurrentDirectory:{2}, Config:{3}", 
                      mainClassType.Namespace, mainClassType.Assembly.GetName().Version, Environment.CurrentDirectory, configFileName);
-      log.InfoFormat(System.Globalization.CultureInfo.InvariantCulture, 
+      log.InfoFormat(CultureInfo.InvariantCulture, 
                      "Environment. CLR:{0}, HostName:{1}, OSVersion:{2}, ProcessorCount:{3}, IsLittleEndian:{4}", 
-                     Environment.Version, Environment.MachineName, Environment.OSVersion, Environment.ProcessorCount, 
-                     BitConverter.IsLittleEndian);
-      log.InfoFormat(System.Globalization.CultureInfo.InvariantCulture, 
-                     "Environment. 64BitOs:{0}, 64BitProcess:{1}, UserName:{2}", Environment.Is64BitOperatingSystem, Environment.Is64BitProcess, Environment.UserName);
-      log.InfoFormat(System.Globalization.CultureInfo.InvariantCulture, 
-                     "Environment. Culture:{0}, UICulture:{1}", System.Threading.Thread.CurrentThread.CurrentCulture, System.Threading.Thread.CurrentThread.CurrentUICulture);
+                     Environment.Version, Environment.MachineName, Environment.OSVersion, Environment.ProcessorCount, BitConverter.IsLittleEndian);
+      log.InfoFormat(CultureInfo.InvariantCulture, 
+                     "Environment. 64BitOs:{0}, 64BitProcess:{1}, UserName:{2}", 
+                      Environment.Is64BitOperatingSystem, Environment.Is64BitProcess, Environment.UserName);
+      log.InfoFormat(CultureInfo.InvariantCulture, "Environment. Culture:{0}, UICulture:{1}, MonoRuntimeVersion:{2}", 
+        Thread.CurrentThread.CurrentCulture, Thread.CurrentThread.CurrentUICulture, EnvironmentHelper.GetMonoRuntimeVersion());
     }
 
     private static void AppDomainCurrentDomainUnhandledException (object sender, UnhandledExceptionEventArgs e)

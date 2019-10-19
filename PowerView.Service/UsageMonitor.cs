@@ -39,7 +39,7 @@ namespace PowerView.Service
       }
     }
 
-    public void TrackDing(string sqliteVersion)
+    public void TrackDing(string sqliteVersion, string monoRuntimeVersion)
     {
       var props = new Dictionary<string, object>
       {
@@ -52,7 +52,8 @@ namespace PowerView.Service
 
         { "Env Is 64bit process", ToString(Environment.Is64BitProcess) },
 
-        { "Env Sqlite Version", sqliteVersion != null ? sqliteVersion : "null" }
+        { "Env Sqlite Version", sqliteVersion != null ? sqliteVersion : "null" },
+        { "Env Mono Runtime Version", monoRuntimeVersion != null ? monoRuntimeVersion : "null" },
       };
       Track("Ding", props);
     }

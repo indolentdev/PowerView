@@ -33,9 +33,11 @@ namespace PowerView.Service.EventHub
         sqliteVersion = envRepository.Value.GetSqliteVersion();
       }
 
+      var monoRuntimeVersion = EnvironmentHelper.GetMonoRuntimeVersion(); 
+
       using (var usageMonitor = factory.Create<IUsageMonitor>())
       {
-        usageMonitor.Value.TrackDing(sqliteVersion);
+        usageMonitor.Value.TrackDing(sqliteVersion, monoRuntimeVersion);
       }
     }
 
