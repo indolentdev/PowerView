@@ -33,10 +33,11 @@ namespace PowerView.Service.EventHub
         
       using (var ownedDbCheck = factory.Create<IDbCheck>())
       {
-        log.InfoFormat("Performing database check");
+        log.Info("Performing database check");
         try
         {
           ownedDbCheck.Value.CheckDatabase();
+          log.Info("Database check completed");
         }
         catch (DataStoreCorruptException e)
         {
@@ -46,6 +47,7 @@ namespace PowerView.Service.EventHub
              ownedExitSignalProvider.Value.FireExitEvent();
           }
         }
+
       }
 
       intervalTrigger.Advance(dateTime);
