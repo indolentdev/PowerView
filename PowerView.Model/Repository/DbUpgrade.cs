@@ -50,7 +50,7 @@ namespace PowerView.Model.Repository
 
           DbContext.ExecuteTransaction("ApplySchemaUpdates", "UPDATE Version SET Number = @NewNumber WHERE Number = @OldNumber AND Timestamp = @Timestamp;",
             new { OldNumber = newVersion.Number, newVersion.Timestamp, NewNumber = dbUpgradeResource.Version });
-          log.InfoFormat("Database schema update complete");
+          log.Info("Database schema update complete");
         }
       }
     }
@@ -105,8 +105,15 @@ namespace PowerView.Model.Repository
 
     private static IEnumerable<DbUpgradeResource> GetUpgradeManifestResources(long currentVersion)
     {
-      var resources = GetUpgradeManifestResources();
-      return resources.OrderBy(i => i.Version).Where(i => i.Version > currentVersion);
+      var resources = GetUpgradeManifestResources().OrderBy(i => i.Version).ToList();
+      var applicationExpectedVersion = resources.Last().Version;
+      if (currentVersion > applicationExpectedVersion)
+      {
+        log.WarnFormat(CultureInfo.InvariantCulture, 
+          "Database schema version greater than expected. Was:{0}. Expected:{1}. PowerView may not function. It may help upgrading to a newer PowerView version.",
+          currentVersion, applicationExpectedVersion);
+      }
+      return resources.Where(i => i.Version > currentVersion);
     }
 
     private static IEnumerable<DbUpgradeResource> GetUpgradeManifestResources()
@@ -124,7 +131,7 @@ namespace PowerView.Model.Repository
         long version;
         if (!long.TryParse(versionElement, NumberStyles.Integer, CultureInfo.InvariantCulture, out version))
         {
-          log.ErrorFormat("Unable to parse db version element from resource upgrade name. Skipping resource. ResourceName:{0}, VersionElement:{1}",
+          log.ErrorFormat(CultureInfo.InvariantCulture, "Unable to parse db version element from resource upgrade name. Skipping resource. ResourceName:{0}, VersionElement:{1}",
                           resourceName, versionElement);
           continue;
         }
