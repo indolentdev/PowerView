@@ -144,7 +144,7 @@ namespace PowerView.Service.Test.Mailer
       AssertMailboxAddress(smtpUser, "PowerView", mimeMessage.From);
       AssertMailboxAddress(toAddr, toName, mimeMessage.To);
       Assert.That(mimeMessage.Subject, Is.EqualTo(subject));
-      Assert.That(mimeMessage.TextBody, Is.EqualTo(message + "\r\n"));
+      Assert.That(mimeMessage.TextBody, Is.EqualTo(message + System.Environment.NewLine));
 
       AssertMailboxAddress(toAddr, toName, mimeMessage.ReplyTo);
       Assert.That(mimeMessage.Cc, Is.Empty);
