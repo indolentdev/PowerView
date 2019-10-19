@@ -9,6 +9,7 @@ import { DisconnectRuleSet } from '../model/disconnectRuleSet';
 import { DisconnectRuleOptionSet } from '../model/disconnectRuleOptionSet';
 import { EmailRecipient } from '../model/emailRecipient';
 import { EmailRecipientSet } from '../model/emailRecipientSet';
+import { ApplicationProperties } from '../model/applicationProperties';
 import { MqttParams } from '../model/mqttParams';
 import { ProfileGraph } from '../model/profileGraph';
 import { ProfileGraphSet } from '../model/profileGraphSet';
@@ -25,6 +26,7 @@ const constLocal = {
   disconnectrulesNames: "settings/disconnectrules/names",
   disconnectrulesOptions: "settings/disconnectrules/options",
   emailRecipients: "settings/emailrecipients",
+  application: "settings/application",
   mqtt: "settings/mqtt",
   mqttTest: "settings/mqtt/test",
   profileGraphs: "settings/profilegraphs",
@@ -244,6 +246,10 @@ export class SettingsService {
 
   public saveSerieColors(serieColorSet: SerieColorSet): Observable<any> {
     return this.dataService.put(constLocal.serieColors, serieColorSet);
+  }
+
+  public getApplicationProperties(): Observable<ApplicationProperties> {
+    return this.dataService.get<ApplicationProperties>(constLocal.application, undefined);
   }
 
   public getMqttParams(): Observable<MqttParams> {

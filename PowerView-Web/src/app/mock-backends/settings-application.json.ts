@@ -1,0 +1,1 @@
+export let settingsApplication = {"version":"0.0.28","culture":"dansk (Danmark)","timeZone":"Europe/Copenhagen"};

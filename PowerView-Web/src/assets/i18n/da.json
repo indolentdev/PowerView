@@ -33,7 +33,10 @@
     "chooseMonth": "Vælg måned",
     "chooseYear": "Vælg årstal",
     "forExampleProfileGraph": "Eksempel: For at tilføje en profil graf med serier vælg 'Indstillinger' derefter 'Profil Grafer'.",
-    "noDataFound": "Ingen data fundet"
+    "noDataFound": "Ingen data fundet",
+    "serverVersion": "Server version:",
+    "serverLanguage": "Server sprog:",
+    "serverTimeZone": "Server tidszone:"
   },
 
   "headings": {

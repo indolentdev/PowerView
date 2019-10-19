@@ -1,7 +1,6 @@
 ﻿using System;
 using Nancy;
 using PowerView.Model;
-using PowerView.Model.Repository;
 
 namespace PowerView.Service.Modules
 {

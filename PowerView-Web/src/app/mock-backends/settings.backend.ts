@@ -4,6 +4,7 @@ import { Observable, throwError } from 'rxjs';
 import { settingsDisconnectrules } from './settings-disconnectrules.json';
 import { settingsDisconnectrulesOptions } from './settings-disconnectrules-options.json';
 import { settingsEmailRecipients } from './settings-email-recipients.json';
+import { settingsApplication } from './settings-application.json';
 import { settingsMqtt } from './settings-mqtt.json';
 import { settingsProfilePageNames } from './settings-profile-page-names.json.js';
 import { settingsProfileGraphs } from './settings-profile-graphs.json';
@@ -108,6 +109,20 @@ export function settingsBackend(url: string, method: string, request: HttpReques
                     server: settingsMqtt.server,
                     port: settingsMqtt.port,
                     publishEnabled: settingsMqtt.publishEnabled
+                }
+            }));
+            resp.complete();
+        });
+    }
+
+    if (url.indexOf('settings/application') > -1 && method === "GET") {
+        return new Observable(resp => {
+            resp.next(new HttpResponse({
+                status: 200,
+                body: {
+                    version: settingsApplication.version,
+                    culture: settingsApplication.culture,
+                    timeZone: settingsApplication.timeZone
                 }
             }));
             resp.complete();

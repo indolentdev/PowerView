@@ -33,7 +33,10 @@
     "chooseMonth": "Choose month",
     "chooseYear": "Choose year",
     "forExampleProfileGraph": "For example: To add a profile graph with series go to 'Settings' then 'ProfileGraphs'.",
-    "noDataFound": "No data found"
+    "noDataFound": "No data found",
+    "serverVersion": "Server version:",
+    "serverLanguage": "Server language:",
+    "serverTimeZone": "Server time zone:"
   },
 
   "headings": {
