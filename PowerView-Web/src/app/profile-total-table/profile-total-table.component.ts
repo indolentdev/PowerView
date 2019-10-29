@@ -13,7 +13,7 @@ export class ProfileTotalTableComponent implements OnInit, OnChanges {
   displayedColumns = ['serie', 'value', 'unit'];
   dataSource: MatTableDataSource<any>;
 
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   @Input('profileTotalValues') profileTotalValues: ProfileTotalValue[];
 

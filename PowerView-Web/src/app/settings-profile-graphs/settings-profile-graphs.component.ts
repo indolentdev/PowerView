@@ -25,7 +25,7 @@ export class SettingsProfileGraphsComponent implements OnInit {
   profileGraphGroups: ProfileGraph[][];
 
   formGroup: FormGroup;
-  @ViewChild('form') form;
+  @ViewChild('form', { static: true }) form;
 
   constructor(private log: NGXLogger, private settingsService: SettingsService, private snackBar: MatSnackBar, private translateService: TranslateService, private serieService: SerieService, private menuService: MenuService) {
   }

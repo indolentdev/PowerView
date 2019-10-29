@@ -13,7 +13,7 @@ export class SettingsProfileGraphsTableComponent implements OnInit, OnChanges {
   displayedColumns = ['title', 'interval', 'series', 'actions'];
   dataSource: MatTableDataSource<any>;
 
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   @Input('profileGraphs') profileGraphs: ProfileGraph[];
 

@@ -17,7 +17,7 @@ export class SettingsRecipientsComponent implements OnInit {
   private snackBarRef:  MatSnackBarRef<SimpleSnackBar>;
   emailRecipientSet: EmailRecipientSet;
   formGroup: FormGroup;
-  @ViewChild('form') form;
+  @ViewChild('form', { static: true }) form;
 
   constructor(private log: NGXLogger, private settingsService: SettingsService, private snackBar: MatSnackBar, private serieService: SerieService, private translateService: TranslateService) {
   }

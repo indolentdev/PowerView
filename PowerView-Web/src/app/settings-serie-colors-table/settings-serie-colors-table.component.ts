@@ -13,7 +13,7 @@ export class SettingsSerieColorsTableComponent implements OnInit, OnChanges {
   displayedColumns = ['serie', 'color'];
   dataSource: MatTableDataSource<any>;
 
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   @Input('serieColorSet') serieColorSet: SerieColorSet;
 

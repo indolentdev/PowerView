@@ -14,7 +14,7 @@ export class SettingsRecipientsTableComponent implements OnInit, OnChanges {
   displayedColumns = ['name', 'emailAddress', 'actions'];
   dataSource: MatTableDataSource<any>;
 
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   @Input('emailRecipientSet') emailRecipientSet: EmailRecipientSet;
 

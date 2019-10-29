@@ -15,7 +15,7 @@ export class EventsTableComponent implements OnInit, OnChanges {
   displayedColumns = ['detectTimestamp', 'label', 'event', 'state', 'details' ];
   dataSource: MatTableDataSource<any>;
 
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   @Input('eventSet') eventSet: EventSet;
 

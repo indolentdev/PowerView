@@ -13,7 +13,7 @@ export class GaugesTableComponent implements OnInit, OnChanges {
   displayedColumns = ['serie', 'timestamp', 'gaugeValue', 'unit', 'serialNumber'];
   dataSource: MatTableDataSource<any>;
 
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   @Input('gaugeValueGroup') gaugeValueGroup: GaugeValueGroup;
 

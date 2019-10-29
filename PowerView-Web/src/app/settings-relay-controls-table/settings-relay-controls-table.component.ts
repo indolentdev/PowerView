@@ -14,7 +14,7 @@ export class SettingsRelayControlsTableComponent implements OnInit, OnChanges {
   displayedColumns = ['nameSerie', 'evaluationSerie', 'durationMinutes', 'disconnectToConnectValue', 'connectToDisconnectValue', 'actions'];
   dataSource: MatTableDataSource<any>;
 
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   @Input('disconnectRuleSet') disconnectRuleSet: DisconnectRuleSet;
 

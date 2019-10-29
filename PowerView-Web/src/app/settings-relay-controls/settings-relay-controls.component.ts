@@ -38,7 +38,7 @@ export class SettingsRelayControlsComponent implements OnInit {
 
   formGroup: FormGroup;
   errorMatcher = new CrossFieldErrorMatcher();
-  @ViewChild('form') form;
+  @ViewChild('form', { static: true }) form;
 
   constructor(private log: NGXLogger, private settingsService: SettingsService, private snackBar: MatSnackBar, private serieService: SerieService, private translateService: TranslateService) {
   }

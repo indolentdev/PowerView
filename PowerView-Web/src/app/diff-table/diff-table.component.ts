@@ -13,7 +13,7 @@ export class DiffTableComponent implements OnInit, OnChanges {
   displayedColumns = ['serie', 'from', 'to', 'value', 'unit'];
   dataSource: MatTableDataSource<any>;
 
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   @Input('diffValueSet') diffValueSet: DiffValueSet;
 
