@@ -1,4 +1,4 @@
-PowerView version 0.0.28 - Xxxx 2019
+PowerView version 0.0.28 - November 2019
 - Improved graph series to always show the full period - even
   if values are missing.
 - Calculated power and flow series are actually average values. Now they are 
