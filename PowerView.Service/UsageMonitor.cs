@@ -47,14 +47,15 @@ namespace PowerView.Service
         { "Env IsLittleEndian", ToString(BitConverter.IsLittleEndian) },
         { "Env OS Version", ToString(Environment.OSVersion) },
         { "Env Is 64bit OS", ToString(Environment.Is64BitOperatingSystem) },
-
         { "Env CLR Version", ToString(Environment.Version) },
-
         { "Env Is 64bit process", ToString(Environment.Is64BitProcess) },
 
         { "Env Sqlite Version", sqliteVersion != null ? sqliteVersion : "null" },
         { "Env Mono Runtime Version", monoRuntimeVersion != null ? monoRuntimeVersion : "null" },
+
+        { "Application Version", GetType().Assembly.GetName().Version.ToString(3) }
       };
+
       Track("Ding", props);
     }
 
