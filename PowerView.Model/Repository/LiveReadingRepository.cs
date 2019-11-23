@@ -38,7 +38,7 @@ namespace PowerView.Model.Repository
         // then insert the registers
         var dbLiveRegisters = GetDbLiveRegisters(dbLiveReadingsMap);
         DbContext.Connection.Execute(
-          "INSERT INTO LiveRegister (ObisCode, Value, Scale, Unit, ReadingId) VALUES (@ObisCode, @Value, @Scale, @Unit, @ReadingId);",
+          "INSERT INTO LiveRegister (ReadingId, ObisCode, Value, Scale, Unit) VALUES (@ReadingId, @ObisCode, @Value, @Scale, @Unit);",
           dbLiveRegisters, transaction);
         transaction.Commit();
       }
@@ -55,7 +55,7 @@ namespace PowerView.Model.Repository
       {
         foreach (var lr in entry.Value.GetRegisterValues())
         {
-          yield return new Db.LiveRegister { ObisCode = lr.ObisCode, Value = lr.Value, Scale = lr.Scale, Unit = (byte)lr.Unit, ReadingId = entry.Key.Id };
+          yield return new Db.LiveRegister { ReadingId = entry.Key.Id, ObisCode = lr.ObisCode, Value = lr.Value, Scale = lr.Scale, Unit = (byte)lr.Unit };
         }
       }
     }

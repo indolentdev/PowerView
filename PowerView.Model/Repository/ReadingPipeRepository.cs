@@ -88,11 +88,7 @@ namespace PowerView.Model.Repository
 
       log.DebugFormat("Querying for labels from {0}", tableName);
 
-      var sqlQuery = @"
-SELECT Label, MAX(Timestamp) AS MaxTimeStampUnix
-FROM {0}
-GROUP BY Label
-";
+      var sqlQuery = "SELECT Label, MAX(Timestamp) AS MaxTimeStampUnix FROM {0} GROUP BY Label;";
       sqlQuery = string.Format(CultureInfo.InvariantCulture, sqlQuery, tableName);
       var resultSet = DbContext.QueryTransaction<dynamic>("GetLabelMaxTimestamps", sqlQuery);
       foreach (dynamic row in resultSet)
@@ -139,11 +135,7 @@ GROUP BY Label
 
       log.DebugFormat("Querying for labels from {0}", tableName);
 
-      var sqlQuery = @"
-SELECT DISTINCT Label
-FROM {0}
-WHERE Timestamp > @Timestamp
-";
+      var sqlQuery = "SELECT DISTINCT Label FROM {0} WHERE Timestamp > @Timestamp;";
       sqlQuery = string.Format(CultureInfo.InvariantCulture, sqlQuery, tableName);
       var resultSet = DbContext.QueryTransaction<dynamic>("GetLabels", sqlQuery, new { Timestamp = timestamp });
       foreach (dynamic row in resultSet)
@@ -163,13 +155,7 @@ WHERE Timestamp > @Timestamp
 
       log.DebugFormat("Querying for {0} readings from position {1}", label, position);
 
-      var sqlQuery = @"
-SELECT *
-FROM {0}
-WHERE Id > @Position AND Label = @Label
-ORDER BY Id ASC
-LIMIT @Limit 
-";
+      var sqlQuery = "SELECT * FROM {0} WHERE Id > @Position AND Label = @Label ORDER BY Id ASC LIMIT @Limit;";
       sqlQuery = string.Format(CultureInfo.InvariantCulture, sqlQuery, tableName);
       var args = new { Label = label, Position = position, Limit = limit };
       var resultSet = DbContext.QueryTransaction<TSrcReading>("GetReadings", sqlQuery, args);
@@ -366,7 +352,7 @@ LIMIT @Limit
         {
           register.ReadingId = dstReading.Id;
         }
-        sql = "INSERT INTO {0} (ObisCode,Value,Scale,Unit,ReadingId) VALUES (@ObisCode,@Value,@Scale,@Unit,@ReadingId);";
+        sql = "INSERT INTO {0} (ReadingId,ObisCode,Value,Scale,Unit) VALUES (@ReadingId,@ObisCode,@Value,@Scale,@Unit);";
         sql = string.Format(CultureInfo.InvariantCulture, sql, dstRegisterTable);
         DbContext.Connection.Execute(sql, registers, transaction);
 

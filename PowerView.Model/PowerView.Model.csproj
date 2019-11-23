@@ -204,6 +204,8 @@
     <EmbeddedResource Include="Repository\DbVersion\16\ddl.sql" />
     <EmbeddedResource Include="Repository\DbVersion\17\ddl.sql" />
     <EmbeddedResource Include="Repository\DbVersion\18\ddl.sql" />
+    <EmbeddedResource Include="Repository\DbVersion\19\ddl.sql" />
+    <EmbeddedResource Include="Repository\DbVersion\20\ddl.sql" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Repository\" />
@@ -226,5 +228,7 @@
     <Folder Include="Repository\DbVersion\17\" />
     <Folder Include="SeriesGenerators\" />
     <Folder Include="Repository\DbVersion\18\" />
+    <Folder Include="Repository\DbVersion\19\" />
+    <Folder Include="Repository\DbVersion\20\" />
   </ItemGroup>
 </Project>

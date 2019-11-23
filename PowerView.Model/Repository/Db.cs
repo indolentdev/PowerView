@@ -14,7 +14,7 @@ namespace PowerView.Model.Repository
     DateTime Timestamp { get; set; }
   }
 
-  public interface IDbRegister : IDbEntity
+  public interface IDbRegister
   {
     long ObisCode { get; set; }
     int Value { get; set; }
@@ -35,12 +35,11 @@ namespace PowerView.Model.Repository
 
     public class LiveRegister : IDbRegister
     {
-      public long Id { get; set; }
+      public long ReadingId { get; set; }
       public long ObisCode { get; set; }
       public int Value { get; set; }
       public short Scale { get; set; }
       public byte Unit { get; set; }
-      public long ReadingId { get; set; }
     }
 
     public class DayReading : IDbReading

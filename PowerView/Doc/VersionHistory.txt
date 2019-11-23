@@ -1,3 +1,6 @@
+PowerView version 0.0.29 - Xxx 2020
+- Database size reduction
+
 PowerView version 0.0.28 - November 2019
 - Improved graph series to always show the full period - even
   if values are missing.
