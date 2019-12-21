@@ -26,7 +26,7 @@
     "@ngx-loading-bar/http-client": "^4.2.0",
     "@ngx-translate/core": "^11.0.1",
     "@ngx-translate/http-loader": "^4.0.0",
-    "core-js": "^2.6.11",
+    "core-js": "^3.6.0",
     "highcharts": "^7.2.1",
     "highcharts-angular": "^2.4.0",
     "moment": "^2.24.0",
