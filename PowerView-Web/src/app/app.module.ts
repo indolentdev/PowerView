@@ -44,8 +44,8 @@ import { ProfileMonthComponent } from './components/profiles/profile-month/profi
 import { ProfileYearComponent } from './components/profiles/profile-year/profile-year.component';
 import { EventsLatestComponent } from './components/events/events-latest/events-latest.component';
 import { EventsTableComponent } from './components/events/events-table/events-table.component';
-import { SettingsSerieColorsComponent } from './components/settings/settings-serie-colors/settings-serie-colors.component';
-import { SettingsSerieColorsTableComponent } from './components/settings/settings-serie-colors-table/settings-serie-colors-table.component';
+import { SettingsSeriesColorsComponent } from './components/settings/settings-series-colors/settings-series-colors.component';
+import { SettingsSeriesColorsTableComponent } from './components/settings/settings-series-colors-table/settings-series-colors-table.component';
 import { SettingsMqttComponent } from './components/settings/settings-mqtt/settings-mqtt.component';
 import { SettingsRelayControlsComponent } from './components/settings/settings-relay-controls/settings-relay-controls.component';
 import { SettingsRelayControlsTableComponent } from './components/settings/settings-relay-controls-table/settings-relay-controls-table.component';
@@ -102,8 +102,8 @@ if (environment.useMockBackend == true) {
     ProfileYearComponent,
     EventsLatestComponent,
     EventsTableComponent,
-    SettingsSerieColorsComponent,
-    SettingsSerieColorsTableComponent,
+    SettingsSeriesColorsComponent,
+    SettingsSeriesColorsTableComponent,
     SettingsMqttComponent,
     SettingsRelayControlsComponent,
     SettingsRelayControlsTableComponent,

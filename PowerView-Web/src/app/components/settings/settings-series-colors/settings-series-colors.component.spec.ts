@@ -10,13 +10,13 @@ import { of } from 'rxjs';
 import { SettingsService } from '../../../services/settings.service';
 import { SerieColorSet } from '../../../model/serieColorSet';
 import { mock, instance, when, verify } from 'ts-mockito';
-import { SettingsSerieColorsTableComponent } from '../settings-serie-colors-table/settings-serie-colors-table.component';
+import { SettingsSeriesColorsTableComponent } from '../settings-series-colors-table/settings-series-colors-table.component';
 
-import { SettingsSerieColorsComponent } from './settings-serie-colors.component';
+import { SettingsSeriesColorsComponent } from './settings-series-colors.component';
 
 describe('SettingsSerieColorsComponent', () => {
-  let component: SettingsSerieColorsComponent;
-  let fixture: ComponentFixture<SettingsSerieColorsComponent>;
+  let component: SettingsSeriesColorsComponent;
+  let fixture: ComponentFixture<SettingsSeriesColorsComponent>;
 
   let log = mock(NGXLogger);    
   let settingsService = mock(SettingsService);
@@ -25,8 +25,8 @@ describe('SettingsSerieColorsComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ 
-        SettingsSerieColorsComponent,
-        SettingsSerieColorsTableComponent 
+        SettingsSeriesColorsComponent,
+        SettingsSeriesColorsTableComponent 
       ],
       imports: [
         HttpClientTestingModule,
@@ -53,7 +53,7 @@ describe('SettingsSerieColorsComponent', () => {
   beforeEach(() => {
     when(settingsService.getSerieColors()).thenReturn(of(new SerieColorSet()));
 
-    fixture = TestBed.createComponent(SettingsSerieColorsComponent);
+    fixture = TestBed.createComponent(SettingsSeriesColorsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

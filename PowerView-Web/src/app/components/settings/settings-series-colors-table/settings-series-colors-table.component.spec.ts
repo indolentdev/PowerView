@@ -12,18 +12,18 @@ import { SerieService } from '../../../services/serie.service';
 
 import { mock, instance, when, verify } from 'ts-mockito';
 
-import { SettingsSerieColorsTableComponent } from './settings-serie-colors-table.component';
+import { SettingsSeriesColorsTableComponent } from './settings-series-colors-table.component';
 
 describe('SettingsSerieColorsTableComponent', () => {
-  let component: SettingsSerieColorsTableComponent;
-  let fixture: ComponentFixture<SettingsSerieColorsTableComponent>;
+  let component: SettingsSeriesColorsTableComponent;
+  let fixture: ComponentFixture<SettingsSeriesColorsTableComponent>;
 
   let log = mock(NGXLogger);    
   let serieService = mock(SerieService);
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SettingsSerieColorsTableComponent ],
+      declarations: [ SettingsSeriesColorsTableComponent ],
       imports: [
         HttpClientTestingModule,
         TranslateModule.forRoot({
@@ -47,7 +47,7 @@ describe('SettingsSerieColorsTableComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SettingsSerieColorsTableComponent);
+    fixture = TestBed.createComponent(SettingsSeriesColorsTableComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

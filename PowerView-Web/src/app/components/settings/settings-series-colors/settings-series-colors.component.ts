@@ -6,11 +6,11 @@ import { SettingsService } from '../../../services/settings.service';
 import { SerieColorSet } from '../../../model/serieColorSet';
 
 @Component({
-  selector: 'app-settings-serie-colors',
-  templateUrl: './settings-serie-colors.component.html',
-  styleUrls: ['./settings-serie-colors.component.css']
+  selector: 'app-settings-series-colors',
+  templateUrl: './settings-series-colors.component.html',
+  styleUrls: ['./settings-series-colors.component.css']
 })
-export class SettingsSerieColorsComponent implements OnInit {
+export class SettingsSeriesColorsComponent implements OnInit {
   private snackBarRef:  MatSnackBarRef<SimpleSnackBar>;
   serieColorSet: SerieColorSet;
 

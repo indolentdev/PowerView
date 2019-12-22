@@ -5,11 +5,11 @@ import { SerieService } from '../../../services/serie.service';
 import { SerieColorSet } from '../../../model/serieColorSet';
 
 @Component({
-  selector: 'app-settings-serie-colors-table',
-  templateUrl: './settings-serie-colors-table.component.html',
-  styleUrls: ['./settings-serie-colors-table.component.css']
+  selector: 'app-settings-series-colors-table',
+  templateUrl: './settings-series-colors-table.component.html',
+  styleUrls: ['./settings-series-colors-table.component.css']
 })
-export class SettingsSerieColorsTableComponent implements OnInit, OnChanges {
+export class SettingsSeriesColorsTableComponent implements OnInit, OnChanges {
   displayedColumns = ['serie', 'color'];
   dataSource: MatTableDataSource<any>;
 
