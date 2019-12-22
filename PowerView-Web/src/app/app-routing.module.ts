@@ -1,22 +1,22 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { DefaultComponent } from './default/default.component';
-import { ProfileLast24hComponent } from './profile-last24h/profile-last24h.component';
-import { ProfileLast31dComponent } from './profile-last31d/profile-last31d.component';
-import { ProfileDayComponent } from './profile-day/profile-day.component';
-import { ProfileMonthComponent } from './profile-month/profile-month.component';
-import { ProfileLast12mComponent } from './profile-last12m/profile-last12m.component';
-import { ProfileYearComponent } from './profile-year/profile-year.component';
-import { DiffBydatesComponent } from './diff-bydates/diff-bydates.component';
-import { GaugesLatestComponent } from './gauges-latest/gauges-latest.component';
-import { GaugesBydateComponent } from './gauges-bydate/gauges-bydate.component';
-import { EventsLatestComponent } from './events-latest/events-latest.component';
-import { SettingsSerieColorsComponent } from './settings-serie-colors/settings-serie-colors.component';
-import { SettingsProfileGraphsComponent } from './settings-profile-graphs/settings-profile-graphs.component';
-import { SettingsRecipientsComponent } from './settings-recipients/settings-recipients.component';
-import { SettingsRelayControlsComponent } from './settings-relay-controls/settings-relay-controls.component';
-import { SettingsSmtpComponent } from './settings-smtp/settings-smtp.component';
-import { SettingsMqttComponent } from './settings-mqtt/settings-mqtt.component';
+import { DefaultComponent } from './components/default/default.component';
+import { ProfileLast24hComponent } from './components/profiles/profile-last24h/profile-last24h.component';
+import { ProfileLast31dComponent } from './components/profiles/profile-last31d/profile-last31d.component';
+import { ProfileDayComponent } from './components/profiles/profile-day/profile-day.component';
+import { ProfileMonthComponent } from './components/profiles/profile-month/profile-month.component';
+import { ProfileLast12mComponent } from './components/profiles/profile-last12m/profile-last12m.component';
+import { ProfileYearComponent } from './components/profiles/profile-year/profile-year.component';
+import { DiffBydatesComponent } from './components/diff/diff-bydates/diff-bydates.component';
+import { GaugesLatestComponent } from './components/gauges/gauges-latest/gauges-latest.component';
+import { GaugesBydateComponent } from './components/gauges/gauges-bydate/gauges-bydate.component';
+import { EventsLatestComponent } from './components/events/events-latest/events-latest.component';
+import { SettingsSerieColorsComponent } from './components/settings/settings-serie-colors/settings-serie-colors.component';
+import { SettingsProfileGraphsComponent } from './components/settings/settings-profile-graphs/settings-profile-graphs.component';
+import { SettingsRecipientsComponent } from './components/settings/settings-recipients/settings-recipients.component';
+import { SettingsRelayControlsComponent } from './components/settings/settings-relay-controls/settings-relay-controls.component';
+import { SettingsSmtpComponent } from './components/settings/settings-smtp/settings-smtp.component';
+import { SettingsMqttComponent } from './components/settings/settings-mqtt/settings-mqtt.component';
 
 const routes: Routes = [
   { path: 'profile/last24h', component: ProfileLast24hComponent },

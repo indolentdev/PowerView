@@ -8,7 +8,7 @@ import { TestBed, async } from '@angular/core/testing';
 import { TranslateLoader, TranslateModule, TranslateService } from "@ngx-translate/core";
 import { RouterModule, Routes } from '@angular/router';
 import { AppComponent } from './app.component';
-import { TopComponent } from './top/top.component';
+import { TopComponent } from './components/top/top.component';
 import { HttpLoaderFactory } from "./app.module";
 
 import { MatMenuModule, MatButtonModule, MatTableModule } from '@angular/material';
