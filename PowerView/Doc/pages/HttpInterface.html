@@ -17,7 +17,7 @@
 
 <p>Endpoint for ingesting metering values into PowerView for storage and presentation.</p> 
 
-<p>Example Request:</p>
+<p>Request:</p>
 
 <pre>
 POST /api/devices/livereadings HTTP/1.1
@@ -25,48 +25,59 @@ Host: [IP-Address-Or-HostName]:47362
 Content-Type: application/json
 </pre>
 
-<p>Content Property Description:</p>
+<p>Request Content Property Description:</p>
 
 <table border="1" style="width:1000px">
  <tr>
    <td>Property Name</td>
    <td>Description</td>
+   <td>Data type</td>
  </tr>
  <tr>
    <td>Items</td>
    <td>Array of meter reading objects</td>
+   <td>array</td>
  </tr>
  <tr>
    <td>Label</td>
    <td>The user defined name of the metering performed. The label value should remain unchanged if the physical meter is replaced.</td>
+   <td>string</td>
  </tr>
  <tr>
    <td>SerialNumber</td>
    <td>The serial number or id of the meter from which the register values originates. This value should change whenever the meter is exchanged.</td>
+   <td>number</td>
  </tr>
  <tr>
    <td>Timestamp</td>
-   <td>The universal coordinated time of the register values. Applies format: YYYY-MM-DDTHH-MM-SSZ</td>
+   <td>The universal coordinated time of the register values.</td>
+   <td>string. Applies format: yyyy-MM-ddTHH-mm-ssZ. yyyy: 4 digit year. MM: 2 digit month. dd: 2 digit day. HH: 2 digit 24h hour.
+   mm: 2 digit minute. ss: 2 digit second.</td>
  </tr>
  <tr>
    <td>RegisterValues</td>
    <td>Array of register values read of the meter</td>
+   <td>array</td>
  </tr> 
  <tr>
    <td>ObisCode</td>
    <td>The DLMS/COSEM ObisCode identifying the value measured</td>
+   <td>string</td>
  </tr> 
  <tr>
    <td>Value</td>
    <td>The numeric value of the register. Consists only of digits, no thousand seperators or decimal points.</td>
+   <td>number</td>
  </tr> 
  <tr>
    <td>Scale</td>
    <td>The numer value which is the power of 10 multiplied with Value. Set to 0 to apply Value without multiplier.</td>
+   <td>number</td>
  </tr> 
  <tr>
    <td>Unit</td>
    <td>The unit of the value represent by Value and Scale.</td>
+   <td>string</td>
  </tr> 
 </table>
 
