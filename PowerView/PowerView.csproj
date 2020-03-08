@@ -139,6 +139,9 @@
       <Link>Mono.Data.Sqlite.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Doc\pages\HttpInterface.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PowerView.Model\PowerView.Model.csproj">

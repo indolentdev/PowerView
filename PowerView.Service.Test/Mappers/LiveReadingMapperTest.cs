@@ -29,41 +29,31 @@ namespace PowerView.Service.Test.Mappers
     }
 
     [Test]
-    public void MapBadJsonThrows()
+    [TestCase("Bad JSON", "Json invalid")]
+    [TestCase("{}", "Items array absent")]
+    [TestCase("{\"Items\":[{\"SerialNumber\":\"sn\",\"Timestamp\":\"2020-03-07T21:44:22Z\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":2,\"Scale\":1,\"Unit\":\"watt\"}]}]}", "Label property absent")]
+    [TestCase("{\"Items\":[{\"Label\":null,\"SerialNumber\":\"sn\",\"Timestamp\":\"2020-03-07T21:44:22Z\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":2,\"Scale\":1,\"Unit\":\"watt\"}]}]}", "Label property null")]
+    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"Timestamp\":\"2020-03-07T21:44:22Z\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":2,\"Scale\":1,\"Unit\":\"watt\"}]}]}", "SerialNumber property absent")]
+    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"SerialNumber\":null,\"Timestamp\":\"2020-03-07T21:44:22Z\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":2,\"Scale\":1,\"Unit\":\"watt\"}]}]}", "SerialNumber property null")]
+    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"SerialNumber\":\"sn\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":2,\"Scale\":1,\"Unit\":\"watt\"}]}]}", "Timestamp property absent")]
+    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"SerialNumber\":\"sn\",\"Timestamp\":\"2020-03-07Q21:44:22Z\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":2,\"Scale\":1,\"Unit\":\"watt\"}]}]}", "Timestamp property invalid format")]
+    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"SerialNumber\":\"sn\",\"Timestamp\":\"2020-03-07T21:44:22\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":2,\"Scale\":1,\"Unit\":\"watt\"}]}]}", "Timestamp property not UTC")]
+    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"SerialNumber\":\"sn\",\"Timestamp\":\"2020-03-07T21:44:22Z\"}]}", "RegisterValues property absent")]
+    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"SerialNumber\":\"sn\",\"Timestamp\":\"2020-03-07T21:44:22Z\",\"RegisterValues\":[{\"Value\":2,\"Scale\":1,\"Unit\":\"watt\"}]}]}", "ObisCode property absent")]
+    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"SerialNumber\":\"sn\",\"Timestamp\":\"2020-03-07T21:44:22Z\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Scale\":1,\"Unit\":\"watt\"}]}]}", "Value property absent")]
+    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"SerialNumber\":\"sn\",\"Timestamp\":\"2020-03-07T21:44:22Z\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":\"BAD\",\"Scale\":1,\"Unit\":\"watt\"}]}]}", "Value property invalid")]
+    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"SerialNumber\":\"sn\",\"Timestamp\":\"2020-03-07T21:44:22Z\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":2,\"Unit\":\"watt\"}]}]}", "Scale property absent")]
+    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"SerialNumber\":\"sn\",\"Timestamp\":\"2020-03-07T21:44:22Z\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":2,\"Scale\":\"BAD\",\"Unit\":\"watt\"}]}]}", "Scale property invalid")]
+    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"SerialNumber\":\"sn\",\"Timestamp\":\"2020-03-07T21:44:22Z\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":2,\"Scale\":1}]}]}", "Unit property absent")]
+    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"SerialNumber\":\"sn\",\"Timestamp\":\"2020-03-07T21:44:22Z\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":2,\"Scale\":1,\"Unit\":\"BADUNIT\"}]}]}", "Unit property invalid")]
+    public void MapInvalidJsonThrows(string json, string message)
     {
       // Arrange
-      var stream = GetStream("Bad JSON");
+      var stream = GetStream(json);
       var target = CreateTarget();
 
       // Act & Assert
-      Assert.That(() => target.Map(ApplicationJson, stream), Throws.TypeOf<ArgumentOutOfRangeException>());
-    }
-
-    [Test]
-    public void MapAbsentSerialNumberThrows()
-    {
-      // Arrange
-      var rvs = new [] { new RegisterValueDto { ObisCode = "1.2.3.4.5.6", Value = 2, Scale = 1, Unit = "watt" } };
-      var lr = new LiveReadingDto { Label = "lbl", Timestamp = DateTime.UtcNow, RegisterValues = rvs };
-      var dto = new LiveReadingSetDto { Items = new [] { lr } };
-      var stream = GetStream(dto);
-      var target = CreateTarget();
-
-      // Act & Assert
-      Assert.That(() => target.Map(ApplicationJson, stream).ToArray(), Throws.TypeOf<ArgumentNullException>());
-    }
-
-    [Test]
-    public void MapBadRegisterValueUnitThrows()
-    {
-      // Arrange
-      var rvs = new [] { new RegisterValueDto { ObisCode = "1.2.3.4.5.6", Unit = "BADUNIT" } };
-      var dto = new LiveReadingSetDto { Items = new [] { new LiveReadingDto { Label = "lbl", SerialNumber = "4", Timestamp = DateTime.UtcNow, RegisterValues = rvs } } };
-      var stream = GetStream(dto);
-      var target = CreateTarget();
-
-      // Act & Assert
-      Assert.That(() => target.Map(ApplicationJson, stream).ToArray(), Throws.TypeOf<ArgumentOutOfRangeException>());
+      Assert.That(() => target.Map(ApplicationJson, stream).ToArray(), Throws.TypeOf<ArgumentOutOfRangeException>(), message);
     }
 
     [Test]

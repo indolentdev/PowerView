@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Newtonsoft.Json;
 
 namespace PowerView.Service.Dtos
 {
@@ -9,6 +9,7 @@ namespace PowerView.Service.Dtos
       Items = new LiveReadingDto[0];
     }
 
+    [JsonProperty(Required = Required.Always)]
     public LiveReadingDto[] Items { get; set; }
   }
 }
