@@ -76,7 +76,7 @@ namespace PowerView.Model
           return dt => 
           {
             var next = dt.Add(minutes);
-            return AdjustForDst(timeZoneInfo, dt, next);
+            return next;
           };
 
         case "days":

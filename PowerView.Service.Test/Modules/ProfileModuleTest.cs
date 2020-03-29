@@ -113,10 +113,12 @@ namespace PowerView.Service.Test.Modules
         with.Query("start", midnight.ToString("o"));
         with.Query("page", "thePage");
       });
-        
+
       // Assert
+      var end = midnight.AddDays(1);
       profileRepository.Verify(dpr => dpr.GetDayProfileSet(It.Is<DateTime>(dt => dt == midnight.AddMinutes(-2.5) && dt.Kind == midnight.Kind),
-        It.Is<DateTime>(dt => dt == midnight && dt.Kind == midnight.Kind), It.Is<DateTime>(dt => dt == midnight.AddDays(1) && dt.Kind == midnight.Kind)));
+        It.Is<DateTime>(dt => dt == midnight && dt.Kind == midnight.Kind), 
+        It.Is<DateTime>(dt => ((dt - end) <= TimeSpan.FromHours(1) || (dt - end) >= TimeSpan.FromHours(-1)) && dt.Kind == midnight.Kind)));
     }
 
     [Test]

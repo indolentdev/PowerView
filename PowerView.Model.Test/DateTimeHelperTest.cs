@@ -131,6 +131,33 @@ namespace PowerView.Model.Test
     }
 
     [Test]
+    public void GetNextSuccessiveNormalToDst()
+    {
+      // Arrange
+      var timeZoneinfo = TimeZoneInfo.FindSystemTimeZoneById("CET");
+      var start = new DateTime(2020, 3, 28, 12, 40, 0, DateTimeKind.Utc);
+      var interval = "60-minutes";
+      var periodStart = start;
+      var periodEnd = new DateTime(2020, 3, 29, 11, 40, 0, DateTimeKind.Utc);
+
+      var target = new DateTimeHelper(timeZoneinfo, start);
+      var getNext = target.GetNext(interval);
+
+      var categories = new System.Collections.Generic.List<DateTime>();
+
+      // Act
+      var categoryTimestamp = periodStart;
+      while (categoryTimestamp < periodEnd)
+      {
+        categories.Add(categoryTimestamp);
+        categoryTimestamp = getNext(categoryTimestamp);
+      }
+
+      // Assert
+      Assert.That(categories.Count, Is.EqualTo(23));
+    }
+
+    [Test]
     [TestCase(null, typeof(ArgumentNullException))]
     [TestCase("", typeof(ArgumentOutOfRangeException))]
     [TestCase("--", typeof(ArgumentOutOfRangeException))]

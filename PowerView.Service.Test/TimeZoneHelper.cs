@@ -20,8 +20,19 @@ namespace PowerView.Service.Test
     public static DateTime GetDenmarkTodayAsUtc()
     {
       var utcNow = DateTime.UtcNow;
-      var timeZoneNow = TimeZoneInfo.ConvertTimeFromUtc(utcNow, GetDenmarkTimeZoneInfo());
-      return timeZoneNow.Date.ToUniversalTime();
+      return GetDenmarkMidnightAsUtc(utcNow);
+    }
+
+    public static DateTime GetDenmarkFixedMidnightAsUtc()
+    {
+      var utc = new DateTime(2020, 3, 27, 13, 22, 1, DateTimeKind.Utc);
+      return GetDenmarkMidnightAsUtc(utc);
+    }
+
+    public static DateTime GetDenmarkMidnightAsUtc(DateTime utc)
+    {
+      var timeZoneMidnight = TimeZoneInfo.ConvertTimeFromUtc(utc, GetDenmarkTimeZoneInfo());
+      return timeZoneMidnight.Date.ToUniversalTime();
     }
 
     public static ILocationContext GetDenmarkLocationContext()

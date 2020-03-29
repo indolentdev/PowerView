@@ -40,7 +40,7 @@ namespace PowerView.Service.Test
     {
       // Arrange
       var locationContext = TimeZoneHelper.GetDenmarkLocationContext();
-      var baseDateTime = TimeZoneHelper.GetDenmarkTodayAsUtc();
+      var baseDateTime = TimeZoneHelper.GetDenmarkFixedMidnightAsUtc();
       var target = new IntervalTrigger(locationContext, baseDateTime);
       target.Setup(TimeSpan.FromMinutes(15), TimeSpan.FromDays(1));
 
@@ -56,7 +56,7 @@ namespace PowerView.Service.Test
     {
       // Arrange
       var locationContext = TimeZoneHelper.GetDenmarkLocationContext();
-      var baseDateTime = TimeZoneHelper.GetDenmarkTodayAsUtc();
+      var baseDateTime = TimeZoneHelper.GetDenmarkFixedMidnightAsUtc();
       var target = new IntervalTrigger(locationContext, baseDateTime);
       target.Setup(TimeSpan.FromMinutes(15), TimeSpan.FromDays(1));
       var dateTimeUnspecified = new DateTime(2019, 10, 11, 1, 2, 3, DateTimeKind.Unspecified);
@@ -71,7 +71,7 @@ namespace PowerView.Service.Test
     {
       // Arrange
       var locationContext = TimeZoneHelper.GetDenmarkLocationContext();
-      var baseDateTime = TimeZoneHelper.GetDenmarkTodayAsUtc();
+      var baseDateTime = TimeZoneHelper.GetDenmarkFixedMidnightAsUtc();
       var target = new IntervalTrigger(locationContext, baseDateTime);
       target.Setup(TimeSpan.FromMinutes(15), TimeSpan.FromDays(1));
 
@@ -93,7 +93,7 @@ namespace PowerView.Service.Test
     {
       // Arrange
       var locationContext = TimeZoneHelper.GetDenmarkLocationContext();
-      var baseDateTime = TimeZoneHelper.GetDenmarkTodayAsUtc();
+      var baseDateTime = TimeZoneHelper.GetDenmarkFixedMidnightAsUtc();
       var target = new IntervalTrigger(locationContext, baseDateTime);
       target.Setup(TimeSpan.FromMinutes(15), TimeSpan.FromDays(1));
 

@@ -1,3 +1,6 @@
+PowerView version 0.0.30 - Xxx 2020
+- Fixed bug which caused day profile to fail on the day DST change happened
+
 PowerView version 0.0.29 - March 2020
 - Database size reduction ~ 40%
 - Improved HTTP interface content validation for ingesting metering values 
