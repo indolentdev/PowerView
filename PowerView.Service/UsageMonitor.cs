@@ -53,7 +53,7 @@ namespace PowerView.Service
         { "Env Sqlite Version", sqliteVersion != null ? sqliteVersion : "null" },
         { "Env Mono Runtime Version", monoRuntimeVersion != null ? monoRuntimeVersion : "null" },
 
-        { "Application Version", GetType().Assembly.GetName().Version.ToString(3) }
+        { "App Version", GetType().Assembly.GetName().Version.ToString(3) }
       };
 
       Track("Ding", props);
