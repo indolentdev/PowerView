@@ -170,7 +170,6 @@ namespace PowerView.Model.Test
       Assert.That(() => target.Normalize(null), Throws.ArgumentNullException);
     }
 
-
     [Test]
     public void Normalize()
     {
@@ -199,6 +198,35 @@ namespace PowerView.Model.Test
       Assert.That(normalized[obisCode], Is.EqualTo(new NormalizedTimeRegisterValue[] 
       { 
         timeRegisterValues[0].Normalize(timeDivider), timeRegisterValues[2].Normalize(timeDivider), timeRegisterValues[4].Normalize(timeDivider) 
+      }));
+    }
+
+    [Test]
+    public void NormalizeOrdersByTimestamp()
+    {
+      // Arrange
+      const string label = "label";
+      ObisCode obisCode = "1.2.3.4.5.6";
+      var now = DateTime.UtcNow;
+      var timeRegisterValues = new[]
+      {
+        new TimeRegisterValue("sn1", new DateTime(now.Year, now.Month, now.Day, 14, 30, 0, DateTimeKind.Utc), 16, Unit.WattHour),
+        new TimeRegisterValue("sn1", new DateTime(now.Year, now.Month, now.Day, 14, 0, 0, DateTimeKind.Utc), 15, Unit.WattHour),
+        new TimeRegisterValue("sn1", new DateTime(now.Year, now.Month, now.Day, 13, 30, 0, DateTimeKind.Utc), 14, Unit.WattHour),
+        new TimeRegisterValue("sn1", new DateTime(now.Year, now.Month, now.Day, 13, 0, 0, DateTimeKind.Utc), 13, Unit.WattHour),
+        new TimeRegisterValue("sn1", new DateTime(now.Year, now.Month, now.Day, 12, 30, 0, DateTimeKind.Utc), 12, Unit.WattHour),
+        new TimeRegisterValue("sn1", new DateTime(now.Year, now.Month, now.Day, 12, 0, 0, DateTimeKind.Utc), 11, Unit.WattHour)
+      };
+      var target = new LabelSeries<TimeRegisterValue>(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, timeRegisterValues } });
+      var timeDivider = new DateTimeHelper(TimeZoneInfo.Local, DateTime.Today.ToUniversalTime()).GetDivider("60-minutes");
+
+      // Act
+      var normalized = target.Normalize(timeDivider);
+
+      // Assert
+      Assert.That(normalized[obisCode], Is.EqualTo(new NormalizedTimeRegisterValue[]
+      {
+        timeRegisterValues[5].Normalize(timeDivider), timeRegisterValues[3].Normalize(timeDivider), timeRegisterValues[1].Normalize(timeDivider)
       }));
     }
 
