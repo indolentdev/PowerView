@@ -58,6 +58,7 @@ import { SettingsRecipientsTableComponent } from './components/settings/settings
 import { ProfileLast24hComponent } from './components/profiles/profile-last24h/profile-last24h.component';
 import { ProfileLast12mComponent } from './components/profiles/profile-last12m/profile-last12m.component';
 import { ProfileLast31dComponent } from './components/profiles/profile-last31d/profile-last31d.component';
+import { ExportHourlyComponent } from './components/export/export-hourly/export-hourly.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -115,7 +116,8 @@ if (environment.useMockBackend == true) {
     SettingsRecipientsTableComponent,
     ProfileLast24hComponent,
     ProfileLast12mComponent,
-    ProfileLast31dComponent
+    ProfileLast31dComponent,
+    ExportHourlyComponent
   ],
   imports: [
     BrowserModule,

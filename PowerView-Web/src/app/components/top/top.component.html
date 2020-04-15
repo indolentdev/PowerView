@@ -92,6 +92,11 @@
   <button mat-menu-item [routerLink] ="['/events/latest']" >{{ 'menu.latest' | translate }}</button>
 </mat-menu>
 
+<button mat-raised-button color="primary" [matMenuTriggerFor]="exportMenu">{{ 'menu.export' | translate }}</button>
+<mat-menu #exportMenu="matMenu">
+  <button mat-menu-item [routerLink] ="['/export/hourly']" >{{ 'menu.hour' | translate }}</button>
+</mat-menu>
+
 <button mat-raised-button color="primary" [matMenuTriggerFor]="settingsMenu">{{ 'menu.settings' | translate }}</button>
 <mat-menu #settingsMenu="matMenu">
   <button mat-menu-item [routerLink] ="['/settings/profilegraphs']" >{{ 'menu.profileGraphs' | translate }}</button>
