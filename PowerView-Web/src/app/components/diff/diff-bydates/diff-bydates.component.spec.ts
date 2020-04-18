@@ -61,8 +61,6 @@ describe('DiffBydatesComponent', () => {
   }));
 
   beforeEach(() => {
-//    when(gaugesService.getLatestGaugeValues()).thenReturn(of(new GaugeValueGroupSet()));
-
     fixture = TestBed.createComponent(DiffBydatesComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

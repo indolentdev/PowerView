@@ -8,7 +8,7 @@
     "events": "Events",
     "export": "Export",
     "gauges": "Gauges",
-    "hour": "Hour",
+    "hour": "Hourly",
     "latest": "Latest",
     "mqtt": "MQTT",
     "profile": "Profile",
@@ -32,10 +32,19 @@
     "chooseDateFrom": "Choose from date (incl.)",
     "chooseDateTo": "Choose to date (incl.)",
     "chooseFromMenu": "Choose from the menu",
+
+    "chooseLabels": "Choose labels",
+
     "chooseMonth": "Choose month",
     "chooseYear": "Choose year",
     "forExampleProfileGraph": "For example: To add a profile graph with series go to 'Settings' then 'ProfileGraphs'.",
+
+    "multipleLabels": "{{ value }} etiketter",
+
     "noDataFound": "No data found",
+
+    "placeholderLabels": "Labels",
+
     "serverVersion": "Server version:",
     "serverLanguage": "Server language:",
     "serverTimeZone": "Server time zone:"
@@ -49,6 +58,7 @@
     "emailRecipientsInfo": "Register email recipients to receive event notifications; water meter leak",
     "emailRecipientsTable": "Email Recipients",
     "events": "Events",
+    "exportHourly": "Export Hourly",
     "last12mProfile": "Last 12 Months Profile",
     "last24hProfile": "Last 24 Hours Profile",
     "last31dProfile": "Last 31 Days Profile",
