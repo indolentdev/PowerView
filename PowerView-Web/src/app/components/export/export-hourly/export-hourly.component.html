@@ -12,7 +12,7 @@
             {{ formGroup.controls['labels'].value[0] }}
           </span>
           <span *ngIf="formGroup.controls['labels'].value?.length > 1" class="example-additional-selection">
-            {{ 'common.multipleLabels' | translate:{value:formGroup.controls['labels'].value.length} }}
+            {{ 'export.multipleLabels' | translate:{value:formGroup.controls['labels'].value.length} }}
           </span>
         </mat-select-trigger>
         <mat-option *ngFor="let opt of labels" [value]="opt">

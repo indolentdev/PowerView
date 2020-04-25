@@ -32,10 +32,12 @@
     "chooseDateFrom": "Vælg fra dato (inkl.)",
     "chooseDateTo": "Vælg til dato (inkl.)",
     "chooseFromMenu": "Vælg fra menuen",
+    "chooseLabels": "Vælg etiketter",
     "chooseMonth": "Vælg måned",
     "chooseYear": "Vælg årstal",
     "forExampleProfileGraph": "Eksempel: For at tilføje en profil graf med serier vælg 'Indstillinger' derefter 'Profil Grafer'.",
     "noDataFound": "Ingen data fundet",
+    "placeholderLabels": "Etiketter",
     "serverVersion": "Server version:",
     "serverLanguage": "Server sprog:",
     "serverTimeZone": "Server tidszone:"
@@ -262,6 +264,17 @@
     "status_true": "Opdaget",
     "status_false": "Nulstillet",
     "type_leak": "Lækage"
+  },
+
+  "export": {
+    "columnNameHour": "Time",
+    "columnNameLabel": "{{label}} {{valueName}}",
+    "columnNameLabelDiff": "{{label}} {{valueName}} Forskel",
+    "columnNameLabelTimestamp": "{{label}} {{valueName}} Tidspunkt",
+    "columnNameLabelUnit": "{{label}} {{valueName}} Enhed",
+    "columnNameLabelSerialNumber": "{{label}} {{valueName}} Serienummer",
+    "filename": "{{timestamp}}-Eksport-{{labelCount}}-Etiketter",
+    "multipleLabels": "{{ value }} etiketter"
   },
 
   "profileGraphs": {

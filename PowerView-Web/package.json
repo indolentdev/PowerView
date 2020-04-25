@@ -27,6 +27,7 @@
     "@ngx-translate/core": "^11.0.1",
     "@ngx-translate/http-loader": "^4.0.0",
     "core-js": "^3.6.0",
+    "export-to-csv": "^0.2.1",
     "highcharts": "^7.2.1",
     "highcharts-angular": "^2.4.0",
     "moment": "^2.24.0",

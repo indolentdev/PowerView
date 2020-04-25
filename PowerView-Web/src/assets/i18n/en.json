@@ -32,19 +32,12 @@
     "chooseDateFrom": "Choose from date (incl.)",
     "chooseDateTo": "Choose to date (incl.)",
     "chooseFromMenu": "Choose from the menu",
-
     "chooseLabels": "Choose labels",
-
     "chooseMonth": "Choose month",
     "chooseYear": "Choose year",
     "forExampleProfileGraph": "For example: To add a profile graph with series go to 'Settings' then 'ProfileGraphs'.",
-
-    "multipleLabels": "{{ value }} etiketter",
-
     "noDataFound": "No data found",
-
     "placeholderLabels": "Labels",
-
     "serverVersion": "Server version:",
     "serverLanguage": "Server language:",
     "serverTimeZone": "Server time zone:"
@@ -271,6 +264,17 @@
     "status_true": "Detected",
     "status_false": "Reset",
     "type_leak": "Leak"
+  },
+
+  "export": {
+    "columnNameHour": "Hour",
+    "columnNameLabel": "{{label}} {{valueName}}",
+    "columnNameLabelDiff": "{{label}} {{valueName}} Diff",
+    "columnNameLabelTimestamp": "{{label}} {{valueName}} Timestamp",
+    "columnNameLabelUnit": "{{label}} {{valueName}} Unit",
+    "columnNameLabelSerialNumber": "{{label}} {{valueName}} Serial Number",
+    "filename": "{{timestamp}}-Export-{{labelCount}}-Labels",
+    "multipleLabels": "{{ value }} labels"
   },
 
   "profileGraphs": {

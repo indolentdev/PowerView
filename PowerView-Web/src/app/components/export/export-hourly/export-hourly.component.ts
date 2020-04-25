@@ -1,10 +1,12 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, AbstractControl, FormGroup, Validators, FormGroupDirective, NgForm } from '@angular/forms';
 import { Router, ActivatedRoute } from "@angular/router";
+import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { ExportService } from '../../../services/export.service';
-//import { DiffValueSet } from '../../../model/diffValueSet';
+import { ExportSeriesSet } from '../../../model/exportSeriesSet';
+import { ExportToCsv } from 'export-to-csv';
 
 import { Moment } from 'moment'
 import * as moment from 'moment';
@@ -29,7 +31,7 @@ export class ExportHourlyComponent implements OnInit {
   formGroup: FormGroup;
   @ViewChild('form', { static: true }) form;
 
-  constructor(private log: NGXLogger, private router: Router, private route: ActivatedRoute, private exportService: ExportService) {
+  constructor(private log: NGXLogger, private router: Router, private route: ActivatedRoute, private exportService: ExportService, private translateService: TranslateService) {
   }
 
   ngOnInit() {
@@ -42,35 +44,32 @@ export class ExportHourlyComponent implements OnInit {
     this.getLabels();
 
     this.route.queryParamMap.subscribe(queryParams => {
-      let fromDateCtl = this.getControl("fromDate");
-      console.log("fromdDateCtl");
-      console.log(fromDateCtl.value);
-      const fromDateString = queryParams.get(fromParam);
-      this.parseDateSetFormControl(fromDateString, fromDateCtl);
-
-      let toDateCtl = this.getControl("toDate");
-      console.log("toDateCtl");
-      console.log(toDateCtl.value);
-      const toDateString = queryParams.get(toParam);
-      this.parseDateSetFormControl(toDateString, toDateCtl);
-
-      let labels = null;
+      let selectedLabels = null;
       let labelsSelectControl = this.getControl("labels");
       const labelsString = queryParams.get(labelsParam);
       if (labelsString != null)
       {
-        labels = labelsString.split(",");
+        selectedLabels = labelsString.split(",");
       }
-      labelsSelectControl.setValue(labels);
+      labelsSelectControl.setValue(selectedLabels);
 
-      if (fromDateCtl.value != null && moment(fromDateCtl.value).isValid() &&
-        toDateCtl.value != null && moment(toDateCtl.value).isValid() &&
-        labelsSelectControl.value != null && labelsSelectControl.value.length > 0) {
-          console.log("Good to query");
-//        this.getDiffValues(this.fcFromDate.value, this.fcToDate.value);
+      let fromDateCtl = this.getControl("fromDate");
+      const fromDateString = queryParams.get(fromParam);
+      this.parseDateSetFormControl(fromDateString, fromDateCtl);
+
+      let toDateCtl = this.getControl("toDate");
+      const toDateString = queryParams.get(toParam);
+      this.parseDateSetFormControl(toDateString, toDateCtl);
+
+      if (labelsSelectControl.value != null && labelsSelectControl.value.length > 0 &&
+        fromDateCtl.value != null && moment(fromDateCtl.value).isValid() &&
+        toDateCtl.value != null && moment(toDateCtl.value).isValid() ) {
+          let labels = labelsSelectControl.value;
+          let fromMoment = moment(fromDateCtl.value);
+          let toMoment = moment(toDateCtl.value);
+          this.Export(labels, fromMoment, toMoment);
       }
-    });
-    
+    });    
   }
 
   private getLabels(): void {
@@ -86,8 +85,8 @@ export class ExportHourlyComponent implements OnInit {
     return this.formGroup.controls[controlName];
   }
 
-  parseDateSetFormControl(dateString: string, fcDate: AbstractControl): void {
-    var parsedDate = moment(dateString);
+  private parseDateSetFormControl(dateString: string, fcDate: AbstractControl): void {
+    let parsedDate = moment(dateString);
     if (parsedDate.isValid() && !parsedDate.isSame(fcDate.value))
     {
       fcDate.setValue(parsedDate);
@@ -121,7 +120,7 @@ export class ExportHourlyComponent implements OnInit {
     this.navigate({ labels: labels });
   }
 
-  navigate(queryParams: any): void {
+  private navigate(queryParams: any): void {
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: queryParams,
@@ -130,4 +129,76 @@ export class ExportHourlyComponent implements OnInit {
     });
   }
 
+  private Export(labels: string[], from: Moment, to: Moment): void {
+    let data = [];
+    let labelCount = 0;
+
+    this.exportService.getHourlyExport(labels, from, to).subscribe(exportSeriesSet => {
+      labelCount = exportSeriesSet.series
+        .map(x => x.label)
+        .filter((lbl, i, arr) => arr.findIndex(l => l === lbl) === i)
+        .length;
+
+      data = this.getRows(exportSeriesSet);
+    });
+
+    let params = {
+      timestamp: moment().format("YYYY-MM-DD--HH-mm-ss"),
+      labelCount: labelCount
+     };
+    this.translateService.get('export.filename', params).subscribe(filename => {
+      const options = {
+        fieldSeparator: ';',
+        filename: filename,
+        quoteStrings: '',
+        decimalSeparator: 'locale',
+        showLabels: true, 
+        showTitle: false,
+        useTextFile: false,
+        useBom: true,
+        useKeysAsHeaders: true,
+      };       
+      const csvExporter = new ExportToCsv(options);
+      csvExporter.generateCsv(data);    
+    });
+  }
+
+  private getRows(exportSeriesSet: ExportSeriesSet): any[] {
+    let data = [];
+
+    for (let ix=0; ix < exportSeriesSet.timestamps.length; ix++)
+    {
+      let row = {}; 
+
+      let name = this.translateService.instant("export.columnNameHour");
+      row[name] = moment(exportSeriesSet.timestamps[ix]).format("YYYY-MM-DD HH");
+
+      exportSeriesSet.series.forEach(s => {
+        let label = s.label;
+        let valueName = this.translateService.instant("serie." + s.obisCode);
+        let params = {label: label, valueName: valueName };
+
+        let exportValue = s.values[ix];
+
+        name = this.translateService.instant("export.columnNameLabelTimestamp", params);
+        row[name] = moment(exportValue.timestamp).format("YYYY-MM-DD HH:mm:ss");
+
+        name = this.translateService.instant("export.columnNameLabel", params);
+        row[name] = exportValue.value;
+
+        name = this.translateService.instant("export.columnNameLabelDiff", params);
+        row[name] = exportValue.diffValue === undefined ? "" : exportValue.diffValue.toString();
+
+        name = this.translateService.instant("export.columnNameLabelUnit", params);
+        row[name] = exportValue.unit;
+
+        name = this.translateService.instant("export.columnNameLabelSerialNumber", params);
+        row[name] = exportValue.serialNumber;
+      });
+
+      data.push(row);
+    }
+
+    return data;
+  }
 }
