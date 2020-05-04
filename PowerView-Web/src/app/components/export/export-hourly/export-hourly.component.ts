@@ -130,36 +130,36 @@ export class ExportHourlyComponent implements OnInit {
   }
 
   private Export(labels: string[], from: Moment, to: Moment): void {
-    let data = [];
-    let labelCount = 0;
-
     this.exportService.getHourlyExport(labels, from, to.add(1,'days')).subscribe(exportSeriesSet => {
-      labelCount = exportSeriesSet.series
+      const labelCount = exportSeriesSet.series
         .map(x => x.label)
         .filter((lbl, i, arr) => arr.findIndex(l => l === lbl) === i) // distinct
         .length;
 
-      data = this.getRows(exportSeriesSet);
-    });
+      const data = this.getRows(exportSeriesSet);
 
-    let params = {
-      timestamp: moment().format("YYYY-MM-DD--HH-mm-ss"),
-      labelCount: labelCount
-     };
-    this.translateService.get('export.filename', params).subscribe(filename => {
-      const options = {
-        fieldSeparator: ';',
-        filename: filename,
-        quoteStrings: '',
-        decimalSeparator: 'locale',
-        showLabels: true, 
-        showTitle: false,
-        useTextFile: false,
-        useBom: true,
-        useKeysAsHeaders: true,
-      };       
-      const csvExporter = new ExportToCsv(options);
-      csvExporter.generateCsv(data);    
+      console.log(data);
+
+      let params = {
+        timestamp: moment().format("YYYY-MM-DD--HH-mm-ss"),
+        labelCount: labelCount
+       };
+      this.translateService.get('export.filename', params).subscribe(filename => {
+        const options = {
+          fieldSeparator: ';',
+          filename: filename,
+          quoteStrings: '',
+          decimalSeparator: 'locale',
+          showLabels: true, 
+          showTitle: false,
+          useTextFile: false,
+          useBom: true,
+          useKeysAsHeaders: true,
+        };       
+        const csvExporter = new ExportToCsv(options);
+        csvExporter.generateCsv(data);    
+      });
+  
     });
   }
 
