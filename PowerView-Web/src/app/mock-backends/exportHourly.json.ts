@@ -11,6 +11,7 @@ export let exportHourly = {
             {
                "timestamp": "2017-09-18T04:01:00.0000000Z",
                "value": 12345.6,
+               "diffValue": null,
                "unit": "m3",
                "deviceId": "SN1"
             },
@@ -30,6 +31,7 @@ export let exportHourly = {
             {
                "timestamp": "2017-09-18T04:03:00.0000000Z",
                "value": 456789,
+               "diffValue": null,
                "unit": "WattHour",
                "deviceId": "SN2"
             },

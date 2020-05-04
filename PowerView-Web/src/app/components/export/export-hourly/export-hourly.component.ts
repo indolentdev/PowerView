@@ -187,7 +187,7 @@ export class ExportHourlyComponent implements OnInit {
         row[name] = exportValue.value;
 
         name = this.translateService.instant("export.columnNameLabelDiff", params);
-        row[name] = exportValue.diffValue === undefined ? "" : exportValue.diffValue.toString();
+        row[name] = (exportValue.diffValue === undefined || exportValue.diffValue == null) ? "" : exportValue.diffValue.toString();
 
         name = this.translateService.instant("export.columnNameLabelUnit", params);
         row[name] = exportValue.unit;
