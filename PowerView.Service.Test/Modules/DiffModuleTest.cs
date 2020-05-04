@@ -78,6 +78,26 @@ namespace PowerView.Service.Test.Modules
     }
 
     [Test]
+    public void GetDiffFromBadFormat()
+    {
+      // Arrange
+      var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
+
+      // Act
+      var response = browser.Get(DiffRoute, with =>
+      {
+        with.HttpRequest();
+        with.HostName("localhost");
+        with.Query("from", "BadFormat");
+        with.Query("to", today.ToString("o"));
+      });
+
+      // Assert
+      Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+      profileRepository.Verify(pr => pr.GetMonthProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Never);
+    }
+
+    [Test]
     public void GetDiffToBadFormat()
     {
       // Arrange

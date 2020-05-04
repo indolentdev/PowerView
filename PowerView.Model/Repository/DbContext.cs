@@ -46,6 +46,11 @@ namespace PowerView.Model.Repository
       return InTransaction(transaction => connection.Query<TReturn>(sql, param, transaction, false, CommandTimeout).ToList(), dbOp);
     }
 
+    internal IList<dynamic> QueryTransaction(string dbOp, string sql, object param = null)
+    {
+      return InTransaction(transaction => connection.Query(sql, param, transaction, false, CommandTimeout).ToList(), dbOp);
+    }
+
     internal IList<TReturn> QueryNoTransaction<TReturn>(string dbOp, string sql, object param = null, int? commandTimeout = null)
     {
       var cmdTimeout = commandTimeout != null ? commandTimeout.Value : CommandTimeout;
@@ -93,12 +98,12 @@ namespace PowerView.Model.Repository
         {
           TReturn ret = dbFunc(transaction);
           transaction.Commit();
-          log.DebugFormat("Finished database operation");
+          log.DebugFormat("Finished database operation. Ok");
           return ret;
         }
         catch (SqliteException e)
         {
-          log.DebugFormat("Finished database operation");
+          log.DebugFormat("Finished database operation. Error");
           transaction.Rollback();
           throw DataStoreExceptionFactory.Create(e);
         }
@@ -111,12 +116,12 @@ namespace PowerView.Model.Repository
       try
       {
         TReturn ret = dbFunc();
-        log.DebugFormat("Finished database operation");
+        log.DebugFormat("Finished database operation. Ok");
         return ret;
       }
       catch (SqliteException e)
       {
-        log.DebugFormat("Finished database operation");
+        log.DebugFormat("Finished database operation. Error");
         throw DataStoreExceptionFactory.Create(e);
       }
     }

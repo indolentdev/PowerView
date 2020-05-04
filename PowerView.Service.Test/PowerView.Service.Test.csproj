@@ -144,6 +144,7 @@
     <Compile Include="EventHub\HealthCheckTest.cs" />
     <Compile Include="TimeZoneHelper.cs" />
     <Compile Include="IntervalTriggerTest.cs" />
+    <Compile Include="Modules\ExportModuleTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

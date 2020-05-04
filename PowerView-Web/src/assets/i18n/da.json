@@ -272,7 +272,7 @@
     "columnNameLabelDiff": "{{label}} {{valueName}} Forskel",
     "columnNameLabelTimestamp": "{{label}} {{valueName}} Tidspunkt",
     "columnNameLabelUnit": "{{label}} {{valueName}} Enhed",
-    "columnNameLabelSerialNumber": "{{label}} {{valueName}} Serienummer",
+    "columnNameLabelDeviceId": "{{label}} {{valueName}} Apparat ID",
     "filename": "{{timestamp}}-Eksport-{{labelCount}}-Etiketter",
     "multipleLabels": "{{ value }} etiketter"
   },

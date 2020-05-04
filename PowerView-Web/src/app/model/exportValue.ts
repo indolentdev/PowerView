@@ -4,5 +4,5 @@ export class ExportValue {
     value: number;
     diffValue: number;
     unit: string;
-    serialNumber: string;
+    deviceId: string;
 }

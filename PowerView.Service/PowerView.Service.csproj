@@ -139,7 +139,7 @@
     <Compile Include="Mailer\IMailMediator.cs" />
     <Compile Include="UrlProvider.cs" />
     <Compile Include="IUrlProvider.cs" />
-    <Compile Include="Modules\DiffModule.cs" />
+    <Compile Include="Modules\ExportModule.cs" />
     <Compile Include="Modules\SettingsProfileGraphsModule.cs" />
     <Compile Include="Dtos\ProfileGraphDto.cs" />
     <Compile Include="Dtos\ProfileGraphSerieDto.cs" />
@@ -185,6 +185,7 @@
     <Compile Include="EventHub\IntervalTrigger.cs" />
     <Compile Include="EventHub\IIntervalTrigger.cs" />
     <Compile Include="EnvironmentHelper.cs" />
+    <Compile Include="Modules\DiffModule.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

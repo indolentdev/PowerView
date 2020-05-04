@@ -272,7 +272,7 @@
     "columnNameLabelDiff": "{{label}} {{valueName}} Diff",
     "columnNameLabelTimestamp": "{{label}} {{valueName}} Timestamp",
     "columnNameLabelUnit": "{{label}} {{valueName}} Unit",
-    "columnNameLabelSerialNumber": "{{label}} {{valueName}} Serial Number",
+    "columnNameLabelDeviceId": "{{label}} {{valueName}} Device ID",
     "filename": "{{timestamp}}-Export-{{labelCount}}-Labels",
     "multipleLabels": "{{ value }} labels"
   },

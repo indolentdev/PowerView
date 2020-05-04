@@ -133,10 +133,10 @@ export class ExportHourlyComponent implements OnInit {
     let data = [];
     let labelCount = 0;
 
-    this.exportService.getHourlyExport(labels, from, to).subscribe(exportSeriesSet => {
+    this.exportService.getHourlyExport(labels, from, to.add(1,'days')).subscribe(exportSeriesSet => {
       labelCount = exportSeriesSet.series
         .map(x => x.label)
-        .filter((lbl, i, arr) => arr.findIndex(l => l === lbl) === i)
+        .filter((lbl, i, arr) => arr.findIndex(l => l === lbl) === i) // distinct
         .length;
 
       data = this.getRows(exportSeriesSet);
@@ -192,8 +192,8 @@ export class ExportHourlyComponent implements OnInit {
         name = this.translateService.instant("export.columnNameLabelUnit", params);
         row[name] = exportValue.unit;
 
-        name = this.translateService.instant("export.columnNameLabelSerialNumber", params);
-        row[name] = exportValue.serialNumber;
+        name = this.translateService.instant("export.columnNameLabelDeviceId", params);
+        row[name] = exportValue.deviceId;
       });
 
       data.push(row);
