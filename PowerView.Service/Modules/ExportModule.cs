@@ -71,11 +71,20 @@ namespace PowerView.Service.Modules
       var hours = falttened
         .Select(x => x.NormalizedValue.NormalizedTimestamp)
         .Distinct()
-        .OrderBy(x => x);
-
-      var exportSeries = new List<object>(); // matches dto
+        .OrderBy(x => x)
+        .ToList();
 
       var seriesGroups = falttened.GroupBy(x => new SeriesName(x.Label, x.ObisCode), x => x.NormalizedValue);
+      var exportSeries = GetExportSeries(hours, seriesGroups);
+
+      var r = new { Timestamps = hours, Series = exportSeries };
+      return Response.AsJson(r);
+    }
+
+    private static IList<object> GetExportSeries(IList<DateTime> hours, IEnumerable<IGrouping<SeriesName, NormalizedTimeRegisterValue>> seriesGroups)
+    {
+      var exportSeries = new List<object>(); // matches dto
+
       foreach (var group in seriesGroups)
       {
         var seriesName = group.Key;
@@ -91,15 +100,27 @@ namespace PowerView.Service.Modules
         {
           seriesName.Label,
           ObisCode = seriesName.ObisCode.ToString(),
-          Values = hourlyValues.Select((x, i) => 
+          Values = hourlyValues.Select((x, i) =>
           {
-            var diffValue = i > 0 ? CalculateDiffValue(x, hourlyValues[i-1]) : null;
+            if (x == default(NormalizedTimeRegisterValue))
+            {
+              return new
+              {
+                Timestamp = (DateTime?)null,
+                Value = (double?)null,
+                DiffValue = (double?)null,
+                Unit = (string)null,
+                DeviceId = (string)null
+              };
+            }
+
+            var diffValue = i > 0 ? CalculateDiffValue(x, hourlyValues[i - 1]) : null;
             var unit = x.TimeRegisterValue.UnitValue.Unit;
-            return new 
-            { 
-              Timestamp = x.TimeRegisterValue.Timestamp, 
-              Value = ValueAndUnitMapper.Map(x.TimeRegisterValue.UnitValue.Value, unit), 
-              DiffValue = diffValue != null ? ValueAndUnitMapper.Map(diffValue.Value, unit) : null, 
+            return new
+            {
+              Timestamp = (DateTime?)x.TimeRegisterValue.Timestamp,
+              Value = ValueAndUnitMapper.Map(x.TimeRegisterValue.UnitValue.Value, unit),
+              DiffValue = diffValue != null ? ValueAndUnitMapper.Map(diffValue.Value, unit) : null,
               Unit = ValueAndUnitMapper.Map(unit),
               DeviceId = x.TimeRegisterValue.SerialNumber
             };
@@ -108,8 +129,7 @@ namespace PowerView.Service.Modules
         exportSeries.Add(completeHourlyValues);
       }
 
-      var r = new { Timestamps = hours, Series = exportSeries };
-      return Response.AsJson(r);
+      return exportSeries;
     }
 
     private static double? CalculateDiffValue(NormalizedTimeRegisterValue value, NormalizedTimeRegisterValue previousValue)

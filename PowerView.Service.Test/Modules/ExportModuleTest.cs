@@ -383,7 +383,7 @@ namespace PowerView.Service.Test.Modules
         with.HostName("localhost");
         with.Query("from", today.AddHours(-5).ToString("o"));
         with.Query("to", today.ToString("o"));
-        with.Query("labels", ls1.Label);
+        with.Query("labels", string.Join(",", new[] { ls1.Label, ls2.Label }));
       });
 
       // Assert
@@ -398,6 +398,55 @@ namespace PowerView.Service.Test.Modules
       AssertExportSeries(ls2.Label, obisCode, new dynamic[] {
         new { Timestamp = t1 + skew, Value = 4, DiffValue = (double?)null, Unit = "kWh", DeviceId = "S2" },
         new { Timestamp = t2 + skew, Value = 6, DiffValue = 2, Unit = "kWh", DeviceId = "S2" },
+      }, json.series[1]);
+    }
+
+    [Test]
+    public void GetHourlyExportValueAbsent()
+    {
+      // Arrange
+      var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
+      var skew = TimeSpan.FromMinutes(5); // To verify normalization.
+      var t1 = today - TimeSpan.FromHours(3) + skew;
+      var t2 = today - TimeSpan.FromHours(2) + skew;
+      var t3 = today - TimeSpan.FromHours(1) + skew;
+      var obisCode = ObisCode.ElectrActiveEnergyA14;
+      var ls1 = CreateLabelSeries("label1", obisCode, new[]
+        {
+          new TimeRegisterValue("S1", t1, 2, 2, Unit.CubicMetre),
+          new TimeRegisterValue("S1", t2, 3, 2, Unit.CubicMetre),
+          new TimeRegisterValue("S1", t3, 3, 2, Unit.CubicMetre),
+        }
+      );
+      var ls2 = CreateLabelSeries("label2", obisCode, new[]
+        {
+            new TimeRegisterValue("S2", t1, 4, 3, Unit.WattHour),
+            // t2 missing
+            new TimeRegisterValue("S2", t3, 6, 3, Unit.WattHour)
+        }
+      );
+      var lss = new LabelSeriesSet<TimeRegisterValue>(t1, t2, new[] { ls1, ls2 });
+      exportRepository.Setup(er => er.GetLiveCumulativeSeries(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<IList<string>>())).Returns(lss);
+
+      // Act
+      var response = browser.Get(ExportHourlyRoute, with =>
+      {
+        with.HttpRequest();
+        with.HostName("localhost");
+        with.Query("from", today.AddHours(-5).ToString("o"));
+        with.Query("to", today.ToString("o"));
+        with.Query("labels", string.Join(",", new[] { ls1.Label, ls2.Label }));
+      });
+
+      // Assert
+      Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+      var json = response.Body.DeserializeJson<ExportRoot>();
+
+      Assert.That(json.series, Has.Length.EqualTo(2));
+      AssertExportSeries(ls2.Label, obisCode, new dynamic[] {
+        new { Timestamp = t1, Value = 4, DiffValue = (double?)null, Unit = "kWh", DeviceId = "S2" },
+        new { Timestamp = (DateTime?)null, Value = (double?)null, DiffValue = (double?)null, Unit = (string)null, DeviceId = (string)null },
+        new { Timestamp = t3, Value = 6, DiffValue = (double?)null, Unit = "kWh", DeviceId = "S2" },
       }, json.series[1]);
     }
 
@@ -506,7 +555,11 @@ namespace PowerView.Service.Test.Modules
       {
         var actualRegister = actual.values[ix];
         dynamic expectedRegister = registers[ix];
-        Assert.That(actualRegister.timestamp, Is.EqualTo(((DateTime)expectedRegister.Timestamp).ToUniversalTime().ToString("o")));
+        Assert.That(actualRegister.timestamp != null, Is.EqualTo(expectedRegister.Timestamp != null));
+        if (expectedRegister.Timestamp != null)
+        {
+          Assert.That(actualRegister.timestamp, Is.EqualTo(((DateTime?)expectedRegister.Timestamp).Value.ToUniversalTime().ToString("o")));
+        }
         Assert.That(actualRegister.value, Is.EqualTo(expectedRegister.Value));
         Assert.That(actualRegister.diffValue, Is.EqualTo(expectedRegister.DiffValue));
         Assert.That(actualRegister.unit, Is.EqualTo(expectedRegister.Unit));
@@ -530,7 +583,7 @@ namespace PowerView.Service.Test.Modules
     internal class ExportRegister
     {
       public string timestamp { get; set; }
-      public double value { get; set; }
+      public double? value { get; set; }
       public double? diffValue { get; set; }
       public string unit { get; set; }
       public string deviceId { get; set; }
