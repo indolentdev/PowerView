@@ -24,7 +24,6 @@ namespace PowerView.Model
       containerBuilder.RegisterType<GaugeRepository>().As<IGaugeRepository>();
       containerBuilder.RegisterType<DisconnectRuleRepository>().As<IDisconnectRuleRepository>();
       containerBuilder.RegisterType<EnvironmentRepository>().As<IEnvironmentRepository>();
-      containerBuilder.RegisterType<LabelRepository>().As<ILabelRepository>();
       containerBuilder.RegisterType<ExportRepository>().As<IExportRepository>();
 
       containerBuilder.RegisterType<LocationContext>().As<ILocationContext>().As<LocationContext>().SingleInstance();

@@ -49,6 +49,18 @@ namespace PowerView.Model.Repository
       return seriesNames;
     }
 
+    public IList<SeriesName> GetStoredSeriesNames()
+    {
+      var labelsAndObisCodes = GetLabelsAndObisCodes();
+
+      var seriesNames = labelsAndObisCodes
+        .Select(x => new SeriesName((string)x.Label, (long)x.ObisCode))
+        .Distinct()
+        .ToList();
+
+      return seriesNames;
+    }
+
     private IEnumerable<dynamic> GetLabelsAndObisCodes()
     {
       var transaction = DbContext.BeginTransaction();

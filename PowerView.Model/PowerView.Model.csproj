@@ -180,8 +180,6 @@
     <Compile Include="DateTimeHelper.cs" />
     <Compile Include="ILocationContext.cs" />
     <Compile Include="LocationContext.cs" />
-    <Compile Include="Repository\LabelRepository.cs" />
-    <Compile Include="Repository\ILabelRepository.cs" />
     <Compile Include="Repository\ExportRepository.cs" />
     <Compile Include="Repository\IExportRepository.cs" />
   </ItemGroup>

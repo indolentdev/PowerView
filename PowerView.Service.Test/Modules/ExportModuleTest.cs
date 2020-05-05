@@ -14,7 +14,7 @@ namespace PowerView.Service.Test.Modules
   [TestFixture]
   public class ExportModuleTest
   {
-    private Mock<ILabelRepository> labelRepository;
+    private Mock<ISeriesNameRepository> seriesNameRepository;
     private Mock<IExportRepository> exportRepository;
 
     private Browser browser;
@@ -25,13 +25,13 @@ namespace PowerView.Service.Test.Modules
     [SetUp]
     public void SetUp()
     {
-      labelRepository = new Mock<ILabelRepository>();
+      seriesNameRepository = new Mock<ISeriesNameRepository>();
       exportRepository = new Mock<IExportRepository>();
 
       browser = new Browser(cfg =>
       {
         cfg.Module<ExportModule>();
-        cfg.Dependency<ILabelRepository>(labelRepository.Object);
+        cfg.Dependency<ISeriesNameRepository>(seriesNameRepository.Object);
         cfg.Dependency<IExportRepository>(exportRepository.Object);
         cfg.Dependency<ILocationContext>(TimeZoneHelper.GetDenmarkLocationContext());
       });
@@ -41,8 +41,9 @@ namespace PowerView.Service.Test.Modules
     public void GetLabels()
     {
       // Arrange
-      var labels = new[] { "lbl1", "lbl2", "lbl3" };
-      labelRepository.Setup(pr => pr.GetLabels()).Returns(labels);
+      var seriesNames = new[] { new SeriesName("lbl1", ObisCode.ColdWaterVolume1),
+        new SeriesName("lbl2", ObisCode.ElectrActiveEnergyA14) };
+      seriesNameRepository.Setup(pr => pr.GetStoredSeriesNames()).Returns(seriesNames);
 
       // Act
       var response = browser.Get(ExportLabelsRoute, with =>
@@ -54,9 +55,50 @@ namespace PowerView.Service.Test.Modules
       // Assert
       Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
       var json = response.Body.DeserializeJson<string[]>();
-      Assert.That(json, Is.EqualTo(labels));
+      Assert.That(json, Is.EqualTo(seriesNames.Select(x => x.Label).ToArray()));
     }
 
+    [Test]
+    public void GetLabelsDistinctsLabels()
+    {
+      // Arrange
+      var seriesNames = new[] { new SeriesName("lbl1", ObisCode.ColdWaterVolume1),
+        new SeriesName("lbl1", ObisCode.ElectrActiveEnergyA14) };
+      seriesNameRepository.Setup(pr => pr.GetStoredSeriesNames()).Returns(seriesNames);
+
+      // Act
+      var response = browser.Get(ExportLabelsRoute, with =>
+      {
+        with.HttpRequest();
+        with.HostName("localhost");
+      });
+
+      // Assert
+      Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+      var json = response.Body.DeserializeJson<string[]>();
+      Assert.That(json, Is.EqualTo(new[] { "lbl1" } ));
+    }
+
+    [Test]
+    public void GetLabelsIncludesCumulatives()
+    {
+      // Arrange
+      var seriesNames = new[] { new SeriesName("lbl1", ObisCode.ColdWaterFlow1),
+        new SeriesName("lbl2", ObisCode.ElectrActiveEnergyA14) };
+      seriesNameRepository.Setup(pr => pr.GetStoredSeriesNames()).Returns(seriesNames);
+
+      // Act
+      var response = browser.Get(ExportLabelsRoute, with =>
+      {
+        with.HttpRequest();
+        with.HostName("localhost");
+      });
+
+      // Assert
+      Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+      var json = response.Body.DeserializeJson<string[]>();
+      Assert.That(json, Is.EqualTo(new[] { "lbl2" }));
+    }
 
     [Test]
     public void GetHourlyExportFromAbsent()

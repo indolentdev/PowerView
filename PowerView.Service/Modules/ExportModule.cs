@@ -15,18 +15,18 @@ namespace PowerView.Service.Modules
   {
     private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-    private readonly ILabelRepository labelRepository;
+    private readonly ISeriesNameRepository seriesNameRepository;
     private readonly IExportRepository exportRepository;
     private readonly ILocationContext locationContext;
 
-    public ExportModule(ILabelRepository labelRepository, IExportRepository exportRepository, ILocationContext locationContext)
+    public ExportModule(ISeriesNameRepository seriesNameRepository, IExportRepository exportRepository, ILocationContext locationContext)
       : base("/api")
     {
-      if (labelRepository == null) throw new ArgumentNullException("labelRepository");
+      if (seriesNameRepository == null) throw new ArgumentNullException("seriesNameRepository");
       if (exportRepository == null) throw new ArgumentNullException("exportRepository");
       if (locationContext == null) throw new ArgumentNullException("locationContext");
 
-      this.labelRepository = labelRepository;
+      this.seriesNameRepository = seriesNameRepository;
       this.exportRepository = exportRepository;
       this.locationContext = locationContext;
 
@@ -36,7 +36,13 @@ namespace PowerView.Service.Modules
 
     private dynamic GetLabels(dynamic param)
     {
-      var r = labelRepository.GetLabels();
+      var seriesNames = seriesNameRepository.GetStoredSeriesNames();
+
+      var r = seriesNames
+        .Where(x => x.ObisCode.IsCumulative)
+        .Select(x => x.Label)
+        .Distinct()
+        .ToList();
  
       return Response.AsJson(r);
     }

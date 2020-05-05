@@ -136,7 +136,6 @@
     <Compile Include="DateTimeHelperTest.cs" />
     <Compile Include="TimeZoneHelper.cs" />
     <Compile Include="LocationContextTest.cs" />
-    <Compile Include="Repository\LabelRepositoryTest.cs" />
     <Compile Include="Repository\ExportRepositoryTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
