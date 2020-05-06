@@ -3,7 +3,7 @@
 </div>
 
 <div class="divCenterOuter">
-  <form #form="ngForm" [formGroup]="formGroup">
+  <form #form="ngForm" [formGroup]="formGroup" (ngSubmit)="submitForm(formGroup.value)">
 
     <mat-form-field style="width:13em">
       <mat-select placeholder="{{ 'common.placeholderLabels' | translate }}" formControlName="labels" id="labels" multiple required (selectionChange)="labelsChangeEvent($event)">
@@ -41,6 +41,8 @@
     </mat-form-field>
 
     <br/>
+
+    <button mat-raised-button style="margin:5px;" type="submit" [disabled]="!formGroup.valid">{{ 'export.buttonGetExport' | translate }}</button>
 
   </form>
 </div>

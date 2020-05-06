@@ -21,10 +21,13 @@ const toParam = "to";
   styleUrls: ['./export-hourly.component.css']
 })
 export class ExportHourlyComponent implements OnInit {
+  private absoluteMaxDateFrom = moment().subtract(2, 'days');
+  private absoluteMaxDateTo = moment().subtract(1, 'days');
+
   minDateFrom = moment("2010-01-01T00:00:00Z");
-  maxDateFrom = moment().subtract(2, 'days');
+  maxDateFrom = this.absoluteMaxDateFrom.clone();
   minDateTo = moment("2010-01-02T00:00:00Z");
-  maxDateTo = moment().subtract(1, 'days');
+  maxDateTo = this.absoluteMaxDateTo.clone();;
 
   labels: string[];
 
@@ -44,14 +47,18 @@ export class ExportHourlyComponent implements OnInit {
     this.getLabels();
 
     this.route.queryParamMap.subscribe(queryParams => {
-      let selectedLabels = null;
+      let labelsArray = [];
       let labelsSelectControl = this.getControl("labels");
       const labelsString = queryParams.get(labelsParam);
       if (labelsString != null)
       {
-        selectedLabels = labelsString.split(",");
+        labelsArray = labelsString.split(",");
       }
-      labelsSelectControl.setValue(selectedLabels);
+      if (labelsArray.length === 1 && labelsArray[0] === "") // we don't want &labels= to mean anything
+      {
+        labelsArray = [];
+      }
+      labelsSelectControl.setValue(labelsArray);
 
       let fromDateCtl = this.getControl("fromDate");
       const fromDateString = queryParams.get(fromParam);
@@ -60,15 +67,6 @@ export class ExportHourlyComponent implements OnInit {
       let toDateCtl = this.getControl("toDate");
       const toDateString = queryParams.get(toParam);
       this.parseDateSetFormControl(toDateString, toDateCtl);
-
-      if (labelsSelectControl.value != null && labelsSelectControl.value.length > 0 &&
-        fromDateCtl.value != null && moment(fromDateCtl.value).isValid() &&
-        toDateCtl.value != null && moment(toDateCtl.value).isValid() ) {
-          let labels = labelsSelectControl.value;
-          let fromMoment = moment(fromDateCtl.value);
-          let toMoment = moment(toDateCtl.value);
-          this.Export(labels, fromMoment, toMoment);
-      }
     });    
   }
 
@@ -99,6 +97,10 @@ export class ExportHourlyComponent implements OnInit {
 
     this.minDateTo = moment(event.value.toISOString()).add(1, 'days');
     this.maxDateTo = moment(event.value.toISOString()).add(2, 'days').add(3, 'months');
+    if (this.maxDateTo > this.absoluteMaxDateTo)
+    {
+      this.maxDateTo = this.absoluteMaxDateTo.clone();
+    }
 
     this.navigate({ from: event.value.toISOString() });
   }
@@ -107,7 +109,11 @@ export class ExportHourlyComponent implements OnInit {
     if (event == null) return;
     if (event.value == null) return;
 
-    this.maxDateFrom = moment(event.value.toISOString()).subtract(1, 'days');
+    this.maxDateFrom = moment(event.value.toISOString()).subtract(1, 'days'); 
+    if (this.maxDateFrom > this.absoluteMaxDateFrom)
+    {
+      this.maxDateFrom = this.absoluteMaxDateFrom.clone();
+    }
     this.minDateFrom = moment(event.value.toISOString()).subtract(2, 'days').subtract(3, 'months');
 
     this.navigate({ to: event.value.toISOString() });
@@ -129,6 +135,20 @@ export class ExportHourlyComponent implements OnInit {
       queryParamsHandling: "merge",
       replaceUrl: true
     });
+  }
+
+  public submitForm(formGroupValue: any) {
+    if (!this.formGroup.valid) {
+      return;
+    }
+
+    if (formGroupValue.labels != null && formGroupValue.labels.length > 0 &&
+      formGroupValue.fromDate != null && moment(formGroupValue.fromDate).isValid() &&
+      formGroupValue.toDate != null && moment(formGroupValue.toDate).isValid() ) {
+        this.Export(formGroupValue.labels, formGroupValue.fromDate, formGroupValue.toDate);
+        this.navigate({ labels: null, to: null, from: null });
+        this.form.resetForm();
+    }
   }
 
   private Export(labels: string[], from: Moment, to: Moment): void {
@@ -201,4 +221,5 @@ export class ExportHourlyComponent implements OnInit {
 
     return data;
   }
+
 }

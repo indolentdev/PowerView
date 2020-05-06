@@ -267,6 +267,7 @@
   },
 
   "export": {
+    "buttonGetExport": "Get Export",
     "columnNameHour": "Hour",
     "columnNameLabel": "{{label}} {{valueName}}",
     "columnNameLabelDiff": "{{label}} {{valueName}} Diff",

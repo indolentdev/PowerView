@@ -267,6 +267,7 @@
   },
 
   "export": {
+    "buttonGetExport": "Hent Eksport",
     "columnNameHour": "Time",
     "columnNameLabel": "{{label}} {{valueName}}",
     "columnNameLabelDiff": "{{label}} {{valueName}} Forskel",

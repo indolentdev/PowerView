@@ -46,6 +46,7 @@ describe('HourComponent', () => {
         MatInputModule,
         MatTableModule,
         MatSelectModule,
+        MatSnackBarModule,
         MatDatepickerModule,
         MatMomentDateModule
       ],
