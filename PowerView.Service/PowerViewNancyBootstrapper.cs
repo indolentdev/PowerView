@@ -24,7 +24,7 @@ namespace PowerView.Service
     {
       base.ApplicationStartup(container, pipelines);
       StaticConfiguration.DisableErrorTraces = false;
-      Nancy.Json.JsonSettings.MaxJsonLength = 1024*300;
+      Nancy.Json.JsonSettings.MaxJsonLength = 1024*1024*2;
     }
 
     protected override ILifetimeScope GetApplicationContainer()
