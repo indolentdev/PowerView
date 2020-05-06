@@ -1,7 +1,8 @@
 export let exportHourly = {
    "timestamps": [ 
       "2017-09-18T04:00:00.0000000Z", 
-      "2017-09-18T05:00:00.0000000Z" 
+      "2017-09-18T05:00:00.0000000Z", 
+      "2017-09-18T06:00:00.0000000Z", 
    ],
    "series": [
       {
@@ -21,6 +22,13 @@ export let exportHourly = {
                "diffValue": 0.1,
                "unit": "m3",
                "deviceId": "SN1"
+            },
+            {
+               "timestamp": "2017-09-18T06:03:00.0000000Z",
+               "value": 4321,
+               "diffValue": null,
+               "unit": "m3",
+               "deviceId": "SN3"
             }
          ]
       },
@@ -36,9 +44,16 @@ export let exportHourly = {
                "deviceId": "SN2"
             },
             {
-               "timestamp": "2017-09-18T05:01:00.0000000Z",
+               "timestamp": null,
+               "value": null,
+               "diffValue": null,
+               "unit": null,
+               "deviceId": null
+            },
+            {
+               "timestamp": "2017-09-18T06:01:00.0000000Z",
                "value": 456889,
-               "diffValue": 100,
+               "diffValue": null,
                "unit": "WattHour",
                "deviceId": "SN2"
             }

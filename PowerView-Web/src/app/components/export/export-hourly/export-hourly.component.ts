@@ -138,8 +138,6 @@ export class ExportHourlyComponent implements OnInit {
 
       const data = this.getRows(exportSeriesSet);
 
-      console.log(data);
-
       let params = {
         timestamp: moment().format("YYYY-MM-DD--HH-mm-ss"),
         labelCount: labelCount
@@ -181,19 +179,19 @@ export class ExportHourlyComponent implements OnInit {
         let exportValue = s.values[ix];
 
         name = this.translateService.instant("export.columnNameLabelTimestamp", params);
-        row[name] = moment(exportValue.timestamp).format("YYYY-MM-DD HH:mm:ss");
+        row[name] = (exportValue.timestamp === undefined || exportValue.timestamp == null) ? "" : moment(exportValue.timestamp).format("YYYY-MM-DD HH:mm:ss");
 
         name = this.translateService.instant("export.columnNameLabel", params);
-        row[name] = exportValue.value;
+        row[name] = (exportValue.value === undefined || exportValue.value == null) ? "" : exportValue.value.toString();
 
         name = this.translateService.instant("export.columnNameLabelDiff", params);
         row[name] = (exportValue.diffValue === undefined || exportValue.diffValue == null) ? "" : exportValue.diffValue.toString();
 
         name = this.translateService.instant("export.columnNameLabelUnit", params);
-        row[name] = exportValue.unit;
+        row[name] = (exportValue.unit === undefined || exportValue.unit == null) ? "" : exportValue.unit;
 
         name = this.translateService.instant("export.columnNameLabelDeviceId", params);
-        row[name] = exportValue.deviceId;
+        row[name] = (exportValue.deviceId === undefined || exportValue.deviceId == null) ? "" : exportValue.deviceId;
       });
 
       data.push(row);
