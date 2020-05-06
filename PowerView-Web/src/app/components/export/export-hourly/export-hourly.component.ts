@@ -98,8 +98,9 @@ export class ExportHourlyComponent implements OnInit {
     if (event.value == null) return;
 
     this.minDateTo = moment(event.value.toISOString()).add(1, 'days');
+    this.maxDateTo = moment(event.value.toISOString()).add(2, 'days').add(3, 'months');
 
-    this.navigate({ from: event.value.toISOString()});
+    this.navigate({ from: event.value.toISOString() });
   }
 
   toDateChangeEvent(event: MatDatepickerInputEvent<Moment>) {
@@ -107,8 +108,9 @@ export class ExportHourlyComponent implements OnInit {
     if (event.value == null) return;
 
     this.maxDateFrom = moment(event.value.toISOString()).subtract(1, 'days');
+    this.minDateFrom = moment(event.value.toISOString()).subtract(2, 'days').subtract(3, 'months');
 
-    this.navigate({ to: event.value.toISOString()});
+    this.navigate({ to: event.value.toISOString() });
   }
 
   labelsChangeEvent(event) {
