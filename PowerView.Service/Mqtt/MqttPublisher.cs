@@ -55,7 +55,7 @@ namespace PowerView.Service.Mqtt
         .Build();
 
       var mqttNetLogger = new MqttNetLogger();
-      mqttNetLogger.LogMessagePublished += (sender, e) => log.Debug(e.TraceMessage);
+      mqttNetLogger.LogMessagePublished += (sender, e) => log.Debug(e.LogMessage);
       using (var mqttClient = new MqttFactory().CreateMqttClient(mqttNetLogger))
       {
         mqttClient.UseConnectedHandler(e => { log.DebugFormat("Connected to MQTT server {0}:{1}.", config.Server, config.Port); });
