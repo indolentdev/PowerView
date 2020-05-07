@@ -64,7 +64,17 @@ namespace PowerView.Service.Mappers
     {
       foreach (var liveReadingDto in liveReadingSetDto.Items)
       {
-        yield return new LiveReading(liveReadingDto.Label, liveReadingDto.SerialNumber, liveReadingDto.Timestamp, MapLiveReadings(liveReadingDto.RegisterValues));
+        var deviceId = liveReadingDto.DeviceId;
+        if (string.IsNullOrEmpty(deviceId))
+        {
+          deviceId = liveReadingDto.SerialNumber;
+        }
+        if (string.IsNullOrEmpty(deviceId))
+        {
+          throw new ArgumentOutOfRangeException("DeviceId absent in LiveReading JSON representation"); // temporary until SerialNumber property is removed.
+        }
+
+        yield return new LiveReading(liveReadingDto.Label, deviceId, liveReadingDto.Timestamp, MapLiveReadings(liveReadingDto.RegisterValues));
       }
     }
 

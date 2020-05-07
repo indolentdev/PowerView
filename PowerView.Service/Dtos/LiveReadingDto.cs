@@ -13,7 +13,10 @@ namespace PowerView.Service.Dtos
     [JsonProperty(Required = Required.Always)]
     public string Label { get; set; }
 
-    [JsonProperty(Required = Required.Always)]
+    [JsonProperty(Required = Required.DisallowNull)]
+    public string DeviceId { get; set; }
+
+    [JsonProperty(Required = Required.DisallowNull)]
     public string SerialNumber { get; set; }
 
     [JsonProperty(Required = Required.Always)]

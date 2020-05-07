@@ -44,9 +44,9 @@ Content-Type: application/json
    <td>string</td>
  </tr>
  <tr>
-   <td>SerialNumber</td>
-   <td>The serial number or id of the meter from which the register values originates. This value should change whenever the meter is exchanged.</td>
-   <td>number</td>
+   <td>DeviceId</td>
+   <td>The hardware id of the meter from which the register values originates, for example the serial number. This value should change whenever the meter is exchanged.</td>
+   <td>string</td>
  </tr>
  <tr>
    <td>Timestamp</td>
@@ -188,7 +188,7 @@ Content-Type: application/json
    "Items":[
       {
          "Label":"Heater",
-         "SerialNumber":"15906168",
+         "DeviceId":"15906168",
          "Timestamp":"2019-10-26T19:55:00Z",
          "RegisterValues":[
             {
@@ -207,7 +207,7 @@ Content-Type: application/json
       },
       {
          "Label":"Water",
-         "SerialNumber":"66127449",
+         "DeviceId":"66127449",
          "Timestamp":"2019-10-26T19:54:28Z",
          "RegisterValues":[
             {
@@ -233,6 +233,8 @@ HTTP/1.1 204 No Content
 <pre>
 HTTP/1.1 503 Service Unavailable
 </pre>
+
+For 503 Service Unavailable response the client may retry the request later.
 
 </body>
 </html>

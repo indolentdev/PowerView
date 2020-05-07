@@ -1,4 +1,7 @@
 PowerView version 0.0.30 - Xxx 2020
+- Added csv file export of hourly cumulative values.
+- HTTP interface for metering value ingestion introduced property DeviceId
+  which replaces the SerialNumber property.
 - Fixed bug which caused day profile to fail on the day DST change happened
 
 PowerView version 0.0.29 - March 2020

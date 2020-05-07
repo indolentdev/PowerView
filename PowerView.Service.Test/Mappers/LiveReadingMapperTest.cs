@@ -31,21 +31,21 @@ namespace PowerView.Service.Test.Mappers
     [Test]
     [TestCase("Bad JSON", "Json invalid")]
     [TestCase("{}", "Items array absent")]
-    [TestCase("{\"Items\":[{\"SerialNumber\":\"sn\",\"Timestamp\":\"2020-03-07T21:44:22Z\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":2,\"Scale\":1,\"Unit\":\"watt\"}]}]}", "Label property absent")]
-    [TestCase("{\"Items\":[{\"Label\":null,\"SerialNumber\":\"sn\",\"Timestamp\":\"2020-03-07T21:44:22Z\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":2,\"Scale\":1,\"Unit\":\"watt\"}]}]}", "Label property null")]
-    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"Timestamp\":\"2020-03-07T21:44:22Z\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":2,\"Scale\":1,\"Unit\":\"watt\"}]}]}", "SerialNumber property absent")]
-    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"SerialNumber\":null,\"Timestamp\":\"2020-03-07T21:44:22Z\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":2,\"Scale\":1,\"Unit\":\"watt\"}]}]}", "SerialNumber property null")]
-    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"SerialNumber\":\"sn\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":2,\"Scale\":1,\"Unit\":\"watt\"}]}]}", "Timestamp property absent")]
-    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"SerialNumber\":\"sn\",\"Timestamp\":\"2020-03-07Q21:44:22Z\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":2,\"Scale\":1,\"Unit\":\"watt\"}]}]}", "Timestamp property invalid format")]
-    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"SerialNumber\":\"sn\",\"Timestamp\":\"2020-03-07T21:44:22\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":2,\"Scale\":1,\"Unit\":\"watt\"}]}]}", "Timestamp property not UTC")]
-    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"SerialNumber\":\"sn\",\"Timestamp\":\"2020-03-07T21:44:22Z\"}]}", "RegisterValues property absent")]
-    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"SerialNumber\":\"sn\",\"Timestamp\":\"2020-03-07T21:44:22Z\",\"RegisterValues\":[{\"Value\":2,\"Scale\":1,\"Unit\":\"watt\"}]}]}", "ObisCode property absent")]
-    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"SerialNumber\":\"sn\",\"Timestamp\":\"2020-03-07T21:44:22Z\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Scale\":1,\"Unit\":\"watt\"}]}]}", "Value property absent")]
-    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"SerialNumber\":\"sn\",\"Timestamp\":\"2020-03-07T21:44:22Z\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":\"BAD\",\"Scale\":1,\"Unit\":\"watt\"}]}]}", "Value property invalid")]
-    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"SerialNumber\":\"sn\",\"Timestamp\":\"2020-03-07T21:44:22Z\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":2,\"Unit\":\"watt\"}]}]}", "Scale property absent")]
-    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"SerialNumber\":\"sn\",\"Timestamp\":\"2020-03-07T21:44:22Z\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":2,\"Scale\":\"BAD\",\"Unit\":\"watt\"}]}]}", "Scale property invalid")]
-    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"SerialNumber\":\"sn\",\"Timestamp\":\"2020-03-07T21:44:22Z\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":2,\"Scale\":1}]}]}", "Unit property absent")]
-    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"SerialNumber\":\"sn\",\"Timestamp\":\"2020-03-07T21:44:22Z\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":2,\"Scale\":1,\"Unit\":\"BADUNIT\"}]}]}", "Unit property invalid")]
+    [TestCase("{\"Items\":[{\"DeviceId\":\"sn\",\"Timestamp\":\"2020-03-07T21:44:22Z\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":2,\"Scale\":1,\"Unit\":\"watt\"}]}]}", "Label property absent")]
+    [TestCase("{\"Items\":[{\"Label\":null,\"DeviceId\":\"sn\",\"Timestamp\":\"2020-03-07T21:44:22Z\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":2,\"Scale\":1,\"Unit\":\"watt\"}]}]}", "Label property null")]
+    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"Timestamp\":\"2020-03-07T21:44:22Z\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":2,\"Scale\":1,\"Unit\":\"watt\"}]}]}", "DeviceId property absent")]
+    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"DeviceId\":null,\"Timestamp\":\"2020-03-07T21:44:22Z\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":2,\"Scale\":1,\"Unit\":\"watt\"}]}]}", "DeviceId property null")]
+    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"DeviceId\":\"sn\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":2,\"Scale\":1,\"Unit\":\"watt\"}]}]}", "Timestamp property absent")]
+    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"DeviceId\":\"sn\",\"Timestamp\":\"2020-03-07Q21:44:22Z\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":2,\"Scale\":1,\"Unit\":\"watt\"}]}]}", "Timestamp property invalid format")]
+    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"DeviceId\":\"sn\",\"Timestamp\":\"2020-03-07T21:44:22\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":2,\"Scale\":1,\"Unit\":\"watt\"}]}]}", "Timestamp property not UTC")]
+    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"DeviceId\":\"sn\",\"Timestamp\":\"2020-03-07T21:44:22Z\"}]}", "RegisterValues property absent")]
+    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"DeviceId\":\"sn\",\"Timestamp\":\"2020-03-07T21:44:22Z\",\"RegisterValues\":[{\"Value\":2,\"Scale\":1,\"Unit\":\"watt\"}]}]}", "ObisCode property absent")]
+    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"DeviceId\":\"sn\",\"Timestamp\":\"2020-03-07T21:44:22Z\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Scale\":1,\"Unit\":\"watt\"}]}]}", "Value property absent")]
+    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"DeviceId\":\"sn\",\"Timestamp\":\"2020-03-07T21:44:22Z\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":\"BAD\",\"Scale\":1,\"Unit\":\"watt\"}]}]}", "Value property invalid")]
+    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"DeviceId\":\"sn\",\"Timestamp\":\"2020-03-07T21:44:22Z\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":2,\"Unit\":\"watt\"}]}]}", "Scale property absent")]
+    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"DeviceId\":\"sn\",\"Timestamp\":\"2020-03-07T21:44:22Z\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":2,\"Scale\":\"BAD\",\"Unit\":\"watt\"}]}]}", "Scale property invalid")]
+    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"DeviceId\":\"sn\",\"Timestamp\":\"2020-03-07T21:44:22Z\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":2,\"Scale\":1}]}]}", "Unit property absent")]
+    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"DeviceId\":\"sn\",\"Timestamp\":\"2020-03-07T21:44:22Z\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":2,\"Scale\":1,\"Unit\":\"BADUNIT\"}]}]}", "Unit property invalid")]
     public void MapInvalidJsonThrows(string json, string message)
     {
       // Arrange
@@ -63,8 +63,8 @@ namespace PowerView.Service.Test.Mappers
       var rv1 = new RegisterValueDto { ObisCode = "1.2.3.4.5.6", Value = 2, Scale = 1, Unit = "watt" };
       var rv2 = new RegisterValueDto { ObisCode = "6.5.4.3.2.1", Value = 20, Scale = 10, Unit = "wattHOUR" };
       var rvs = new [] { rv1, rv2 };
-      var lr = new LiveReadingDto { Label = "lbl", SerialNumber="4", Timestamp = DateTime.UtcNow, RegisterValues = rvs };
-      var dto = new LiveReadingSetDto { Items = new [] { lr } };
+      var lr = new { Label = "lbl", DeviceId="4", Timestamp = DateTime.UtcNow, RegisterValues = rvs };
+      var dto = new { Items = new [] { lr } };
       var stream = GetStream(dto);
       var target = CreateTarget();
 
@@ -75,7 +75,7 @@ namespace PowerView.Service.Test.Mappers
       Assert.That(liveReadings, Has.Length.EqualTo(1));
       var liveReading = liveReadings.First();
       Assert.That(liveReading.Label, Is.EqualTo(lr.Label));
-      Assert.That(liveReading.SerialNumber, Is.EqualTo(lr.SerialNumber));
+      Assert.That(liveReading.SerialNumber, Is.EqualTo(lr.DeviceId));
       Assert.That(liveReading.Timestamp, Is.EqualTo(lr.Timestamp));
       var registerValues = liveReading.GetRegisterValues();
       Assert.That(registerValues, Has.Length.EqualTo(rvs.Length));
@@ -84,13 +84,33 @@ namespace PowerView.Service.Test.Mappers
     }
 
     [Test]
-    public void MapSerialNumberInteger()
+    public void MapDeviceIdInteger()
     {
       // Arrange
       var rv1 = new RegisterValueDto { ObisCode = "1.2.3.4.5.6", Value = 2, Scale = 1, Unit = "watt" };
       var rvs = new[] { rv1 };
-      var lr = new { Label = "lbl", SerialNumber=4, Timestamp = DateTime.UtcNow, RegisterValues = rvs };
+      var lr = new { Label = "lbl", DeviceId=4, Timestamp = DateTime.UtcNow, RegisterValues = rvs };
       var dto = new  { Items = new[] { lr } };
+      var stream = GetStream(dto);
+      var target = CreateTarget();
+
+      // Act
+      var liveReadings = target.Map(ApplicationJson, stream).ToArray();
+
+      // Assert
+      Assert.That(liveReadings, Has.Length.EqualTo(1));
+      var liveReading = liveReadings.First();
+      Assert.That(liveReading.SerialNumber, Is.EqualTo(lr.DeviceId.ToString()));
+    }
+
+    [Test]
+    public void MapSerialNumberCascadeToDeviceId()
+    {
+      // Arrange
+      var rv1 = new RegisterValueDto { ObisCode = "1.2.3.4.5.6", Value = 2, Scale = 1, Unit = "watt" };
+      var rvs = new[] { rv1 };
+      var lr = new { Label = "lbl", SerialNumber = "4", Timestamp = DateTime.UtcNow, RegisterValues = rvs };
+      var dto = new { Items = new[] { lr } };
       var stream = GetStream(dto);
       var target = CreateTarget();
 
@@ -108,8 +128,8 @@ namespace PowerView.Service.Test.Mappers
     {
       // Arrange
       var rvs = new [] { new RegisterValueDto { ObisCode = "6.5.4.3.2.1", Unit = "wattHOUR" } };
-      var lr = new LiveReadingDto { Label = "lbl", SerialNumber = "5", Timestamp = DateTime.UtcNow, RegisterValues = rvs };
-      var dto = new LiveReadingSetDto { Items = new [] { lr } };
+      var lr = new { Label = "lbl", DeviceId = "5", Timestamp = DateTime.UtcNow, RegisterValues = rvs };
+      var dto = new { Items = new [] { lr } };
       var stream = GetStream(dto);
       var target = CreateTarget();
 
