@@ -30,7 +30,7 @@ namespace PowerView.Model.Expression
               x => new { x.NormalizedTimestamp, x.TimeRegisterValue.UnitValue.Unit },
               x => new { x.NormalizedTimestamp, x.TimeRegisterValue.UnitValue.Unit },
               (a1, a2) => new NormalizedTimeRegisterValue(
-                new TimeRegisterValue(TimeRegisterValue.DummySerialNumber,
+                new TimeRegisterValue(TimeRegisterValue.DummyDeviceId,
                                 ValueExpressionSetHelper.GetMeanTimestamp(a1.TimeRegisterValue, a2.TimeRegisterValue),
                                 a1.TimeRegisterValue.UnitValue.Value + a2.TimeRegisterValue.UnitValue.Value,
                                 a1.TimeRegisterValue.UnitValue.Unit),

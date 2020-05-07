@@ -66,7 +66,7 @@ namespace PowerView.Model.SeriesGenerators
             normalizedTimeRegisterValue.TimeRegisterValue.UnitValue.Unit + ", " + addend.Value.TimeRegisterValue.UnitValue.Unit);
         }
 
-        var addendSerialNumber = addend.Value.DeviceIdEquals(normalizedTimeRegisterValue) ? normalizedTimeRegisterValue.TimeRegisterValue.DeviceId : TimeRegisterValue.DummySerialNumber;
+        var addendSerialNumber = addend.Value.DeviceIdEquals(normalizedTimeRegisterValue) ? normalizedTimeRegisterValue.TimeRegisterValue.DeviceId : TimeRegisterValue.DummyDeviceId;
         addend = new NormalizedTimeRegisterValue(
           new TimeRegisterValue(addendSerialNumber, normalizedTimeRegisterValue.TimeRegisterValue.Timestamp, normalizedTimeRegisterValue.TimeRegisterValue.UnitValue.Value + addend.Value.TimeRegisterValue.UnitValue.Value, normalizedTimeRegisterValue.TimeRegisterValue.UnitValue.Unit),
           normalizedTimeRegisterValue.NormalizedTimestamp);

@@ -41,7 +41,7 @@ namespace PowerView.Service.Mqtt
           {
             Label = liveReading.Label,
             ObisCode = registerValue.ObisCode,
-            TimeRegisterValue = new TimeRegisterValue(liveReading.SerialNumber, liveReading.Timestamp, registerValue.Value,
+            TimeRegisterValue = new TimeRegisterValue(liveReading.DeviceId, liveReading.Timestamp, registerValue.Value,
                                              registerValue.Scale, registerValue.Unit)
           };
         }

@@ -79,7 +79,7 @@ namespace PowerView.Model.Test
 
       // Assert
       cacheItem.Verify(ci => ci.Add(It.Is<IEnumerable<TimeRegisterValue>>(x => x.Count() == 1 && 
-        x.SequenceEqual(new [] { new TimeRegisterValue(lr1.SerialNumber, lr1.Timestamp, 1, 1, Unit.Watt) }) )));
+        x.SequenceEqual(new [] { new TimeRegisterValue(lr1.DeviceId, lr1.Timestamp, 1, 1, Unit.Watt) }) )));
     }
 
     [Test]

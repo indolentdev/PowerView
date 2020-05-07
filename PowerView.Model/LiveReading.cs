@@ -7,26 +7,26 @@ namespace PowerView.Model
   public class LiveReading
   {
     private readonly string label;
-    private readonly string serialNumber;
+    private readonly string deviceId;
     private readonly DateTime timestamp;
     private readonly RegisterValue[] registers;
 
-    public LiveReading(string label, string serialNumber, DateTime timestamp, IEnumerable<RegisterValue> registers)
+    public LiveReading(string label, string deviceId, DateTime timestamp, IEnumerable<RegisterValue> registers)
     {
       if ( string.IsNullOrEmpty(label) ) throw new ArgumentNullException("label");
-      if ( string.IsNullOrEmpty(serialNumber)) throw new ArgumentNullException("serialNumber");
+      if ( string.IsNullOrEmpty(deviceId)) throw new ArgumentNullException("deviceId");
       if ( timestamp.Kind != DateTimeKind.Utc ) throw new ArgumentOutOfRangeException("timestamp", "Must be UTC timestamp");
       if ( registers == null || !registers.Any() ) throw new ArgumentNullException("registers");
       if (registers.Any(r => r == null)) throw new ArgumentOutOfRangeException("registers", "Must not contain nulls");
 
       this.label = label;
-      this.serialNumber = serialNumber;
+      this.deviceId = deviceId;
       this.timestamp = timestamp;
       this.registers = registers.ToArray();
     }
 
     public string Label { get { return label; } }
-    public string SerialNumber { get { return serialNumber; } }
+    public string DeviceId { get { return deviceId; } }
     public DateTime Timestamp { get { return timestamp; } }
 
     public RegisterValue[] GetRegisterValues()

@@ -92,14 +92,14 @@ namespace PowerView.Service.Mappers
       }
     }
 
-    public LiveReading MapPvOutputArgs(Uri requestUrl, string contentType, Stream body, string deviceLabel, string deviceSerialNumber, string deviceSerialNumberParam,
+    public LiveReading MapPvOutputArgs(Uri requestUrl, string contentType, Stream body, string deviceLabel, string deviceId, string deviceIdParam,
                                        string actualPowerP23L1Param, string actualPowerP23L2Param, string actualPowerP23L3Param)
     {
       if (requestUrl == null) throw new ArgumentNullException("requestUrl");
       if (string.IsNullOrEmpty(contentType)) throw new ArgumentNullException("contentType");
       if (body == null) throw new ArgumentNullException("body");
       if (string.IsNullOrEmpty(deviceLabel)) throw new ArgumentNullException("deviceLabel");
-      if (string.IsNullOrEmpty(deviceSerialNumberParam)) throw new ArgumentNullException("deviceSerialNumberParam");
+      if (string.IsNullOrEmpty(deviceIdParam)) throw new ArgumentNullException("deviceIdParam");
 
       var pvArgString = GetPvArgs(requestUrl, contentType, body);
       var pvArgsArray = pvArgString.Split(new[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
@@ -113,11 +113,11 @@ namespace PowerView.Service.Mappers
         return null;
       }
 
-      var serialNumber = GetSerialNumber(deviceSerialNumber, pvArgs, deviceSerialNumberParam);
-      if (serialNumber == null)
+      var resolvedDeviceId = GetDeviceId(deviceId, pvArgs, deviceIdParam);
+      if (resolvedDeviceId == null)
       {
-        log.InfoFormat("Failed to extract PV device serial number from configuration or PV data. SerialNumberParam:{0}, Params:{1}",
-          deviceSerialNumberParam, pvArgString);
+        log.InfoFormat("Failed to extract PV device id from configuration or PV data. DeviceIdParam:{0}, Params:{1}",
+          deviceIdParam, pvArgString);
         return null;
       }
 
@@ -134,7 +134,7 @@ namespace PowerView.Service.Mappers
         GetRegisterValue(pvArgs, actualPowerP23L3Param, ObisCode.ElectrActualPowerP23L3, Unit.Watt),
       }.Where(rv => rv != null);
 
-      return new LiveReading(deviceLabel, serialNumber, timestamp, registerValues);
+      return new LiveReading(deviceLabel, resolvedDeviceId, timestamp, registerValues);
     }
 
     private static string GetPvArgs(Uri requestUrl, string contentType, Stream body)
@@ -177,19 +177,19 @@ namespace PowerView.Service.Mappers
       return result;
     }
 
-    private static string GetSerialNumber(string deviceSerialNumber, IDictionary<string, IList<string>> pvArgs, string deviceSerialNumberParam)
+    private static string GetDeviceId(string deviceId, IDictionary<string, IList<string>> pvArgs, string deviceIdParam)
     {
-      if (deviceSerialNumber != null)
+      if (deviceId != null)
       {
-        return deviceSerialNumber;
+        return deviceId;
       }
 
-      if (!pvArgs.ContainsKey(deviceSerialNumberParam))
+      if (!pvArgs.ContainsKey(deviceIdParam))
       {
         return null;
       }
 
-      return pvArgs[deviceSerialNumberParam][0];
+      return pvArgs[deviceIdParam][0];
     }
 
     private static RegisterValue GetRegisterValue(IDictionary<string, IList<string>> pvArgs, string param, ObisCode obisCode, Unit unit)

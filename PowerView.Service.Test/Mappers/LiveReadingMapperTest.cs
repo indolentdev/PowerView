@@ -75,7 +75,7 @@ namespace PowerView.Service.Test.Mappers
       Assert.That(liveReadings, Has.Length.EqualTo(1));
       var liveReading = liveReadings.First();
       Assert.That(liveReading.Label, Is.EqualTo(lr.Label));
-      Assert.That(liveReading.SerialNumber, Is.EqualTo(lr.DeviceId));
+      Assert.That(liveReading.DeviceId, Is.EqualTo(lr.DeviceId));
       Assert.That(liveReading.Timestamp, Is.EqualTo(lr.Timestamp));
       var registerValues = liveReading.GetRegisterValues();
       Assert.That(registerValues, Has.Length.EqualTo(rvs.Length));
@@ -100,7 +100,7 @@ namespace PowerView.Service.Test.Mappers
       // Assert
       Assert.That(liveReadings, Has.Length.EqualTo(1));
       var liveReading = liveReadings.First();
-      Assert.That(liveReading.SerialNumber, Is.EqualTo(lr.DeviceId.ToString()));
+      Assert.That(liveReading.DeviceId, Is.EqualTo(lr.DeviceId.ToString()));
     }
 
     [Test]
@@ -120,7 +120,7 @@ namespace PowerView.Service.Test.Mappers
       // Assert
       Assert.That(liveReadings, Has.Length.EqualTo(1));
       var liveReading = liveReadings.First();
-      Assert.That(liveReading.SerialNumber, Is.EqualTo(lr.SerialNumber.ToString()));
+      Assert.That(liveReading.DeviceId, Is.EqualTo(lr.SerialNumber.ToString()));
     }
 
     [Test]
@@ -182,7 +182,7 @@ namespace PowerView.Service.Test.Mappers
 
       // Assert
       Assert.That(liveReading.Label, Is.EqualTo(deviceLabel));
-      Assert.That(liveReading.SerialNumber, Is.EqualTo(sn));
+      Assert.That(liveReading.DeviceId, Is.EqualTo(sn));
       Assert.That(liveReading.Timestamp, Is.EqualTo(new DateTime(2015, 3, 12, 19, 50, 0)));
       Assert.That(liveReading.Timestamp.Kind, Is.EqualTo(DateTimeKind.Utc));
       var registerValues = liveReading.GetRegisterValues();
@@ -207,7 +207,7 @@ namespace PowerView.Service.Test.Mappers
 
       // Assert
       Assert.That(liveReading.Label, Is.EqualTo(deviceLabel));
-      Assert.That(liveReading.SerialNumber, Is.EqualTo(sn));
+      Assert.That(liveReading.DeviceId, Is.EqualTo(sn));
       Assert.That(liveReading.Timestamp, Is.EqualTo(new DateTime(2015,3,12,19,50,0)));
       Assert.That(liveReading.Timestamp.Kind, Is.EqualTo(DateTimeKind.Utc));
       var registerValues = liveReading.GetRegisterValues();
@@ -230,7 +230,7 @@ namespace PowerView.Service.Test.Mappers
       var liveReading = target.MapPvOutputArgs(uri, ApplicationFormUrlEncoded, body, deviceLabel, null, snParam, null, null, null);
 
       // Assert
-      Assert.That(liveReading.SerialNumber, Is.EqualTo("12345678"));
+      Assert.That(liveReading.DeviceId, Is.EqualTo("12345678"));
     }
 
     [Test]

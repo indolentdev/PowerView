@@ -4,7 +4,7 @@ namespace PowerView.Model
 {
   public struct TimeRegisterValue : IEquatable<TimeRegisterValue>, ISeries
   {
-    public const string DummySerialNumber = "0";
+    public const string DummyDeviceId = "0";
 
     private readonly string deviceId;
     private readonly DateTime timestamp;

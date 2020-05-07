@@ -24,7 +24,7 @@ namespace PowerView.Model.Repository
         return;
       }
 
-      var dbLiveReadingsMap = liveReadings.ToDictionary(lr => new Db.LiveReading { Label = lr.Label, SerialNumber = lr.SerialNumber, Timestamp = lr.Timestamp });
+      var dbLiveReadingsMap = liveReadings.ToDictionary(lr => new Db.LiveReading { Label = lr.Label, SerialNumber = lr.DeviceId, Timestamp = lr.Timestamp });
       var transaction = DbContext.BeginTransaction();
       try
       {

@@ -84,13 +84,13 @@ namespace PowerView.Model.Test.SeriesGenerators
         Normalize(new TimeRegisterValue("1", dt, 0, unit)),
         Normalize(new TimeRegisterValue("1", dt.AddHours(1), 10, unit)),
         Normalize(new TimeRegisterValue("1", dt.AddHours(2), 30, unit)),
-        Normalize(new TimeRegisterValue(TimeRegisterValue.DummySerialNumber, dt.AddHours(3), 30+0, unit)),
-        Normalize(new TimeRegisterValue(TimeRegisterValue.DummySerialNumber, dt.AddHours(4), 30+10, unit)),
-        Normalize(new TimeRegisterValue(TimeRegisterValue.DummySerialNumber, dt.AddHours(5), 30+20, unit)),
-        Normalize(new TimeRegisterValue(TimeRegisterValue.DummySerialNumber, dt.AddHours(6), 30+40, unit)),
-        Normalize(new TimeRegisterValue(TimeRegisterValue.DummySerialNumber, dt.AddHours(7), 30+40, unit)),
-        Normalize(new TimeRegisterValue(TimeRegisterValue.DummySerialNumber, dt.AddHours(8), 30+40+10, unit)),
-        Normalize(new TimeRegisterValue(TimeRegisterValue.DummySerialNumber, dt.AddHours(9), 30+40+30, unit))
+        Normalize(new TimeRegisterValue(TimeRegisterValue.DummyDeviceId, dt.AddHours(3), 30+0, unit)),
+        Normalize(new TimeRegisterValue(TimeRegisterValue.DummyDeviceId, dt.AddHours(4), 30+10, unit)),
+        Normalize(new TimeRegisterValue(TimeRegisterValue.DummyDeviceId, dt.AddHours(5), 30+20, unit)),
+        Normalize(new TimeRegisterValue(TimeRegisterValue.DummyDeviceId, dt.AddHours(6), 30+40, unit)),
+        Normalize(new TimeRegisterValue(TimeRegisterValue.DummyDeviceId, dt.AddHours(7), 30+40, unit)),
+        Normalize(new TimeRegisterValue(TimeRegisterValue.DummyDeviceId, dt.AddHours(8), 30+40+10, unit)),
+        Normalize(new TimeRegisterValue(TimeRegisterValue.DummyDeviceId, dt.AddHours(9), 30+40+30, unit))
       };
       Assert.That(generatedValues, Is.EqualTo(periodValues));
     }
@@ -128,13 +128,13 @@ namespace PowerView.Model.Test.SeriesGenerators
         Normalize(new TimeRegisterValue("1", dt, 0, unit)),
         Normalize(new TimeRegisterValue("1", dt.AddHours(1), 10, unit)),
         Normalize(new TimeRegisterValue("1", dt.AddHours(2), 30, unit)),
-        Normalize(new TimeRegisterValue(TimeRegisterValue.DummySerialNumber, dt.AddHours(3), 30+0, unit)),
-        Normalize(new TimeRegisterValue(TimeRegisterValue.DummySerialNumber, dt.AddHours(4), 30+10, unit)),
-        Normalize(new TimeRegisterValue(TimeRegisterValue.DummySerialNumber, dt.AddHours(5), 30+20, unit)),
-        Normalize(new TimeRegisterValue(TimeRegisterValue.DummySerialNumber, dt.AddHours(6), 30+40, unit)),
-        Normalize(new TimeRegisterValue(TimeRegisterValue.DummySerialNumber, dt.AddHours(7), 30+40, unit)),
-        Normalize(new TimeRegisterValue(TimeRegisterValue.DummySerialNumber, dt.AddHours(8), 30+40+20, unit)),
-        Normalize(new TimeRegisterValue(TimeRegisterValue.DummySerialNumber, dt.AddHours(9), 30+40+30, unit))
+        Normalize(new TimeRegisterValue(TimeRegisterValue.DummyDeviceId, dt.AddHours(3), 30+0, unit)),
+        Normalize(new TimeRegisterValue(TimeRegisterValue.DummyDeviceId, dt.AddHours(4), 30+10, unit)),
+        Normalize(new TimeRegisterValue(TimeRegisterValue.DummyDeviceId, dt.AddHours(5), 30+20, unit)),
+        Normalize(new TimeRegisterValue(TimeRegisterValue.DummyDeviceId, dt.AddHours(6), 30+40, unit)),
+        Normalize(new TimeRegisterValue(TimeRegisterValue.DummyDeviceId, dt.AddHours(7), 30+40, unit)),
+        Normalize(new TimeRegisterValue(TimeRegisterValue.DummyDeviceId, dt.AddHours(8), 30+40+20, unit)),
+        Normalize(new TimeRegisterValue(TimeRegisterValue.DummyDeviceId, dt.AddHours(9), 30+40+30, unit))
       };
       Assert.That(generatedValues, Is.EqualTo(periodValues));
     }
@@ -168,9 +168,9 @@ namespace PowerView.Model.Test.SeriesGenerators
         Normalize(new TimeRegisterValue("1", dt, 0, unit)),
         Normalize(new TimeRegisterValue("1", dt.AddHours(1), 10, unit)),
         Normalize(new TimeRegisterValue("1", dt.AddHours(2), 30, unit)),
-        Normalize(new TimeRegisterValue(TimeRegisterValue.DummySerialNumber, dt.AddHours(3), 30+0, unit)),
-        Normalize(new TimeRegisterValue(TimeRegisterValue.DummySerialNumber, dt.AddHours(7), 30+0, unit)),
-        Normalize(new TimeRegisterValue(TimeRegisterValue.DummySerialNumber, dt.AddHours(8), 30+0+20, unit))
+        Normalize(new TimeRegisterValue(TimeRegisterValue.DummyDeviceId, dt.AddHours(3), 30+0, unit)),
+        Normalize(new TimeRegisterValue(TimeRegisterValue.DummyDeviceId, dt.AddHours(7), 30+0, unit)),
+        Normalize(new TimeRegisterValue(TimeRegisterValue.DummyDeviceId, dt.AddHours(8), 30+0+20, unit))
       };
       Assert.That(generatedValues, Is.EqualTo(periodValues));
     }

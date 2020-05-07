@@ -51,7 +51,7 @@ namespace PowerView.Model
         {
           continue;
         }
-        cacheItems[itemGroup.Key].Add(itemGroup.Select(x => new TimeRegisterValue(x.reading.SerialNumber, x.reading.Timestamp,
+        cacheItems[itemGroup.Key].Add(itemGroup.Select(x => new TimeRegisterValue(x.reading.DeviceId, x.reading.Timestamp,
                                                            x.register.Value, x.register.Scale, x.register.Unit)));
       }
     }
