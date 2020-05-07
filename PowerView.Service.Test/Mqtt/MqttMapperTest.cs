@@ -54,6 +54,9 @@ namespace PowerView.Service.Test.Mqtt
     [TestCase("8.0.1.0.0.255", "theLabel", "ColdWater/theLabel/Volume/Import")]
     [TestCase("8.0.2.0.0.255", "theLabel", "ColdWater/theLabel/Flow/Import")]
 
+    [TestCase("9.0.1.0.0.255", "theLabel", "HotWater/theLabel/Volume/Import")]
+    [TestCase("9.0.2.0.0.255", "theLabel", "HotWater/theLabel/Flow/Import")]
+
     [TestCase("6.0.1.0.0.255", "theLabel", "Heat/theLabel/Energy")]
     [TestCase("6.0.8.0.0.255", "theLabel", "Heat/theLabel/Power")]
     [TestCase("6.0.2.0.0.255", "theLabel", "Heat/theLabel/Volume")]

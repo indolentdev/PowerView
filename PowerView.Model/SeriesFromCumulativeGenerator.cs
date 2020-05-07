@@ -49,6 +49,10 @@ namespace PowerView.Model
       {
         return ObisCode.ColdWaterFlow1Average;
       }
+      else if (obisCode == ObisCode.HotWaterVolume1)
+      {
+        return ObisCode.HotWaterFlow1Average;
+      }
       else if (obisCode == ObisCode.HeatEnergyEnergy1)
       {
         return ObisCode.HeatEnergyPower1Average;

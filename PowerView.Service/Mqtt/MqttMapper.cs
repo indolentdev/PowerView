@@ -79,6 +79,9 @@ namespace PowerView.Service.Mqtt
       if (obisCode == ObisCode.ColdWaterVolume1) return "ColdWater/{0}/Volume/Import";
       if (obisCode == ObisCode.ColdWaterFlow1) return "ColdWater/{0}/Flow/Import";
 
+      if (obisCode == ObisCode.HotWaterVolume1) return "HotWater/{0}/Volume/Import";
+      if (obisCode == ObisCode.HotWaterFlow1) return "HotWater/{0}/Flow/Import";
+
       if (obisCode == ObisCode.HeatEnergyEnergy1) return "Heat/{0}/Energy";
       if (obisCode == ObisCode.HeatEnergyPower1) return "Heat/{0}/Power";
       if (obisCode == ObisCode.HeatEnergyVolume1) return "Heat/{0}/Volume";

@@ -51,8 +51,14 @@ namespace PowerView.Model
     public static readonly ObisCode ColdWaterFlow1 = "8.0.2.0.0.255";
     public static readonly ObisCode ColdWaterFlow1Average = "8.67.2.0.0.255";
 
-    private static readonly Regex isWaterImport  = new Regex(@"^8\.[0-9]{1,3}\.[1-2]{1}\.0\.0\.255$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Compiled);
-    private static readonly Regex isWaterCumulative  = new Regex(@"^8\.0\.1\.0\.0\.255$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Compiled);
+    public static readonly ObisCode HotWaterVolume1 = "9.0.1.0.0.255";
+    public static readonly ObisCode HotWaterVolume1Delta = "9.65.1.0.0.255";
+    public static readonly ObisCode HotWaterVolume1Period = "9.66.1.0.0.255";
+    public static readonly ObisCode HotWaterFlow1 = "9.0.2.0.0.255";
+    public static readonly ObisCode HotWaterFlow1Average = "9.67.2.0.0.255";
+
+    private static readonly Regex isWaterImport  = new Regex(@"^[8-9]{1}\.[0-9]{1,3}\.[1-2]{1}\.0\.0\.255$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Compiled);
+    private static readonly Regex isWaterCumulative  = new Regex(@"^[8-9]{1}\.0\.1\.0\.0\.255$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
     public static readonly ObisCode HeatEnergyEnergy1 = "6.0.1.0.0.255";
     public static readonly ObisCode HeatEnergyEnergy1Delta = "6.65.1.0.0.255";

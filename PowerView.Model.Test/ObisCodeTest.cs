@@ -148,6 +148,19 @@ namespace PowerView.Model.Test
     }
 
     [Test]
+    public void StaticObisCodesHotWater()
+    {
+      // Arrange
+
+      // Act & Assert
+      Assert.That(ObisCode.HotWaterVolume1, Is.EqualTo(new byte[] { 9, 0, 1, 0, 0, 255 }));
+      Assert.That(ObisCode.HotWaterVolume1Delta, Is.EqualTo(new byte[] { 9, 65, 1, 0, 0, 255 }));
+      Assert.That(ObisCode.HotWaterVolume1Period, Is.EqualTo(new byte[] { 9, 66, 1, 0, 0, 255 }));
+      Assert.That(ObisCode.HotWaterFlow1, Is.EqualTo(new byte[] { 9, 0, 2, 0, 0, 255 }));
+      Assert.That(ObisCode.HotWaterFlow1Average, Is.EqualTo(new byte[] { 9, 67, 2, 0, 0, 255 }));
+    }
+
+    [Test]
     public void StaticObisCodesHeatEnergy()
     {
       // Arrange
@@ -240,6 +253,11 @@ namespace PowerView.Model.Test
     [TestCase("8.66.1.0.0.255")]
     [TestCase("8.0.2.0.0.255")]
     [TestCase("8.67.2.0.0.255")]
+    [TestCase("9.0.1.0.0.255")]
+    [TestCase("9.65.1.0.0.255")]
+    [TestCase("9.66.1.0.0.255")]
+    [TestCase("9.0.2.0.0.255")]
+    [TestCase("9.67.2.0.0.255")]
     public void IsWaterImport(string obisCode)
     {
       // Arrange
@@ -254,6 +272,7 @@ namespace PowerView.Model.Test
 
     [Test]
     [TestCase("8.0.1.0.0.255")]
+    [TestCase("9.0.1.0.0.255")]
     public void IsWaterCumulative(string obisCode)
     {
       // Arrange
@@ -270,6 +289,9 @@ namespace PowerView.Model.Test
     [TestCase("8.65.1.0.0.255")]
     [TestCase("8.66.1.0.0.255")]
     [TestCase("8.67.1.0.0.255")]
+    [TestCase("9.65.1.0.0.255")]
+    [TestCase("9.66.1.0.0.255")]
+    [TestCase("9.67.1.0.0.255")]
     public void IsNotWaterCumulative(string obisCode)
     {
       // Arrange

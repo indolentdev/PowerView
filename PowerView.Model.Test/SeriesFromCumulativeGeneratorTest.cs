@@ -43,6 +43,7 @@ namespace PowerView.Model.Test
     [TestCase("1.0.1.8.0.255", "1.67.1.7.0.255")]
     [TestCase("1.0.2.8.0.255", "1.67.2.7.0.255")]
     [TestCase("8.0.1.0.0.255", "8.67.2.0.0.255")]
+    [TestCase("9.0.1.0.0.255", "9.67.2.0.0.255")]
     [TestCase("6.0.1.0.0.255", "6.67.8.0.0.255")]
     [TestCase("6.0.2.0.0.255", "6.67.9.0.0.255")]
     public void GenerateSeriesFromCumulativeAverages(string obisCode, string expectedAverage)

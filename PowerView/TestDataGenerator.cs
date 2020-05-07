@@ -102,9 +102,13 @@ namespace PowerView
       var invActiveEnergyA23 = new AccSG { Unit=Unit.WattHour, Scale=0, ObisCode=OC.ElectrActiveEnergyA23, BackingGenerator=invActualPowerP23 };
       result.Add("Inverter", new SerieGenerator[] { invActualPowerP23, invActiveEnergyA23 });
 
-      var waterFlow = new ActSG { Unit=Unit.CubicMetrePrHour, Scale=-3, BaseValue=5, BaseOffset=200,  MinValue=25, MaxValue=600, ObisCode = OC.ColdWaterFlow1 };
-      var waterVolume = new AccSG { Unit=Unit.CubicMetre, Scale=-3, ObisCode=OC.ColdWaterVolume1, BackingGenerator=waterFlow };
-      result.Add("Water", new SerieGenerator[] { waterFlow, waterVolume });
+      var coldWaterFlow = new ActSG { Unit=Unit.CubicMetrePrHour, Scale=-3, BaseValue=5, BaseOffset=200,  MinValue=25, MaxValue=600, ObisCode = OC.ColdWaterFlow1 };
+      var coldWaterVolume = new AccSG { Unit=Unit.CubicMetre, Scale=-3, ObisCode=OC.ColdWaterVolume1, BackingGenerator=coldWaterFlow };
+      result.Add("Water", new SerieGenerator[] { coldWaterFlow, coldWaterVolume });
+
+      var hotWaterFlow = new ActSG { Unit = Unit.CubicMetrePrHour, Scale = -3, BaseValue = 5, BaseOffset = 200, MinValue = 25, MaxValue = 600, ObisCode = OC.HotWaterFlow1 };
+      var hotWaterVolume = new AccSG { Unit = Unit.CubicMetre, Scale = -3, ObisCode = OC.HotWaterVolume1, BackingGenerator = hotWaterFlow };
+      result.Add("HotWater", new SerieGenerator[] { hotWaterFlow, hotWaterVolume });
 
       var heatFlow = new ActSG { Unit=Unit.CubicMetrePrHour, Scale=-3, BaseValue=5, BaseOffset=200,  MinValue=25, MaxValue=600, ObisCode = OC.HeatEnergyFlow1 };
       var heatVolume = new AccSG { Unit=Unit.CubicMetre, Scale=-3, ObisCode=OC.HeatEnergyVolume1, BackingGenerator=heatFlow };

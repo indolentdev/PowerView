@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace PowerView.Model.Repository
 {
@@ -18,7 +17,11 @@ namespace PowerView.Model.Repository
       { ObisCode.ColdWaterFlow1, "#330066" },
       { ObisCode.ColdWaterFlow1Average, "#330066" },
       { ObisCode.ColdWaterVolume1Delta, "#330066" }, 
-      { ObisCode.ColdWaterVolume1Period, "#99CCFF" }, 
+      { ObisCode.ColdWaterVolume1Period, "#99CCFF" },
+      { ObisCode.HotWaterFlow1, "#33CCCC" },
+      { ObisCode.HotWaterFlow1Average, "#33CCCC" },
+      { ObisCode.HotWaterVolume1Delta, "#33CCCC" },
+      { ObisCode.HotWaterVolume1Period, "#D6F5F5" },
       { ObisCode.HeatEnergyPower1, "#CC3300" },
       { ObisCode.HeatEnergyPower1Average, "#CC3300" },
       { ObisCode.HeatEnergyEnergy1Delta, "#CC3300" },
