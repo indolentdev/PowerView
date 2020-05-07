@@ -122,7 +122,7 @@ namespace PowerView.Service.Modules
               Value = ValueAndUnitMapper.Map(x.TimeRegisterValue.UnitValue.Value, unit),
               DiffValue = diffValue != null ? ValueAndUnitMapper.Map(diffValue.Value, unit) : null,
               Unit = ValueAndUnitMapper.Map(unit),
-              DeviceId = x.TimeRegisterValue.SerialNumber
+              DeviceId = x.TimeRegisterValue.DeviceId
             };
           }).ToList()
         };
@@ -134,7 +134,7 @@ namespace PowerView.Service.Modules
 
     private static double? CalculateDiffValue(NormalizedTimeRegisterValue value, NormalizedTimeRegisterValue previousValue)
     {
-      if (previousValue.TimeRegisterValue.SerialNumberEquals(value.TimeRegisterValue) &&
+      if (previousValue.TimeRegisterValue.DeviceIdEquals(value.TimeRegisterValue) &&
         previousValue.TimeRegisterValue.UnitValue.Unit == value.TimeRegisterValue.UnitValue.Unit)
       {
         var diffValueCandidate = value.TimeRegisterValue.UnitValue.Value - previousValue.TimeRegisterValue.UnitValue.Value;

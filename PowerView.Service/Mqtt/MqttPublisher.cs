@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Reflection;
 using System.Threading.Tasks;
 using log4net;
@@ -75,7 +74,6 @@ namespace PowerView.Service.Mqtt
           var mqttMessages = mqttMapper.Map(liveReadings);
           await mqttClient.PublishAsync(mqttMessages);
           log.DebugFormat("Published {0} MQTT messages", mqttMessages.Length);
-//        System.Threading.Thread.Sleep(postPublishSleepMs); // Allow MQTTnet crap library timing to complete before disconnecting.
           await mqttClient.DisconnectAsync();
         }
         catch (MqttCommunicationException e)

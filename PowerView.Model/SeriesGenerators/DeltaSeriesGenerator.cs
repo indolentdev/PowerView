@@ -26,10 +26,10 @@ namespace PowerView.Model.SeriesGenerators
       {
         var minutend = normalizedTimeRegisterValue;
         var substrahend = previous;
-        if (!minutend.SerialNumberEquals(substrahend))
+        if (!minutend.DeviceIdEquals(substrahend))
         {
           generatedValue = new NormalizedTimeRegisterValue(
-            new TimeRegisterValue(minutend.TimeRegisterValue.SerialNumber, minutend.TimeRegisterValue.Timestamp, 0, minutend.TimeRegisterValue.UnitValue.Unit),
+            new TimeRegisterValue(minutend.TimeRegisterValue.DeviceId, minutend.TimeRegisterValue.Timestamp, 0, minutend.TimeRegisterValue.UnitValue.Unit),
             minutend.NormalizedTimestamp);
         }
         else

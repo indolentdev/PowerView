@@ -27,7 +27,7 @@ namespace PowerView.Model.Test
       var target = new TimeRegisterValue("1", dt, 100, 2, Unit.WattHour);
 
       // Assert
-      Assert.That(target.SerialNumber, Is.EqualTo("1"));
+      Assert.That(target.DeviceId, Is.EqualTo("1"));
       Assert.That(target.Timestamp, Is.EqualTo(dt));
       Assert.That(target.UnitValue.Value, Is.EqualTo(10000));
       Assert.That(target.UnitValue.Unit, Is.EqualTo(Unit.WattHour));
@@ -77,7 +77,7 @@ namespace PowerView.Model.Test
     }
 
     [Test]
-    public void SubstractValueSerialNumberCaseInsensitive()
+    public void SubstractValueDeviceIdCaseInsensitive()
     {
       // Arrange
       var dt = new DateTime(2015, 02, 13, 19, 30, 00, DateTimeKind.Utc);
@@ -135,7 +135,7 @@ namespace PowerView.Model.Test
     }
 
     [Test]
-    public void SubstractValueCrossSerialNumberThrows()
+    public void SubstractValueCrossDeviceIdsThrows()
     {
       // Arrange
       var dt = new DateTime(2015,02,13,19,30,00,DateTimeKind.Utc);
@@ -165,14 +165,14 @@ namespace PowerView.Model.Test
     [TestCase("SN", "XX", false)]
     [TestCase(null, "SN", false)]
     [TestCase("SN", null, false)]
-    public void SerialNumberEquals(string sn1, string sn2, bool expected)
+    public void DeviceIdEquals(string sn1, string sn2, bool expected)
     {
       // Arrange
       var target1 = new TimeRegisterValue(sn1, DateTime.UtcNow, 2, Unit.CubicMetre);
       var target2 = new TimeRegisterValue(sn2, DateTime.UtcNow, 1, Unit.CubicMetre);
 
       // Act
-      var snEquals = target1.SerialNumberEquals(target2);
+      var snEquals = target1.DeviceIdEquals(target2);
 
       // Assert
       Assert.That(snEquals, Is.EqualTo(expected));
@@ -188,7 +188,7 @@ namespace PowerView.Model.Test
       var target = new TimeRegisterValue("1", dt, 10, 1, Unit.Watt);
 
       // Assert
-      Assert.That(target.ToString(), Is.EqualTo("[serialNumber=1, timestamp=2015-02-13T19:30:00.0000000Z, unitValue=[value=100, unit=Watt]]"));
+      Assert.That(target.ToString(), Is.EqualTo("[deviceId=1, timestamp=2015-02-13T19:30:00.0000000Z, unitValue=[value=100, unit=Watt]]"));
     }
 
     [Test]

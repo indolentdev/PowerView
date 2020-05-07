@@ -19,17 +19,17 @@ namespace PowerView.Model.SeriesGenerators
       if (generatedValues.Count == 0)
       {
         generatedValue = new NormalizedTimeRegisterValue(
-          new TimeRegisterValue(normalizedTimeRegisterValue.TimeRegisterValue.SerialNumber, normalizedTimeRegisterValue.TimeRegisterValue.Timestamp, 0, GetActualUnit(normalizedTimeRegisterValue.TimeRegisterValue.UnitValue.Unit)),
+          new TimeRegisterValue(normalizedTimeRegisterValue.TimeRegisterValue.DeviceId, normalizedTimeRegisterValue.TimeRegisterValue.Timestamp, 0, GetActualUnit(normalizedTimeRegisterValue.TimeRegisterValue.UnitValue.Unit)),
           normalizedTimeRegisterValue.NormalizedTimestamp);
       }
       else
       {
         var minutend = normalizedTimeRegisterValue;
         var substrahend = previous;
-        if (!minutend.SerialNumberEquals(substrahend))
+        if (!minutend.DeviceIdEquals(substrahend))
         {
           generatedValue = new NormalizedTimeRegisterValue(
-            new TimeRegisterValue(minutend.TimeRegisterValue.SerialNumber, minutend.TimeRegisterValue.Timestamp, 0, GetActualUnit(normalizedTimeRegisterValue.TimeRegisterValue.UnitValue.Unit)),
+            new TimeRegisterValue(minutend.TimeRegisterValue.DeviceId, minutend.TimeRegisterValue.Timestamp, 0, GetActualUnit(normalizedTimeRegisterValue.TimeRegisterValue.UnitValue.Unit)),
             minutend.NormalizedTimestamp);
         }
         else
@@ -39,7 +39,7 @@ namespace PowerView.Model.SeriesGenerators
           var delta = minutend.TimeRegisterValue.SubtractValue(substrahend.TimeRegisterValue).UnitValue.Value;
           var averageActualValue = delta / duration.TotalHours;
           generatedValue = new NormalizedTimeRegisterValue(
-            new TimeRegisterValue(minutend.TimeRegisterValue.SerialNumber, minutend.TimeRegisterValue.Timestamp, averageActualValue, unit),
+            new TimeRegisterValue(minutend.TimeRegisterValue.DeviceId, minutend.TimeRegisterValue.Timestamp, averageActualValue, unit),
             minutend.NormalizedTimestamp);
         }
       }

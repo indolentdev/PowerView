@@ -4,7 +4,7 @@ namespace PowerView.Model
 {
   public struct NormalizedTimeRegisterValue : IEquatable<NormalizedTimeRegisterValue>, ISeries
   {
-    public const string DummySerialNumber = "0";
+    public const string DummyDeviceId = "0";
 
     private readonly TimeRegisterValue timeRegisterValue;
     private readonly DateTime normalizedTimestamp;
@@ -27,9 +27,9 @@ namespace PowerView.Model
       throw new NotSupportedException();
     }
 
-    public bool SerialNumberEquals(NormalizedTimeRegisterValue normalizedTimeRegisterValue)
+    public bool DeviceIdEquals(NormalizedTimeRegisterValue normalizedTimeRegisterValue)
     {
-      return TimeRegisterValue.SerialNumberEquals(normalizedTimeRegisterValue.TimeRegisterValue);
+      return TimeRegisterValue.DeviceIdEquals(normalizedTimeRegisterValue.TimeRegisterValue);
     }
 
     public override string ToString()

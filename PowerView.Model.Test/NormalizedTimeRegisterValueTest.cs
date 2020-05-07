@@ -52,14 +52,14 @@ namespace PowerView.Model.Test
     [TestCase("SN", "XX", false)]
     [TestCase(null, "SN", false)]
     [TestCase("SN", null, false)]
-    public void SerialNumberEquals(string sn1, string sn2, bool expected)
+    public void DeviceIdEquals(string sn1, string sn2, bool expected)
     {
       // Arrange
       var target1 = new NormalizedTimeRegisterValue(new TimeRegisterValue(sn1, DateTime.UtcNow, 2, Unit.CubicMetre), DateTime.UtcNow);
       var target2 = new NormalizedTimeRegisterValue(new TimeRegisterValue(sn2, DateTime.UtcNow, 1, Unit.CubicMetre), DateTime.UtcNow);
 
       // Act
-      var snEquals = target1.SerialNumberEquals(target2);
+      var snEquals = target1.DeviceIdEquals(target2);
 
       // Assert
       Assert.That(snEquals, Is.EqualTo(expected));
@@ -76,7 +76,7 @@ namespace PowerView.Model.Test
       var target = new NormalizedTimeRegisterValue(timeRegisterValue, dt);
 
       // Assert
-      Assert.That(target.ToString(), Is.EqualTo("[timeRegisterValue=[serialNumber=, timestamp=0001-01-01T00:00:00.0000000, unitValue=[value=0, unit=Watt]], normalizedTimestamp=2019-04-18T15:27:11.0000000Z]"));
+      Assert.That(target.ToString(), Is.EqualTo("[timeRegisterValue=[deviceId=, timestamp=0001-01-01T00:00:00.0000000, unitValue=[value=0, unit=Watt]], normalizedTimestamp=2019-04-18T15:27:11.0000000Z]"));
     }
 
     [Test]

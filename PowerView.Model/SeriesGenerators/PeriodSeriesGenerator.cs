@@ -25,7 +25,7 @@ namespace PowerView.Model.SeriesGenerators
       }
 
       var reference = snReferenceValues[snReferenceValues.Count - 1];
-      if (!reference.SerialNumberEquals(normalizedTimeRegisterValue))
+      if (!reference.DeviceIdEquals(normalizedTimeRegisterValue))
       {
         snReferenceValues.Add(normalizedTimeRegisterValue);
         reference = normalizedTimeRegisterValue;
@@ -46,7 +46,7 @@ namespace PowerView.Model.SeriesGenerators
 
     private static string GetTransitionKey(NormalizedTimeRegisterValue normalizedTimeRegisterValue)
     {
-      return string.Format("SN:{0}-RefTime:{1}", normalizedTimeRegisterValue.TimeRegisterValue.SerialNumber, normalizedTimeRegisterValue.TimeRegisterValue.Timestamp.ToString("o"));
+      return string.Format("SN:{0}-RefTime:{1}", normalizedTimeRegisterValue.TimeRegisterValue.DeviceId, normalizedTimeRegisterValue.TimeRegisterValue.Timestamp.ToString("o"));
     }
 
     private static NormalizedTimeRegisterValue Sum(ICollection<NormalizedTimeRegisterValue> normalizedTimeRegisterValues)
@@ -66,7 +66,7 @@ namespace PowerView.Model.SeriesGenerators
             normalizedTimeRegisterValue.TimeRegisterValue.UnitValue.Unit + ", " + addend.Value.TimeRegisterValue.UnitValue.Unit);
         }
 
-        var addendSerialNumber = addend.Value.SerialNumberEquals(normalizedTimeRegisterValue) ? normalizedTimeRegisterValue.TimeRegisterValue.SerialNumber : TimeRegisterValue.DummySerialNumber;
+        var addendSerialNumber = addend.Value.DeviceIdEquals(normalizedTimeRegisterValue) ? normalizedTimeRegisterValue.TimeRegisterValue.DeviceId : TimeRegisterValue.DummySerialNumber;
         addend = new NormalizedTimeRegisterValue(
           new TimeRegisterValue(addendSerialNumber, normalizedTimeRegisterValue.TimeRegisterValue.Timestamp, normalizedTimeRegisterValue.TimeRegisterValue.UnitValue.Value + addend.Value.TimeRegisterValue.UnitValue.Value, normalizedTimeRegisterValue.TimeRegisterValue.UnitValue.Unit),
           normalizedTimeRegisterValue.NormalizedTimestamp);

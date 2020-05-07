@@ -6,31 +6,31 @@ namespace PowerView.Model
   {
     public const string DummySerialNumber = "0";
 
-    private readonly string serialNumber;
+    private readonly string deviceId;
     private readonly DateTime timestamp;
     private readonly UnitValue unitValue;
 
-    public string SerialNumber { get { return serialNumber; } }
+    public string DeviceId { get { return deviceId; } }
     public DateTime Timestamp { get { return timestamp; } }
     public UnitValue UnitValue { get { return unitValue; } }
 
     public DateTime OrderProperty { get { return Timestamp; } }
 
-    public TimeRegisterValue(string serialNumber, DateTime timestamp, int value, short scale, Unit unit)
-      : this(serialNumber, timestamp, new UnitValue(value, scale, unit))
+    public TimeRegisterValue(string deviceId, DateTime timestamp, int value, short scale, Unit unit)
+      : this(deviceId, timestamp, new UnitValue(value, scale, unit))
     {
     }
 
-    internal TimeRegisterValue(string serialNumber, DateTime timestamp, double value, Unit unit)
-      : this(serialNumber, timestamp, new UnitValue(value, unit))
+    internal TimeRegisterValue(string deviceId, DateTime timestamp, double value, Unit unit)
+      : this(deviceId, timestamp, new UnitValue(value, unit))
     {
     }
 
-    internal TimeRegisterValue(string serialNumber, DateTime timestamp, UnitValue unitValue)
+    internal TimeRegisterValue(string deviceId, DateTime timestamp, UnitValue unitValue)
     {
       if (timestamp.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("timestamp", "Must be UTC");
 
-      this.serialNumber = serialNumber;
+      this.deviceId = deviceId;
       this.timestamp = timestamp;
       this.unitValue = unitValue;
     }
@@ -47,9 +47,9 @@ namespace PowerView.Model
       var substractedValue = unitValue - baseValue.unitValue;
       var dValue = substractedValue.Value;
 
-      if (!SerialNumberEquals(baseValue))
+      if (!DeviceIdEquals(baseValue))
       {
-        var msg = string.Format("A calculation of a subtracted value was not possible. The values originate from different devices (serial numbers). Minuend:{0}, Subtrahend:{1}",
+        var msg = string.Format("A calculation of a subtracted value was not possible. The values originate from different devices (device ids). Minuend:{0}, Subtrahend:{1}",
           this, baseValue);
         throw new DataMisalignedException(msg);
       }
@@ -73,7 +73,7 @@ namespace PowerView.Model
         }
       }
 
-      return new TimeRegisterValue(serialNumber, timestamp, dValue, substractedValue.Unit);
+      return new TimeRegisterValue(deviceId, timestamp, dValue, substractedValue.Unit);
     }
 
     private static double GetMaxValue(TimeRegisterValue timeRegisterValue)
@@ -83,15 +83,15 @@ namespace PowerView.Model
       return Math.Pow(10, pow);
     }
 
-    public bool SerialNumberEquals(TimeRegisterValue timeRegisterValue)
+    public bool DeviceIdEquals(TimeRegisterValue timeRegisterValue)
     {
-      return string.Equals(SerialNumber, timeRegisterValue.SerialNumber, StringComparison.InvariantCultureIgnoreCase);
+      return string.Equals(DeviceId, timeRegisterValue.DeviceId, StringComparison.InvariantCultureIgnoreCase);
     }
 
     public override string ToString()
     {
-      return string.Format(System.Globalization.CultureInfo.InvariantCulture, "[serialNumber={0}, timestamp={1}, unitValue={2}]", 
-        serialNumber, timestamp.ToString("o"), unitValue);
+      return string.Format(System.Globalization.CultureInfo.InvariantCulture, "[deviceId={0}, timestamp={1}, unitValue={2}]", 
+        deviceId, timestamp.ToString("o"), unitValue);
     }
 
     public override bool Equals(object obj)
@@ -104,14 +104,14 @@ namespace PowerView.Model
 
     public bool Equals(TimeRegisterValue other)
     {
-      return string.Equals(serialNumber, other.serialNumber, StringComparison.InvariantCultureIgnoreCase) && timestamp == other.timestamp && unitValue == other.UnitValue;
+      return DeviceIdEquals(other) && timestamp == other.timestamp && unitValue == other.UnitValue;
     }
 
     public override int GetHashCode()
     {
       unchecked
       {
-        return (serialNumber != null ? serialNumber.ToLowerInvariant().GetHashCode() : 0) ^ timestamp.GetHashCode() ^ unitValue.GetHashCode();
+        return (deviceId != null ? deviceId.ToLowerInvariant().GetHashCode() : 0) ^ timestamp.GetHashCode() ^ unitValue.GetHashCode();
       }
     }
 
