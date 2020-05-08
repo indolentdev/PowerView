@@ -8,7 +8,7 @@ namespace PowerView.Model.Test.SeriesGenerators
   public class AverageActualSeriesGeneratorTest
   {
     [Test]
-    public void GenerateSameSerialNumber()
+    public void GenerateSameDeviceId()
     {
       // Arrange
       var wh = Unit.WattHour;
@@ -53,7 +53,7 @@ namespace PowerView.Model.Test.SeriesGenerators
     }
 
     [Test]
-    public void GenerateCrossingSerialNumber()
+    public void GenerateCrossingDeviceId()
     {
       // Arrange
       var wh = Unit.WattHour;
@@ -98,7 +98,7 @@ namespace PowerView.Model.Test.SeriesGenerators
     }
 
     [Test]
-    public void GenerateCrossingSerialNumberAndBack()
+    public void GenerateCrossingDeviceIdAndBack()
     {
       // Arrange
       var wh = Unit.WattHour;
@@ -143,7 +143,7 @@ namespace PowerView.Model.Test.SeriesGenerators
     }
 
     [Test]
-    public void GenerateCrossingSerialNumberWithOneValueAndBack()
+    public void GenerateCrossingDeviceIdWithOneValueAndBack()
     {
       // Arrange
       var wh = Unit.WattHour;

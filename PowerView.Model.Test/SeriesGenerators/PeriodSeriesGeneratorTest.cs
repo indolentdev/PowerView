@@ -8,7 +8,7 @@ namespace PowerView.Model.Test.SeriesGenerators
   public class PeriodSeriesGeneratorTest
   {
     [Test]
-    public void GenerateSameSerialNumber()
+    public void GenerateSameDeviceId()
     {
       // Arrange
       var unit = Unit.WattHour;
@@ -52,7 +52,7 @@ namespace PowerView.Model.Test.SeriesGenerators
     }
 
     [Test]
-    public void GenerateCrossingSerialNumber()
+    public void GenerateCrossingDeviceId()
     {
       // Arrange
       var unit = Unit.WattHour;
@@ -96,7 +96,7 @@ namespace PowerView.Model.Test.SeriesGenerators
     }
 
     [Test]
-    public void GenerateCrossingSerialNumberAndBack()
+    public void GenerateCrossingDeviceIdAndBack()
     {
       // Arrange
       var unit = Unit.WattHour;
@@ -140,7 +140,7 @@ namespace PowerView.Model.Test.SeriesGenerators
     }
 
     [Test]
-    public void GenerateCrossingSerialNumberWithOneValueAndBack()
+    public void GenerateCrossingDeviceIdWithOneValueAndBack()
     {
       // Arrange
       var unit = Unit.WattHour;
