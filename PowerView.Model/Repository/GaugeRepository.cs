@@ -69,7 +69,7 @@ ORDER BY rea.Timestamp DESC;";
       var resultSet = DbContext.Connection.Query(sqlQuery, new { Cutoff = cutoffDateTime }, transaction, buffered: true);
 
       var values = resultSet.Select(GetObisCode).Where(x => x.Item1.IsCumulative)
-                            .Select(ToGaugeValue).GroupBy(gv => new { gv.Label, gv.ObisCode, gv.SerialNumber })
+                            .Select(ToGaugeValue).GroupBy(gv => new { gv.Label, gv.ObisCode, gv.DeviceId })
                             .Select(x => x.First()).ToArray();
       log.Debug("Finished subquery");
 
@@ -125,7 +125,7 @@ ORDER BY rea.Timestamp DESC;";
       var resultSet = DbContext.Connection.Query(sqlQuery, new { Cutoff = cutoffDateTime, dateTime }, transaction, buffered: true);
 
       var values = resultSet.Select(GetObisCode).Where(x => x.Item1.IsCumulative)
-                            .Select(ToGaugeValue).GroupBy(gv => new { gv.Label, gv.ObisCode, gv.SerialNumber })
+                            .Select(ToGaugeValue).GroupBy(gv => new { gv.Label, gv.ObisCode, gv.DeviceId })
                             .Select(x => x.First()).ToArray();
       log.Debug("Finished subquery");
 
@@ -145,10 +145,10 @@ ORDER BY rea.Timestamp DESC;";
     {
       dynamic row = r.Item2;  
       var label = (string)row.Label;
-      var serialNumber = (string)row.SerialNumber;
+      var deviceId = (string)row.SerialNumber;
       var dateTime = (DateTime)row.Timestamp;
       var unitValue = new UnitValue((int)row.Value, (short)row.Scale, (Unit)row.Unit);
-      return new GaugeValue(label, serialNumber, dateTime, r.Item1, unitValue);
+      return new GaugeValue(label, deviceId, dateTime, r.Item1, unitValue);
     }
   }
 }

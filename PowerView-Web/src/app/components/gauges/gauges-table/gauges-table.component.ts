@@ -10,7 +10,7 @@ import { GaugeValueGroup } from '../../../model/gaugeValueGroup';
   styleUrls: ['./gauges-table.component.css']
 })
 export class GaugesTableComponent implements OnInit, OnChanges {
-  displayedColumns = ['serie', 'timestamp', 'gaugeValue', 'unit', 'serialNumber'];
+  displayedColumns = ['serie', 'timestamp', 'gaugeValue', 'unit', 'deviceId'];
   dataSource: MatTableDataSource<any>;
 
   @ViewChild(MatSort, { static: true }) sort: MatSort;

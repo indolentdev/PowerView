@@ -115,7 +115,7 @@ namespace PowerView.Service.Modules
     {
       return new
       {
-        gaugeValue.Label, gaugeValue.SerialNumber, 
+        gaugeValue.Label, gaugeValue.DeviceId, 
         Timestamp = DateTimeMapper.Map(gaugeValue.DateTime), 
         ObisCode = gaugeValue.ObisCode.ToString(),
         Value = ValueAndUnitMapper.Map(gaugeValue.UnitValue.Value, gaugeValue.UnitValue.Unit),

@@ -6,7 +6,6 @@ import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { GaugesService } from '../../../services/gauges.service';
 import { GaugeValueGroupSet } from '../../../model/gaugeValueGroupSet';
 
-
 import { Moment } from 'moment'
 import * as moment from 'moment';
 

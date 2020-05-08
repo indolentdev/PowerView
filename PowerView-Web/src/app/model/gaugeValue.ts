@@ -1,7 +1,7 @@
 
 export class GaugeValue {
     label: string;
-    serialNumber: string;
+    deviceId: string;
     timestamp: string;
     obisCode: string;
     value: number;
