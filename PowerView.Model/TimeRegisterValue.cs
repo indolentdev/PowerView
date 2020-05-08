@@ -85,7 +85,7 @@ namespace PowerView.Model
 
     public bool DeviceIdEquals(TimeRegisterValue timeRegisterValue)
     {
-      return string.Equals(DeviceId, timeRegisterValue.DeviceId, StringComparison.InvariantCultureIgnoreCase);
+      return Model.DeviceId.Equals(DeviceId, timeRegisterValue.DeviceId);
     }
 
     public override string ToString()

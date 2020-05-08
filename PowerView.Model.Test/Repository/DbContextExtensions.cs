@@ -18,7 +18,7 @@ namespace PowerView.Model.Test.Repository
     {
       if (dbReadings.Length == 0) return;
 
-      var sql = "INSERT INTO {0} (Label,SerialNumber,Timestamp) VALUES (@Label,@SerialNumber,@Timestamp); SELECT last_insert_rowid();";
+      var sql = "INSERT INTO {0} (Label,DeviceId,Timestamp) VALUES (@Label,@DeviceId,@Timestamp); SELECT last_insert_rowid();";
       foreach (var dbReading in dbReadings)
       {
         var tableName = dbReading.GetType().Name;

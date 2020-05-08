@@ -137,6 +137,7 @@
     <Compile Include="TimeZoneHelper.cs" />
     <Compile Include="LocationContextTest.cs" />
     <Compile Include="Repository\ExportRepositoryTest.cs" />
+    <Compile Include="DeviceIdTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

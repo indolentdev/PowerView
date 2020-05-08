@@ -117,7 +117,7 @@ namespace PowerView.Model.Test.Repository
       where TReading  : IDbReading,  new()
       where TRegister : IDbRegister, new()
     {
-      var reading = new TReading { Label=label, SerialNumber="1", Timestamp=DateTime.UtcNow };
+      var reading = new TReading { Label=label, DeviceId="1", Timestamp=DateTime.UtcNow };
       DbContext.InsertReadings(reading);
 
       var registers = obisCodes

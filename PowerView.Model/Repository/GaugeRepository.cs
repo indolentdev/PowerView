@@ -57,7 +57,7 @@ namespace PowerView.Model.Repository
       var cutoffDateTime = dateTime - TimeSpan.FromDays(cutoffDays);
 
       var sqlQuery = @"
-SELECT rea.Label,rea.SerialNumber,rea.Timestamp,reg.ObisCode,reg.Value,reg.Scale,reg.Unit 
+SELECT rea.Label,rea.DeviceId,rea.Timestamp,reg.ObisCode,reg.Value,reg.Scale,reg.Unit 
 FROM {0} AS rea JOIN {1} AS reg ON rea.Id=reg.ReadingId
 WHERE rea.Timestamp > @Cutoff
 ORDER BY rea.Timestamp DESC;";
@@ -113,7 +113,7 @@ ORDER BY rea.Timestamp DESC;";
       var cutoffDateTime = dateTime - TimeSpan.FromDays(cutoffDays);
 
       var sqlQuery = @"
-SELECT rea.Label,rea.SerialNumber,rea.Timestamp,reg.ObisCode,reg.Value,reg.Scale,reg.Unit 
+SELECT rea.Label,rea.DeviceId,rea.Timestamp,reg.ObisCode,reg.Value,reg.Scale,reg.Unit 
 FROM {0} AS rea JOIN {1} AS reg ON rea.Id=reg.ReadingId
 WHERE rea.Timestamp > @Cutoff AND rea.Timestamp < @dateTime
 ORDER BY rea.Timestamp DESC;";
@@ -145,7 +145,7 @@ ORDER BY rea.Timestamp DESC;";
     {
       dynamic row = r.Item2;  
       var label = (string)row.Label;
-      var deviceId = (string)row.SerialNumber;
+      var deviceId = (string)row.DeviceId;
       var dateTime = (DateTime)row.Timestamp;
       var unitValue = new UnitValue((int)row.Value, (short)row.Scale, (Unit)row.Unit);
       return new GaugeValue(label, deviceId, dateTime, r.Item1, unitValue);

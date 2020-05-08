@@ -217,7 +217,7 @@ namespace PowerView.Service.Test.Mappers
     }
 
     [Test]
-    public void MapPvOutputArgsSerialNumberInBody()
+    public void MapPvOutputArgsDeviceIdInBody()
     {
       // Arrange
       var uri = new Uri("http://localhost");
@@ -234,7 +234,7 @@ namespace PowerView.Service.Test.Mappers
     }
 
     [Test]
-    public void MapPvOutputArgsSerialNumberAbsent()
+    public void MapPvOutputArgsDeviceIdAbsent()
     {
       // Arrange
       var uri = new Uri("http://localhost");

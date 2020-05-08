@@ -24,10 +24,10 @@ namespace PowerView.Model.Test.Repository
       // Arrange
       var dt = new DateTime(2017, 2, 27, 12, 0, 0, DateTimeKind.Utc);
       var target = CreateTarget();
-      var rd1 = new Db.LiveReading { Label="L1", SerialNumber="1", Timestamp=dt };
-      var rd2 = new Db.DayReading { Label="L1", SerialNumber="1", Timestamp=dt };
-      var rd3 = new Db.MonthReading { Label="L1", SerialNumber="1", Timestamp=dt };
-      var rd4 = new Db.YearReading { Label="L1", SerialNumber="1", Timestamp=dt };
+      var rd1 = new Db.LiveReading { Label="L1", DeviceId="1", Timestamp=dt };
+      var rd2 = new Db.DayReading { Label="L1", DeviceId="1", Timestamp=dt };
+      var rd3 = new Db.MonthReading { Label="L1", DeviceId="1", Timestamp=dt };
+      var rd4 = new Db.YearReading { Label="L1", DeviceId="1", Timestamp=dt };
       DbContext.InsertReadings(rd1, rd2, rd3, rd4);
       var rg1 = new Db.LiveRegister { ReadingId=rd1.Id, ObisCode = ObisCode.ElectrActiveEnergyA14, Value = 1, Scale = 1, Unit = (byte)Unit.WattHour };
       var rg2 = new Db.DayRegister { ReadingId=rd2.Id, ObisCode = ObisCode.ElectrActiveEnergyA14, Value = 2, Scale = 1, Unit = (byte)Unit.WattHour };
@@ -51,15 +51,15 @@ namespace PowerView.Model.Test.Repository
     }
 
     [Test]
-    public void GetLatestGroupsByLabelObisCodeAndSerialNumber()
+    public void GetLatestGroupsByLabelObisCodeAndDeviceId()
     {
       // Arrange
       var dt = new DateTime(2017, 2, 27, 12, 0, 0, DateTimeKind.Utc);
       var target = CreateTarget();
-      var rd1 = new Db.LiveReading { Label="L1", SerialNumber="1", Timestamp=dt };
-      var rd2 = new Db.LiveReading { Label="L1", SerialNumber="2", Timestamp=dt };
-      var rd3 = new Db.LiveReading { Label="L2", SerialNumber="2", Timestamp=dt };
-      var rd4 = new Db.LiveReading { Label="L2", SerialNumber="2", Timestamp=dt };
+      var rd1 = new Db.LiveReading { Label="L1", DeviceId="1", Timestamp=dt };
+      var rd2 = new Db.LiveReading { Label="L1", DeviceId="2", Timestamp=dt };
+      var rd3 = new Db.LiveReading { Label="L2", DeviceId="2", Timestamp=dt };
+      var rd4 = new Db.LiveReading { Label="L2", DeviceId="2", Timestamp=dt };
       DbContext.InsertReadings(rd1, rd2, rd3, rd4);
       var rg1 = new Db.LiveRegister { ReadingId=rd1.Id, ObisCode = ObisCode.ElectrActiveEnergyA14, Value = 1, Scale = 1, Unit = (byte)Unit.WattHour };
       var rg2 = new Db.LiveRegister { ReadingId=rd2.Id, ObisCode = ObisCode.ElectrActiveEnergyA14, Value = 2, Scale = 1, Unit = (byte)Unit.WattHour };
@@ -81,7 +81,7 @@ namespace PowerView.Model.Test.Repository
       // Arrange
       var dt = new DateTime(2017, 2, 27, 12, 0, 0, DateTimeKind.Utc);
       var target = CreateTarget();
-      var rd = new Db.LiveReading { Label="L1", SerialNumber="1", Timestamp=dt - TimeSpan.FromDays(2) };
+      var rd = new Db.LiveReading { Label="L1", DeviceId="1", Timestamp=dt - TimeSpan.FromDays(2) };
       DbContext.InsertReadings(rd);
       var rg = new Db.LiveRegister { ReadingId=rd.Id, ObisCode = ObisCode.ElectrActiveEnergyA14, Value = 3, Scale = 1, Unit = (byte)Unit.WattHour };
       DbContext.InsertRegisters(rg);
@@ -99,7 +99,7 @@ namespace PowerView.Model.Test.Repository
       // Arrange
       var dt = new DateTime(2017, 2, 27, 12, 0, 0, DateTimeKind.Utc);
       var target = CreateTarget();
-      var rd = new Db.LiveReading { Label="L1", SerialNumber="1", Timestamp=dt };
+      var rd = new Db.LiveReading { Label="L1", DeviceId="1", Timestamp=dt };
       DbContext.InsertReadings(rd);
       var rg = new Db.LiveRegister { ReadingId=rd.Id, ObisCode = ObisCode.ElectrActualPowerP14, Value = 3, Scale = 1, Unit = (byte)Unit.Watt };
       DbContext.InsertRegisters(rg);
@@ -117,7 +117,7 @@ namespace PowerView.Model.Test.Repository
       // Arrange
       var dt = new DateTime(2017, 2, 27, 12, 0, 0, DateTimeKind.Utc);
       var target = CreateTarget();
-      var rd = new Db.DayReading { Label="L1", SerialNumber="1", Timestamp=dt };
+      var rd = new Db.DayReading { Label="L1", DeviceId="1", Timestamp=dt };
       DbContext.InsertReadings(rd);
       var rg = new Db.DayRegister { ReadingId=rd.Id, ObisCode = ObisCode.ElectrActiveEnergyA14, Value = 2, Scale = 1, Unit = (byte)Unit.WattHour };
       DbContext.InsertRegisters(rg);
@@ -132,15 +132,15 @@ namespace PowerView.Model.Test.Repository
     }
 
     [Test]
-    public void GetCustomGroupsByLabelObisCodeAndSerialNumber()
+    public void GetCustomGroupsByLabelObisCodeAndDeviceId()
     {
       // Arrange
       var dt = new DateTime(2017, 2, 27, 12, 0, 0, DateTimeKind.Utc);
       var target = CreateTarget();
-      var rd1 = new Db.DayReading { Label="L1", SerialNumber="1", Timestamp=dt };
-      var rd2 = new Db.DayReading { Label="L1", SerialNumber="2", Timestamp=dt };
-      var rd3 = new Db.DayReading { Label="L2", SerialNumber="2", Timestamp=dt };
-      var rd4 = new Db.DayReading { Label="L2", SerialNumber="2", Timestamp=dt };
+      var rd1 = new Db.DayReading { Label="L1", DeviceId="1", Timestamp=dt };
+      var rd2 = new Db.DayReading { Label="L1", DeviceId="2", Timestamp=dt };
+      var rd3 = new Db.DayReading { Label="L2", DeviceId="2", Timestamp=dt };
+      var rd4 = new Db.DayReading { Label="L2", DeviceId="2", Timestamp=dt };
       DbContext.InsertReadings(rd1, rd2, rd3, rd4);
       var rg1 = new Db.DayRegister { ReadingId=rd1.Id, ObisCode = ObisCode.ElectrActiveEnergyA14, Value = 1, Scale = 1, Unit = (byte)Unit.WattHour };
       var rg2 = new Db.DayRegister { ReadingId=rd2.Id, ObisCode = ObisCode.ElectrActiveEnergyA14, Value = 2, Scale = 1, Unit = (byte)Unit.WattHour };
@@ -162,8 +162,8 @@ namespace PowerView.Model.Test.Repository
       // Arrange
       var dt = new DateTime(2017, 2, 27, 12, 0, 0, DateTimeKind.Utc);
       var target = CreateTarget();
-      var rd1 = new Db.DayReading { Label="L1", SerialNumber="1", Timestamp=dt - TimeSpan.FromDays(3) };
-      var rd2 = new Db.DayReading { Label="L1", SerialNumber="1", Timestamp=dt };
+      var rd1 = new Db.DayReading { Label="L1", DeviceId="1", Timestamp=dt - TimeSpan.FromDays(3) };
+      var rd2 = new Db.DayReading { Label="L1", DeviceId="1", Timestamp=dt };
       DbContext.InsertReadings(rd1, rd2);
       var rg1 = new Db.DayRegister { ReadingId=rd1.Id, ObisCode = ObisCode.ElectrActiveEnergyA14, Value = 3, Scale = 1, Unit = (byte)Unit.WattHour };
       var rg2 = new Db.DayRegister { ReadingId=rd2.Id, ObisCode = ObisCode.ElectrActiveEnergyA14, Value = 4, Scale = 1, Unit = (byte)Unit.WattHour };
@@ -181,7 +181,7 @@ namespace PowerView.Model.Test.Repository
       // Arrange
       var dt = new DateTime(2017, 2, 27, 12, 0, 0, DateTimeKind.Utc);
       var target = CreateTarget();
-      var rd = new Db.DayReading { Label="L1", SerialNumber="1", Timestamp=dt };
+      var rd = new Db.DayReading { Label="L1", DeviceId="1", Timestamp=dt };
       DbContext.InsertReadings(rd);
       var rg = new Db.DayRegister { ReadingId=rd.Id, ObisCode = ObisCode.ElectrActualPowerP14, Value = 3, Scale = 1, Unit = (byte)Unit.Watt };
       DbContext.InsertRegisters(rg);

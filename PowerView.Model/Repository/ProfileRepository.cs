@@ -41,7 +41,7 @@ namespace PowerView.Model.Repository
         preStart.ToString(CultureInfo.InvariantCulture), start.ToString(CultureInfo.InvariantCulture), end.ToString(CultureInfo.InvariantCulture));
 
       var sqlQuery = @"
-SELECT rea.Label,rea.SerialNumber,rea.Timestamp,reg.ObisCode,reg.Value,reg.Scale,reg.Unit 
+SELECT rea.Label,rea.DeviceId,rea.Timestamp,reg.ObisCode,reg.Value,reg.Scale,reg.Unit 
 FROM {0} AS rea JOIN {1} AS reg ON rea.Id=reg.ReadingId
 WHERE rea.Timestamp >= @From AND rea.Timestamp < @To;";
       sqlQuery = string.Format(CultureInfo.InvariantCulture, sqlQuery, readingTable, registerTable);
@@ -66,7 +66,7 @@ WHERE rea.Timestamp >= @From AND rea.Timestamp < @To;";
         foreach (IGrouping<ObisCode, dynamic> obisCodeGroup in groupedByObisCode)
         {
           obisCodeToTimeRegisterValues.Add(obisCodeGroup.Key, obisCodeGroup.Select(row =>
-            new TimeRegisterValue((string)row.SerialNumber, (DateTime)row.Timestamp, (int)row.Value, (short)row.Scale, (Unit)row.Unit)) );
+            new TimeRegisterValue((string)row.DeviceId, (DateTime)row.Timestamp, (int)row.Value, (short)row.Scale, (Unit)row.Unit)) );
         }
         labelSeries.Add(new LabelSeries<TimeRegisterValue>(labelGroup.Key, obisCodeToTimeRegisterValues));
       }

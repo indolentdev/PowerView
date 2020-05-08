@@ -150,7 +150,7 @@ namespace PowerView
 
         LocationSetup(scope);
 
-        GenerateTestDataIfDebug(scope);
+//        GenerateTestDataIfDebug(scope);
       }
 
       var serviceHost = container.Resolve<IServiceHost>();
@@ -173,6 +173,10 @@ namespace PowerView
       var dbUpgradeNeeded = false;
       using(var scopeNested = scope.BeginLifetimeScope())
       {
+        var envRepository = scopeNested.Resolve<IEnvironmentRepository>(); 
+        var sqliteVersion = envRepository.GetSqliteVersion();
+        log.InfoFormat("SQLite version:{0}", sqliteVersion);
+
         var dbCheck = scopeNested.Resolve<IDbCheck>();
         dbCheck.CheckDatabase();
 

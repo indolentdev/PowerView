@@ -182,6 +182,7 @@
     <Compile Include="LocationContext.cs" />
     <Compile Include="Repository\ExportRepository.cs" />
     <Compile Include="Repository\IExportRepository.cs" />
+    <Compile Include="DeviceId.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -208,6 +209,7 @@
     <EmbeddedResource Include="Repository\DbVersion\18\ddl.sql" />
     <EmbeddedResource Include="Repository\DbVersion\19\ddl.sql" />
     <EmbeddedResource Include="Repository\DbVersion\20\ddl.sql" />
+    <EmbeddedResource Include="Repository\DbVersion\21\ddl.sql" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Repository\" />
@@ -232,5 +234,6 @@
     <Folder Include="Repository\DbVersion\18\" />
     <Folder Include="Repository\DbVersion\19\" />
     <Folder Include="Repository\DbVersion\20\" />
+    <Folder Include="Repository\DbVersion\21\" />
   </ItemGroup>
 </Project>

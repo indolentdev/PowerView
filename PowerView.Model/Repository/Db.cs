@@ -10,7 +10,7 @@ namespace PowerView.Model.Repository
   public interface IDbReading : IDbEntity
   {
     string Label { get; set; }
-    string SerialNumber { get; set; }
+    string DeviceId { get; set; }
     DateTime Timestamp { get; set; }
   }
 
@@ -29,7 +29,7 @@ namespace PowerView.Model.Repository
     {
       public long Id { get; set; }
       public string Label { get; set; }
-      public string SerialNumber { get; set; }
+      public string DeviceId { get; set; }
       public DateTime Timestamp { get; set; }
     }
 
@@ -46,7 +46,7 @@ namespace PowerView.Model.Repository
     {
       public long Id { get; set; }
       public string Label { get; set; } 
-      public string SerialNumber { get; set; }
+      public string DeviceId { get; set; }
       public DateTime Timestamp { get; set; }
     }
 
@@ -64,7 +64,7 @@ namespace PowerView.Model.Repository
     {
       public long Id { get; set; }
       public string Label { get; set; } 
-      public string SerialNumber { get; set; }
+      public string DeviceId { get; set; }
       public DateTime Timestamp { get; set; }
     }
 
@@ -82,7 +82,7 @@ namespace PowerView.Model.Repository
     {
       public long Id { get; set; }
       public string Label { get; set; }
-      public string SerialNumber { get; set; }
+      public string DeviceId { get; set; }
       public DateTime Timestamp { get; set; }
     }
 
@@ -187,4 +187,3 @@ namespace PowerView.Model.Repository
 
   }
 }
-

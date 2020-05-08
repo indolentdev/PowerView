@@ -24,7 +24,7 @@ namespace PowerView.Model.Repository
         return;
       }
 
-      var dbLiveReadingsMap = liveReadings.ToDictionary(lr => new Db.LiveReading { Label = lr.Label, SerialNumber = lr.DeviceId, Timestamp = lr.Timestamp });
+      var dbLiveReadingsMap = liveReadings.ToDictionary(lr => new Db.LiveReading { Label = lr.Label, DeviceId = lr.DeviceId, Timestamp = lr.Timestamp });
       var transaction = DbContext.BeginTransaction();
       try
       {
@@ -32,7 +32,7 @@ namespace PowerView.Model.Repository
         foreach (var liveReading in dbLiveReadingsMap.Keys)
         {
           liveReading.Id = DbContext.Connection.QueryFirst<long>(
-            "INSERT INTO LiveReading (Label, SerialNumber, Timestamp) VALUES (@Label, @SerialNumber, @Timestamp); SELECT last_insert_rowid();",
+            "INSERT INTO LiveReading (Label, DeviceId, Timestamp) VALUES (@Label, @DeviceId, @Timestamp); SELECT last_insert_rowid();",
             liveReading, transaction);
         }
         // then insert the registers

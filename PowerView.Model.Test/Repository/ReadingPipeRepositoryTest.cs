@@ -24,7 +24,7 @@ namespace PowerView.Model.Test.Repository
       // Arrange
       var dt = GetDateTime(28, 19, 31, 43);
       var maximumDateTime = dt+TimeSpan.FromDays(1);
-      var liveReading = new Db.LiveReading { Label="A", SerialNumber="1", Timestamp=dt };
+      var liveReading = new Db.LiveReading { Label="A", DeviceId="1", Timestamp=dt };
       DbContext.InsertReadings(liveReading);
       var target = CreateTarget();
 
@@ -33,7 +33,7 @@ namespace PowerView.Model.Test.Repository
 
       // Assert
       Assert.That(DbContext.GetCount<Db.DayReading>(), Is.EqualTo(1));
-      AssertReading<Db.DayReading>(liveReading.Label, liveReading.SerialNumber, liveReading.Timestamp);
+      AssertReading<Db.DayReading>(liveReading.Label, liveReading.DeviceId, liveReading.Timestamp);
 
       Assert.That(DbContext.GetCount<Db.StreamPosition>(), Is.EqualTo(1));
       AssertStreamPosition("DayReading", liveReading.Label, liveReading.Id);
@@ -47,9 +47,9 @@ namespace PowerView.Model.Test.Repository
       // Arrange
       var dt = GetDateTime(28, 19, 31, 43);
       var maximumDateTime = dt+TimeSpan.FromDays(1);
-      var liveReadingA = new Db.LiveReading { Label="A", SerialNumber="1", Timestamp=dt };
-      var liveReadingB = new Db.LiveReading { Label="B", SerialNumber="1", Timestamp=dt };
-      var liveReadingC = new Db.LiveReading { Label="C", SerialNumber="1", Timestamp=dt };
+      var liveReadingA = new Db.LiveReading { Label="A", DeviceId="1", Timestamp=dt };
+      var liveReadingB = new Db.LiveReading { Label="B", DeviceId="1", Timestamp=dt };
+      var liveReadingC = new Db.LiveReading { Label="C", DeviceId="1", Timestamp=dt };
       DbContext.InsertReadings(liveReadingA, liveReadingB, liveReadingC);
       var target = CreateTarget();
 
@@ -58,9 +58,9 @@ namespace PowerView.Model.Test.Repository
 
       // Assert
       Assert.That(DbContext.GetCount<Db.DayReading>(), Is.EqualTo(3));
-      AssertReading<Db.DayReading>(liveReadingA.Label, liveReadingA.SerialNumber, liveReadingA.Timestamp);
-      AssertReading<Db.DayReading>(liveReadingB.Label, liveReadingB.SerialNumber, liveReadingB.Timestamp);
-      AssertReading<Db.DayReading>(liveReadingC.Label, liveReadingC.SerialNumber, liveReadingC.Timestamp);
+      AssertReading<Db.DayReading>(liveReadingA.Label, liveReadingA.DeviceId, liveReadingA.Timestamp);
+      AssertReading<Db.DayReading>(liveReadingB.Label, liveReadingB.DeviceId, liveReadingB.Timestamp);
+      AssertReading<Db.DayReading>(liveReadingC.Label, liveReadingC.DeviceId, liveReadingC.Timestamp);
 
       Assert.That(DbContext.GetCount<Db.StreamPosition>(), Is.EqualTo(3));
       AssertStreamPosition("DayReading", liveReadingA.Label, liveReadingA.Id);
@@ -74,8 +74,8 @@ namespace PowerView.Model.Test.Repository
       // Arrange
       var dt = GetDateTime(28, 19, 31, 43);
       var maximumDateTime = dt+TimeSpan.FromDays(1);
-      var liveReading1 = new Db.LiveReading { Label="A", SerialNumber="1", Timestamp=dt };
-      var liveReading2 = new Db.LiveReading { Label="A", SerialNumber="1", Timestamp=dt.AddHours(12.47) };
+      var liveReading1 = new Db.LiveReading { Label="A", DeviceId="1", Timestamp=dt };
+      var liveReading2 = new Db.LiveReading { Label="A", DeviceId="1", Timestamp=dt.AddHours(12.47) };
       DbContext.InsertReadings(liveReading1, liveReading2); // liveReading2 has insufficient time
       var target = CreateTarget(2);  // liveReading2 is the last of the potential piped.
 
@@ -84,7 +84,7 @@ namespace PowerView.Model.Test.Repository
 
       // Assert
       Assert.That(DbContext.GetCount<Db.DayReading>(), Is.EqualTo(1));
-      AssertReading<Db.DayReading>(liveReading1.Label, liveReading1.SerialNumber, liveReading1.Timestamp);
+      AssertReading<Db.DayReading>(liveReading1.Label, liveReading1.DeviceId, liveReading1.Timestamp);
     }
 
     [Test]
@@ -94,9 +94,9 @@ namespace PowerView.Model.Test.Repository
       var hour = TimeSpan.FromMinutes(60);
       var dt = GetDateTime(28, 19, 25, 0);
       var maximumDateTime = dt+TimeSpan.FromDays(1);
-      var liveReading1 = new Db.LiveReading { Label="A", SerialNumber="1", Timestamp=dt };
-      var liveReading2 = new Db.LiveReading { Label="A", SerialNumber="1", Timestamp=dt+hour };
-      var liveReading3 = new Db.LiveReading { Label="A", SerialNumber="2", Timestamp=dt+hour+hour };
+      var liveReading1 = new Db.LiveReading { Label="A", DeviceId="1", Timestamp=dt };
+      var liveReading2 = new Db.LiveReading { Label="A", DeviceId="1", Timestamp=dt+hour };
+      var liveReading3 = new Db.LiveReading { Label="A", DeviceId="2", Timestamp=dt+hour+hour };
       DbContext.InsertReadings(liveReading1, liveReading2, liveReading3);
       var target = CreateTarget();
 
@@ -105,8 +105,8 @@ namespace PowerView.Model.Test.Repository
 
       // Assert
       Assert.That(DbContext.GetCount<Db.DayReading>(), Is.EqualTo(2));
-      AssertReading<Db.DayReading>(liveReading2.Label, liveReading2.SerialNumber, liveReading2.Timestamp);
-      AssertReading<Db.DayReading>(liveReading3.Label, liveReading3.SerialNumber, liveReading3.Timestamp);
+      AssertReading<Db.DayReading>(liveReading2.Label, liveReading2.DeviceId, liveReading2.Timestamp);
+      AssertReading<Db.DayReading>(liveReading3.Label, liveReading3.DeviceId, liveReading3.Timestamp);
     }
 
     [Test]
@@ -115,7 +115,7 @@ namespace PowerView.Model.Test.Repository
       // Arrange
       var dt = GetDateTime(28, 19, 31, 43);
       var maximumDateTime = dt+TimeSpan.FromDays(1);
-      var liveReading = new Db.LiveReading { Label="A", SerialNumber="1", Timestamp=dt };
+      var liveReading = new Db.LiveReading { Label="A", DeviceId="1", Timestamp=dt };
       DbContext.InsertReadings(liveReading);
       var liveRegister1 = new Db.LiveRegister { ObisCode=(ObisCode)"1.1.1.1.1.1", ReadingId=liveReading.Id };
       var liveRegister2 = new Db.LiveRegister { ObisCode=(ObisCode)"2.2.2.2.2.2", ReadingId=liveReading.Id };
@@ -127,7 +127,7 @@ namespace PowerView.Model.Test.Repository
 
       // Assert
       Assert.That(DbContext.GetCount<Db.DayReading>(), Is.EqualTo(1));
-      AssertReading<Db.DayReading>(liveReading.Label, liveReading.SerialNumber, liveReading.Timestamp);
+      AssertReading<Db.DayReading>(liveReading.Label, liveReading.DeviceId, liveReading.Timestamp);
 
       Assert.That(DbContext.GetCount<Db.DayRegister>(), Is.EqualTo(2));
       AssertRegister<Db.DayRegister>(liveRegister1.ObisCode, liveRegister1.ReadingId);
@@ -141,10 +141,10 @@ namespace PowerView.Model.Test.Repository
       const string label = "A";
       var dt = GetDateTime(28, 19, 28, 11);
       var maximumDateTime = dt+TimeSpan.FromDays(1);
-      var liveReading0 = new Db.LiveReading { Label=label, SerialNumber="1", Timestamp=dt-TimeSpan.FromHours(36) };
-      var liveReading1 = new Db.LiveReading { Label=label, SerialNumber="1", Timestamp=dt-TimeSpan.FromHours(24) };
-      var liveReading2 = new Db.LiveReading { Label=label, SerialNumber="1", Timestamp=dt-TimeSpan.FromHours(12) };
-      var liveReading3 = new Db.LiveReading { Label=label, SerialNumber="1", Timestamp=dt };
+      var liveReading0 = new Db.LiveReading { Label=label, DeviceId="1", Timestamp=dt-TimeSpan.FromHours(36) };
+      var liveReading1 = new Db.LiveReading { Label=label, DeviceId="1", Timestamp=dt-TimeSpan.FromHours(24) };
+      var liveReading2 = new Db.LiveReading { Label=label, DeviceId="1", Timestamp=dt-TimeSpan.FromHours(12) };
+      var liveReading3 = new Db.LiveReading { Label=label, DeviceId="1", Timestamp=dt };
       DbContext.InsertReadings(liveReading0, liveReading1, liveReading2, liveReading3);
       var target = CreateTarget();
 
@@ -153,8 +153,8 @@ namespace PowerView.Model.Test.Repository
 
       // Assert
       Assert.That(DbContext.GetCount<Db.DayReading>(), Is.EqualTo(2));
-      AssertReading<Db.DayReading>(liveReading1.Label, liveReading1.SerialNumber, liveReading1.Timestamp);
-      AssertReading<Db.DayReading>(liveReading3.Label, liveReading3.SerialNumber, liveReading3.Timestamp);
+      AssertReading<Db.DayReading>(liveReading1.Label, liveReading1.DeviceId, liveReading1.Timestamp);
+      AssertReading<Db.DayReading>(liveReading3.Label, liveReading3.DeviceId, liveReading3.Timestamp);
       AssertStreamPosition("DayReading", label, liveReading3.Id);
     }
 
@@ -164,8 +164,8 @@ namespace PowerView.Model.Test.Repository
       // Arrange
       const string label = "A";
       var dt = GetDateTime(28, 19, 0, 0);
-      var liveReading1 = new Db.LiveReading { Label=label, SerialNumber="1", Timestamp=dt-TimeSpan.FromDays(2) };
-      var liveReading2 = new Db.LiveReading { Label=label, SerialNumber="1", Timestamp=dt };
+      var liveReading1 = new Db.LiveReading { Label=label, DeviceId="1", Timestamp=dt-TimeSpan.FromDays(2) };
+      var liveReading2 = new Db.LiveReading { Label=label, DeviceId="1", Timestamp=dt };
       DbContext.InsertReadings(liveReading1, liveReading2);
       var target = CreateTarget();
 
@@ -174,7 +174,7 @@ namespace PowerView.Model.Test.Repository
 
       // Assert
       Assert.That(DbContext.GetCount<Db.DayReading>(), Is.EqualTo(1));
-      AssertReading<Db.DayReading>(liveReading1.Label, liveReading1.SerialNumber, liveReading1.Timestamp);
+      AssertReading<Db.DayReading>(liveReading1.Label, liveReading1.DeviceId, liveReading1.Timestamp);
 
       Assert.That(DbContext.GetCount<Db.StreamPosition>(), Is.EqualTo(1));
       AssertStreamPosition("DayReading", label, liveReading1.Id);
@@ -186,13 +186,13 @@ namespace PowerView.Model.Test.Repository
       // Arrange
       var dt = GetDateTime(28, 19, 0, 0);
       var maximumDateTime = dt+TimeSpan.FromDays(2);
-      var liveReadingA1 = new Db.LiveReading { Label="A", SerialNumber="1", Timestamp=dt };
-      var liveReadingA2 = new Db.LiveReading { Label="A", SerialNumber="1", Timestamp=dt+TimeSpan.FromDays(1) };
-      var liveReadingB1 = new Db.LiveReading { Label="B", SerialNumber="1", Timestamp=dt };
-      var liveReadingB2 = new Db.LiveReading { Label="B", SerialNumber="1", Timestamp=dt+TimeSpan.FromDays(1) };
+      var liveReadingA1 = new Db.LiveReading { Label="A", DeviceId="1", Timestamp=dt };
+      var liveReadingA2 = new Db.LiveReading { Label="A", DeviceId="1", Timestamp=dt+TimeSpan.FromDays(1) };
+      var liveReadingB1 = new Db.LiveReading { Label="B", DeviceId="1", Timestamp=dt };
+      var liveReadingB2 = new Db.LiveReading { Label="B", DeviceId="1", Timestamp=dt+TimeSpan.FromDays(1) };
       DbContext.InsertReadings(liveReadingA1, liveReadingA2, liveReadingB1, liveReadingB2);
-      var dayReadingA = new Db.DayReading { Label = "A", SerialNumber="1", Timestamp = dt-TimeSpan.FromHours(4) };
-      var dayReadingB = new Db.DayReading { Label = "B", SerialNumber="1", Timestamp = dt-TimeSpan.FromHours(4) };
+      var dayReadingA = new Db.DayReading { Label = "A", DeviceId="1", Timestamp = dt-TimeSpan.FromHours(4) };
+      var dayReadingB = new Db.DayReading { Label = "B", DeviceId="1", Timestamp = dt-TimeSpan.FromHours(4) };
       DbContext.InsertReadings(dayReadingA, dayReadingB);
       var target = CreateTarget();
 
@@ -200,8 +200,8 @@ namespace PowerView.Model.Test.Repository
       target.PipeLiveReadingsToDayReadings(maximumDateTime);
 
       // Assert
-      AssertReading<Db.DayReading>(liveReadingA2.Label, liveReadingA2.SerialNumber, liveReadingA2.Timestamp);
-      AssertReading<Db.DayReading>(liveReadingB2.Label, liveReadingB2.SerialNumber, liveReadingB2.Timestamp);
+      AssertReading<Db.DayReading>(liveReadingA2.Label, liveReadingA2.DeviceId, liveReadingA2.Timestamp);
+      AssertReading<Db.DayReading>(liveReadingB2.Label, liveReadingB2.DeviceId, liveReadingB2.Timestamp);
 
       Assert.That(DbContext.GetCount<Db.StreamPosition>(), Is.EqualTo(2));
       AssertStreamPosition("DayReading", "A", liveReadingA2.Id);
@@ -216,9 +216,9 @@ namespace PowerView.Model.Test.Repository
       InsertStreamPositions(streamPosition);
       var dt = GetDateTime(28, 19, 0, 0);
       var maximumDateTime = dt+TimeSpan.FromDays(4);
-      var liveReading1 = new Db.LiveReading { Label="A", SerialNumber="1", Timestamp=dt+TimeSpan.FromDays(1) };
-      var liveReading2 = new Db.LiveReading { Label="A", SerialNumber="1", Timestamp=dt+TimeSpan.FromDays(2) };
-      var liveReading3 = new Db.LiveReading { Label="A", SerialNumber="1", Timestamp=dt+TimeSpan.FromDays(3) };
+      var liveReading1 = new Db.LiveReading { Label="A", DeviceId="1", Timestamp=dt+TimeSpan.FromDays(1) };
+      var liveReading2 = new Db.LiveReading { Label="A", DeviceId="1", Timestamp=dt+TimeSpan.FromDays(2) };
+      var liveReading3 = new Db.LiveReading { Label="A", DeviceId="1", Timestamp=dt+TimeSpan.FromDays(3) };
       DbContext.InsertReadings(liveReading1, liveReading2, liveReading3);
       var target = CreateTarget();
 
@@ -227,7 +227,7 @@ namespace PowerView.Model.Test.Repository
 
       // Assert
       Assert.That(DbContext.GetCount<Db.DayReading>(), Is.EqualTo(1));
-      AssertReading<Db.DayReading>(liveReading3.Label, liveReading3.SerialNumber, liveReading3.Timestamp);
+      AssertReading<Db.DayReading>(liveReading3.Label, liveReading3.DeviceId, liveReading3.Timestamp);
 
       Assert.That(DbContext.GetCount<Db.StreamPosition>(), Is.EqualTo(1));
       AssertStreamPosition("DayReading", "A", liveReading3.Id);
@@ -239,7 +239,7 @@ namespace PowerView.Model.Test.Repository
       // Arrange
       var dt = GetDateTime(10, 31, 22, 51, 43);
       var maximumDateTime = dt+TimeSpan.FromDays(32);
-      var dayReading = new Db.DayReading { Label="A", SerialNumber="1", Timestamp=dt };
+      var dayReading = new Db.DayReading { Label="A", DeviceId="1", Timestamp=dt };
       DbContext.InsertReadings(dayReading);
       var target = CreateTarget();
 
@@ -248,7 +248,7 @@ namespace PowerView.Model.Test.Repository
 
       // Assert
       Assert.That(DbContext.GetCount<Db.MonthReading>(), Is.EqualTo(1));
-      AssertReading<Db.MonthReading>(dayReading.Label, dayReading.SerialNumber, dayReading.Timestamp);
+      AssertReading<Db.MonthReading>(dayReading.Label, dayReading.DeviceId, dayReading.Timestamp);
 
       Assert.That(DbContext.GetCount<Db.StreamPosition>(), Is.EqualTo(1));
       AssertStreamPosition("MonthReading", dayReading.Label, dayReading.Id);
@@ -262,9 +262,9 @@ namespace PowerView.Model.Test.Repository
       // Arrange
       var dt = GetDateTime(10, 31, 22, 51, 43);
       var maximumDateTime = dt+TimeSpan.FromDays(32);
-      var dayReadingA = new Db.DayReading { Label="A", SerialNumber="1", Timestamp=dt };
-      var dayReadingB = new Db.DayReading { Label="B", SerialNumber="1", Timestamp=dt };
-      var dayReadingC = new Db.DayReading { Label="C", SerialNumber="1", Timestamp=dt };
+      var dayReadingA = new Db.DayReading { Label="A", DeviceId="1", Timestamp=dt };
+      var dayReadingB = new Db.DayReading { Label="B", DeviceId="1", Timestamp=dt };
+      var dayReadingC = new Db.DayReading { Label="C", DeviceId="1", Timestamp=dt };
       DbContext.InsertReadings(dayReadingA, dayReadingB, dayReadingC);
       var target = CreateTarget();
 
@@ -273,9 +273,9 @@ namespace PowerView.Model.Test.Repository
 
       // Assert
       Assert.That(DbContext.GetCount<Db.MonthReading>(), Is.EqualTo(3));
-      AssertReading<Db.MonthReading>(dayReadingA.Label, dayReadingA.SerialNumber, dayReadingA.Timestamp);
-      AssertReading<Db.MonthReading>(dayReadingB.Label, dayReadingB.SerialNumber, dayReadingB.Timestamp);
-      AssertReading<Db.MonthReading>(dayReadingC.Label, dayReadingC.SerialNumber, dayReadingC.Timestamp);
+      AssertReading<Db.MonthReading>(dayReadingA.Label, dayReadingA.DeviceId, dayReadingA.Timestamp);
+      AssertReading<Db.MonthReading>(dayReadingB.Label, dayReadingB.DeviceId, dayReadingB.Timestamp);
+      AssertReading<Db.MonthReading>(dayReadingC.Label, dayReadingC.DeviceId, dayReadingC.Timestamp);
 
       Assert.That(DbContext.GetCount<Db.StreamPosition>(), Is.EqualTo(3));
       AssertStreamPosition("MonthReading", dayReadingA.Label, dayReadingA.Id);
@@ -289,8 +289,8 @@ namespace PowerView.Model.Test.Repository
       // Arrange
       var dt = GetDateTime(10, 31, 22, 51, 43);
       var maximumDateTime = dt+TimeSpan.FromDays(1);
-      var dayReading1 = new Db.DayReading { Label="A", SerialNumber="1", Timestamp=dt };
-      var dayReading2 = new Db.DayReading { Label="A", SerialNumber="1", Timestamp=dt.AddDays(10.52) };
+      var dayReading1 = new Db.DayReading { Label="A", DeviceId="1", Timestamp=dt };
+      var dayReading2 = new Db.DayReading { Label="A", DeviceId="1", Timestamp=dt.AddDays(10.52) };
       DbContext.InsertReadings(dayReading1, dayReading2); // dayReading2 has insufficient time
       var target = CreateTarget(2);  // dayReading2 is the last of the potential piped.
 
@@ -299,7 +299,7 @@ namespace PowerView.Model.Test.Repository
 
       // Assert
       Assert.That(DbContext.GetCount<Db.MonthReading>(), Is.EqualTo(1));
-      AssertReading<Db.MonthReading>(dayReading1.Label, dayReading1.SerialNumber, dayReading1.Timestamp);
+      AssertReading<Db.MonthReading>(dayReading1.Label, dayReading1.DeviceId, dayReading1.Timestamp);
     }
 
     [Test]
@@ -309,9 +309,9 @@ namespace PowerView.Model.Test.Repository
       var hour = TimeSpan.FromHours(1);
       var dt = GetDateTime(10, 31, 22, 51, 43);
       var maximumDateTime = dt+TimeSpan.FromDays(32);
-      var dayReading1 = new Db.DayReading { Label="A", SerialNumber="1", Timestamp=dt-hour-hour };
-      var dayReading2 = new Db.DayReading { Label="A", SerialNumber="2", Timestamp=dt-hour };
-      var dayReading3 = new Db.DayReading { Label="A", SerialNumber="2", Timestamp=dt };
+      var dayReading1 = new Db.DayReading { Label="A", DeviceId="1", Timestamp=dt-hour-hour };
+      var dayReading2 = new Db.DayReading { Label="A", DeviceId="2", Timestamp=dt-hour };
+      var dayReading3 = new Db.DayReading { Label="A", DeviceId="2", Timestamp=dt };
       DbContext.InsertReadings(dayReading1, dayReading2, dayReading3);
       var target = CreateTarget();
 
@@ -320,8 +320,8 @@ namespace PowerView.Model.Test.Repository
 
       // Assert
       Assert.That(DbContext.GetCount<Db.MonthReading>(), Is.EqualTo(3));
-      AssertReading<Db.MonthReading>(dayReading1.Label, dayReading1.SerialNumber, dayReading1.Timestamp);
-      AssertReading<Db.MonthReading>(dayReading2.Label, dayReading2.SerialNumber, dayReading2.Timestamp);
+      AssertReading<Db.MonthReading>(dayReading1.Label, dayReading1.DeviceId, dayReading1.Timestamp);
+      AssertReading<Db.MonthReading>(dayReading2.Label, dayReading2.DeviceId, dayReading2.Timestamp);
     }
 
     [Test]
@@ -330,7 +330,7 @@ namespace PowerView.Model.Test.Repository
       // Arrange
       var dt = GetDateTime(10, 31, 22, 51, 43);
       var maximumDateTime = dt+TimeSpan.FromDays(32);
-      var dayReading = new Db.DayReading { Label="A", SerialNumber="1", Timestamp=dt };
+      var dayReading = new Db.DayReading { Label="A", DeviceId="1", Timestamp=dt };
       DbContext.InsertReadings(dayReading);
       var dayRegister1 = new Db.DayRegister { ObisCode=(ObisCode)"1.1.1.1.1.1", ReadingId=dayReading.Id };
       var dayRegister2 = new Db.DayRegister { ObisCode=(ObisCode)"2.2.2.2.2.2", ReadingId=dayReading.Id };
@@ -342,7 +342,7 @@ namespace PowerView.Model.Test.Repository
 
       // Assert
       Assert.That(DbContext.GetCount<Db.MonthReading>(), Is.EqualTo(1));
-      AssertReading<Db.MonthReading>(dayReading.Label, dayReading.SerialNumber, dayReading.Timestamp);
+      AssertReading<Db.MonthReading>(dayReading.Label, dayReading.DeviceId, dayReading.Timestamp);
 
       Assert.That(DbContext.GetCount<Db.MonthRegister>(), Is.EqualTo(2));
       AssertRegister<Db.MonthRegister>(dayRegister1.ObisCode, dayRegister1.ReadingId);
@@ -356,10 +356,10 @@ namespace PowerView.Model.Test.Repository
       const string label = "A";
       var dt = GetDateTime(10, 31, 22, 51, 43);
       var maximumDateTime = dt+TimeSpan.FromDays(32);
-      var dayReading0 = new Db.DayReading { Label=label, SerialNumber="1", Timestamp=dt-TimeSpan.FromDays(48) };
-      var dayReading1 = new Db.DayReading { Label=label, SerialNumber="1", Timestamp=dt-TimeSpan.FromDays(32) };
-      var dayReading2 = new Db.DayReading { Label=label, SerialNumber="1", Timestamp=dt-TimeSpan.FromDays(16) };
-      var dayReading3 = new Db.DayReading { Label=label, SerialNumber="1", Timestamp=dt };
+      var dayReading0 = new Db.DayReading { Label=label, DeviceId="1", Timestamp=dt-TimeSpan.FromDays(48) };
+      var dayReading1 = new Db.DayReading { Label=label, DeviceId="1", Timestamp=dt-TimeSpan.FromDays(32) };
+      var dayReading2 = new Db.DayReading { Label=label, DeviceId="1", Timestamp=dt-TimeSpan.FromDays(16) };
+      var dayReading3 = new Db.DayReading { Label=label, DeviceId="1", Timestamp=dt };
       DbContext.InsertReadings(dayReading0, dayReading1, dayReading2, dayReading3);
       var target = CreateTarget();
 
@@ -368,8 +368,8 @@ namespace PowerView.Model.Test.Repository
 
       // Assert
       Assert.That(DbContext.GetCount<Db.MonthReading>(), Is.EqualTo(2));
-      AssertReading<Db.MonthReading>(dayReading1.Label, dayReading1.SerialNumber, dayReading1.Timestamp);
-      AssertReading<Db.MonthReading>(dayReading3.Label, dayReading3.SerialNumber, dayReading3.Timestamp);
+      AssertReading<Db.MonthReading>(dayReading1.Label, dayReading1.DeviceId, dayReading1.Timestamp);
+      AssertReading<Db.MonthReading>(dayReading3.Label, dayReading3.DeviceId, dayReading3.Timestamp);
       AssertStreamPosition("MonthReading", label, dayReading3.Id);
     }
 
@@ -379,8 +379,8 @@ namespace PowerView.Model.Test.Repository
       // Arrange
       const string label = "A";
       var dt = GetDateTime(10, 31, 22, 51, 43);
-      var dayReading1 = new Db.DayReading { Label=label, SerialNumber="1", Timestamp=dt-TimeSpan.FromDays(62) };
-      var dayReading2 = new Db.DayReading { Label=label, SerialNumber="1", Timestamp=dt };
+      var dayReading1 = new Db.DayReading { Label=label, DeviceId="1", Timestamp=dt-TimeSpan.FromDays(62) };
+      var dayReading2 = new Db.DayReading { Label=label, DeviceId="1", Timestamp=dt };
       DbContext.InsertReadings(dayReading1, dayReading2);
       var target = CreateTarget();
 
@@ -389,7 +389,7 @@ namespace PowerView.Model.Test.Repository
 
       // Assert
       Assert.That(DbContext.GetCount<Db.MonthReading>(), Is.EqualTo(1));
-      AssertReading<Db.MonthReading>(dayReading1.Label, dayReading1.SerialNumber, dayReading1.Timestamp);
+      AssertReading<Db.MonthReading>(dayReading1.Label, dayReading1.DeviceId, dayReading1.Timestamp);
 
       Assert.That(DbContext.GetCount<Db.StreamPosition>(), Is.EqualTo(1));
       AssertStreamPosition("MonthReading", label, dayReading1.Id);
@@ -401,13 +401,13 @@ namespace PowerView.Model.Test.Repository
       // Arrange
       var dt = GetDateTime(11, 30, 19, 0, 0);
       var maximumDateTime = dt+TimeSpan.FromDays(63);
-      var dayReadingA1 = new Db.DayReading { Label="A", SerialNumber="1", Timestamp=dt };
-      var dayReadingA2 = new Db.DayReading { Label="A", SerialNumber="1", Timestamp=dt+TimeSpan.FromDays(31) };
-      var dayReadingB1 = new Db.DayReading { Label="B", SerialNumber="1", Timestamp=dt };
-      var dayReadingB2 = new Db.DayReading { Label="B", SerialNumber="1", Timestamp=dt+TimeSpan.FromDays(31) };
+      var dayReadingA1 = new Db.DayReading { Label="A", DeviceId="1", Timestamp=dt };
+      var dayReadingA2 = new Db.DayReading { Label="A", DeviceId="1", Timestamp=dt+TimeSpan.FromDays(31) };
+      var dayReadingB1 = new Db.DayReading { Label="B", DeviceId="1", Timestamp=dt };
+      var dayReadingB2 = new Db.DayReading { Label="B", DeviceId="1", Timestamp=dt+TimeSpan.FromDays(31) };
       DbContext.InsertReadings(dayReadingA1, dayReadingA2, dayReadingB1, dayReadingB2);
-      var dayReadingA = new Db.DayReading { Label = "A", SerialNumber="1", Timestamp = dt-TimeSpan.FromDays(4) };
-      var dayReadingB = new Db.DayReading { Label = "B", SerialNumber="1", Timestamp = dt-TimeSpan.FromDays(4) };
+      var dayReadingA = new Db.DayReading { Label = "A", DeviceId="1", Timestamp = dt-TimeSpan.FromDays(4) };
+      var dayReadingB = new Db.DayReading { Label = "B", DeviceId="1", Timestamp = dt-TimeSpan.FromDays(4) };
       DbContext.InsertReadings(dayReadingA, dayReadingB);
       var target = CreateTarget();
 
@@ -415,8 +415,8 @@ namespace PowerView.Model.Test.Repository
       target.PipeDayReadingsToMonthReadings(maximumDateTime);
 
       // Assert
-      AssertReading<Db.MonthReading>(dayReadingA2.Label, dayReadingA2.SerialNumber, dayReadingA2.Timestamp);
-      AssertReading<Db.MonthReading>(dayReadingB2.Label, dayReadingB2.SerialNumber, dayReadingB2.Timestamp);
+      AssertReading<Db.MonthReading>(dayReadingA2.Label, dayReadingA2.DeviceId, dayReadingA2.Timestamp);
+      AssertReading<Db.MonthReading>(dayReadingB2.Label, dayReadingB2.DeviceId, dayReadingB2.Timestamp);
 
       Assert.That(DbContext.GetCount<Db.StreamPosition>(), Is.EqualTo(2));
       AssertStreamPosition("MonthReading", "A", dayReadingA2.Id);
@@ -431,9 +431,9 @@ namespace PowerView.Model.Test.Repository
       InsertStreamPositions(streamPosition);
       var dt = GetDateTime(10, 31, 22, 51, 43);
       var maximumDateTime = dt+TimeSpan.FromDays(124);
-      var dayReading1 = new Db.DayReading { Label="A", SerialNumber="1", Timestamp=dt+TimeSpan.FromDays(30) };
-      var dayReading2 = new Db.DayReading { Label="A", SerialNumber="1", Timestamp=dt+TimeSpan.FromDays(61) };
-      var dayReading3 = new Db.DayReading { Label="A", SerialNumber="1", Timestamp=dt+TimeSpan.FromDays(92) };
+      var dayReading1 = new Db.DayReading { Label="A", DeviceId="1", Timestamp=dt+TimeSpan.FromDays(30) };
+      var dayReading2 = new Db.DayReading { Label="A", DeviceId="1", Timestamp=dt+TimeSpan.FromDays(61) };
+      var dayReading3 = new Db.DayReading { Label="A", DeviceId="1", Timestamp=dt+TimeSpan.FromDays(92) };
       DbContext.InsertReadings(dayReading1, dayReading2, dayReading3);
       var target = CreateTarget();
 
@@ -442,7 +442,7 @@ namespace PowerView.Model.Test.Repository
 
       // Assert
       Assert.That(DbContext.GetCount<Db.MonthReading>(), Is.EqualTo(1));
-      AssertReading<Db.MonthReading>(dayReading3.Label, dayReading3.SerialNumber, dayReading3.Timestamp);
+      AssertReading<Db.MonthReading>(dayReading3.Label, dayReading3.DeviceId, dayReading3.Timestamp);
 
       Assert.That(DbContext.GetCount<Db.StreamPosition>(), Is.EqualTo(1));
       AssertStreamPosition("MonthReading", "A", dayReading3.Id);
@@ -454,7 +454,7 @@ namespace PowerView.Model.Test.Repository
       // Arrange
       var dt = GetDateTime(10, 31, 22, 51, 43);
       var maximumDateTime = dt+TimeSpan.FromDays(70); // some time the following year
-      var monthReading = new Db.MonthReading { Label="A", SerialNumber="1", Timestamp=dt };
+      var monthReading = new Db.MonthReading { Label="A", DeviceId="1", Timestamp=dt };
       DbContext.InsertReadings(monthReading);
       var target = CreateTarget();
 
@@ -463,7 +463,7 @@ namespace PowerView.Model.Test.Repository
 
       // Assert
       Assert.That(DbContext.GetCount<Db.MonthReading>(), Is.EqualTo(1));
-      AssertReading<Db.YearReading>(monthReading.Label, monthReading.SerialNumber, monthReading.Timestamp);
+      AssertReading<Db.YearReading>(monthReading.Label, monthReading.DeviceId, monthReading.Timestamp);
 
       Assert.That(DbContext.GetCount<Db.StreamPosition>(), Is.EqualTo(1));
       AssertStreamPosition("YearReading", monthReading.Label, monthReading.Id);
@@ -475,9 +475,9 @@ namespace PowerView.Model.Test.Repository
       // Arrange
       var dt = GetDateTime(10, 31, 22, 51, 43);
       var maximumDateTime = dt+TimeSpan.FromDays(70); // some time the following year
-      var monthReadingA = new Db.MonthReading { Label="A", SerialNumber="1", Timestamp=dt };
-      var monthReadingB = new Db.MonthReading { Label="B", SerialNumber="1", Timestamp=dt };
-      var monthReadingC = new Db.MonthReading { Label="C", SerialNumber="1", Timestamp=dt };
+      var monthReadingA = new Db.MonthReading { Label="A", DeviceId="1", Timestamp=dt };
+      var monthReadingB = new Db.MonthReading { Label="B", DeviceId="1", Timestamp=dt };
+      var monthReadingC = new Db.MonthReading { Label="C", DeviceId="1", Timestamp=dt };
       DbContext.InsertReadings(monthReadingA, monthReadingB, monthReadingC);
       var target = CreateTarget();
 
@@ -486,9 +486,9 @@ namespace PowerView.Model.Test.Repository
 
       // Assert
       Assert.That(DbContext.GetCount<Db.MonthReading>(), Is.EqualTo(3));
-      AssertReading<Db.YearReading>(monthReadingA.Label, monthReadingA.SerialNumber, monthReadingA.Timestamp);
-      AssertReading<Db.YearReading>(monthReadingB.Label, monthReadingB.SerialNumber, monthReadingB.Timestamp);
-      AssertReading<Db.YearReading>(monthReadingC.Label, monthReadingC.SerialNumber, monthReadingC.Timestamp);
+      AssertReading<Db.YearReading>(monthReadingA.Label, monthReadingA.DeviceId, monthReadingA.Timestamp);
+      AssertReading<Db.YearReading>(monthReadingB.Label, monthReadingB.DeviceId, monthReadingB.Timestamp);
+      AssertReading<Db.YearReading>(monthReadingC.Label, monthReadingC.DeviceId, monthReadingC.Timestamp);
 
       Assert.That(DbContext.GetCount<Db.StreamPosition>(), Is.EqualTo(3));
       AssertStreamPosition("YearReading", monthReadingA.Label, monthReadingA.Id);
@@ -502,8 +502,8 @@ namespace PowerView.Model.Test.Repository
       // Arrange
       var dt = GetDateTime(10, 31, 22, 51, 43);
       var maximumDateTime = dt+TimeSpan.FromDays(365+180); // some time the following year
-      var monthReading1 = new Db.MonthReading { Label="A", SerialNumber="1", Timestamp=dt };
-      var monthReading2 = new Db.MonthReading { Label="A", SerialNumber="1", Timestamp=dt.AddDays(70) };
+      var monthReading1 = new Db.MonthReading { Label="A", DeviceId="1", Timestamp=dt };
+      var monthReading2 = new Db.MonthReading { Label="A", DeviceId="1", Timestamp=dt.AddDays(70) };
       DbContext.InsertReadings(monthReading1, monthReading2); // monthReading2 has insufficient time
       var target = CreateTarget(2);  // monthReading2 is the last of the potential piped.
 
@@ -512,7 +512,7 @@ namespace PowerView.Model.Test.Repository
 
       // Assert
       Assert.That(DbContext.GetCount<Db.YearReading>(), Is.EqualTo(1));
-      AssertReading<Db.YearReading>(monthReading1.Label, monthReading1.SerialNumber, monthReading1.Timestamp);
+      AssertReading<Db.YearReading>(monthReading1.Label, monthReading1.DeviceId, monthReading1.Timestamp);
     }
 
     [Test]
@@ -522,9 +522,9 @@ namespace PowerView.Model.Test.Repository
       var hour = TimeSpan.FromHours(1);
       var dt = GetDateTime(10, 31, 22, 51, 43);
       var maximumDateTime = dt+TimeSpan.FromDays(70); // some time the following year
-      var monthReading1 = new Db.MonthReading { Label="A", SerialNumber="1", Timestamp=dt-hour-hour };
-      var monthReading2 = new Db.MonthReading { Label="A", SerialNumber="2", Timestamp=dt-hour };
-      var monthReading3 = new Db.MonthReading { Label="A", SerialNumber="2", Timestamp=dt };
+      var monthReading1 = new Db.MonthReading { Label="A", DeviceId="1", Timestamp=dt-hour-hour };
+      var monthReading2 = new Db.MonthReading { Label="A", DeviceId="2", Timestamp=dt-hour };
+      var monthReading3 = new Db.MonthReading { Label="A", DeviceId="2", Timestamp=dt };
       DbContext.InsertReadings(monthReading1, monthReading2, monthReading3);
       var target = CreateTarget();
 
@@ -533,8 +533,8 @@ namespace PowerView.Model.Test.Repository
 
       // Assert
       Assert.That(DbContext.GetCount<Db.YearReading>(), Is.EqualTo(3));
-      AssertReading<Db.YearReading>(monthReading1.Label, monthReading1.SerialNumber, monthReading1.Timestamp);
-      AssertReading<Db.YearReading>(monthReading2.Label, monthReading2.SerialNumber, monthReading2.Timestamp);
+      AssertReading<Db.YearReading>(monthReading1.Label, monthReading1.DeviceId, monthReading1.Timestamp);
+      AssertReading<Db.YearReading>(monthReading2.Label, monthReading2.DeviceId, monthReading2.Timestamp);
     }
 
     [Test]
@@ -543,7 +543,7 @@ namespace PowerView.Model.Test.Repository
       // Arrange
       var dt = GetDateTime(10, 31, 22, 51, 43);
       var maximumDateTime = dt+TimeSpan.FromDays(70); // some time the following year
-      var monthReading = new Db.MonthReading { Label="A", SerialNumber="1", Timestamp=dt };
+      var monthReading = new Db.MonthReading { Label="A", DeviceId="1", Timestamp=dt };
       DbContext.InsertReadings(monthReading);
       var monthRegister1 = new Db.MonthRegister { ObisCode=(ObisCode)"1.1.1.1.1.1", ReadingId=monthReading.Id };
       var monthRegister2 = new Db.MonthRegister { ObisCode=(ObisCode)"2.2.2.2.2.2", ReadingId=monthReading.Id };
@@ -555,7 +555,7 @@ namespace PowerView.Model.Test.Repository
 
       // Assert
       Assert.That(DbContext.GetCount<Db.YearReading>(), Is.EqualTo(1));
-      AssertReading<Db.YearReading>(monthReading.Label, monthReading.SerialNumber, monthReading.Timestamp);
+      AssertReading<Db.YearReading>(monthReading.Label, monthReading.DeviceId, monthReading.Timestamp);
 
       Assert.That(DbContext.GetCount<Db.YearRegister>(), Is.EqualTo(2));
       AssertRegister<Db.YearRegister>(monthRegister1.ObisCode, monthRegister1.ReadingId);
@@ -569,10 +569,10 @@ namespace PowerView.Model.Test.Repository
       const string label = "A";
       var dt = GetDateTime(10, 31, 22, 51, 43);
       var maximumDateTime = dt+TimeSpan.FromDays(70); // some time the following year
-      var monthReading0 = new Db.MonthReading { Label=label, SerialNumber="1", Timestamp=dt-TimeSpan.FromDays(545) };
-      var monthReading1 = new Db.MonthReading { Label=label, SerialNumber="1", Timestamp=dt-TimeSpan.FromDays(365) };
-      var monthReading2 = new Db.MonthReading { Label=label, SerialNumber="1", Timestamp=dt-TimeSpan.FromDays(180) };
-      var monthReading3 = new Db.MonthReading { Label=label, SerialNumber="1", Timestamp=dt };
+      var monthReading0 = new Db.MonthReading { Label=label, DeviceId="1", Timestamp=dt-TimeSpan.FromDays(545) };
+      var monthReading1 = new Db.MonthReading { Label=label, DeviceId="1", Timestamp=dt-TimeSpan.FromDays(365) };
+      var monthReading2 = new Db.MonthReading { Label=label, DeviceId="1", Timestamp=dt-TimeSpan.FromDays(180) };
+      var monthReading3 = new Db.MonthReading { Label=label, DeviceId="1", Timestamp=dt };
       DbContext.InsertReadings(monthReading0, monthReading1, monthReading2, monthReading3);
       var target = CreateTarget();
 
@@ -581,8 +581,8 @@ namespace PowerView.Model.Test.Repository
 
       // Assert
       Assert.That(DbContext.GetCount<Db.YearReading>(), Is.EqualTo(2));
-      AssertReading<Db.YearReading>(monthReading1.Label, monthReading1.SerialNumber, monthReading1.Timestamp);
-      AssertReading<Db.YearReading>(monthReading3.Label, monthReading3.SerialNumber, monthReading3.Timestamp);
+      AssertReading<Db.YearReading>(monthReading1.Label, monthReading1.DeviceId, monthReading1.Timestamp);
+      AssertReading<Db.YearReading>(monthReading3.Label, monthReading3.DeviceId, monthReading3.Timestamp);
       AssertStreamPosition("YearReading", label, monthReading3.Id);
     }
 
@@ -592,8 +592,8 @@ namespace PowerView.Model.Test.Repository
       // Arrange
       const string label = "A";
       var dt = GetDateTime(10, 31, 22, 51, 43);
-      var monthReading1 = new Db.MonthReading { Label=label, SerialNumber="1", Timestamp=dt-TimeSpan.FromDays(365) };
-      var monthReading2 = new Db.MonthReading { Label=label, SerialNumber="1", Timestamp=dt.AddDays(50) };
+      var monthReading1 = new Db.MonthReading { Label=label, DeviceId="1", Timestamp=dt-TimeSpan.FromDays(365) };
+      var monthReading2 = new Db.MonthReading { Label=label, DeviceId="1", Timestamp=dt.AddDays(50) };
       DbContext.InsertReadings(monthReading1, monthReading2);
       var target = CreateTarget();
 
@@ -602,7 +602,7 @@ namespace PowerView.Model.Test.Repository
 
       // Assert
       Assert.That(DbContext.GetCount<Db.YearReading>(), Is.EqualTo(1));
-      AssertReading<Db.YearReading>(monthReading1.Label, monthReading1.SerialNumber, monthReading1.Timestamp);
+      AssertReading<Db.YearReading>(monthReading1.Label, monthReading1.DeviceId, monthReading1.Timestamp);
 
       Assert.That(DbContext.GetCount<Db.StreamPosition>(), Is.EqualTo(1));
       AssertStreamPosition("YearReading", label, monthReading1.Id);
@@ -614,13 +614,13 @@ namespace PowerView.Model.Test.Repository
       // Arrange
       var dt = GetDateTime(11, 30, 19, 0, 0);
       var maximumDateTime = dt+TimeSpan.FromDays(2*365);
-      var monthReadingA1 = new Db.MonthReading { Label="A", SerialNumber="1", Timestamp=dt };
-      var monthReadingA2 = new Db.MonthReading { Label="A", SerialNumber="1", Timestamp=dt+TimeSpan.FromDays(365) };
-      var monthReadingB1 = new Db.MonthReading { Label="B", SerialNumber="1", Timestamp=dt };
-      var monthReadingB2 = new Db.MonthReading { Label="B", SerialNumber="1", Timestamp=dt+TimeSpan.FromDays(365) };
+      var monthReadingA1 = new Db.MonthReading { Label="A", DeviceId="1", Timestamp=dt };
+      var monthReadingA2 = new Db.MonthReading { Label="A", DeviceId="1", Timestamp=dt+TimeSpan.FromDays(365) };
+      var monthReadingB1 = new Db.MonthReading { Label="B", DeviceId="1", Timestamp=dt };
+      var monthReadingB2 = new Db.MonthReading { Label="B", DeviceId="1", Timestamp=dt+TimeSpan.FromDays(365) };
       DbContext.InsertReadings(monthReadingA1, monthReadingA2, monthReadingB1, monthReadingB2);
-      var monthReadingA = new Db.DayReading { Label = "A", SerialNumber="1", Timestamp = dt-TimeSpan.FromDays(47) };
-      var monthReadingB = new Db.DayReading { Label = "B", SerialNumber="1", Timestamp = dt-TimeSpan.FromDays(47) };
+      var monthReadingA = new Db.DayReading { Label = "A", DeviceId="1", Timestamp = dt-TimeSpan.FromDays(47) };
+      var monthReadingB = new Db.DayReading { Label = "B", DeviceId="1", Timestamp = dt-TimeSpan.FromDays(47) };
       DbContext.InsertReadings(monthReadingA, monthReadingB);
       var target = CreateTarget();
 
@@ -628,8 +628,8 @@ namespace PowerView.Model.Test.Repository
       target.PipeMonthReadingsToYearReadings(maximumDateTime);
 
       // Assert
-      AssertReading<Db.YearReading>(monthReadingA2.Label, monthReadingA2.SerialNumber, monthReadingA2.Timestamp);
-      AssertReading<Db.YearReading>(monthReadingB2.Label, monthReadingB2.SerialNumber, monthReadingB2.Timestamp);
+      AssertReading<Db.YearReading>(monthReadingA2.Label, monthReadingA2.DeviceId, monthReadingA2.Timestamp);
+      AssertReading<Db.YearReading>(monthReadingB2.Label, monthReadingB2.DeviceId, monthReadingB2.Timestamp);
 
       Assert.That(DbContext.GetCount<Db.StreamPosition>(), Is.EqualTo(2));
       AssertStreamPosition("YearReading", "A", monthReadingA2.Id);
@@ -644,9 +644,9 @@ namespace PowerView.Model.Test.Repository
       InsertStreamPositions(streamPosition);
       var dt = GetDateTime(10, 31, 22, 51, 43);
       var maximumDateTime = dt+TimeSpan.FromDays(4*365);
-      var monthReading1 = new Db.MonthReading { Label="A", SerialNumber="1", Timestamp=dt+TimeSpan.FromDays(365) };
-      var monthReading2 = new Db.MonthReading { Label="A", SerialNumber="1", Timestamp=dt+TimeSpan.FromDays(2*365) };
-      var monthReading3 = new Db.MonthReading { Label="A", SerialNumber="1", Timestamp=dt+TimeSpan.FromDays(3*365) };
+      var monthReading1 = new Db.MonthReading { Label="A", DeviceId="1", Timestamp=dt+TimeSpan.FromDays(365) };
+      var monthReading2 = new Db.MonthReading { Label="A", DeviceId="1", Timestamp=dt+TimeSpan.FromDays(2*365) };
+      var monthReading3 = new Db.MonthReading { Label="A", DeviceId="1", Timestamp=dt+TimeSpan.FromDays(3*365) };
       DbContext.InsertReadings(monthReading1, monthReading2, monthReading3);
       var target = CreateTarget();
 
@@ -655,19 +655,19 @@ namespace PowerView.Model.Test.Repository
 
       // Assert
       Assert.That(DbContext.GetCount<Db.YearReading>(), Is.EqualTo(1));
-      AssertReading<Db.MonthReading>(monthReading3.Label, monthReading3.SerialNumber, monthReading3.Timestamp);
+      AssertReading<Db.MonthReading>(monthReading3.Label, monthReading3.DeviceId, monthReading3.Timestamp);
 
       Assert.That(DbContext.GetCount<Db.StreamPosition>(), Is.EqualTo(1));
       AssertStreamPosition("YearReading", "A", monthReading3.Id);
     }
 
-    private void AssertReading<TReading>(string label, string serialNumber, DateTime timestamp)
+    private void AssertReading<TReading>(string label, string deviceId, DateTime timestamp)
       where TReading : class, IDbReading
     {
       var tableName = typeof(TReading).Name;
-      var sql = "SELECT * FROM {0} WHERE Label=@label AND SerialNumber=@serialNumber AND Timestamp=@timestamp;";
+      var sql = "SELECT * FROM {0} WHERE Label=@label AND DeviceId=@deviceId AND Timestamp=@timestamp;";
       sql = string.Format(CultureInfo.InvariantCulture, sql, tableName);
-      var result = DbContext.QueryTransaction<TReading>("", sql, new { label, serialNumber, timestamp });
+      var result = DbContext.QueryTransaction<TReading>("", sql, new { label, deviceId, timestamp });
       Assert.That(result.Count, Is.EqualTo(1));
     }
 

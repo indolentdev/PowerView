@@ -19,8 +19,8 @@ namespace PowerView.Model.Test.Repository
       var lr2b = new Db.LiveReading {Label="Label2"};
       var lr3a = new Db.LiveReading {Label="Label3"};
       var lr3b = new Db.LiveReading {Label="Label3"};
-      var lr1z = new Db.LiveReading {Label="Label1", SerialNumber="111"};
-      var lr2z = new Db.LiveReading {Label="Label2", SerialNumber="222"};
+      var lr1z = new Db.LiveReading {Label="Label1", DeviceId="111"};
+      var lr2z = new Db.LiveReading {Label="Label2", DeviceId="222"};
       var lr3z = new Db.LiveReading {Label="Label3"};
       SetTimestamp(new[] { lr1a, lr1b, lr2a, lr2b, lr3a, lr3b, lr1z, lr2z, lr3z });
       DbContext.InsertReadings(lr1a, lr1b, lr2a, lr2b, lr3a, lr3b, lr1z, lr2z, lr3z);

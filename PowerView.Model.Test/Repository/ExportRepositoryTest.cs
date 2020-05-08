@@ -31,7 +31,7 @@ namespace PowerView.Model.Test.Repository
       // Arrange
       var label = "Thelabel";
       var timestamp = new DateTime(2015, 02, 12, 22, 0, 0, DateTimeKind.Utc);
-      Insert(new Db.LiveReading { Label = label, SerialNumber = "1", Timestamp = timestamp },
+      Insert(new Db.LiveReading { Label = label, DeviceId = "1", Timestamp = timestamp },
         new Db.LiveRegister { ObisCode = ObisCode.ColdWaterVolume1, Value = 1 });
       var target = CreateTarget();
 
@@ -49,7 +49,7 @@ namespace PowerView.Model.Test.Repository
       // Arrange
       var label = "Thelabel";
       var timestamp = new DateTime(2015, 02, 12, 22, 0, 0, DateTimeKind.Utc);
-      Insert(new Db.LiveReading { Label = "Other" + label, SerialNumber = "1", Timestamp = timestamp },
+      Insert(new Db.LiveReading { Label = "Other" + label, DeviceId = "1", Timestamp = timestamp },
         new Db.LiveRegister { ObisCode = ObisCode.ColdWaterVolume1, Value = 1 });
       var target = CreateTarget();
 
@@ -67,7 +67,7 @@ namespace PowerView.Model.Test.Repository
       // Arrange
       var label = "Thelabel";
       var timestamp = new DateTime(2015, 02, 12, 22, 0, 0, DateTimeKind.Utc);
-      Insert(new Db.LiveReading { Label = label, SerialNumber = "1", Timestamp = timestamp },
+      Insert(new Db.LiveReading { Label = label, DeviceId = "1", Timestamp = timestamp },
         new Db.LiveRegister { ObisCode = ObisCode.ColdWaterFlow1, Value = 1 }); // non cumulative obis code
       var target = CreateTarget();
 
@@ -85,13 +85,13 @@ namespace PowerView.Model.Test.Repository
       // Arrange
       const string label = "TheLabel";
       var timestamp = new DateTime(2015, 02, 13, 22, 0, 0, DateTimeKind.Local).ToUniversalTime();
-      Insert(new Db.LiveReading { Label = label, SerialNumber = "1", Timestamp = timestamp },
+      Insert(new Db.LiveReading { Label = label, DeviceId = "1", Timestamp = timestamp },
         new Db.LiveRegister { ObisCode = ObisCode.ElectrActiveEnergyA14, Value = 1, Unit = (byte)Unit.WattHour },
         new Db.LiveRegister { ObisCode = ObisCode.ElectrActualPowerP14, Value = 11, Unit = (byte)Unit.Watt });
-      Insert(new Db.LiveReading { Label = label, SerialNumber = "1", Timestamp = timestamp + TimeSpan.FromMinutes(5) },
+      Insert(new Db.LiveReading { Label = label, DeviceId = "1", Timestamp = timestamp + TimeSpan.FromMinutes(5) },
         new Db.LiveRegister { ObisCode = ObisCode.ElectrActiveEnergyA14, Value = 2, Unit = (byte)Unit.WattHour },
         new Db.LiveRegister { ObisCode = ObisCode.ElectrActualPowerP14, Value = 22, Unit = (byte)Unit.Watt });
-      Insert(new Db.LiveReading { Label = label, SerialNumber = "1", Timestamp = timestamp + TimeSpan.FromMinutes(10) },
+      Insert(new Db.LiveReading { Label = label, DeviceId = "1", Timestamp = timestamp + TimeSpan.FromMinutes(10) },
         new Db.LiveRegister { ObisCode = ObisCode.ElectrActiveEnergyA14, Value = 3, Unit = (byte)Unit.WattHour });
       var target = CreateTarget();
       var start = timestamp;

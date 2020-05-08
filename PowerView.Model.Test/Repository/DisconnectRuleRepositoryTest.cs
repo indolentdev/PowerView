@@ -168,9 +168,9 @@ namespace PowerView.Model.Test.Repository
     public void GetLatestSerieNamesFromLive()
     {
       // Arrange
-      var reading1 = new Db.LiveReading { Label = "lbl", SerialNumber = "SN", Timestamp = DateTime.UtcNow };
-      var reading2 = new Db.LiveReading { Label = "lbl-other", SerialNumber = "SN-other", Timestamp = DateTime.UtcNow - TimeSpan.FromDays(3)};
-      var reading3 = new Db.LiveReading { Label = "lbl", SerialNumber = "SN", Timestamp = DateTime.UtcNow - TimeSpan.FromDays(1)};
+      var reading1 = new Db.LiveReading { Label = "lbl", DeviceId = "SN", Timestamp = DateTime.UtcNow };
+      var reading2 = new Db.LiveReading { Label = "lbl-other", DeviceId = "SN-other", Timestamp = DateTime.UtcNow - TimeSpan.FromDays(3)};
+      var reading3 = new Db.LiveReading { Label = "lbl", DeviceId = "SN", Timestamp = DateTime.UtcNow - TimeSpan.FromDays(1)};
       DbContext.InsertReadings(reading1, reading2, reading3);
       var register1 = new Db.LiveRegister { ObisCode = ObisCode.ElectrActualPowerP23L2, Unit = (byte)Unit.Watt, ReadingId = reading1.Id };
       var register2 = new Db.LiveRegister { ObisCode = ObisCode.ElectrActualPowerP23L2, Unit = (byte)Unit.Joule, ReadingId = reading2.Id };
@@ -192,9 +192,9 @@ namespace PowerView.Model.Test.Repository
     public void GetLatestSerieNamesFromDay()
     {
       // Arrange
-      var reading1 = new Db.DayReading { Label = "lbl", SerialNumber = "SN", Timestamp = DateTime.UtcNow - TimeSpan.FromDays(4) };
-      var reading2 = new Db.DayReading { Label = "lbl-other", SerialNumber = "SN-other", Timestamp = DateTime.UtcNow - TimeSpan.FromDays(8) };
-      var reading3 = new Db.DayReading { Label = "lbl", SerialNumber = "SN", Timestamp = DateTime.UtcNow - TimeSpan.FromDays(6) };
+      var reading1 = new Db.DayReading { Label = "lbl", DeviceId = "SN", Timestamp = DateTime.UtcNow - TimeSpan.FromDays(4) };
+      var reading2 = new Db.DayReading { Label = "lbl-other", DeviceId = "SN-other", Timestamp = DateTime.UtcNow - TimeSpan.FromDays(8) };
+      var reading3 = new Db.DayReading { Label = "lbl", DeviceId = "SN", Timestamp = DateTime.UtcNow - TimeSpan.FromDays(6) };
       DbContext.InsertReadings(reading1, reading2, reading3);
       var register1 = new Db.DayRegister { ObisCode = ObisCode.ElectrActualPowerP23L2, Unit = (byte)Unit.Watt, ReadingId = reading1.Id };
       var register2 = new Db.DayRegister { ObisCode = ObisCode.ElectrActualPowerP23L2, Unit = (byte)Unit.Joule, ReadingId = reading2.Id };

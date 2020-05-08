@@ -41,6 +41,11 @@ namespace PowerView.Model.Repository
       return InTransaction(transaction => connection.Execute(sql, param, transaction, CommandTimeout), dbOp);
     }
 
+    internal int ExecuteNoTransaction(string dbOp, string sql, object param = null)
+    {
+      return NoTransaction(() => connection.Execute(sql, param, null, CommandTimeout), dbOp);
+    }
+
     internal IList<TReturn> QueryTransaction<TReturn>(string dbOp, string sql, object param = null)
     {
       return InTransaction(transaction => connection.Query<TReturn>(sql, param, transaction, false, CommandTimeout).ToList(), dbOp);

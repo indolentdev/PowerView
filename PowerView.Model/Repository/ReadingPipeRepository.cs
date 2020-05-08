@@ -225,7 +225,7 @@ namespace PowerView.Model.Repository
       { 
         var a = orderedReadings[ix];
         var b = orderedReadings[ix+1];
-        if (a.Reading.SerialNumber == b.Reading.SerialNumber)
+        if (DeviceId.Equals(a.Reading.DeviceId, b.Reading.DeviceId))
         {
           continue;
         }
@@ -343,7 +343,7 @@ namespace PowerView.Model.Repository
       var transaction = DbContext.BeginTransaction();
       try
       {
-        var sql = "INSERT INTO {0} (Label, SerialNumber, Timestamp) VALUES (@Label, @SerialNumber, @Timestamp); SELECT last_insert_rowid();";
+        var sql = "INSERT INTO {0} (Label, DeviceId, Timestamp) VALUES (@Label, @DeviceId, @Timestamp); SELECT last_insert_rowid();";
         sql = string.Format(CultureInfo.InvariantCulture, sql, dstReadingTable);
         var dstReading = ToDstReading<TDstReading>(reading);
         dstReading.Id = DbContext.Connection.QueryFirst<long>(sql, dstReading, transaction);
@@ -384,7 +384,7 @@ namespace PowerView.Model.Repository
       var dstReading = new TDstReading
       { 
         Label = srcReading.Label,
-        SerialNumber = srcReading.SerialNumber,
+        DeviceId = srcReading.DeviceId,
         Timestamp = srcReading.Timestamp
       };
       return dstReading;
