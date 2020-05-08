@@ -15,7 +15,7 @@ namespace PowerView.Service
 {
   public static class ContainerConfiguration
   {
-    public static void Register(ContainerBuilder containerBuilder, Uri baseUri, Uri pvOutputAddStatusUri, string pvDeviceLabel, string pvDeviceSerialNumber, string pvDeviceSerialNumberParam,
+    public static void Register(ContainerBuilder containerBuilder, Uri baseUri, Uri pvOutputAddStatusUri, string pvDeviceLabel, string pvDeviceId, string pvDeviceIdParam,
                                 string actualPowerP23L1Param, string actualPowerP23L2Param, string actualPowerP23L3Param, ICollection<LabelObisCodeTemplate> labelObisCodeTemplates)
     {
       containerBuilder.RegisterType<ExitSignal>().As<IExitSignal>().As<IExitSignalProvider>().SingleInstance();
@@ -62,11 +62,11 @@ namespace PowerView.Service
         ))
         .WithParameter(new ResolvedParameter(
           (pi, ctx) => pi.Position == 2 && pi.ParameterType == typeof(string),
-          (pi, ctx) => pvDeviceSerialNumber
+          (pi, ctx) => pvDeviceId
         ))
         .WithParameter(new ResolvedParameter(
           (pi, ctx) => pi.Position == 3 && pi.ParameterType == typeof(string),
-          (pi, ctx) => pvDeviceSerialNumberParam
+          (pi, ctx) => pvDeviceIdParam
         ))
         .WithParameter(new ResolvedParameter(
           (pi, ctx) => pi.Position == 4 && pi.ParameterType == typeof(string),

@@ -55,8 +55,8 @@ namespace PowerView.Service.Test.Modules
 
       moduleConfigProvider.Setup(mcp => mcp.PvOutputAddStatus).Returns(pvOutputAddStatus);
       moduleConfigProvider.Setup(mcp => mcp.PvDeviceLabel).Returns(deviceLabel);
-      moduleConfigProvider.Setup(mcp => mcp.PvDeviceSerialNumber).Returns(serialNumber);
-      moduleConfigProvider.Setup(mcp => mcp.PvDeviceSerialNumberParam).Returns(serialNumberParam);
+      moduleConfigProvider.Setup(mcp => mcp.PvDeviceId).Returns(serialNumber);
+      moduleConfigProvider.Setup(mcp => mcp.PvDeviceIdParam).Returns(serialNumberParam);
       moduleConfigProvider.Setup(mcp => mcp.ActualPowerP23L1Param).Returns(powerL1Param);
       moduleConfigProvider.Setup(mcp => mcp.ActualPowerP23L2Param).Returns(powerL2Param);
       moduleConfigProvider.Setup(mcp => mcp.ActualPowerP23L3Param).Returns(powerL3Param);

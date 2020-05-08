@@ -20,20 +20,20 @@ namespace PowerView.Configuration
       set { this[PvDeviceLabelString] = value; }
     }
 
-    private const string PvDeviceSerialNumberString = "PvDeviceSerialNumber";
-    [ConfigurationProperty(PvDeviceSerialNumberString)]
-    public StringElement PvDeviceSerialNumber
+    private const string PvDeviceIdString = "PvDeviceId";
+    [ConfigurationProperty(PvDeviceIdString)]
+    public StringElement PvDeviceId
     { 
-      get { return (StringElement)this[PvDeviceSerialNumberString]; }
-      set { this[PvDeviceSerialNumberString] = value; }
+      get { return (StringElement)this[PvDeviceIdString]; }
+      set { this[PvDeviceIdString] = value; }
     }
 
-    private const string PvDeviceSerialNumberParamString = "PvDeviceSerialNumberParam";
-    [ConfigurationProperty(PvDeviceSerialNumberParamString)]
-    public StringElement PvDeviceSerialNumberParam
+    private const string PvDeviceIdParamString = "PvDeviceIdParam";
+    [ConfigurationProperty(PvDeviceIdParamString)]
+    public StringElement PvDeviceIdParam
     { 
-      get { return (StringElement)this[PvDeviceSerialNumberParamString]; }
-      set { this[PvDeviceSerialNumberParamString] = value; }
+      get { return (StringElement)this[PvDeviceIdParamString]; }
+      set { this[PvDeviceIdParamString] = value; }
     }
 
     private const string ActualPowerP23L1ParamString = "ActualPowerP23L1Param";
@@ -66,17 +66,17 @@ namespace PowerView.Configuration
       {
         PvOutputAddStatusUrl.Value = "http://pvoutput.org/service/r2/addstatus.jsp";
       }
-      if (string.IsNullOrEmpty(PvDeviceSerialNumber.Value))
+      if (string.IsNullOrEmpty(PvDeviceId.Value))
       {
-        PvDeviceSerialNumber.Value = null;
+        PvDeviceId.Value = null;
       }
-      if (string.IsNullOrEmpty(PvDeviceSerialNumberParam.Value))
+      if (string.IsNullOrEmpty(PvDeviceIdParam.Value))
       {
-        PvDeviceSerialNumberParam.Value = "v12";
+        PvDeviceIdParam.Value = "v12";
       }
 
       PvOutputAddStatusUrl.Validate(PvOutputAddStatusUrlString);
-      PvDeviceSerialNumberParam.Validate(PvDeviceSerialNumberParamString);
+      PvDeviceIdParam.Validate(PvDeviceIdParamString);
 
       if (string.IsNullOrEmpty(ActualPowerP23L1Param.Value))
       {

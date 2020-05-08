@@ -66,6 +66,14 @@ namespace PowerView
 
     private static void MigrateConfig(string configFileName)
     {
+      var config = System.IO.File.ReadAllText(configFileName);
+      var modifiedConfig = config.Replace("PvDeviceSerialNumber", "PvDeviceId");
+      if (!modifiedConfig.Equals(config, StringComparison.Ordinal))
+      {
+        log.InfoFormat("Migrating config file");
+        System.IO.File.WriteAllText(configFileName, modifiedConfig);
+      }
+
       XmlDocument document = new XmlDocument();
       document.PreserveWhitespace = true;
       document.Load(configFileName);
@@ -123,8 +131,8 @@ namespace PowerView
       Model.ContainerConfiguration.Register(containerBuilder, dbConfig.Name.Value, minBackupInterval, maxBackupCount, integrityCheckCommandTimeout, configuredTimeZoneId, configuredCultureInfoName);
 
       Service.ContainerConfiguration.Register(containerBuilder, serviceConfig.BaseUrl.GetValueAsUri(), serviceConfig.PvOutputFacade.PvOutputAddStatusUrl.GetValueAsUri(), 
-        serviceConfig.PvOutputFacade.PvDeviceLabel.Value, serviceConfig.PvOutputFacade.PvDeviceSerialNumber.Value,
-        serviceConfig.PvOutputFacade.PvDeviceSerialNumberParam.Value, serviceConfig.PvOutputFacade.ActualPowerP23L1Param.Value,
+        serviceConfig.PvOutputFacade.PvDeviceLabel.Value, serviceConfig.PvOutputFacade.PvDeviceId.Value,
+        serviceConfig.PvOutputFacade.PvDeviceIdParam.Value, serviceConfig.PvOutputFacade.ActualPowerP23L1Param.Value,
         serviceConfig.PvOutputFacade.ActualPowerP23L1Param.Value, serviceConfig.PvOutputFacade.ActualPowerP23L1Param.Value,
         registerConfig.Calculations.GetLabelObisCodeTemplates());
 

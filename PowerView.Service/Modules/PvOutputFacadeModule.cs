@@ -170,7 +170,7 @@ namespace PowerView.Service.Modules
       }
       
       var liveReading = liveReadingMapper.MapPvOutputArgs(request.Url, request.Headers.ContentType, request.Body,
-        moduleConfigProvider.PvDeviceLabel, moduleConfigProvider.PvDeviceSerialNumber, moduleConfigProvider.PvDeviceSerialNumberParam,
+        moduleConfigProvider.PvDeviceLabel, moduleConfigProvider.PvDeviceId, moduleConfigProvider.PvDeviceIdParam,
         moduleConfigProvider.ActualPowerP23L1Param, moduleConfigProvider.ActualPowerP23L2Param, moduleConfigProvider.ActualPowerP23L3Param);
       if (liveReading == null)
       {

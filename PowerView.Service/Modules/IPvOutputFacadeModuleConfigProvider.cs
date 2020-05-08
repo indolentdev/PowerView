@@ -6,8 +6,8 @@ namespace PowerView.Service.Modules
   {
     Uri PvOutputAddStatus { get; }
     string PvDeviceLabel { get; }
-    string PvDeviceSerialNumber { get; }
-    string PvDeviceSerialNumberParam { get; }
+    string PvDeviceId { get; }
+    string PvDeviceIdParam { get; }
 
     string ActualPowerP23L1Param { get; }
     string ActualPowerP23L2Param { get; }

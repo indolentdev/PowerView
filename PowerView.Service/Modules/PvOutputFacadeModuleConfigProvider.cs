@@ -4,7 +4,7 @@ namespace PowerView.Service.Modules
 {
   internal class PvOutputFacadeModuleConfigProvider : IPvOutputFacadeModuleConfigProvider
   {
-    public PvOutputFacadeModuleConfigProvider(Uri pvOutputAddStatus, string pvDeviceLabel, string pvDeviceSerialNumber, string pvDeviceSerialNumberParam, 
+    public PvOutputFacadeModuleConfigProvider(Uri pvOutputAddStatus, string pvDeviceLabel, string pvDeviceId, string pvDeviceIdParam, 
                                               string actualPowerP23L1Param, string actualPowerP23L2Param, string actualPowerP23L3Param)
     {
       if (pvOutputAddStatus == null) throw new ArgumentNullException("pvOutputAddStatus");
@@ -12,8 +12,8 @@ namespace PowerView.Service.Modules
 
       PvOutputAddStatus = pvOutputAddStatus;
       PvDeviceLabel = pvDeviceLabel;
-      PvDeviceSerialNumber = pvDeviceSerialNumber;
-      PvDeviceSerialNumberParam = pvDeviceSerialNumberParam;
+      PvDeviceId = pvDeviceId;
+      PvDeviceIdParam = pvDeviceIdParam;
 
       ActualPowerP23L1Param = actualPowerP23L1Param;
       ActualPowerP23L2Param = actualPowerP23L2Param;
@@ -22,8 +22,8 @@ namespace PowerView.Service.Modules
 
     public Uri PvOutputAddStatus { get; private set; }
     public string PvDeviceLabel { get; private set; }
-    public string PvDeviceSerialNumber { get; private set; }
-    public string PvDeviceSerialNumberParam { get; private set; }
+    public string PvDeviceId { get; private set; }
+    public string PvDeviceIdParam { get; private set; }
 
     public string ActualPowerP23L1Param { get; }
     public string ActualPowerP23L2Param { get; }

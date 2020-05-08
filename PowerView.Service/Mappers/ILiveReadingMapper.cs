@@ -9,6 +9,6 @@ namespace PowerView.Service.Mappers
   {
     IEnumerable<LiveReading> Map(string contentType, Stream body);
 
-    LiveReading MapPvOutputArgs(Uri requestUrl, string contentType, Stream body, string deviceLabel, string deviceSerialNumber, string deviceSerialNumberParam, string actualPowerP23L1Param, string actualPowerP23L2Param, string actualPowerP23L3Param);
+    LiveReading MapPvOutputArgs(Uri requestUrl, string contentType, Stream body, string deviceLabel, string deviceId, string deviceIdParam, string actualPowerP23L1Param, string actualPowerP23L2Param, string actualPowerP23L3Param);
   }
 }

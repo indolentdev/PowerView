@@ -5,7 +5,7 @@
 <head>
   <meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
   <title>Configuring PowerView</title>
-  <meta name="generator" content="Bluefish 2.2.7" />
+  <meta name="generator" content="Bluefish 2.2.10" />
 </head>
 
 <body>
@@ -30,25 +30,26 @@ PowerView extend the &lt;Service&gt; element:</p>
 <p>The PvOutputFacade element declars parameters needed for PowerView to provide the pvoutput.org
 <a href="http://pvoutput.org/help.html#api-addstatus" >add status</a> facade. The PvDeviceLabel 
 defines the device label name applied for photovoltic readings accepted through the pvoutput.org facade. 
-PowerView requires a serial number for each device providing data. PowerView can extract the inverter 
-serial number from the PV data if possible, by default PowerView assumes the serial number is contained 
+PowerView requires a device id for each device providing data. PowerView can extract the inverter 
+device id from the PV data if possible, by default PowerView assumes the device id is contained 
 in the "v12" PV data parameterset.</p> 
 
-<p>If the inverter device does not provide its serial number PowerView allows
-explicit declaring the inverter serial number:</p>
+<p>If the inverter device does not provide its device id PowerView allows
+explicit declaring the inverter device id:</p>
 
 <pre>	&lt;Service&gt;
 		&lt;BaseUrl value="http://localhost:47362" /&gt;
 		&lt;PvOutputFacade&gt;
 			&lt;PvDeviceLabel value="Inverter" /&gt;
-			&lt;PvDeviceSerialNumber value="12345678" /&gt;
+			&lt;PvDeviceId value="12345678" /&gt;
 		&lt;/PvOutputFacade&gt;
 	&lt;/Service&gt;</pre>
 	
-<p>If at all possible have the inverter serial number provided in the PV data. Explicitly declaring 
-the inverter serial number should be a last resort. When explicitly declaring 
-the inverter serial number make sure to update the serial number if the inverter is replaced. 
-Failing to update the inverter serial number appropriately may cause wrong energy production summaries.</p>
+<p>If at all possible have the inverter provide the device id in the PV data. Explicitly declaring 
+the inverter device id should be a last resort. When explicitly declaring 
+the inverter device id make sure to update the value if the inverter is replaced. 
+Failing to update the inverter device id appropriately will cause wrong energy production summaries
+in PowerView.</p>
 
 <h2>Configuring Database</h2>
 
