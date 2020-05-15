@@ -54,7 +54,7 @@ namespace PowerView.Service.Modules
       var disconnectControlNames = latestSerieNames.Keys.Where(x => x.ObisCode.IsDisconnectControl)
                                                .Except(disconnectRules.Select(x => x.Name)).ToList();
 
-      var evaluationObisCodes = new[] { ObisCode.ElectrActualPowerP23L1, ObisCode.ElectrActualPowerP23L2, ObisCode.ElectrActualPowerP23L3 };
+      var evaluationObisCodes = new[] { ObisCode.ElectrActualPowerP23, ObisCode.ElectrActualPowerP23L1, ObisCode.ElectrActualPowerP23L2, ObisCode.ElectrActualPowerP23L3 };
       var evaluationItems = latestSerieNames.Where(x => evaluationObisCodes.Contains(x.Key.ObisCode)).ToList();
 
       var disconnectControlNameDtos = disconnectControlNames.Select(x => new { Label = x.Label, ObisCode = x.ObisCode.ToString() }).ToList();
