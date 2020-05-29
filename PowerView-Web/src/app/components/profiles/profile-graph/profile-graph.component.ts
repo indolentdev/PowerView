@@ -76,7 +76,15 @@ export class ProfileGraphComponent implements OnInit {
         text: this.profileGraph.title
       },
       chart: {
-        zoomType: 'x'
+        zoomType: 'x',
+        resetZoomButton: {
+          position: {
+              align: 'left'//, // by default
+              // verticalAlign: 'top', // by default
+              // x: 0,
+              // y: -30
+          }
+        }        
       },
       subtitle: {
         text: document.ontouchstart === undefined ? 
