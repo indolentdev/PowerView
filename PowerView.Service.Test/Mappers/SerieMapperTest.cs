@@ -10,6 +10,7 @@ namespace PowerView.Service.Test.Mappers
     [TestCase("1.66.1.8.0.255")]
     [TestCase("1.66.2.8.0.255")]
     [TestCase("8.66.1.0.0.255")]
+    [TestCase("9.66.1.0.0.255")]
     [TestCase("6.66.1.0.0.255")]
     [TestCase("6.66.2.0.0.255")]
     public void MapToSerieTypeAreaspline(string obisCode)
@@ -103,6 +104,7 @@ namespace PowerView.Service.Test.Mappers
       
     [Test]
     [TestCase("8.66.1.0.0.255")]
+    [TestCase("9.66.1.0.0.255")]
     public void MapToSerieYAxisVolumePeriod(string obisCode)
     {
       // Arrange
@@ -131,6 +133,7 @@ namespace PowerView.Service.Test.Mappers
 
     [Test]
     [TestCase("8.65.1.0.0.255")]
+    [TestCase("9.65.1.0.0.255")]
     public void MapToSerieYAxisVolumeDelta(string obisCode)
     {
       // Arrange
@@ -160,6 +163,8 @@ namespace PowerView.Service.Test.Mappers
     [Test]
     [TestCase("8.0.2.0.0.255")]
     [TestCase("8.67.2.0.0.255")]
+    [TestCase("9.0.2.0.0.255")]
+    [TestCase("9.67.2.0.0.255")]
     public void MapToSerieYAxisFlow(string obisCode)
     {
       // Arrange
