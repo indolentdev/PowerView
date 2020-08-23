@@ -1,3 +1,6 @@
+PowerView version 0.0.31 - Xxxx YYY
+- Fixed a bug preventing updating of series colors.
+
 PowerView version 0.0.30 - July 2020
 - Added csv file export of hourly cumulative values.
 - Added support for HotWater Volume and Flow.

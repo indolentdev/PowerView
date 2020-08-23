@@ -92,7 +92,7 @@ namespace PowerView.Model.Repository
           if (dbSeriesColor != null)
           {
             DbContext.Connection.Execute(
-              "UPDATE SerieColor SET Color = @Color WHERE Id = @Id AND Label = @Lable AND ObisCode = @ObisCode;", 
+              "UPDATE SerieColor SET Color = @Color WHERE Id = @Id AND Label = @Label AND ObisCode = @ObisCode;", 
               new { seriesColor.Color, dbSeriesColor.Id, dbSeriesColor.Label, dbSeriesColor.ObisCode }, transaction);
           }
           else
