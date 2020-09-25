@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Reflection;
+using log4net;
 
 namespace PowerView.Service.EventHub
 {
   internal class MeterEventCoordinator : IMeterEventCoordinator
   {
+    private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
     private readonly IIntervalTrigger intervalTrigger;
     private readonly IFactory factory;
 
@@ -25,11 +29,11 @@ namespace PowerView.Service.EventHub
         return;
       }
 
-      var dateTimeUtc = dateTime.Date.ToUniversalTime();
+      log.DebugFormat("Trigger time occurred. Running Detector. {0}", dateTime.ToString("O"));
 
       using (var ownedMeterEventDetector = factory.Create<IMeterEventDetector>())
       {
-        ownedMeterEventDetector.Value.DetectMeterEvents(dateTimeUtc);
+        ownedMeterEventDetector.Value.DetectMeterEvents(dateTime);
       }
 
       using (var ownedMeterEventNotifier = factory.Create<IMeterEventNotifier>())

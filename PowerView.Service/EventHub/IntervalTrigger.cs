@@ -29,6 +29,8 @@ namespace PowerView.Service.EventHub
 
       this.locationContext = locationContext;
       this.baseDateTime = baseDateTime;
+
+      log.DebugFormat("Interval trigger initialized. Base date time:{0}", baseDateTime.ToString("O"));
     }
 
     public void Setup(TimeSpan timeOfDayAtTimezone, TimeSpan interval)
