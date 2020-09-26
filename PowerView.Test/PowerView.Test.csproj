@@ -65,10 +65,14 @@
     <Compile Include="Configuration\CalculationElementTest.cs" />
     <Compile Include="Configuration\CalculationElementCollectionTest.cs" />
     <Compile Include="Configuration\UIntElementTest.cs" />
+    <Compile Include="Configuration\Migration\ConfigMigraterTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Configuration\Migration\test.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PowerView\PowerView.csproj">
@@ -86,5 +90,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Configuration\" />
+    <Folder Include="Configuration\Migration\" />
   </ItemGroup>
 </Project>

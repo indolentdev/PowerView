@@ -8,6 +8,7 @@ using Autofac;
 using log4net;
 using log4net.Config;
 using PowerView.Configuration;
+using PowerView.Configuration.Migration;
 using PowerView.Model;
 using PowerView.Model.Repository;
 using PowerView.Service;
@@ -28,7 +29,9 @@ namespace PowerView
 
       StartLog(args, configFileName);
 
-      MigrateConfig(configFileName);
+      MigrateConfig(configFileName); // The old migration..
+      var configMigrater = new ConfigMigrater();
+      configMigrater.Migrate(configFileName);
 
       IContainer container = null;
       var config = GetConfiguration();
