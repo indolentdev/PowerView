@@ -21,9 +21,8 @@ namespace PowerView.Service.Modules
     private readonly IProfileGraphRepository profileGraphRepository;
     private readonly ILocationContext locationContext;
     private readonly ISerieMapper serieMapper;
-    private readonly ITemplateConfigProvider templateConfigProvider;
 
-    public ProfileModule(IProfileRepository profileRepository, ISeriesColorRepository serieRepository, IProfileGraphRepository profileGraphRepository, ILocationContext locationContext, ISerieMapper serieMapper, ITemplateConfigProvider templateConfigProvider)
+    public ProfileModule(IProfileRepository profileRepository, ISeriesColorRepository serieRepository, IProfileGraphRepository profileGraphRepository, ILocationContext locationContext, ISerieMapper serieMapper)
       :base("/api/profile")
     {
       if (profileRepository == null) throw new ArgumentNullException("profileRepository");
@@ -31,14 +30,12 @@ namespace PowerView.Service.Modules
       if (profileGraphRepository == null) throw new ArgumentNullException("profileGraphRepository");
       if (locationContext == null) throw new ArgumentNullException("locationContext");
       if (serieMapper == null) throw new ArgumentNullException("serieMapper");
-      if (templateConfigProvider == null) throw new ArgumentNullException("templateConfigProvider");
 
       this.profileRepository = profileRepository;
       this.serieRepository = serieRepository;
       this.profileGraphRepository = profileGraphRepository;
       this.locationContext = locationContext;
       this.serieMapper = serieMapper;
-      this.templateConfigProvider = templateConfigProvider;
 
       Get["day"] = GetDayProfile;
       Get["month"] = GetMonthProfile;
@@ -127,7 +124,7 @@ namespace PowerView.Service.Modules
         var groupProfileGraphs = group.ToList();
 
         var intervalGroup = new IntervalGroup(timeZoneInfo, start, groupInterval, groupProfileGraphs, labelSeriesSet);
-        intervalGroup.Prepare(templateConfigProvider.LabelObisCodeTemplates);
+        intervalGroup.Prepare();
         intervalGroups.Add(intervalGroup);
       }
       sw.Stop();

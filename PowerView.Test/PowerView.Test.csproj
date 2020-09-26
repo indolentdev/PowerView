@@ -62,8 +62,6 @@
     <Compile Include="Configuration\StringElementTest.cs" />
     <Compile Include="Configuration\DatabaseSectionTest.cs" />
     <Compile Include="Configuration\UriElementTest.cs" />
-    <Compile Include="Configuration\CalculationElementTest.cs" />
-    <Compile Include="Configuration\CalculationElementCollectionTest.cs" />
     <Compile Include="Configuration\UIntElementTest.cs" />
     <Compile Include="Configuration\Migration\ConfigMigraterTest.cs" />
   </ItemGroup>

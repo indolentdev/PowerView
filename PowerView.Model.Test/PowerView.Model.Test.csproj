@@ -81,9 +81,6 @@
     <Compile Include="Repository\ProfileRepositoryTest.cs" />
     <Compile Include="Repository\ReadingPipeRepositoryTest.cs" />
     <Compile Include="Repository\ReadingPipeRepositoryHelperTest.cs" />
-    <Compile Include="Expression\RegisterTemplateExpressionTest.cs" />
-    <Compile Include="Expression\OperationTemplateExpressionTest.cs" />
-    <Compile Include="Expression\TemplateExpressionFactoryTest.cs" />
     <Compile Include="Repository\SettingRepositoryTest.cs" />
     <Compile Include="Repository\DataStoreExceptionFactoryTest.cs" />
     <Compile Include="Repository\DbMigrateTest.cs" />
@@ -109,8 +106,6 @@
     <Compile Include="SeriesNameTest.cs" />
     <Compile Include="Repository\SeriesNameRepositoryTest.cs" />
     <Compile Include="ProfileGraphTest.cs" />
-    <Compile Include="Expression\AddValueExpressionSetTest.cs" />
-    <Compile Include="Expression\SubtractValueExpressionSetTest.cs" />
     <Compile Include="MqttConfigTest.cs" />
     <Compile Include="DisconnectRuleTest.cs" />
     <Compile Include="DisconnectCacheItemTest.cs" />
@@ -129,7 +124,6 @@
     <Compile Include="ProfileViewSetSourceTest.cs" />
     <Compile Include="NormalizedTimeRegisterValueTest.cs" />
     <Compile Include="SeriesFromCumulativeGeneratorTest.cs" />
-    <Compile Include="LabelsSeriesFromTemplatesGeneratorTest.cs" />
     <Compile Include="LeakCharacteristicCheckerTest.cs" />
     <Compile Include="Repository\EnvironmentRepositoryTest.cs" />
     <Compile Include="Repository\DbContextExtensions.cs" />
@@ -151,7 +145,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Repository\" />
-    <Folder Include="Expression\" />
     <Folder Include="SeriesGenerators\" />
   </ItemGroup>
 </Project>

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using PowerView.Model.Expression;
 
 namespace PowerView.Model.Test
 {
@@ -74,11 +73,9 @@ namespace PowerView.Model.Test
         new TimeRegisterValue("SN1", start, 1234, Unit.Watt) } } })
       });
       var target = new IntervalGroup(timeZoneInfo, start, interval, profileGraphs, labelSeriesSet);
-      var labelObisCodeTemplate = new LabelObisCodeTemplate("newTemplate", new ObisCodeTemplate[0]);
-      var labelObisCodeTemplates = new[] { labelObisCodeTemplate };
 
       // Act
-      target.Prepare(labelObisCodeTemplates);
+      target.Prepare();
 
       // Assert
       Assert.That(target.Categories.Count, Is.EqualTo(24));
@@ -103,11 +100,9 @@ namespace PowerView.Model.Test
         new TimeRegisterValue("SN1", start, 1234, Unit.Watt) } } })
       });
       var target = new IntervalGroup(timeZoneInfo, start, interval, profileGraphs, labelSeriesSet);
-      var labelObisCodeTemplate = new LabelObisCodeTemplate("newTemplate", new ObisCodeTemplate[0]);
-      var labelObisCodeTemplates = new[] { labelObisCodeTemplate };
 
       // Act
-      target.Prepare(labelObisCodeTemplates);
+      target.Prepare();
 
       // Assert
       Assert.That(target.Categories.Count, Is.EqualTo(31));
@@ -132,11 +127,9 @@ namespace PowerView.Model.Test
         new TimeRegisterValue("SN1", start.AddMinutes(2), 1234, Unit.Watt) } } })
       });
       var target = new IntervalGroup(timeZoneInfo, start, interval, profileGraphs, labelSeriesSet);
-      var labelObisCodeTemplate = new LabelObisCodeTemplate("newTemplate", new ObisCodeTemplate[0]);
-      var labelObisCodeTemplates = new[] { labelObisCodeTemplate };
 
       // Act
-      target.Prepare(labelObisCodeTemplates);
+      target.Prepare();
 
       // Assert
       Assert.That(target.NormalizedLabelSeriesSet, Is.Not.Null);
@@ -163,43 +156,13 @@ namespace PowerView.Model.Test
         new TimeRegisterValue("SN1", start, 1234, Unit.Watt) } } })
       });
       var target = new IntervalGroup(timeZoneInfo, start, interval, profileGraphs, labelSeriesSet);
-      var labelObisCodeTemplate = new LabelObisCodeTemplate("newTemplate", new ObisCodeTemplate[0]);
-      var labelObisCodeTemplates = new[] { labelObisCodeTemplate };
 
       // Act
-      target.Prepare(labelObisCodeTemplates);
+      target.Prepare();
 
       // Assert
       Assert.That(target.NormalizedLabelSeriesSet.Count(), Is.EqualTo(1));
       Assert.That(target.NormalizedLabelSeriesSet.First().Count(), Is.EqualTo(4));
-    }
-
-    [Test]
-    public void Prepare_GeneratesFromTemplates()
-    {
-      // Arrange
-      const string label = "label";
-      const string interval = "60-minutes";
-      ObisCode obisCode = "1.2.3.4.5.6";
-      var profileGraph = new ProfileGraph("day", "The Page", "The Title", interval, 1, new[] { new SeriesName(label, obisCode) });
-      var profileGraphs = new List<ProfileGraph> { profileGraph };
-      var timeZoneInfo = TimeZoneInfo.Local;
-      var start = DateTime.Today.ToUniversalTime();
-      var end = start.AddDays(1);
-      var labelSeriesSet = new LabelSeriesSet<TimeRegisterValue>(start, end, new[] {
-        new LabelSeries<TimeRegisterValue>(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, new[] {
-        new TimeRegisterValue("SN1", start, 1234, Unit.Watt) } } })
-      });
-      var target = new IntervalGroup(timeZoneInfo, start, interval, profileGraphs, labelSeriesSet);
-      var obisCodeTemplate = new ObisCodeTemplate("6.5.4.3.2.1", new RegisterTemplateExpression(label + ":" + obisCode));
-      var labelObisCodeTemplate = new LabelObisCodeTemplate("new-label", new[] { obisCodeTemplate });
-      var labelObisCodeTemplates = new[] { labelObisCodeTemplate };
-
-      // Act
-      target.Prepare(labelObisCodeTemplates);
-
-      // Assert
-      Assert.That(target.NormalizedLabelSeriesSet.Count(), Is.EqualTo(2));
     }
 
   }

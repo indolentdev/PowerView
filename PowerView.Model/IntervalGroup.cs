@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using PowerView.Model.Expression;
 
 namespace PowerView.Model
 {
@@ -30,13 +29,12 @@ namespace PowerView.Model
     public IList<DateTime> Categories { get; private set; }
     public LabelSeriesSet<NormalizedTimeRegisterValue> NormalizedLabelSeriesSet { get; private set; }
 
-    public void Prepare(ICollection<LabelObisCodeTemplate> labelObisCodeTemplates)
+    public void Prepare()
     {
       Categories = new ReadOnlyCollection<DateTime>(GetCategories());
 
       NormalizedLabelSeriesSet = LabelSeriesSet.Normalize(timeDivider);
       GenerateSeriesFromCumulative();
-      GenerateLabelsFromTemplates(labelObisCodeTemplates);
     }
 
     private List<DateTime> GetCategories()
@@ -61,10 +59,5 @@ namespace PowerView.Model
       }
     }
 
-    private void GenerateLabelsFromTemplates(ICollection<LabelObisCodeTemplate> labelObisCodeTemplates)
-    {
-      var generator = new LabelSeriesFromTemplatesGenerator(labelObisCodeTemplates);
-      NormalizedLabelSeriesSet.Add(generator.Generate(NormalizedLabelSeriesSet));
-    }
   }
 }

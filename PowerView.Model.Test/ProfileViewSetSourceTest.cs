@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using PowerView.Model.Expression;
 
 namespace PowerView.Model.Test
 {
@@ -129,7 +128,7 @@ namespace PowerView.Model.Test
       }
       if (start == null) start = new DateTime(2019, 8, 26, 0, 0, 0, DateTimeKind.Local).ToUniversalTime();
       var intervalGroup = new IntervalGroup(TimeZoneInfo.Local, start.Value, profileGraphs.First().Interval, profileGraphs, GetLabelSeriesSet(firstTimestamp, fromFirstCount, start, fromStartCount, interval, baseValue, profileGraphs));
-      intervalGroup.Prepare(new LabelObisCodeTemplate[0]);
+      intervalGroup.Prepare();
       return intervalGroup;
     }
 

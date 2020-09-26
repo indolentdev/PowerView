@@ -103,7 +103,6 @@ namespace PowerView
       { // Trigger validation
         config.GetServiceSection();
         config.GetDatabaseSection();
-        config.GetRegisterSection();
       }
       catch (ConfigurationErrorsException e)
       {
@@ -117,7 +116,6 @@ namespace PowerView
     {
       var serviceConfig = config.GetServiceSection();
       var dbConfig = config.GetDatabaseSection();
-      var registerConfig = config.GetRegisterSection();
 
       var containerBuilder = new ContainerBuilder();
 
@@ -136,8 +134,7 @@ namespace PowerView
       Service.ContainerConfiguration.Register(containerBuilder, serviceConfig.BaseUrl.GetValueAsUri(), serviceConfig.PvOutputFacade.PvOutputAddStatusUrl.GetValueAsUri(), 
         serviceConfig.PvOutputFacade.PvDeviceLabel.Value, serviceConfig.PvOutputFacade.PvDeviceId.Value,
         serviceConfig.PvOutputFacade.PvDeviceIdParam.Value, serviceConfig.PvOutputFacade.ActualPowerP23L1Param.Value,
-        serviceConfig.PvOutputFacade.ActualPowerP23L1Param.Value, serviceConfig.PvOutputFacade.ActualPowerP23L1Param.Value,
-        registerConfig.Calculations.GetLabelObisCodeTemplates());
+        serviceConfig.PvOutputFacade.ActualPowerP23L1Param.Value, serviceConfig.PvOutputFacade.ActualPowerP23L1Param.Value);
 
       var container = containerBuilder.Build();
       return container;

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using PowerView.Model;
-using PowerView.Model.Expression;
 using PowerView.Model.Repository;
 using PowerView.Service.Modules;
 using Moq;
@@ -16,7 +15,6 @@ namespace PowerView.Service.Test.Modules
   public class DiffModuleTest
   {
     private Mock<IProfileRepository> profileRepository;
-    private Mock<ITemplateConfigProvider> templateConfigProvider;
 
     private Browser browser;
 
@@ -26,15 +24,11 @@ namespace PowerView.Service.Test.Modules
     public void SetUp()
     {
       profileRepository = new Mock<IProfileRepository>();
-      templateConfigProvider = new Mock<ITemplateConfigProvider>();
-
-      templateConfigProvider.Setup(mcp => mcp.LabelObisCodeTemplates).Returns(new LabelObisCodeTemplate[0]);
 
       browser = new Browser(cfg =>
       {
         cfg.Module<DiffModule>();
         cfg.Dependency<IProfileRepository>(profileRepository.Object);
-        cfg.Dependency<ITemplateConfigProvider>(templateConfigProvider.Object);
         cfg.Dependency<ILocationContext>(TimeZoneHelper.GetDenmarkLocationContext());
       });
     }

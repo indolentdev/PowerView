@@ -83,15 +83,7 @@
     <Compile Include="Repository\ReadingPipeRepository.cs" />
     <Compile Include="Repository\ReadingPipeRepositoryHelper.cs" />
     <Compile Include="Repository\IReadingPipeRepository.cs" />
-    <Compile Include="Expression\ValueExpressionSetException.cs" />
-    <Compile Include="Expression\ValueExpressionSetHelper.cs" />
     <Compile Include="Repository\Db.cs" />
-    <Compile Include="Expression\ITemplateExpression.cs" />
-    <Compile Include="Expression\RegisterTemplateExpression.cs" />
-    <Compile Include="Expression\TemplateExpressionException.cs" />
-    <Compile Include="Expression\TemplateExpressionFactory.cs" />
-    <Compile Include="Expression\OperationTemplateExpression.cs" />
-    <Compile Include="Expression\ITemplateExpressionFactory.cs" />
     <Compile Include="Repository\SettingRepository.cs" />
     <Compile Include="Repository\ISettingRepository.cs" />
     <Compile Include="Repository\DataStoreException.cs" />
@@ -137,12 +129,6 @@
     <Compile Include="SeriesName.cs" />
     <Compile Include="ProfileGraph.cs" />
     <Compile Include="NamedValue.cs" />
-    <Compile Include="Expression\IValueExpressionSet.cs" />
-    <Compile Include="Expression\AddValueExpressionSet.cs" />
-    <Compile Include="Expression\ValueExpressionSet.cs" />
-    <Compile Include="Expression\SubtractValueExpressionSet.cs" />
-    <Compile Include="Expression\ObisCodeTemplate.cs" />
-    <Compile Include="Expression\LabelObisCodeTemplate.cs" />
     <Compile Include="MqttConfig.cs" />
     <Compile Include="DataException.cs" />
     <Compile Include="MissingDataException.cs" />
@@ -173,7 +159,6 @@
     <Compile Include="NormalizedTimeRegisterValue.cs" />
     <Compile Include="SeriesFromCumulativeGenerator.cs" />
     <Compile Include="ISeries.cs" />
-    <Compile Include="LabelSeriesFromTemplatesGenerator.cs" />
     <Compile Include="LeakCharacteristicChecker.cs" />
     <Compile Include="Repository\EnvironmentRepository.cs" />
     <Compile Include="Repository\IEnvironmentRepository.cs" />
@@ -216,7 +201,6 @@
     <Folder Include="Repository\DbVersion\2\" />
     <Folder Include="Repository\DbVersion\3\" />
     <Folder Include="Repository\DbVersion\4\" />
-    <Folder Include="Expression\" />
     <Folder Include="Repository\DbVersion\5\" />
     <Folder Include="Repository\DbVersion\6\" />
     <Folder Include="Repository\DbVersion\7\" />

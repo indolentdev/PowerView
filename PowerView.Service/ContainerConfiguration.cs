@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using Autofac;
 using Autofac.Core;
-using PowerView.Model.Expression;
 using PowerView.Service.DisconnectControl;
 using PowerView.Service.EventHub;
 using PowerView.Service.Mailer;
@@ -16,7 +14,7 @@ namespace PowerView.Service
   public static class ContainerConfiguration
   {
     public static void Register(ContainerBuilder containerBuilder, Uri baseUri, Uri pvOutputAddStatusUri, string pvDeviceLabel, string pvDeviceId, string pvDeviceIdParam,
-                                string actualPowerP23L1Param, string actualPowerP23L2Param, string actualPowerP23L3Param, ICollection<LabelObisCodeTemplate> labelObisCodeTemplates)
+                                string actualPowerP23L1Param, string actualPowerP23L2Param, string actualPowerP23L3Param)
     {
       containerBuilder.RegisterType<ExitSignal>().As<IExitSignal>().As<IExitSignalProvider>().SingleInstance();
 
@@ -79,12 +77,6 @@ namespace PowerView.Service
         .WithParameter(new ResolvedParameter(
           (pi, ctx) => pi.Position == 6 && pi.ParameterType == typeof(string),
           (pi, ctx) => actualPowerP23L3Param
-        ));
-      
-      containerBuilder.RegisterType<TemplateConfigProvider>().As<ITemplateConfigProvider>()
-        .WithParameter(new ResolvedParameter(
-          (pi, ctx) => pi.Position == 0,
-          (pi, ctx) => labelObisCodeTemplates
         ));
 
       // Translations

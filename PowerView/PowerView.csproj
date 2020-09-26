@@ -72,9 +72,6 @@
     <Compile Include="Configuration\ServiceSection.cs" />
     <Compile Include="Configuration\IConfigurationValidatable.cs" />
     <Compile Include="Configuration\UriElement.cs" />
-    <Compile Include="Configuration\RegisterSection.cs" />
-    <Compile Include="Configuration\CalculationElement.cs" />
-    <Compile Include="Configuration\CalculationElementCollection.cs" />
     <Compile Include="TestDataGenerator.cs" />
     <Compile Include="Configuration\UIntElement.cs" />
     <Compile Include="Configuration\Migration\ConfigMigrater.cs" />

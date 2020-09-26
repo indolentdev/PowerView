@@ -14,8 +14,8 @@ namespace PowerView.Configuration.Migration
 
     private static readonly IList<ISpec> specs = new List<ISpec>
     {
-//      new RemoveSpec("configuration/configSections/section[@name='Register']"),
-//      new RemoveSpec("configuration/Register"),
+      new RemoveSpec("configuration/configSections/section[@name='Register']"),
+      new RemoveSpec("configuration/Register"),
     };
 
     private bool dirty = false;

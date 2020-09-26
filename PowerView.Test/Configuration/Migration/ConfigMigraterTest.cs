@@ -46,7 +46,7 @@ namespace PowerView.Test.Configuration.Migration
       // Assert
       var xml = File.ReadAllText(configFile).Replace(Environment.NewLine, string.Empty).Replace("\t", string.Empty);
 
-//      StringAssert.DoesNotContain("Register", xml); // Version 0.0.29 -> 0.0.30
+      StringAssert.DoesNotContain("Register", xml); // Version 0.0.29 -> 0.0.30
     }
 
     private string GetFileName()

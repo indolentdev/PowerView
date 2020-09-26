@@ -7,7 +7,6 @@ using System.Reflection;
 using log4net;
 using Mono.Data.Sqlite;
 using Dapper;
-using PowerView.Model.Expression;
 
 namespace PowerView.Model.Repository
 {
@@ -20,7 +19,7 @@ namespace PowerView.Model.Repository
     {
     }
 
-    public IList<SeriesName> GetSeriesNames(TimeZoneInfo timeZoneInfo, ICollection<LabelObisCodeTemplate> labelObisCodeTemplates)
+    public IList<SeriesName> GetSeriesNames(TimeZoneInfo timeZoneInfo)
     {
       var labelsAndObisCodes = GetLabelsAndObisCodes();
 
@@ -41,7 +40,7 @@ namespace PowerView.Model.Repository
       }
       var labelSeriesSet = new LabelSeriesSet<TimeRegisterValue>(dt1, dt2, labelSeries);
       var intervalGroup = new IntervalGroup(timeZoneInfo, midnight, "5-minutes", new ProfileGraph[0], labelSeriesSet);
-      intervalGroup.Prepare(labelObisCodeTemplates);
+      intervalGroup.Prepare();
 
       var seriesNames = intervalGroup.NormalizedLabelSeriesSet
         .SelectMany(ls => ls.Where(oc => !oc.IsCumulative).Select(oc => new SeriesName(ls.Label, oc)))

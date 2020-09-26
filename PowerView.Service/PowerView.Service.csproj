@@ -101,8 +101,6 @@
     <Compile Include="Modules\ProfileModule.cs" />
     <Compile Include="Modules\IPvOutputFacadeModuleConfigProvider.cs" />
     <Compile Include="Modules\PvOutputFacadeModuleConfigProvider.cs" />
-    <Compile Include="Modules\ITemplateConfigProvider.cs" />
-    <Compile Include="Modules\TemplateConfigProvider.cs" />
     <Compile Include="IUsageMonitor.cs" />
     <Compile Include="UsageMonitor.cs" />
     <Compile Include="Mappers\ISerieMapper.cs" />

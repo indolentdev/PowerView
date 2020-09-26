@@ -16,18 +16,15 @@ namespace PowerView.Service.Modules
     private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
     private readonly IProfileRepository profileRepository;
-    private readonly ITemplateConfigProvider templateConfigProvider;
     private readonly ILocationContext locationContext;
 
-    public DiffModule(IProfileRepository profileRepository, ITemplateConfigProvider templateConfigProvider, ILocationContext locationContext)
+    public DiffModule(IProfileRepository profileRepository, ILocationContext locationContext)
       : base("/api")
     {
       if (profileRepository == null) throw new ArgumentNullException("profileRepository");
-      if (templateConfigProvider == null) throw new ArgumentNullException("templateConfigProvider");
       if (locationContext == null) throw new ArgumentNullException("locationContext");
 
       this.profileRepository = profileRepository;
-      this.templateConfigProvider = templateConfigProvider;
       this.locationContext = locationContext;
 
       Get["diff"] = GetDiff;
@@ -51,7 +48,7 @@ namespace PowerView.Service.Modules
 
       var intervalGroup = new IntervalGroup(locationContext.TimeZoneInfo, fromDate.Value, "1-days", new ProfileGraph[0], lss);
       sw.Restart();
-      intervalGroup.Prepare(templateConfigProvider.LabelObisCodeTemplates);
+      intervalGroup.Prepare();
       sw.Stop();
       if (log.IsDebugEnabled) log.DebugFormat("GetDiff timing - Normalize, generate: {0}ms", sw.ElapsedMilliseconds);
 

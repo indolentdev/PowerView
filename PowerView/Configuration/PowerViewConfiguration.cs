@@ -1,5 +1,4 @@
 using System.Configuration;
-using System.Linq;
 
 namespace PowerView.Configuration
 {
@@ -9,7 +8,7 @@ namespace PowerView.Configuration
 
     public PowerViewConfiguration()
     {
-      configuration = System.Configuration.ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+      configuration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
     }
     
     public ServiceSection GetServiceSection()
@@ -20,11 +19,6 @@ namespace PowerView.Configuration
     public DatabaseSection GetDatabaseSection()
     {
       return GetSection<DatabaseSection>("Database");
-    }
-
-    public RegisterSection GetRegisterSection()
-    {
-      return GetSection<RegisterSection>("Register");
     }
 
     private TSection GetSection<TSection>(string sectionName) where TSection : ConfigurationSection, IConfigurationValidatable

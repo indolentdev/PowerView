@@ -17,20 +17,17 @@ namespace PowerView.Service.Modules
 
     private readonly ISeriesNameRepository serieNameRepository;
     private readonly IProfileGraphRepository profileGraphRepository;
-    private readonly ITemplateConfigProvider templateConfigProvider;
     private readonly ILocationContext locationContext;
 
-    public SettingsProfileGraphsModule(ISeriesNameRepository serieNameRepository, IProfileGraphRepository profileGraphRepository, ITemplateConfigProvider templateConfigProvider, ILocationContext locationContext)
+    public SettingsProfileGraphsModule(ISeriesNameRepository serieNameRepository, IProfileGraphRepository profileGraphRepository, ILocationContext locationContext)
       : base("/api/settings/profilegraphs")
     {
       if (serieNameRepository == null) throw new ArgumentNullException("serieNameRepository");
       if (profileGraphRepository == null) throw new ArgumentNullException("profileGraphRepository");
-      if (templateConfigProvider == null) throw new ArgumentNullException("templateConfigProvider");
       if (locationContext == null) throw new ArgumentNullException("locationContext");
 
       this.serieNameRepository = serieNameRepository;
       this.profileGraphRepository = profileGraphRepository;
-      this.templateConfigProvider = templateConfigProvider;
       this.locationContext = locationContext;
 
       Get["series"] = GetProfileGraphSeries;
@@ -44,7 +41,7 @@ namespace PowerView.Service.Modules
     private dynamic GetProfileGraphSeries(dynamic param)
     {
       var timeZoneInfo = locationContext.TimeZoneInfo;
-      var serieNames = serieNameRepository.GetSeriesNames(timeZoneInfo, templateConfigProvider.LabelObisCodeTemplates);
+      var serieNames = serieNameRepository.GetSeriesNames(timeZoneInfo);
 
       var day = serieNames.Where(sn => !sn.ObisCode.IsDelta)
         .Select(sn => new { Period = "day", sn.Label, ObisCode = sn.ObisCode.ToString() });

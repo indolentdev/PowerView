@@ -5,6 +5,5 @@ namespace PowerView.Configuration
   {
     ServiceSection GetServiceSection();
     DatabaseSection GetDatabaseSection();
-    RegisterSection GetRegisterSection();
   }
 }

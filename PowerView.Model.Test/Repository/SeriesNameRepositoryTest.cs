@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using NUnit.Framework;
-using PowerView.Model.Expression;
 using PowerView.Model.Repository;
 
 namespace PowerView.Model.Test.Repository
@@ -37,7 +36,7 @@ namespace PowerView.Model.Test.Repository
       Insert<Db.MonthReading, Db.MonthRegister>(label1, obisCode1);
 
       // Act
-      var serieNames = target.GetSeriesNames(TimeZoneInfo.Local, new LabelObisCodeTemplate[0]);
+      var serieNames = target.GetSeriesNames(TimeZoneInfo.Local);
 
       // Assert
       Assert.That(serieNames.Count, Is.EqualTo(3));
@@ -55,34 +54,13 @@ namespace PowerView.Model.Test.Repository
       Insert<Db.DayReading, Db.DayRegister>(label, ObisCode.ElectrActiveEnergyA14);
 
       // Act
-      var serieColors = target.GetSeriesNames(TimeZoneInfo.Local, new LabelObisCodeTemplate[0]);
+      var serieColors = target.GetSeriesNames(TimeZoneInfo.Local);
 
       // Assert
       Assert.That(serieColors.Count, Is.EqualTo(3));
       Assert.That(serieColors.Count(sc => sc.Label==label && sc.ObisCode==ObisCode.ElectrActiveEnergyA14Period), Is.EqualTo(1));
       Assert.That(serieColors.Count(sc => sc.Label==label && sc.ObisCode==ObisCode.ElectrActiveEnergyA14Delta), Is.EqualTo(1));
       Assert.That(serieColors.Count(sc => sc.Label==label && sc.ObisCode==ObisCode.ElectrActualPowerP14Average), Is.EqualTo(1));
-    }
-
-    [Test]
-    public void GetSerieNamesGeneratesFromTemplates()
-    {
-      // Arrange
-      var target = CreateTarget();
-      const string label1 = "label1";
-      const string label2 = "label2";
-      ObisCode obisCode1 = "1.2.3.4.5.6";
-      ObisCode obisCode2 = "6.5.4.3.2.1";
-      Insert<Db.LiveReading, Db.LiveRegister>(label1, obisCode1);
-      var labelObisCodeTemplats = new[] {
-        new LabelObisCodeTemplate(label2, new [] { new ObisCodeTemplate(obisCode2, new RegisterTemplateExpression(label1 + ":" + obisCode1)) }) };
-
-      // Act
-      var serieNames = target.GetSeriesNames(TimeZoneInfo.Local, labelObisCodeTemplats);
-
-      // Assert
-      Assert.That(serieNames.Count, Is.EqualTo(2));
-      Assert.That(serieNames.Count(sc => sc.Label==label2 && sc.ObisCode==obisCode2), Is.EqualTo(1));
     }
 
     [Test]
@@ -104,7 +82,7 @@ namespace PowerView.Model.Test.Repository
       Insert<Db.MonthReading, Db.MonthRegister>(label1, obisCode1);
 
       // Act
-      var serieNames = target.GetSeriesNames(TimeZoneInfo.Local, new LabelObisCodeTemplate[0]);
+      var serieNames = target.GetSeriesNames(TimeZoneInfo.Local);
 
       // Assert
       Assert.That(serieNames.Count, Is.EqualTo(3));
