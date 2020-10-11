@@ -57,7 +57,7 @@ namespace PowerView.Service.Test.Mqtt
         .Build();
 
       var mqttNetLogger = new MqttNetLogger();
-      mqttNetLogger.LogMessagePublished += (sender, e) => log.Debug(e.TraceMessage);
+      mqttNetLogger.LogMessagePublished += (sender, e) => log.Debug(e.LogMessage);
       mqttServer = new MqttFactory().CreateMqttServer(mqttNetLogger);
       mqttServer.UseApplicationMessageReceivedHandler(e => published.Add(e));
       Assert.That(mqttServer.StartAsync(options).Wait(3000), Is.True, "MQTT Server failed to start");

@@ -9,11 +9,9 @@ using MimeKit;
 using NUnit.Framework;
 using SmtpServer;     // https://github.com/cosullivan/SmtpServer
 using SmtpServer.Authentication;
-using SmtpServer.IO;
 using SmtpServer.Mail;
 using SmtpServer.Protocol;
 using SmtpServer.Storage;
-
 
 namespace PowerView.Service.Test.Mailer
 {
@@ -58,6 +56,8 @@ namespace PowerView.Service.Test.Mailer
     public Action<SmtpServerOptionsBuilder> EnableTls(string siteName)
     {
       Action<SmtpServerOptionsBuilder> action = ob => {
+        ob.SupportedSslProtocols(System.Security.Authentication.SslProtocols.Tls11 | System.Security.Authentication.SslProtocols.Tls12);
+
         var password = "123456789";
         using (var certificateGenerator = new CertificateGenerator())
         {
@@ -98,7 +98,6 @@ namespace PowerView.Service.Test.Mailer
       var optionsBuilder = new SmtpServerOptionsBuilder().ServerName(ServerName).Port(Port);
       optionsBuilder.MessageStore(messageStore).MaxRetryCount(1);
       optionsBuilder.Logger(smtpLogger);
-      optionsBuilder.AuthenticationRequired(true).AllowUnsecureAuthentication(false);
       foreach (var optionsAction in optionsActions)
       {
         optionsAction(optionsBuilder);
@@ -129,7 +128,7 @@ namespace PowerView.Service.Test.Mailer
             catch (AggregateException e)
             {
               var ee = e.GetBaseException();
-              Assert.That(ee, Is.TypeOf<TaskCanceledException>(), "Seems the smtp server failed...");
+              Assert.That(ee, Is.TypeOf<System.IO.IOException>(), "Seems the smtp server failed...");
             }
             smtpServerTask = null;
           }

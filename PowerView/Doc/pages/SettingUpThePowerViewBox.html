@@ -17,7 +17,7 @@
 
 <h2>Linux</h2>
 
-<p>Generally the PowerView application requires mono 3.2.8 or greater if not
+<p>Generally the PowerView application requires mono 5.18.0 or greater if not
 otherwise specified.</p>
 
 <p></p>
@@ -26,9 +26,9 @@ otherwise specified.</p>
 
 <h4>Before first boot</h4>
 
-<p>PowerView requires mono 4.6.2 or greater if
-run on the Raspberry Pi. The recommended operating system is Raspbian Buster, 
-which can be installed with the NOOBS installer. Download the
+<p>The recommended operating system is Raspberry PI OS. It can be installed easily 
+with the Raspberry Pi Imager tool. Alternatively it can be installed with the 
+NOOBS installer. Download the
 NOOBS zip available <a
 href="http://www.raspberrypi.org/downloads">here</a>. Once downloaded deploy it
 to the Raspberry Pi SD-card according to procedures, e.g. <a
@@ -39,7 +39,7 @@ software. Therefore be sure to connect an RJ45 patch cable to the gateway/router
 before first boot.</p>
 
 <p>When booting the RPi the first time and NOOBS presents the available OS
-choices make sure to select the Raspbian Buster OS option. Once installed and
+choices make sure to select the Raspberry PI OS option. Once installed and
 Raspbian boots configure Raspbian basics using the Raspberry Pi Configuration:</p>
 
 <p><img alt="Raspberry Pi Configuraion" src="../media/RaspberryPiConfiguration.jpg" 
@@ -54,7 +54,7 @@ Also enable SSH (if a remote command line to the Raspberry Pi is required).</p>
 command lines (note: They can take rather long to complete):</p>
 <pre>sudo apt-get update
 sudo apt-get upgrade
-sudo apt-get install mono-complete wpasupplicant</pre>
+sudo apt-get install mono-complete</pre>
 
 <p>To verify the mono version execute this command line:</p>
 
@@ -111,7 +111,7 @@ iface wlan0 inet manual
 
 <h2>Windows</h2>
 
-<p>The PowerView application requires .NET Framework 4.5.2 or greater. If using a USB
+<p>The PowerView application requires .NET Framework 4.7.2 or greater. If using a USB
 to RS232/RS422 adapter be sure to install the latest drivers available for the
 device.</p>
 
