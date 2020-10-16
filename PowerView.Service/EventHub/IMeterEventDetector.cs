@@ -4,7 +4,7 @@ namespace PowerView.Service.EventHub
 {
   public interface IMeterEventDetector
   {
-    void DetectMeterEvents(DateTime midnight);
+    void DetectMeterEvents(DateTime date);
   }
 }
 

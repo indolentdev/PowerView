@@ -23,7 +23,8 @@ namespace PowerView.Model
       if (end.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("end", "Must be UTC");
       if (timeGroupFunc == null) throw new ArgumentNullException("timeGroupFunc");
 
-      var timeRegisterValues = labelSeries[obisCode].Where(sv => sv.TimeRegisterValue.Timestamp > start && sv.TimeRegisterValue.Timestamp < end);
+      var obisCodeTimeRegisterValues = labelSeries[obisCode];
+      var timeRegisterValues = obisCodeTimeRegisterValues.Where(sv => sv.TimeRegisterValue.Timestamp > start && sv.TimeRegisterValue.Timestamp < end).ToList();
       var hourly = new Dictionary<int, UnitValue>(6);
       try
       {

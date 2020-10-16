@@ -23,19 +23,22 @@ namespace PowerView.Service.EventHub
       this.locationContext = locationContext;
     }
 
-    public void DetectMeterEvents(DateTime midnight)
+    public void DetectMeterEvents(DateTime date)
     {
-      if (midnight.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("midnight", "Must be UTC");
+      if (date.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException(nameof(date), "Must be UTC");
 
-      var end = midnight.AddDays(1);
-      var preStart = midnight.Subtract(TimeSpan.FromMinutes(30));
-      var labelSeriesSet = profileRepository.GetDayProfileSet(preStart, midnight, end);
+      var dateLocal = locationContext.ConvertTimeFromUtc(date);
+      var localMidnightAsUtc = dateLocal.Date.ToUniversalTime();
 
-      var timeDivider = new DateTimeHelper(locationContext.TimeZoneInfo, midnight).GetDivider("5-minutes");
+      var end = localMidnightAsUtc.AddDays(1);
+      var preStart = localMidnightAsUtc.Subtract(TimeSpan.FromMinutes(30));
+      var labelSeriesSet = profileRepository.GetDayProfileSet(preStart, localMidnightAsUtc, end);
+
+      var timeDivider = new DateTimeHelper(locationContext.TimeZoneInfo, localMidnightAsUtc).GetDivider("5-minutes");
       var normalizedLabelSeriesSet = labelSeriesSet.Normalize(timeDivider);
       GenerateSeriesFromCumulative(normalizedLabelSeriesSet);
           
-      var meterEventCandidates = GetMeterEventCandidates(midnight, normalizedLabelSeriesSet).ToArray();
+      var meterEventCandidates = GetMeterEventCandidates(localMidnightAsUtc, normalizedLabelSeriesSet).ToArray();
       if (meterEventCandidates.Length == 0)
       {
         return;

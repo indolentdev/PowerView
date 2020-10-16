@@ -51,52 +51,53 @@ namespace PowerView.Service.Test.EventHub
     public void DetectMeterEventsLeak()
     {
       // Arrange
-      var time = TimeZoneHelper.GetDenmarkFixedMidnightAsUtc();
-      var labelSeries = GetLeakProfile(time);
+      var midnightUtc = TimeZoneHelper.GetDenmarkFixedMidnightAsUtc();
+      var labelSeries = GetLeakProfile(midnightUtc);
       profileRepository.Setup(pr => pr.GetDayProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
-        .Returns(new LabelSeriesSet<TimeRegisterValue>(time, time, new [] { labelSeries }));
+        .Returns(new LabelSeriesSet<TimeRegisterValue>(midnightUtc, midnightUtc, new [] { labelSeries }));
       meterEventRepository.Setup(mer => mer.GetLatestMeterEventsByLabel()).Returns(new MeterEvent[0]);
+      var time = midnightUtc.AddHours(5.123);
 
       // Act
       CreateTarget().DetectMeterEvents(time);
 
       // Assert
-      meterEventRepository.Verify(mer => mer.AddMeterEvents(ContainsLeak(labelSeries.Label, time, true, time, time.AddHours(6))));
+      meterEventRepository.Verify(mer => mer.AddMeterEvents(ContainsLeak(labelSeries.Label, midnightUtc, true, midnightUtc, midnightUtc.AddHours(6))));
     }
 
     [Test]
     public void DetectMeterEventsChangedEvent()
     {
       // Arrange
-      var time = TimeZoneHelper.GetDenmarkFixedMidnightAsUtc();
-      var labelSeries = GetLeakProfile(time);
+      var midnightUtc = TimeZoneHelper.GetDenmarkFixedMidnightAsUtc();
+      var labelSeries = GetLeakProfile(midnightUtc);
       profileRepository.Setup(pr => pr.GetDayProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
-        .Returns(new LabelSeriesSet<TimeRegisterValue>(time, time, new[] { labelSeries }));
-      var oldTime = time.Subtract(TimeSpan.FromDays(4));
+        .Returns(new LabelSeriesSet<TimeRegisterValue>(midnightUtc, midnightUtc, new[] { labelSeries }));
+      var oldTime = midnightUtc.Subtract(TimeSpan.FromDays(4));
       var meterEvent = new MeterEvent(labelSeries.Label, oldTime, false, new LeakMeterEventAmplification(oldTime, oldTime, new UnitValue()));
       meterEventRepository.Setup(mer => mer.GetLatestMeterEventsByLabel()).Returns(new [] { meterEvent });
 
       // Act
-      CreateTarget().DetectMeterEvents(time);
+      CreateTarget().DetectMeterEvents(midnightUtc);
 
       // Assert
-      meterEventRepository.Verify(mer => mer.AddMeterEvents(ContainsLeak(labelSeries.Label, time, true, time, time.AddHours(6))));
+      meterEventRepository.Verify(mer => mer.AddMeterEvents(ContainsLeak(labelSeries.Label, midnightUtc, true, midnightUtc, midnightUtc.AddHours(6))));
     }
 
     [Test]
     public void DetectMeterEventsRedundantEvent()
     {
       // Arrange
-      var time = TimeZoneHelper.GetDenmarkFixedMidnightAsUtc();
-      var labelSeries = GetLeakProfile(time);
+      var midnightUtc = TimeZoneHelper.GetDenmarkFixedMidnightAsUtc();
+      var labelSeries = GetLeakProfile(midnightUtc);
       profileRepository.Setup(pr => pr.GetDayProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
-        .Returns(new LabelSeriesSet<TimeRegisterValue>(time, time, new[] { labelSeries }));
-      var oldTime = time.Subtract(TimeSpan.FromDays(4));
+        .Returns(new LabelSeriesSet<TimeRegisterValue>(midnightUtc, midnightUtc, new[] { labelSeries }));
+      var oldTime = midnightUtc.Subtract(TimeSpan.FromDays(4));
       var meterEvent = new MeterEvent(labelSeries.Label, oldTime, true, new LeakMeterEventAmplification(oldTime, oldTime, new UnitValue()));
       meterEventRepository.Setup(mer => mer.GetLatestMeterEventsByLabel()).Returns(new [] { meterEvent });
 
       // Act
-      CreateTarget().DetectMeterEvents(time);
+      CreateTarget().DetectMeterEvents(midnightUtc);
 
       // Assert
       meterEventRepository.Verify(mer => mer.AddMeterEvents(It.IsAny<IEnumerable<MeterEvent>>()), Times.Never);
@@ -113,9 +114,9 @@ namespace PowerView.Service.Test.EventHub
         ));
     }
 
-    private static LabelSeries<TimeRegisterValue> GetLeakProfile(DateTime time)
+    private static LabelSeries<TimeRegisterValue> GetLeakProfile(DateTime midnightAsUtc)
     {
-      var baseTime = TimeZoneHelper.GetDenmarkFixedMidnightAsUtc().AddMinutes(58);
+      var baseTime = midnightAsUtc.AddMinutes(58);
       var timestamps = Enumerable.Range(-1, 25).Select(i => baseTime.AddHours(i)).ToArray(); 
       var values = timestamps.Select((dt, i) => new TimeRegisterValue("1", dt, i+3, 1, Unit.CubicMetre)).ToArray();
       var dict = new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { ObisCode.ColdWaterVolume1, values } };
