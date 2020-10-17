@@ -62,7 +62,7 @@ namespace PowerView.Service.Test.EventHub
       CreateTarget().DetectMeterEvents(time);
 
       // Assert
-      meterEventRepository.Verify(mer => mer.AddMeterEvents(ContainsLeak(labelSeries.Label, midnightUtc, true, midnightUtc, midnightUtc.AddHours(6))));
+      meterEventRepository.Verify(mer => mer.AddMeterEvents(ContainsLeak(labelSeries.Label, time, true, midnightUtc, midnightUtc.AddHours(6))));
     }
 
     [Test]

@@ -23,11 +23,11 @@ namespace PowerView.Service.EventHub
       this.locationContext = locationContext;
     }
 
-    public void DetectMeterEvents(DateTime date)
+    public void DetectMeterEvents(DateTime timestamp)
     {
-      if (date.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException(nameof(date), "Must be UTC");
+      if (timestamp.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException(nameof(timestamp), "Must be UTC");
 
-      var dateLocal = locationContext.ConvertTimeFromUtc(date);
+      var dateLocal = locationContext.ConvertTimeFromUtc(timestamp);
       var localMidnightAsUtc = dateLocal.Date.ToUniversalTime();
 
       var end = localMidnightAsUtc.AddDays(1);
@@ -38,7 +38,7 @@ namespace PowerView.Service.EventHub
       var normalizedLabelSeriesSet = labelSeriesSet.Normalize(timeDivider);
       GenerateSeriesFromCumulative(normalizedLabelSeriesSet);
           
-      var meterEventCandidates = GetMeterEventCandidates(localMidnightAsUtc, normalizedLabelSeriesSet).ToArray();
+      var meterEventCandidates = GetMeterEventCandidates(timestamp, localMidnightAsUtc, normalizedLabelSeriesSet).ToArray();
       if (meterEventCandidates.Length == 0)
       {
         return;
@@ -64,7 +64,7 @@ namespace PowerView.Service.EventHub
       }
     }
 
-    private IEnumerable<MeterEvent> GetMeterEventCandidates(DateTime timestamp, LabelSeriesSet<NormalizedTimeRegisterValue> labelSeriesSet)
+    private IEnumerable<MeterEvent> GetMeterEventCandidates(DateTime timestamp, DateTime localMidnightAsUtc, LabelSeriesSet<NormalizedTimeRegisterValue> labelSeriesSet)
     {
       var coldWaterVolume1Delta = ObisCode.ColdWaterVolume1Delta;
       foreach (var labelSeries in labelSeriesSet)
@@ -74,7 +74,7 @@ namespace PowerView.Service.EventHub
           continue;
         }
 
-        var timestampNonUtc = locationContext.ConvertTimeFromUtc(timestamp);
+        var timestampNonUtc = locationContext.ConvertTimeFromUtc(localMidnightAsUtc);
         var start = locationContext.ConvertTimeToUtc(new DateTime(timestampNonUtc.Year, timestampNonUtc.Month, timestampNonUtc.Day, 0, 0, 0, timestampNonUtc.Kind));
         var end = locationContext.ConvertTimeToUtc(new DateTime(timestampNonUtc.Year, timestampNonUtc.Month, timestampNonUtc.Day, 6, 0, 0, timestampNonUtc.Kind));
 
