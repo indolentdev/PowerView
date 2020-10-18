@@ -97,7 +97,7 @@
     </Reference>
     <Reference Include="System.Configuration" />
     <Reference Include="BouncyCastle.Crypto">
-      <HintPath>..\packages\Portable.BouncyCastle.1.8.8\lib\net40\BouncyCastle.Crypto.dll</HintPath>
+      <HintPath>..\packages\Portable.BouncyCastle.1.8.8\lib\netstandard2.0\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -214,6 +214,7 @@
     <Compile Include="EventHub\IIntervalTrigger.cs" />
     <Compile Include="EnvironmentHelper.cs" />
     <Compile Include="Modules\DiffModule.cs" />
+    <Compile Include="BouncyCastleReference.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
