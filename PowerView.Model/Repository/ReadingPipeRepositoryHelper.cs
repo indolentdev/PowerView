@@ -4,6 +4,8 @@ namespace PowerView.Model.Repository
 {
   internal static class ReadingPipeRepositoryHelper
   {
+
+    // Should this use the DateTimeHelper divider?
     public static DateTime Reduce<TDstReading>(DateTime zonedDateTime)
       where TDstReading : class, IDbReading
     {

@@ -1,6 +1,7 @@
 PowerView version 0.0.31 - Xxxx YYY
 - Fixed a bug preventing updating of series colors.
 - Fixed a bug causing wrong detect timestamp for water leak events.
+- Fixed a bug for the hourly export on the night of DST change.
 - Removed the experimental formula series calculation
 - Upgraded to .NET Framework 4.7.2
 

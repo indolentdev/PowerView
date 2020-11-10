@@ -90,7 +90,7 @@ namespace PowerView.Service.Test.EventHub
       target.PipeLiveReadings(dateTime);
 
       // Assert
-      readingPipeRepository.Verify(rpr => rpr.PipeLiveReadingsToDayReadings(dateTime), Times.Exactly(10)) ;
+      readingPipeRepository.Verify(rpr => rpr.PipeLiveReadingsToDayReadings(dateTime), Times.Exactly(50)) ;
     }
 
     [Test]
@@ -161,7 +161,7 @@ namespace PowerView.Service.Test.EventHub
       target.PipeDayReadings(dateTime);
 
       // Assert
-      readingPipeRepository.Verify(rpr => rpr.PipeDayReadingsToMonthReadings(dateTime), Times.Exactly(2));
+      readingPipeRepository.Verify(rpr => rpr.PipeDayReadingsToMonthReadings(dateTime), Times.Exactly(13));
     }
 
     [Test]

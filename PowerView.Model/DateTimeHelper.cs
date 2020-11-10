@@ -112,7 +112,7 @@ namespace PowerView.Model
           return dt =>
           {
             var divided = Divide(dt, origin, minutes);
-            return AdjustForDst(timeZoneInfo, origin, divided);
+            return divided; // Do not adjust for DST on minute (hour) resolution
           };
 
         case "days":

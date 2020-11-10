@@ -51,7 +51,7 @@ namespace PowerView.Service.EventHub
 
       using (var ownedRepo = factory.Create<IReadingPipeRepository>())
       {
-        for (var i = 0; i < 10; i++)
+        for (var i = 0; i < 50; i++)
         {
           var pipedSomething = ownedRepo.Value.PipeLiveReadingsToDayReadings(dateTime);
           if (!pipedSomething)
@@ -83,7 +83,7 @@ namespace PowerView.Service.EventHub
 
       using (var ownedRepo = factory.Create<IReadingPipeRepository>())
       {
-        for (var i = 0; i < 2; i++)
+        for (var i = 0; i < 13; i++)
         {
           var pipedSomething = ownedRepo.Value.PipeDayReadingsToMonthReadings(dateTime);
           if (!pipedSomething)
