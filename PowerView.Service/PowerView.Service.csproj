@@ -45,7 +45,7 @@
       <HintPath>..\packages\Mixpanel.NET.0.2.0\lib\Mixpanel.NET.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
-      <HintPath>..\packages\log4net.2.0.11\lib\net45\log4net.dll</HintPath>
+      <HintPath>..\packages\log4net.2.0.12\lib\net45\log4net.dll</HintPath>
     </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
@@ -93,7 +93,7 @@
       <HintPath>..\packages\System.Net.WebSockets.Client.4.3.2\lib\net46\System.Net.WebSockets.Client.dll</HintPath>
     </Reference>
     <Reference Include="MQTTnet">
-      <HintPath>..\packages\MQTTnet.3.0.12\lib\net461\MQTTnet.dll</HintPath>
+      <HintPath>..\packages\MQTTnet.3.0.13\lib\net461\MQTTnet.dll</HintPath>
     </Reference>
     <Reference Include="System.Configuration" />
     <Reference Include="BouncyCastle.Crypto">

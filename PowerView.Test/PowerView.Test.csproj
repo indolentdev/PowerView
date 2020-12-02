@@ -40,10 +40,10 @@
       <HintPath>..\packages\NUnit.3.12.0\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="Moq">
-      <HintPath>..\packages\Moq.4.14.5\lib\net45\Moq.dll</HintPath>
+      <HintPath>..\packages\Moq.4.15.2\lib\net45\Moq.dll</HintPath>
     </Reference>
     <Reference Include="System.Runtime.CompilerServices.Unsafe">
-      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.7.1\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.5.0.0\lib\net45\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="System.Threading.Tasks.Extensions">
