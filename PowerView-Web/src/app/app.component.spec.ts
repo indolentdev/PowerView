@@ -11,7 +11,9 @@ import { AppComponent } from './app.component';
 import { TopComponent } from './components/top/top.component';
 import { HttpLoaderFactory } from "./app.module";
 
-import { MatMenuModule, MatButtonModule, MatTableModule } from '@angular/material';
+import { MatButtonModule } from '@angular/material/button';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatTableModule } from '@angular/material/table';
 import { LoadingBarModule } from '@ngx-loading-bar/core';
 
 import { mock, instance, when, verify, anyString } from 'ts-mockito';

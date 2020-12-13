@@ -1,5 +1,6 @@
 import { Component, OnInit,ViewChild, Input, Output, OnChanges, SimpleChanges, EventEmitter } from '@angular/core';
-import { MatSort, MatSortable, MatTableDataSource } from '@angular/material';
+import { MatSort, MatSortable } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { NGXLogger } from 'ngx-logger';
 import { SerieService } from '../../../services/serie.service';
 import { DisconnectRuleSet } from '../../../model/disconnectRuleSet';

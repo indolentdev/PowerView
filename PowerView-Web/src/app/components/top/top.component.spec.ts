@@ -12,7 +12,8 @@ import { HttpClientTestingModule } from "@angular/common/http/testing";
 import { TranslateLoader, TranslateModule } from "@ngx-translate/core";
 import { HttpLoaderFactory } from "../../app.module";
 import { RouterModule, Routes } from '@angular/router';
-import { MatMenuModule, MatButtonModule } from '@angular/material';
+import { MatButtonModule } from '@angular/material/button';
+import { MatMenuModule } from '@angular/material/menu';
 
 import { TopComponent } from './top.component';
 

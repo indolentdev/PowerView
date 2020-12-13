@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NGXLogger } from 'ngx-logger';
 
-import { DateAdapter } from '@angular/material';
+import { DateAdapter } from '@angular/material/core';
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
 
 import { Moment } from 'moment'
