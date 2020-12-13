@@ -4,7 +4,7 @@ import { NGXLogger } from 'ngx-logger';
 
 import { HttpClient } from "@angular/common/http";
 import { HttpClientTestingModule, HttpTestingController } from "@angular/common/http/testing";
-import { TestBed, async } from '@angular/core/testing';
+import { TestBed, waitForAsync } from '@angular/core/testing';
 import { TranslateLoader, TranslateModule, TranslateService } from "@ngx-translate/core";
 import { RouterModule, Routes } from '@angular/router';
 import { AppComponent } from './app.component';
@@ -31,7 +31,7 @@ describe('AppComponent', () => {
 //    { path: 'home', component: XxxComponent }
   ];
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [
         AppComponent,
@@ -46,7 +46,7 @@ describe('AppComponent', () => {
             deps: [HttpClient]
           }
         }),
-        RouterModule.forRoot(routes),
+        RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' }),
         MatMenuModule,
         MatButtonModule,
         MatTableModule,
@@ -62,18 +62,18 @@ describe('AppComponent', () => {
     translate = TestBed.inject(TranslateService);
     http = TestBed.inject(HttpTestingController);
   }));
-  it('should create the app', async(() => {
+  it('should create the app', waitForAsync(() => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.debugElement.componentInstance;
     expect(app).toBeTruthy();
   }));
-  it('should contain app-top tag', async(() => {
+  it('should contain app-top tag', waitForAsync(() => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.debugElement.nativeElement;
     expect(compiled.querySelector('app-top')).toBeTruthy();
   }));
-  it('should contain router-outlet tag', async(() => {
+  it('should contain router-outlet tag', waitForAsync(() => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.debugElement.nativeElement;

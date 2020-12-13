@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { HttpClient } from "@angular/common/http";
 import { HttpClientTestingModule } from "@angular/common/http/testing";
 import { TranslateLoader, TranslateModule } from "@ngx-translate/core";
@@ -28,7 +28,7 @@ describe('SettingsSmtpComponent', () => {
   let serieService = mock(SerieService);
   let snackBar = mock(MatSnackBar);
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ SettingsSmtpComponent ],
       imports: [

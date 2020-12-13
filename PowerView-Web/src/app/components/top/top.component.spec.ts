@@ -1,6 +1,6 @@
 import { APP_BASE_HREF } from '@angular/common';
 import { EventEmitter } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { NGXLogger } from 'ngx-logger';
 import { Observable, of } from 'rxjs';
@@ -31,7 +31,7 @@ describe('TopComponent', () => {
     //    { path: 'home', component: XxxComponent }
   ];
     
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     menuService = mock(MenuService);
 
     TestBed.configureTestingModule({
@@ -45,7 +45,7 @@ describe('TopComponent', () => {
             deps: [HttpClient]
           }
         }),
-        RouterModule.forRoot(routes),
+        RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' }),
         MatMenuModule,       
         MatButtonModule        
       ],

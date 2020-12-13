@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClient } from "@angular/common/http";
@@ -35,7 +35,7 @@ describe('ProfileYearComponent', () => {
   let log = mock(NGXLogger);    
   let profileService = mock(ProfileService);
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ 
         ProfileYearComponent,
