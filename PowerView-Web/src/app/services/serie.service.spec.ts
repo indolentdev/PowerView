@@ -20,13 +20,13 @@ describe('SerieService', () => {
   }));
 
   it('should be created', () => {
-    const service: SerieService = TestBed.get(SerieService);
+    const service: SerieService = TestBed.inject(SerieService);
     expect(service).toBeTruthy();
   });
 
   it('AddSerieProperty returns input items', () => {
     // Arrange
-    const service: SerieService = TestBed.get(SerieService);
+    const service: SerieService = TestBed.inject(SerieService);
     var obj = { label: "Woop" };
     var array = [ obj ];
 
@@ -40,7 +40,7 @@ describe('SerieService', () => {
 
   it('AddSerieProperty should do nothing when only label exists', () => {
     // Arrange
-    const service: SerieService = TestBed.get(SerieService);
+    const service: SerieService = TestBed.inject(SerieService);
     var obj = { label: "Woop" };
     var array = [ obj ];
 
@@ -54,7 +54,7 @@ describe('SerieService', () => {
 
   it('AddSerieProperty should do nothing when only obisCode exists', () => {
     // Arrange
-    const service: SerieService = TestBed.get(SerieService);
+    const service: SerieService = TestBed.inject(SerieService);
     var obj = { obisCode: "Woop" };
     var array = [ obj ];
 
@@ -69,7 +69,7 @@ describe('SerieService', () => {
   it('AddSerieProperty should call TranslateService', () => {
     // Arrange
     when(translateService.get(anyString())).thenReturn(of("Habbada"));
-    const service: SerieService = TestBed.get(SerieService);
+    const service: SerieService = TestBed.inject(SerieService);
     var obj = { label: "Woop", obisCode: "theObis" };
     var array = [ obj ];
 
@@ -83,7 +83,7 @@ describe('SerieService', () => {
   it('AddSerieProperty should add serie property', () => {
     // Arrange
     when(translateService.get(anyString())).thenReturn(of("Habbada"));
-    const service: SerieService = TestBed.get(SerieService);
+    const service: SerieService = TestBed.inject(SerieService);
     var obj = { label: "Woop", obisCode: "theObis" };
     var array = [ obj ];
 
@@ -99,7 +99,7 @@ describe('SerieService', () => {
   it('AddSerieProperty customizable property names', () => {
     // Arrange
     when(translateService.get(anyString())).thenReturn(of("Habbada"));
-    const service: SerieService = TestBed.get(SerieService);
+    const service: SerieService = TestBed.inject(SerieService);
     var obj = { lbl: "Woop", oc: "theObis" };
     var array = [ obj ];
 

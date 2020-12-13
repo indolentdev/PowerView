@@ -14,7 +14,7 @@ describe('ExportService', () => {
   });
 
   it('should be created', () => {
-    const service: ExportService = TestBed.get(ExportService);
+    const service: ExportService = TestBed.inject(ExportService);
     expect(service).toBeTruthy();
   });
 });

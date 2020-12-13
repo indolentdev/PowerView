@@ -27,7 +27,7 @@ export class ProfileComponent implements OnInit {
   profileSet: ProfilePage;
   profileTotalValues: ProfileTotalValue[] = [];
 
-  @ViewChild(MatDatepicker, { static: false }) dp: MatDatepicker<Moment>;
+  @ViewChild(MatDatepicker) dp: MatDatepicker<Moment>;
 
   @Input('profilePeriod') profilePeriod: string;
   @Input('profileHeading') profileHeading: string;

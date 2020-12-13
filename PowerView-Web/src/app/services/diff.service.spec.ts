@@ -13,7 +13,7 @@ describe('DiffService', () => {
   });
 
   it('should be created', () => {
-    const service: DiffService = TestBed.get(DiffService);
+    const service: DiffService = TestBed.inject(DiffService);
     expect(service).toBeTruthy();
   });
 });

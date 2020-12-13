@@ -13,7 +13,7 @@ describe('GuagesService', () => {
   });
 
   it('should be created', () => {
-    const service: GaugesService = TestBed.get(GaugesService);
+    const service: GaugesService = TestBed.inject(GaugesService);
     expect(service).toBeTruthy();
   });
 });

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Injectable } from '@angular/core';
 import { NGXLogger } from 'ngx-logger';
 
 import { DateAdapter } from '@angular/material/core';
@@ -8,6 +8,7 @@ import { Moment } from 'moment'
 import * as moment from 'moment';
 
 
+@Injectable()
 export class MonthCustomMomentDateAdapter extends MomentDateAdapter {
   format(date: Moment, displayFormat: Object): string {
     var formatString = 'MMMM YYYY';

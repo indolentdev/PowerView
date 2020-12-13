@@ -59,8 +59,8 @@ describe('AppComponent', () => {
       ]
     }).compileComponents();
 
-    translate = TestBed.get(TranslateService);
-    http = TestBed.get(HttpTestingController);
+    translate = TestBed.inject(TranslateService);
+    http = TestBed.inject(HttpTestingController);
   }));
   it('should create the app', async(() => {
     const fixture = TestBed.createComponent(AppComponent);

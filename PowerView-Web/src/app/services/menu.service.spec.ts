@@ -13,12 +13,12 @@ describe('MenuService', () => {
   });
 
   it('should be created', () => {
-    const service: MenuService = TestBed.get(MenuService);
+    const service: MenuService = TestBed.inject(MenuService);
     expect(service).toBeTruthy();
   });
 
   it('should signal profile graph pages changed event', () => {
-    const service: MenuService = TestBed.get(MenuService);
+    const service: MenuService = TestBed.inject(MenuService);
     var signal = false;
     service.getProfileGraphPageChanges().subscribe(_ => {
       signal = true;

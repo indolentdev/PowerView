@@ -72,16 +72,20 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
   return new TranslateHttpLoader(httpClient);
 }
 
+export class DynamicLocaleId extends String {
+  constructor(protected service: TranslateService) {
+    super('');
+  }
+
+  toString() {
+    return this.service.currentLang;
+  }
+}
+
 // providers to variable so we can append to it dynamically
 let providers: any[] = [
   GaugesService,
-  {
-    provide: LOCALE_ID,
-    useFactory: (translate: TranslateService) => {
-      return translate.currentLang;
-    },
-    deps: [TranslateService]
-  }
+  { provide: LOCALE_ID, useClass: DynamicLocaleId, deps: [TranslateService] }
 ];
 
 // use mock backend if env variable is set
