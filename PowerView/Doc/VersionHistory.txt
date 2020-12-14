@@ -15,7 +15,7 @@ PowerView version 0.0.30 - July 2020
 
 PowerView version 0.0.29 - March 2020
 - Database size reduction ~ 40%
-- Improved HTTP interface content validation for ingesting metering values 
+- Improved HTTP interface content validation for ingesting metering values
 - Documentation of HTTP interface for ingesting metering values
 
 PowerView version 0.0.28 - November 2019

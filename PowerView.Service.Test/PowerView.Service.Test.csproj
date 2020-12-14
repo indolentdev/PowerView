@@ -116,12 +116,16 @@
       <HintPath>..\packages\MQTTnet.3.0.13\lib\net461\MQTTnet.dll</HintPath>
     </Reference>
     <Reference Include="MimeKit">
-      <HintPath>..\packages\MimeKit.2.9.2\lib\net47\MimeKit.dll</HintPath>
+      <HintPath>..\packages\MimeKit.2.10.1\lib\net47\MimeKit.dll</HintPath>
     </Reference>
     <Reference Include="System.Web" />
     <Reference Include="BouncyCastle.Crypto">
       <HintPath>..\packages\Portable.BouncyCastle.1.8.8\lib\netstandard2.0\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
+    <Reference Include="System.Buffers">
+      <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
