@@ -75,14 +75,17 @@ describe('TopComponent', () => {
 
   it('should get day profile pages', () => {
     verify(menuService.getProfilePageNames("day"));
+    expect().nothing(); // suppress Spec has no expectations warning
   });
 
   it('should get month profile pages', () => {
     verify(menuService.getProfilePageNames("month"));
+    expect().nothing(); // suppress Spec has no expectations warning
   });
 
   it('should get year profile pages', () => {
     verify(menuService.getProfilePageNames("year"));
+    expect().nothing(); // suppress Spec has no expectations warning
   });
 
   it('should refresh pages on signal', () => {
@@ -93,5 +96,6 @@ describe('TopComponent', () => {
 
     // Assert
     verify(menuService.getProfilePageNames(anyString())).times(2*3);  // 2 for ngOnInit and emit, 3 for day/month/year
+    expect().nothing(); // suppress Spec has no expectations warning
   });
 });

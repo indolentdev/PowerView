@@ -78,6 +78,7 @@ describe('SerieService', () => {
 
     // Assert
     verify(translateService.get("serie.theObis"));
+    expect().nothing(); // suppress Spec has no expectations warning
   });
 
   it('AddSerieProperty should add serie property', () => {
