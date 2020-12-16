@@ -1,4 +1,4 @@
-PowerView version 0.0.31 - Xxxx YYY
+PowerView version 0.0.31 - December 2020
 - Fixed a bug preventing updating of series colors.
 - Fixed a bug causing wrong detect timestamp for water leak events.
 - Fixed a bug for the hourly export on the night of DST change.
