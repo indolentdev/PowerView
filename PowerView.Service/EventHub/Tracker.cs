@@ -33,11 +33,12 @@ namespace PowerView.Service.EventHub
         sqliteVersion = envRepository.Value.GetSqliteVersion();
       }
 
-      var monoRuntimeVersion = EnvironmentHelper.GetMonoRuntimeVersion(); 
+      var monoRuntimeVersion = EnvironmentHelper.GetMonoRuntimeVersion();
+      var raspberryPiModelRevision = EnvironmentHelper.GetCpuInfoRevision();
 
       using (var usageMonitor = factory.Create<IUsageMonitor>())
       {
-        usageMonitor.Value.TrackDing(sqliteVersion, monoRuntimeVersion);
+        usageMonitor.Value.TrackDing(sqliteVersion, monoRuntimeVersion, raspberryPiModelRevision);
       }
     }
 

@@ -39,7 +39,7 @@ namespace PowerView.Service
       }
     }
 
-    public void TrackDing(string sqliteVersion, string monoRuntimeVersion)
+    public void TrackDing(string sqliteVersion, string monoRuntimeVersion, string raspberryPiModelRevision)
     {
       var props = new Dictionary<string, object>
       {
@@ -49,6 +49,8 @@ namespace PowerView.Service
         { "Env Is 64bit OS", ToString(Environment.Is64BitOperatingSystem) },
         { "Env CLR Version", ToString(Environment.Version) },
         { "Env Is 64bit process", ToString(Environment.Is64BitProcess) },
+
+        { "Env Raspberry Pi Model Revision", raspberryPiModelRevision != null ? raspberryPiModelRevision : "null" },
 
         { "Env Sqlite Version", sqliteVersion != null ? sqliteVersion : "null" },
         { "Env Mono Runtime Version", monoRuntimeVersion != null ? monoRuntimeVersion : "null" },

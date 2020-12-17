@@ -69,7 +69,7 @@ namespace PowerView.Service.Test.EventHub
       envRepository.Verify(x => x.GetSqliteVersion());
       disposable1.Verify(x => x.Dispose());
       factory.Verify(f => f.Create<IUsageMonitor>());
-      usageMonitor.Verify(um => um.TrackDing(It.Is<string>(x => x == sqliteVersion), It.IsAny<string>()));
+      usageMonitor.Verify(um => um.TrackDing(It.Is<string>(x => x == sqliteVersion), It.IsAny<string>(), It.IsAny<string>()));
       disposable2.Verify(x => x.Dispose());
     }
 
