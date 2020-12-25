@@ -21,18 +21,23 @@ namespace PowerView.Model.Repository
 
     public bool IsNeeded()
     {
-      var currentVersion = GetCurrentVersion();
-
-      return GetUpgradeManifestResources(currentVersion).Any();
+      return GetDbUpgradeResources().Any();
     }
 
     public void ApplyUpdates()
+    {
+      var dbUpgradeResources = GetDbUpgradeResources();
+
+      ApplySchemaUpdates(dbUpgradeResources);
+    }
+
+    private IEnumerable<DbUpgradeResource> GetDbUpgradeResources()
     {
       var currentVersion = GetCurrentVersion();
 
       var dbUpgradeResources = GetUpgradeManifestResources(currentVersion);
 
-      ApplySchemaUpdates(dbUpgradeResources);
+      return dbUpgradeResources;
     }
 
     private void ApplySchemaUpdates(IEnumerable<DbUpgradeResource> dbUpgradeResources)
@@ -53,6 +58,7 @@ namespace PowerView.Model.Repository
           log.Info("Database schema update complete");
         }
       }
+      DbContext.ExecuteNoTransaction("ApplySchemaUpdates-VACUUM", "VACUUM;");
     }
 
     private long GetCurrentVersion()

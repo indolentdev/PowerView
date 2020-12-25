@@ -62,20 +62,18 @@ namespace PowerView.Model
 
     public static void RegisterIDbContextServiceSingleInstance(ContainerBuilder builder)
     {
-      builder.Register(ctx =>
-      {
-        var dbContextFactory = ctx.Resolve<IDbContextFactory>();
-        return dbContextFactory.CreateContext();
-      }).As<IDbContext>().SingleInstance();
+      builder.Register(CreateDbContext).As<IDbContext>().SingleInstance();
     }
 
     public static void RegisterIDbContextServiceInstancePerRequest(ContainerBuilder builder)
     {
-      builder.Register(ctx =>
-      {
-        var dbContextFactory = ctx.Resolve<IDbContextFactory>();
-        return dbContextFactory.CreateContext();
-      }).As<IDbContext>().InstancePerRequest();
+      builder.Register(CreateDbContext).As<IDbContext>().InstancePerRequest();
+    }
+
+    private static IDbContext CreateDbContext(IComponentContext ctx)
+    {
+      var dbContextFactory = ctx.Resolve<IDbContextFactory>();
+      return dbContextFactory.CreateContext();
     }
 
   }

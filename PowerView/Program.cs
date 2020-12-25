@@ -144,34 +144,37 @@ namespace PowerView
     {
       var dbConfig = config.GetDatabaseSection();
 
-      using (var scope = container.BeginLifetimeScope(Model.ContainerConfiguration.RegisterIDbContextServiceSingleInstance))
+      using (var startUpScope = container.BeginLifetimeScope())
       {
-        SetupDatabase(scope, dbConfig);
+        SetupDatabase(startUpScope, dbConfig);
 
-        LocationSetup(scope);
+        LocationSetup(startUpScope);
 
-//        GenerateTestDataIfDebug(scope);
+        GenerateTestDataIfDebug(startUpScope);
       }
 
       var serviceHost = container.Resolve<IServiceHost>();
       serviceHost.Start();
     }
 
-    private static void LocationSetup(ILifetimeScope setupScope)
+    private static void LocationSetup(ILifetimeScope startUpScope)
     {
-      setupScope.Resolve<ILocationResolver>().Resolve();
-      var locationProvider = setupScope.Resolve<ILocationProvider>();
-      var timeZoneInfo = locationProvider.GetTimeZone();
-      var cultureInfo = locationProvider.GetCultureInfo();
-      setupScope.Resolve<LocationContext>().Setup(timeZoneInfo, cultureInfo);
-      log.InfoFormat(CultureInfo.InvariantCulture, "Applying time zone {0}:{1} and culture info {2}:{3}",
-        timeZoneInfo.Id, timeZoneInfo.DisplayName, cultureInfo.Name, cultureInfo.EnglishName);
+      using (var locationSetupScope = startUpScope.BeginLifetimeScope(Model.ContainerConfiguration.RegisterIDbContextServiceSingleInstance))
+      {
+        locationSetupScope.Resolve<ILocationResolver>().Resolve();
+        var locationProvider = locationSetupScope.Resolve<ILocationProvider>();
+        var timeZoneInfo = locationProvider.GetTimeZone();
+        var cultureInfo = locationProvider.GetCultureInfo();
+        startUpScope.Resolve<LocationContext>().Setup(timeZoneInfo, cultureInfo);
+        log.InfoFormat(CultureInfo.InvariantCulture, "Applying time zone {0}:{1} and culture info {2}:{3}",
+          timeZoneInfo.Id, timeZoneInfo.DisplayName, cultureInfo.Name, cultureInfo.EnglishName);
+      }
     }
 
-    private static void SetupDatabase(ILifetimeScope scope, DatabaseSection dbConfig)
+    private static void SetupDatabase(ILifetimeScope startUpScope, DatabaseSection dbConfig)
     {
       var dbUpgradeNeeded = false;
-      using(var scopeNested = scope.BeginLifetimeScope())
+      using(var scopeNested = startUpScope.BeginLifetimeScope(Model.ContainerConfiguration.RegisterIDbContextServiceSingleInstance))
       {
         var envRepository = scopeNested.Resolve<IEnvironmentRepository>(); 
         var sqliteVersion = envRepository.GetSqliteVersion();
@@ -181,16 +184,16 @@ namespace PowerView
         dbCheck.CheckDatabase();
 
         var dbUpgrade = scopeNested.Resolve<IDbUpgrade>();
-        if ( dbConfig.Backup != null )
+        if ( dbConfig.HasBackupElement )
         {
           dbUpgradeNeeded = dbUpgrade.IsNeeded();
         }
       }
 
-      var dbBackup = scope.Resolve<IDbBackup>();
+      var dbBackup = startUpScope.Resolve<IDbBackup>();
       dbBackup.BackupDatabaseAsNeeded(dbUpgradeNeeded);
 
-      using (var scopeNested = scope.BeginLifetimeScope())
+      using (var scopeNested = startUpScope.BeginLifetimeScope(Model.ContainerConfiguration.RegisterIDbContextServiceSingleInstance))
       {
         var dbUpgrade = scopeNested.Resolve<IDbUpgrade>();
         dbUpgrade.ApplyUpdates();
@@ -200,16 +203,19 @@ namespace PowerView
       }
     }
 
-    private static void GenerateTestDataIfDebug(ILifetimeScope scope)
+    private static void GenerateTestDataIfDebug(ILifetimeScope startUpScope)
     {
 #if DEBUG
-      var readingPiper = scope.Resolve<IReadingPiper>();
-      var utcNow = DateTime.UtcNow + TimeSpan.FromDays(1);
-      readingPiper.PipeLiveReadings(utcNow);
-      readingPiper.PipeDayReadings(utcNow);
-      readingPiper.PipeMonthReadings(utcNow);
+      using (var genTestDataScope = startUpScope.BeginLifetimeScope(Model.ContainerConfiguration.RegisterIDbContextServiceSingleInstance))
+      {
+        var readingPiper = genTestDataScope.Resolve<IReadingPiper>();
+        var utcNow = DateTime.UtcNow + TimeSpan.FromDays(1);
+        readingPiper.PipeLiveReadings(utcNow);
+        readingPiper.PipeDayReadings(utcNow);
+        readingPiper.PipeMonthReadings(utcNow);
 
-      new TestDataGenerator(scope).Invoke();
+        new TestDataGenerator(genTestDataScope).Invoke();
+      }
 #endif
     }
 

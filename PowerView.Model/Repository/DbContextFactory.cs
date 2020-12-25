@@ -8,7 +8,7 @@ namespace PowerView.Model.Repository
 {
   internal class DbContextFactory : IDbContextFactory
   {
-    private readonly DbConnectionStringBuilder connectionStringBuilder;
+    private readonly SqliteConnectionStringBuilder connectionStringBuilder;
 
     public DbContextFactory(string dbName)
     {

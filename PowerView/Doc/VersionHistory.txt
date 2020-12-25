@@ -1,5 +1,5 @@
 PowerView version 0.0.32 - Xxxx 2021
-- 
+- Auto VACUUM database after upgrades
 
 PowerView version 0.0.31 - December 2020
 - Fixed a bug preventing updating of series colors.
