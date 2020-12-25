@@ -243,8 +243,8 @@ namespace PowerView
       log.InfoFormat(CultureInfo.InvariantCulture, 
                      "Environment. 64BitOs:{0}, 64BitProcess:{1}, UserName:{2}", 
                       Environment.Is64BitOperatingSystem, Environment.Is64BitProcess, Environment.UserName);
-      log.InfoFormat(CultureInfo.InvariantCulture, "Environment. Culture:{0}, UICulture:{1}, MonoRuntimeVersion:{2}", 
-        Thread.CurrentThread.CurrentCulture, Thread.CurrentThread.CurrentUICulture, EnvironmentHelper.GetMonoRuntimeVersion());
+      log.InfoFormat(CultureInfo.InvariantCulture, "Environment. Culture:{0}, UICulture:{1}, MonoRuntimeVersion:{2}, RaspberryPiRevision:{3}", 
+        Thread.CurrentThread.CurrentCulture, Thread.CurrentThread.CurrentUICulture, EnvironmentHelper.GetMonoRuntimeVersion(), EnvironmentHelper.GetCpuInfoRevision());
     }
 
     private static void AppDomainCurrentDomainUnhandledException (object sender, UnhandledExceptionEventArgs e)
