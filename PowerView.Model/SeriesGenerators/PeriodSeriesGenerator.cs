@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace PowerView.Model.SeriesGenerators
 {
-  public class PeriodSeriesGenerator : ISeriesGenerator
+  public class PeriodSeriesGenerator : ISingleInputSeriesGenerator
   {
     private readonly List<NormalizedTimeRegisterValue> snReferenceValues;
     private readonly Dictionary<string, NormalizedTimeRegisterValue> snTransitionValues;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace PowerView.Model.SeriesGenerators
 {
-  public class AverageActualSeriesGenerator : ISeriesGenerator
+  public class AverageActualSeriesGenerator : ISingleInputSeriesGenerator
   {
     private readonly List<NormalizedTimeRegisterValue> generatedValues;
     private NormalizedTimeRegisterValue previous;

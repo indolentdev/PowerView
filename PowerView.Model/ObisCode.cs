@@ -27,6 +27,8 @@ namespace PowerView.Model
     public static readonly ObisCode ElectrActiveEnergyA14 = "1.0.1.8.0.255";
     public static readonly ObisCode ElectrActiveEnergyA14Delta = "1.65.1.8.0.255";
     public static readonly ObisCode ElectrActiveEnergyA14Period = "1.66.1.8.0.255";
+    public static readonly ObisCode ElectrActiveEnergyNetDelta = "1.65.16.8.0.255";
+    public static readonly ObisCode ElectrActiveEnergyNetPeriod = "1.66.16.8.0.255";
     public static readonly ObisCode ElectrActualPowerP14 = "1.0.1.7.0.255";
     public static readonly ObisCode ElectrActualPowerP14Average = "1.67.1.7.0.255";
     public static readonly ObisCode ElectrActualPowerP14L1 = "1.0.21.7.0.255";

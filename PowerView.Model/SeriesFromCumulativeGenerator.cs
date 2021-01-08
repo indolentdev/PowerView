@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using PowerView.Model.SeriesGenerators;
 
 namespace PowerView.Model
@@ -7,8 +9,17 @@ namespace PowerView.Model
   {
     public IDictionary<ObisCode, IList<NormalizedTimeRegisterValue>> Generate(IDictionary<ObisCode, IList<NormalizedTimeRegisterValue>> cumulatives)
     {
-      var result = new Dictionary<ObisCode, IList<NormalizedTimeRegisterValue>>(3);
+      var result = new Dictionary<ObisCode, IList<NormalizedTimeRegisterValue>>();
 
+      GenerateSingleInputSeries(cumulatives, result);
+
+      GenerateMultiInputSeries(result);
+
+      return result;
+    }
+
+    private static void GenerateSingleInputSeries(IDictionary<ObisCode, IList<NormalizedTimeRegisterValue>> cumulatives, Dictionary<ObisCode, IList<NormalizedTimeRegisterValue>> result)
+    {
       foreach (var cumulative in cumulatives)
       {
         if (!cumulative.Key.IsCumulative) continue;
@@ -31,8 +42,6 @@ namespace PowerView.Model
           result.Add(actualAverageGenerator.ObisCode.Value, actualAverageGenerator.Generator.GetGenerated());
         }
       }
-
-      return result;
     }
 
     private static ObisCode? GetAverageActualObisCode(ObisCode obisCode)
@@ -64,5 +73,42 @@ namespace PowerView.Model
 
       return null;
     }
+
+    private void GenerateMultiInputSeries(Dictionary<ObisCode, IList<NormalizedTimeRegisterValue>> result)
+    {
+      var activeEnergyNetDeltaGenerator = new { ObisCode = ObisCode.ElectrActiveEnergyNetDelta, 
+        Generator = new DiffByTimeSeriesGenerator(ObisCode.ElectrActiveEnergyA14Delta, ObisCode.ElectrActiveEnergyA23Delta) };
+      var activeEnergyNetPeriodGenerator = new { ObisCode = ObisCode.ElectrActiveEnergyNetPeriod,
+        Generator = new DiffByTimeSeriesGenerator(ObisCode.ElectrActiveEnergyA14Period, ObisCode.ElectrActiveEnergyA23Period) };
+
+      var generators = new[] { activeEnergyNetDeltaGenerator, activeEnergyNetPeriodGenerator };
+
+      var satisfiedGenerators = generators.Where(x => x.Generator.IsSatisfiedBy(result)).ToList();
+
+      if (!satisfiedGenerators.Any())
+      {
+        return;
+      }
+
+      // "flip" the dictionary so it is keyed first by normalized time, and then by obis code.
+      var generatedByNormalizedTimestamp = result
+        .SelectMany(x => x.Value, (x, y) => new { ObisCode = x.Key, NormalizedTimeRegisterValue = y })
+        .GroupBy(x => x.NormalizedTimeRegisterValue.NormalizedTimestamp)
+        .ToDictionary(x => x.Key, x => x.ToDictionary(xx => xx.ObisCode, xx => xx.NormalizedTimeRegisterValue.TimeRegisterValue));
+
+      foreach (var item in generatedByNormalizedTimestamp)
+      {
+        foreach (var generator in satisfiedGenerators)
+        {
+          generator.Generator.CalculateNext(item.Key, item.Value);
+        }
+      }
+
+      foreach (var generator in satisfiedGenerators)
+      {
+        result.Add(generator.ObisCode, generator.Generator.GetGenerated());
+      }
+    }
+
   }
 }

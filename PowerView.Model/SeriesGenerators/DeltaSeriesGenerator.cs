@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace PowerView.Model.SeriesGenerators
 {
-  public class DeltaSeriesGenerator : ISeriesGenerator
+  public class DeltaSeriesGenerator : ISingleInputSeriesGenerator
   {
     private readonly List<NormalizedTimeRegisterValue> generatedValues;
     private NormalizedTimeRegisterValue previous;

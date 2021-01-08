@@ -153,7 +153,7 @@
     <Compile Include="LabelSeries.cs" />
     <Compile Include="LabelSeriesSet.cs" />
     <Compile Include="SeriesGenerators\PeriodSeriesGenerator.cs" />
-    <Compile Include="SeriesGenerators\ISeriesGenerator.cs" />
+    <Compile Include="SeriesGenerators\ISingleInputSeriesGenerator.cs" />
     <Compile Include="SeriesGenerators\DeltaSeriesGenerator.cs" />
     <Compile Include="SeriesGenerators\AverageActualSeriesGenerator.cs" />
     <Compile Include="IntervalGroup.cs" />
@@ -170,6 +170,8 @@
     <Compile Include="Repository\ExportRepository.cs" />
     <Compile Include="Repository\IExportRepository.cs" />
     <Compile Include="DeviceId.cs" />
+    <Compile Include="SeriesGenerators\IMultiInputSeriesGenerator.cs" />
+    <Compile Include="SeriesGenerators\DiffByTimeSeriesGenerator.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
