@@ -11,6 +11,7 @@ namespace PowerView.Service.Mappers
     public string MapToSerieType(ObisCode obisCode)
     {
       if (obisCode == ObisCode.ElectrActiveEnergyA14Period || obisCode == ObisCode.ElectrActiveEnergyA23Period ||
+         obisCode == ObisCode.ElectrActiveEnergyNetPeriod ||
          obisCode == ObisCode.ColdWaterVolume1Period || obisCode == ObisCode.HotWaterVolume1Period || 
          obisCode == ObisCode.HeatEnergyEnergy1Period || obisCode == ObisCode.HeatEnergyVolume1Period)
       {
@@ -23,13 +24,13 @@ namespace PowerView.Service.Mappers
     public string MapToSerieYAxis(ObisCode obisCode)
     {
       if (obisCode == ObisCode.ElectrActiveEnergyA14Period || obisCode == ObisCode.ElectrActiveEnergyA23Period ||
-         obisCode == ObisCode.HeatEnergyEnergy1Period)
+         obisCode == ObisCode.ElectrActiveEnergyNetPeriod || obisCode == ObisCode.HeatEnergyEnergy1Period)
       {
         return "energyPeriod";
       }
 
       if (obisCode == ObisCode.ElectrActiveEnergyA14Delta || obisCode == ObisCode.ElectrActiveEnergyA23Delta ||
-         obisCode == ObisCode.HeatEnergyEnergy1Delta)
+         obisCode == ObisCode.ElectrActiveEnergyNetDelta || obisCode == ObisCode.HeatEnergyEnergy1Delta)
       {
         return "energyDelta";
       }
