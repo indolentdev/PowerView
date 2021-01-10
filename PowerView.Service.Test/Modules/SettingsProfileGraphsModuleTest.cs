@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text;
 using PowerView.Model;
 using PowerView.Model.Repository;
 using PowerView.Service.Dtos;
@@ -24,7 +25,7 @@ namespace PowerView.Service.Test.Modules
     private const string ProfileGraphsSeriesRoute = ProfileGraphsRoute + "/series";
     private const string ProfileGraphsPagesRoute = ProfileGraphsRoute + "/pages";
     private const string ProfileGraphsSwapRankRoute = ProfileGraphsRoute + "/swaprank";
-    private const string ProfileGrahpsModifyRoute = ProfileGraphsRoute + "/modify/{0}/{1}/{2}";
+    private const string ProfileGrahpsModifyRoute = ProfileGraphsRoute + "/modify/{0}";
 
     [SetUp]
     public void SetUp()
@@ -216,7 +217,8 @@ namespace PowerView.Service.Test.Modules
         .Returns(true);
 
       // Act
-      var response = browser.Put(string.Format(ProfileGrahpsModifyRoute, oldPeriod, oldPage, oldTitle), with =>
+      string url = string.Format(ProfileGrahpsModifyRoute, EncodeUpdateProfileGraphIdUrlSegment(oldPeriod, oldPage, oldTitle));
+      var response = browser.Put(url, with =>
       {
         with.HttpRequest();
         with.HostName("localhost");
@@ -239,7 +241,8 @@ namespace PowerView.Service.Test.Modules
       // Arrange
 
       // Act
-      var response = browser.Put(string.Format(ProfileGrahpsModifyRoute, "day", "ThePage", "TheTitle"), with =>
+      string url = string.Format(ProfileGrahpsModifyRoute, EncodeUpdateProfileGraphIdUrlSegment("Period", "Page", "Title"));
+      var response = browser.Put(url, with =>
       {
         with.HttpRequest();
         with.HostName("localhost");
@@ -250,13 +253,66 @@ namespace PowerView.Service.Test.Modules
     }
 
     [Test]
-    public void PutProfileGraphBad()
+    public void PutProfileGraphBadBase64Url()
+    {
+      // Arrange
+      var profileGraph = new
+      {
+        Period = "day",
+        Page = "The Page",
+        Title = "The Title",
+        Interval = "5-minutes",
+        Series = new[] { new { Label = "The Label", ObisCode = "1.2.3.4.5.6" } }
+      };
+
+      // Act
+      string url = string.Format(ProfileGrahpsModifyRoute, "NotBase64String");
+      var response = browser.Put(url, with =>
+      {
+        with.HttpRequest();
+        with.HostName("localhost");
+        with.JsonBody(profileGraph);
+      });
+
+      // Assert
+      Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.UnsupportedMediaType));
+    }
+
+    [Test]
+    public void PutProfileGraphBadJsonUrl()
+    {
+      // Arrange
+      var profileGraph = new
+      {
+        Period = "day",
+        Page = "The Page",
+        Title = "The Title",
+        Interval = "5-minutes",
+        Series = new[] { new { Label = "The Label", ObisCode = "1.2.3.4.5.6" } }
+      };
+
+      // Act
+      string url = string.Format(ProfileGrahpsModifyRoute, Convert.ToBase64String(Encoding.ASCII.GetBytes("NotJsonString")));
+      var response = browser.Put(url, with =>
+      {
+        with.HttpRequest();
+        with.HostName("localhost");
+        with.JsonBody(profileGraph);
+      });
+
+      // Assert
+      Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.UnsupportedMediaType));
+    }
+
+    [Test]
+    public void PutProfileGraphBadContent()
     {
       // Arrange
       var profileGraph = new { Series = new object[0] };
 
       // Act
-      var response = browser.Put(string.Format(ProfileGrahpsModifyRoute, "day", "ThePage", "TheTitle"), with =>
+      string url = string.Format(ProfileGrahpsModifyRoute, EncodeUpdateProfileGraphIdUrlSegment("Period", "Page", "Title"));
+      var response = browser.Put(url, with =>
       {
         with.HttpRequest();
         with.HostName("localhost");
@@ -284,7 +340,8 @@ namespace PowerView.Service.Test.Modules
       };
 
       // Act
-      var response = browser.Put(string.Format(ProfileGrahpsModifyRoute, oldPeriod, oldPage, oldTitle), with =>
+      string url = string.Format(ProfileGrahpsModifyRoute, EncodeUpdateProfileGraphIdUrlSegment(oldPeriod, oldPage, oldTitle));
+      var response = browser.Put(url, with =>
       {
         with.HttpRequest();
         with.HostName("localhost");
@@ -433,6 +490,13 @@ namespace PowerView.Service.Test.Modules
     {
       Assert.That(dto.Label, Is.EqualTo(serieName.Label));
       Assert.That(dto.ObisCode, Is.EqualTo(serieName.ObisCode.ToString()));
+    }
+
+    private dynamic EncodeUpdateProfileGraphIdUrlSegment(string period, string page, string title)
+    {
+      var obj = new { period, page, title };
+      var json = Newtonsoft.Json.JsonConvert.SerializeObject(obj);
+      return Convert.ToBase64String(System.Text.Encoding.ASCII.GetBytes(json));
     }
 
     internal class TestProfileGraphSerieSetDto

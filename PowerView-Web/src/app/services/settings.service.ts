@@ -197,8 +197,8 @@ export class SettingsService {
     }
   }
 
-  public updateProfileGraph(period: string, page: string, title: string, profileGraph: ProfileGraph): Observable<any> {
-    return this.dataService.put(constLocal.profileGraphsModify + '/' + period + '/' + page + '/' + title, profileGraph)
+  public updateProfileGraph(periodGraphIdBase64: string, profileGraph: ProfileGraph): Observable<any> {
+    return this.dataService.put(constLocal.profileGraphsModify + '/' + periodGraphIdBase64, profileGraph)
     .pipe(catchError(error => {
       return throwError(this.convertToUpdateProfileGraphError(error));
     }));

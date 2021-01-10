@@ -2,9 +2,11 @@
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using log4net;
 using Nancy;
 using Nancy.ModelBinding;
+using Newtonsoft.Json;
 using PowerView.Model;
 using PowerView.Model.Repository;
 using PowerView.Service.Dtos;
@@ -34,7 +36,7 @@ namespace PowerView.Service.Modules
       Get["pages"] = GetProfileGraphPages;
       Get[""] = GetProfileGraphs;
       Post[""] = PostProfileGraph;
-      Put["modify/{existingPeriod}/{existingPage}/{existingTitle}"] = PutProfileGraph;
+      Put["modify/{existingProfileGraphIdBase64}"] = PutProfileGraph;
       Delete[""] = DeleteProfileGraph;
       Put["swaprank"] = SwapProfileGraphRank;
     }
@@ -119,9 +121,27 @@ namespace PowerView.Service.Modules
 
     private dynamic PutProfileGraph(dynamic param)
     {
-      string period = param.existingPeriod;
-      string page = param.existingPage;
-      string title = param.existingTitle;
+      string existingProfileGraphIdBase64 = param.existingProfileGraphIdBase64;
+      UpdateProfileGraphId updateProfileGraphId;
+      try
+      {
+        var existingProfileGraphIdJson = Encoding.ASCII.GetString(Convert.FromBase64String(existingProfileGraphIdBase64));
+        updateProfileGraphId = JsonConvert.DeserializeObject<UpdateProfileGraphId>(existingProfileGraphIdJson);
+      }
+      catch (FormatException e)
+      {
+        var msg = string.Format(CultureInfo.InvariantCulture, "Update profile graph failed. Unable to decode existing profile graph id:{0}",
+                                  existingProfileGraphIdBase64);
+        log.Warn(msg, e);
+        return Response.AsJson(new { Description = "ProfileGraph [period, page, title] unknown" }, HttpStatusCode.UnsupportedMediaType);
+      }
+      catch (JsonException e)
+      {
+        var msg = string.Format(CultureInfo.InvariantCulture, "Update profile graph failed. Unable to decode existing profile graph id:{0}",
+                                  existingProfileGraphIdBase64);
+        log.Warn(msg, e);
+        return Response.AsJson(new { Description = "ProfileGraph [period, page, title] unknown" }, HttpStatusCode.UnsupportedMediaType);
+      }
 
       var dto = this.Bind<ProfileGraphDto>();
       ProfileGraph profileGraph = null;
@@ -136,16 +156,23 @@ namespace PowerView.Service.Modules
         return HttpStatusCode.UnsupportedMediaType;
       }
 
-      var success = profileGraphRepository.UpdateProfileGraph(period, page, title, profileGraph);
+      var success = profileGraphRepository.UpdateProfileGraph(updateProfileGraphId.Period, updateProfileGraphId.Page, updateProfileGraphId.Title, profileGraph);
       if (!success)
       {
         var msg = string.Format(CultureInfo.InvariantCulture, "Update profile graph failed. Period:{0}, Page:{1}, Title:{2}. Does not exist.",
-                                  period, page, title);
+                                  updateProfileGraphId.Period, updateProfileGraphId.Page, updateProfileGraphId.Title);
         log.Warn(msg);
         return Response.AsJson(new { Description = "ProfileGraph [period, page, title] does not exist" }, HttpStatusCode.Conflict);
       }
 
       return HttpStatusCode.NoContent;
+    }
+
+    private class UpdateProfileGraphId
+    {
+      public string Period { get; set; }
+      public string Page { get; set; }
+      public string Title { get; set; }
     }
 
     private dynamic DeleteProfileGraph(dynamic param)
