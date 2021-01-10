@@ -9,12 +9,6 @@ namespace PowerView.Model.Test.Repository
   [TestFixture]
   public class ProfileGraphRepositoryTest : DbTestFixtureWithSchema
   {
-    [SetUp]
-    public override void SetUp()
-    {
-      base.SetUp();
-    }
-    
     [Test]
     public void ConstructorThrows()
     {
@@ -149,6 +143,63 @@ namespace PowerView.Model.Test.Repository
 
       // Act & Assert
       Assert.That(() => target.AddProfileGraph(profileGraph2), Throws.TypeOf<DataStoreUniqueConstraintException>());
+    }
+
+    [Test]
+    public void UpdateProfileGraphAbsent()
+    {
+      // Arrange
+      var sn1 = new SeriesName("label", ObisCode.ElectrActiveEnergyA14Period);
+      var profileGraph = new ProfileGraph("day", "pPage", "pTitle", "5-minutes", 1, new[] { sn1 });
+      var target = CreateTarget();
+
+      // Act
+      var success = target.UpdateProfileGraph("absentPeriod", "absentPage", "absentTitle", profileGraph);
+
+      // Assert
+      Assert.That(success, Is.False);
+      AssertProfileGraphExists(profileGraph, not: true);
+    }
+
+    [Test]
+    public void UpdateProfileGraphExistingRank()
+    {
+      // Arrange
+      var sn1 = new SeriesName("label", ObisCode.ElectrActiveEnergyA14Period);
+      var profileGraphExisting = new ProfileGraph("day", "pPage", "pTitle", "5-minutes", 1, new[] { sn1 });
+      var sn2 = new SeriesName("label", ObisCode.ElectrActiveEnergyA23Period);
+      var sn3 = new SeriesName("label", ObisCode.ElectrActiveEnergyA23Delta);
+      var profileGraphUpdate = new ProfileGraph("day", "pPage", "pNewTitle", "30-minutes", 1, new[] { sn2, sn3 });
+      var target = CreateTarget();
+      target.AddProfileGraph(profileGraphExisting);
+
+      // Act
+      var success = target.UpdateProfileGraph(profileGraphExisting.Period, profileGraphExisting.Page, profileGraphExisting.Title, profileGraphUpdate);
+
+      // Assert
+      Assert.That(success, Is.True);
+      AssertProfileGraphExists(profileGraphUpdate);
+    }
+
+    [Test]
+    public void UpdateProfileGraphNewRank()
+    {
+      // Arrange
+      var sn1 = new SeriesName("label", ObisCode.ElectrActiveEnergyA14Period);
+      var profileGraphExisting = new ProfileGraph("day", "pPage", "pTitle", "5-minutes", 1, new[] { sn1 });
+      var sn2 = new SeriesName("label", ObisCode.ElectrActiveEnergyA23Period);
+      var sn3 = new SeriesName("label", ObisCode.ElectrActiveEnergyA23Delta);
+      var profileGraphUpdate = new ProfileGraph("day", "pPageOther", "pNewTitle", "30-minutes", 1, new[] { sn2, sn3 });
+      var target = CreateTarget();
+      target.AddProfileGraph(profileGraphExisting);
+
+      // Act
+      var success = target.UpdateProfileGraph(profileGraphExisting.Period, profileGraphExisting.Page, profileGraphExisting.Title, profileGraphUpdate);
+
+      // Assert
+      Assert.That(success, Is.True);
+      AssertProfileGraphExists(profileGraphExisting, not: true);
+      AssertProfileGraphExists(profileGraphUpdate);
     }
 
     [Test]

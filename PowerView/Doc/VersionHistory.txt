@@ -1,5 +1,6 @@
 PowerView version 0.0.32 - Xxxx 2021
-- Added calculated series for electricity net consumed energy
+- Automaticly calculate series for electricity net consumed energy
+- Ability to edit profile graphs
 - Auto VACUUM database after upgrades
 
 PowerView version 0.0.31 - December 2020

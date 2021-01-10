@@ -34,6 +34,7 @@ namespace PowerView.Service.Modules
       Get["pages"] = GetProfileGraphPages;
       Get[""] = GetProfileGraphs;
       Post[""] = PostProfileGraph;
+      Put["modify/{existingPeriod}/{existingPage}/{existingTitle}"] = PutProfileGraph;
       Delete[""] = DeleteProfileGraph;
       Put["swaprank"] = SwapProfileGraphRank;
     }
@@ -113,6 +114,37 @@ namespace PowerView.Service.Modules
         log.Warn(msg, e);
         return Response.AsJson(new { Description = "ProfileGraph [period, page, title] or [period, page, rank] already exists" }, HttpStatusCode.Conflict);
       }
+      return HttpStatusCode.NoContent;
+    }
+
+    private dynamic PutProfileGraph(dynamic param)
+    {
+      string period = param.existingPeriod;
+      string page = param.existingPage;
+      string title = param.existingTitle;
+
+      var dto = this.Bind<ProfileGraphDto>();
+      ProfileGraph profileGraph = null;
+      try
+      {
+        var serieNames = dto.Series.Select(x => new SeriesName(x.Label, x.ObisCode)).ToList();
+        profileGraph = new ProfileGraph(dto.Period, dto.Page, dto.Title, dto.Interval, 0, serieNames);
+      }
+      catch (ArgumentException e)
+      {
+        log.Warn("Update profile graph failed.", e);
+        return HttpStatusCode.UnsupportedMediaType;
+      }
+
+      var success = profileGraphRepository.UpdateProfileGraph(period, page, title, profileGraph);
+      if (!success)
+      {
+        var msg = string.Format(CultureInfo.InvariantCulture, "Update profile graph failed. Period:{0}, Page:{1}, Title:{2}. Does not exist.",
+                                  period, page, title);
+        log.Warn(msg);
+        return Response.AsJson(new { Description = "ProfileGraph [period, page, title] does not exist" }, HttpStatusCode.Conflict);
+      }
+
       return HttpStatusCode.NoContent;
     }
 

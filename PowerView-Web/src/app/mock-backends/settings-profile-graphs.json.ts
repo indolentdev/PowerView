@@ -205,7 +205,7 @@ export let settingsProfileGraphs = {
          "period":"day",
          "page":"",
          "title":"Relay",
-         "interval":"5-minutes",
+         "interval":"30-minutes",
          "rank":20,
          "series":[
             {
@@ -226,7 +226,7 @@ export let settingsProfileGraphs = {
          "period":"day",
          "page":"",
          "title":"El Power",
-         "interval":"5-minutes",
+         "interval":"30-minutes",
          "rank":21,
          "series":[
             {
@@ -255,7 +255,7 @@ export let settingsProfileGraphs = {
          "period":"day",
          "page":"",
          "title":"Conservatory",
-         "interval":"5-minutes",
+         "interval":"30-minutes",
          "rank":22,
          "series":[
             {

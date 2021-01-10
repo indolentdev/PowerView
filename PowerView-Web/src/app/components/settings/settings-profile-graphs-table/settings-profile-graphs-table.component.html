@@ -25,6 +25,7 @@
   <ng-container matColumnDef="actions">
     <th mat-header-cell *matHeaderCellDef>{{ 'columns.actions' | translate }}</th>
     <td mat-cell *matCellDef="let v">
+      <button style="margin-left:3px;margin-right:3px" mat-raised-button type="button" (click)="editClick(v)">{{ 'forms.settings.profileGraphs.buttonActionEdit' | translate }}</button>
       <button style="margin-left:3px;margin-right:3px" mat-raised-button type="button" (click)="deleteClick(v)">{{ 'forms.settings.profileGraphs.buttonActionDelete' | translate }}</button>
       <button *ngIf="v.isLast != undefined && !v.isLast" style="margin-left:3px;margin-right:3px" mat-raised-button type="button" (click)="downClick(v)">{{ 'forms.settings.profileGraphs.buttonActionDown' | translate }}</button>
       <button *ngIf="v.isFirst != undefined && !v.isFirst" style="margin-left:3px;margin-right:3px" mat-raised-button type="button" (click)="upClick(v)">{{ 'forms.settings.profileGraphs.buttonActionUp' | translate }}</button>

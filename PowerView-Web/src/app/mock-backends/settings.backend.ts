@@ -183,6 +183,16 @@ export function settingsBackend(url: string, method: string, request: HttpReques
         });
     }
 
+    if (url.indexOf('settings/profilegraphs/modify') > -1 && method === "PUT") {
+//        return throwError(new HttpErrorResponse({status:415}));
+        return new Observable(resp => {
+            resp.next(new HttpResponse({
+                status: 204
+            }));
+            resp.complete();
+        });
+    }
+        
     if (url.indexOf('settings/profilegraphs') > -1 && method === "GET") {
         return new Observable(resp => {
             resp.next(new HttpResponse({

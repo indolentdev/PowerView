@@ -32,6 +32,7 @@ const constLocal = {
   profileGraphs: "settings/profilegraphs",
   profileGraphsSwaprank: "settings/profilegraphs/swaprank",
   profileGraphsSeries: "settings/profilegraphs/series",
+  profileGraphsModify: "settings/profilegraphs/modify",
   serieColors: "settings/seriecolors",
   smtp: "settings/smtp"
 };
@@ -193,6 +194,29 @@ export class SettingsService {
         return AddProfileGraphError.RequestContentIncomplete;
       default:
         return AddProfileGraphError.UnspecifiedError;
+    }
+  }
+
+  public updateProfileGraph(period: string, page: string, title: string, profileGraph: ProfileGraph): Observable<any> {
+    return this.dataService.put(constLocal.profileGraphsModify + '/' + period + '/' + page + '/' + title, profileGraph)
+    .pipe(catchError(error => {
+      return throwError(this.convertToUpdateProfileGraphError(error));
+    }));
+  }
+
+  private convertToUpdateProfileGraphError(error: any): UpdateProfileGraphError {
+    if ( !(error instanceof HttpErrorResponse) ) {
+      return UpdateProfileGraphError.UnspecifiedError;
+    }
+
+    var httpErrorResponse = error as HttpErrorResponse;
+    switch(httpErrorResponse.status) {
+      case 409:
+        return UpdateProfileGraphError.ExistingProfileGraphAbsent;
+      case 415:
+        return UpdateProfileGraphError.RequestContentIncomplete;
+      default:
+        return UpdateProfileGraphError.UnspecifiedError;
     }
   }
 
@@ -360,6 +384,12 @@ export enum AddProfileGraphError {
   UnspecifiedError = "UnspecifiedError",
   RequestContentIncomplete = "RequestContentIncomplete",
   RequestContentDuplicate = "RequestContentDuplicate"
+}
+
+export enum UpdateProfileGraphError {
+  UnspecifiedError = "UnspecifiedError",
+  RequestContentIncomplete = "RequestContentIncomplete",
+  ExistingProfileGraphAbsent = "RequestContentDuplicate"
 }
 
 export enum SwapProfileGraphRankError {

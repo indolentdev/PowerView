@@ -12,6 +12,8 @@ namespace PowerView.Model.Repository
 
     void AddProfileGraph(ProfileGraph profileGraph);
 
+    bool UpdateProfileGraph(string period, string page, string title, ProfileGraph profileGraph);
+
     void DeleteProfileGraph(string period, string page, string title);
 
     void SwapProfileGraphRank(string period, string page, string title1, string title2);

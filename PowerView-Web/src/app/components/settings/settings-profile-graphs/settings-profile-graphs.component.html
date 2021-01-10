@@ -72,7 +72,8 @@
   
     <br/>
 
-    <button mat-raised-button style="margin:5px;" type="submit" [disabled]="!formGroup.valid">{{ 'forms.settings.profileGraphs.buttonAdd' | translate }}</button>
+    <button *ngIf="createMode" mat-raised-button style="margin:5px;" type="submit" [disabled]="!formGroup.valid">{{ 'forms.settings.profileGraphs.buttonAdd' | translate }}</button>
+    <button *ngIf="!createMode" mat-raised-button style="margin:5px;" type="button" [disabled]="!formGroup.valid" (click)="updateClick()">{{ 'forms.settings.profileGraphs.buttonUpdate' | translate }}</button>
   </form>
 </div>
 
@@ -81,6 +82,7 @@
 
 <div *ngIf="profileGraphGroups !== undefined">
   <app-settings-profile-graphs-table *ngFor="let profileGraphGroup of profileGraphGroups"
-    [profileGraphs]="profileGraphGroup" (deleteProfileGraph)="deleteProfileGraph($event)"
+    [profileGraphs]="profileGraphGroup" (editProfileGraph)="editProfileGraph($event)"
+    (deleteProfileGraph)="deleteProfileGraph($event)"
     (swapProfileGraphs)="swapProfileGraphs($event)"></app-settings-profile-graphs-table>
 </div>

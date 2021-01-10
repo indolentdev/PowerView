@@ -18,6 +18,7 @@ export class SettingsProfileGraphsTableComponent implements OnInit, OnChanges {
 
   @Input('profileGraphs') profileGraphs: ProfileGraph[];
 
+  @Output('editProfileGraph') editAction: EventEmitter<ProfileGraph> = new EventEmitter();
   @Output('deleteProfileGraph') deleteAction: EventEmitter<ProfileGraph> = new EventEmitter();
   @Output('swapProfileGraphs') swapAction: EventEmitter<ProfileGraph[]> = new EventEmitter();
 
@@ -87,6 +88,14 @@ export class SettingsProfileGraphsTableComponent implements OnInit, OnChanges {
 
   getSerie(ob: any[]): any[] {
     return ob.map(x => x.serie);
+  }
+
+  editClick(item: any) {
+    if (item == null) {
+      return;
+    }
+    this.log.debug("Edit clicked", item);
+    this.editAction.emit(item);
   }
 
   deleteClick(item: any) {

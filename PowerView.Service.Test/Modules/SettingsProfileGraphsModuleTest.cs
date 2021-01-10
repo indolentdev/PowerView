@@ -24,6 +24,7 @@ namespace PowerView.Service.Test.Modules
     private const string ProfileGraphsSeriesRoute = ProfileGraphsRoute + "/series";
     private const string ProfileGraphsPagesRoute = ProfileGraphsRoute + "/pages";
     private const string ProfileGraphsSwapRankRoute = ProfileGraphsRoute + "/swaprank";
+    private const string ProfileGrahpsModifyRoute = ProfileGraphsRoute + "/modify/{0}/{1}/{2}";
 
     [SetUp]
     public void SetUp()
@@ -186,6 +187,104 @@ namespace PowerView.Service.Test.Modules
 
       // Act
       var response = browser.Post(ProfileGraphsRoute, with =>
+      {
+        with.HttpRequest();
+        with.HostName("localhost");
+        with.JsonBody(profileGraph);
+      });
+
+      // Assert
+      Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Conflict));
+    }
+
+    [Test]
+    public void PutProfileGraph()
+    {
+      // Arrange
+      const string oldPeriod = "month";
+      const string oldPage = "Old Page";
+      const string oldTitle = "Old Title";
+      var profileGraph = new
+      {
+        Period = "day",
+        Page = "The Page",
+        Title = "The Title",
+        Interval = "5-minutes",
+        Series = new[] { new { Label = "The Label", ObisCode = "1.2.3.4.5.6" } }
+      };
+      profileGraphRepository.Setup(x => x.UpdateProfileGraph(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<ProfileGraph>()))
+        .Returns(true);
+
+      // Act
+      var response = browser.Put(string.Format(ProfileGrahpsModifyRoute, oldPeriod, oldPage, oldTitle), with =>
+      {
+        with.HttpRequest();
+        with.HostName("localhost");
+        with.JsonBody(profileGraph);
+      });
+
+      // Assert
+      Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
+      profileGraphRepository.Verify(pgr => pgr.UpdateProfileGraph(It.Is<string>(x => x == oldPeriod),
+        It.Is<string>(x => x == oldPage), It.Is<string>(x => x == oldTitle), It.Is<ProfileGraph>(pg =>
+          pg.Period == profileGraph.Period && pg.Page == profileGraph.Page && pg.Title == profileGraph.Title &&
+          pg.Interval == profileGraph.Interval && pg.SerieNames.Count == profileGraph.Series.Length &&
+          pg.SerieNames.First().Label == profileGraph.Series[0].Label &&
+          pg.SerieNames.First().ObisCode == profileGraph.Series[0].ObisCode)));
+    }
+
+    [Test]
+    public void PutProfileGraphNoContent()
+    {
+      // Arrange
+
+      // Act
+      var response = browser.Put(string.Format(ProfileGrahpsModifyRoute, "day", "ThePage", "TheTitle"), with =>
+      {
+        with.HttpRequest();
+        with.HostName("localhost");
+      });
+
+      // Assert
+      Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.UnsupportedMediaType));
+    }
+
+    [Test]
+    public void PutProfileGraphBad()
+    {
+      // Arrange
+      var profileGraph = new { Series = new object[0] };
+
+      // Act
+      var response = browser.Put(string.Format(ProfileGrahpsModifyRoute, "day", "ThePage", "TheTitle"), with =>
+      {
+        with.HttpRequest();
+        with.HostName("localhost");
+        with.JsonBody(profileGraph);
+      });
+
+      // Assert
+      Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.UnsupportedMediaType));
+    }
+
+    [Test]
+    public void PutProfileGraphDoesNotExist()
+    {
+      // Arrange
+      const string oldPeriod = "month";
+      const string oldPage = "Old Page";
+      const string oldTitle = "Old Title";
+      var profileGraph = new
+      {
+        Period = "day",
+        Page = "The Page",
+        Title = "The Title",
+        Interval = "5-minutes",
+        Series = new[] { new { Label = "The Label", ObisCode = "1.2.3.4.5.6" } }
+      };
+
+      // Act
+      var response = browser.Put(string.Format(ProfileGrahpsModifyRoute, oldPeriod, oldPage, oldTitle), with =>
       {
         with.HttpRequest();
         with.HostName("localhost");

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
@@ -65,12 +67,7 @@ ORDER BY pg.Rank, pgs.Id;";
       var transaction = DbContext.BeginTransaction();
       try
       {
-        var sqlQuery = @"
-SELECT MAX(Rank) AS MaxRank
-FROM ProfileGraph
-WHERE Period=@period AND Page=@page;";
-        var dbMaxRank = DbContext.Connection.Query<long?>(sqlQuery, new { period = profileGraph.Period, page = profileGraph.Page }, transaction).FirstOrDefault();
-        var newRank = dbMaxRank != null ? dbMaxRank.Value + 1 : 1;
+        var newRank = GetNewRank(transaction, profileGraph.Period, profileGraph.Page);
 
         var dbProfileGraph = new Db.ProfileGraph { Period = profileGraph.Period, Page = profileGraph.Page, 
           Title = profileGraph.Title, Interval = profileGraph.Interval, Rank = profileGraph.Rank };
@@ -78,7 +75,7 @@ WHERE Period=@period AND Page=@page;";
         {
           dbProfileGraph.Rank = newRank;
         }
-        log.DebugFormat("Creating ProfileGraphSerie; Period:{0},Page:{1},Rank:{2}", dbProfileGraph.Period, dbProfileGraph.Page, dbProfileGraph.Rank);
+        log.DebugFormat("Creating ProfileGraph; Period:{0},Page:{1},Rank:{2}", dbProfileGraph.Period, dbProfileGraph.Page, dbProfileGraph.Rank);
 
         var profileGraphId = DbContext.Connection.QueryFirstOrDefault<long>(@"
 INSERT INTO ProfileGraph (Period, Page, Title, Interval, Rank) VALUES (@Period, @Page, @Title, @Interval, @Rank);
@@ -98,6 +95,76 @@ SELECT LAST_INSERT_ROWID() AS [Id];", dbProfileGraph, transaction);
         throw DataStoreExceptionFactory.Create(e);
       }
     }
+
+    public bool UpdateProfileGraph(string period, string page, string title, ProfileGraph profileGraph)
+    {
+      var setNewRank = true;
+      if (string.Equals(period, profileGraph.Period, StringComparison.Ordinal) && string.Equals(page, profileGraph.Page, StringComparison.Ordinal))
+      {
+        setNewRank = false;
+      }
+
+      var transaction = DbContext.BeginTransaction();
+      try
+      {
+        var existing = DbContext.Connection.QueryFirstOrDefault(@"
+SELECT Id, Rank FROM ProfileGraph WHERE Period=@period AND Page=@Page AND Title=@title;", new { period, page, title }, transaction);
+        if (existing == null)
+        {
+          return false;
+        }
+
+        var rank = (long)existing.Rank;
+        if (setNewRank)
+        {
+          rank = GetNewRank(transaction, profileGraph.Period, profileGraph.Page);
+        }
+
+        var dbProfileGraph = new Db.ProfileGraph
+        {
+          Id = existing.Id,
+          Period = profileGraph.Period,
+          Page = profileGraph.Page,
+          Title = profileGraph.Title,
+          Interval = profileGraph.Interval,
+          Rank = rank
+        };
+        log.DebugFormat("Updating ProfileGraph; Period:{0},Page:{1},Title:{2}", period, page, title);
+
+        var pgRowsAffected = DbContext.Connection.Execute(@"
+UPDATE ProfileGraph SET Period=@Period, Page=@Page, Title=@Title, Interval=@Interval, Rank=@Rank WHERE Id=@Id;", dbProfileGraph, transaction);
+
+        var pgsDeletedRowsAffected = DbContext.Connection.Execute(@"
+DELETE FROM ProfileGraphSerie WHERE ProfileGraphId=@Id;", dbProfileGraph, transaction);
+
+        var pgsAddedRowsAffected = DbContext.Connection.Execute(@"
+INSERT INTO ProfileGraphSerie (Label, ObisCode, ProfileGraphId) VALUES (@Label, @ObisCode, @ProfileGraphId);",
+          profileGraph.SerieNames.Select(x =>
+            new Db.ProfileGraphSerie { Label = x.Label, ObisCode = x.ObisCode, ProfileGraphId = dbProfileGraph.Id }), transaction);
+
+        transaction.Commit();
+        log.InfoFormat("Updated ProfileGraph; Period:{0},Page:{1},Title:{2}. Rows affected:{3}", period, page, title, pgRowsAffected + pgsDeletedRowsAffected + pgsAddedRowsAffected);
+      }
+      catch (SqliteException e)
+      {
+        transaction.Rollback();
+        throw DataStoreExceptionFactory.Create(e);
+      }
+
+      return true;
+    }
+
+    private long GetNewRank(IDbTransaction transaction, string period, string page)
+    {
+      var sqlQuery = @"
+SELECT MAX(Rank) AS MaxRank
+FROM ProfileGraph
+WHERE Period=@period AND Page=@page;";
+      var dbMaxRank = DbContext.Connection.Query<long?>(sqlQuery, new { period = period, page = page }, transaction).FirstOrDefault();
+      var newRank = dbMaxRank != null ? dbMaxRank.Value + 1 : 1;
+      return newRank;
+    }
+
 
     public void DeleteProfileGraph(string period, string page, string title)
     {

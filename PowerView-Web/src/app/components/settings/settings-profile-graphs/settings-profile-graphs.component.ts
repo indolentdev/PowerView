@@ -4,7 +4,7 @@ import { MatSnackBar, MatSnackBarRef, SimpleSnackBar } from '@angular/material/s
 import { NGXLogger } from 'ngx-logger';
 import { TranslateService } from '@ngx-translate/core';
 import { SerieService } from '../../../services/serie.service';
-import { SettingsService, AddProfileGraphError } from '../../../services/settings.service';
+import { SettingsService, AddProfileGraphError, UpdateProfileGraphError } from '../../../services/settings.service';
 import { MenuService } from '../../../services/menu.service';
 import { ProfileGraph } from '../../../model/profileGraph';
 import { ProfileGraphSerieSet } from '../../../model/profileGraphSerieSet';
@@ -26,6 +26,9 @@ export class SettingsProfileGraphsComponent implements OnInit {
 
   formGroup: FormGroup;
   @ViewChild('form', { static: true }) form;
+
+  createMode: boolean = true;
+  updateProfileGraphId: any;
 
   constructor(private log: NGXLogger, private settingsService: SettingsService, private snackBar: MatSnackBar, private translateService: TranslateService, private serieService: SerieService, private menuService: MenuService) {
   }
@@ -77,11 +80,11 @@ export class SettingsProfileGraphsComponent implements OnInit {
   }
 
   private onChangesPeriodAffectsSeries(selectedPeriod: string): void {
-    var seriesControl = this.formGroup.get('series');
+    let seriesControl = this.formGroup.get('series');
     seriesControl.enable();
     seriesControl.reset();
 
-    var profileGraphSeriesForPeriod = this.profileGraphSerieSet.items.filter(x => x.period === selectedPeriod);
+    let profileGraphSeriesForPeriod = this.profileGraphSerieSet.items.filter(x => x.period === selectedPeriod);
     this.profileGraphSeries = this.serieService.AddSerieProperty(profileGraphSeriesForPeriod);
   }
 
@@ -127,19 +130,15 @@ export class SettingsProfileGraphsComponent implements OnInit {
 
     this.dismissSnackBar();
 
-    var profileGraph: ProfileGraph = formGroupValue;
-    profileGraph.series = formGroupValue.series.map(x => { return {label:x.label, obisCode:x.obisCode} });
-
+    let profileGraph: ProfileGraph = formGroupValue;
+    this.stripUnwantedSeriesProperties(profileGraph);
     this.log.debug("Adding profile graph", profileGraph);
 
     this.settingsService.addProfileGraph(profileGraph).subscribe(_ => {
       this.log.debug("Add ok");
       this.translateService.get('forms.settings.profileGraphs.confirmAdd').subscribe(message => {
         this.snackBarRef = this.snackBar.open(message, undefined, { duration: 4000 });
-        this.menuService.signalProfileGraphPagesChanged();
-        this.form.resetForm();
-        this.formGroup.reset({ page: '' }); // Provide default value for the optional field.
-        this.getProfileGraphs();
+        this.resetForm();
       });
     }, err => {
       this.log.debug("Add failed", err);
@@ -157,11 +156,92 @@ export class SettingsProfileGraphsComponent implements OnInit {
         }
         this.snackBarRef = this.snackBar.open(message, undefined, { duration: 9000 });
       });
-    })    
+    });
+  }
+
+  updateClick() {
+    if (!this.formGroup.valid) {
+      return;
+    }
+
+    this.dismissSnackBar();
+
+    let profileGraph: ProfileGraph = this.formGroup.value;
+    this.stripUnwantedSeriesProperties(profileGraph);
+    this.log.debug("Updating profile graph", profileGraph);
+
+    this.settingsService.updateProfileGraph(this.updateProfileGraphId.period, this.updateProfileGraphId.page, this.updateProfileGraphId.title, profileGraph).subscribe(_ => {
+      this.log.debug("Update ok");
+      this.translateService.get('forms.settings.profileGraphs.confirmUpdate').subscribe(message => {
+        this.snackBarRef = this.snackBar.open(message, undefined, { duration: 4000 });
+        this.resetForm();
+      });
+    }, err => {
+      this.log.debug("Update failed", err);
+      var translateIds = ['forms.settings.profileGraphs.errorUpdate'];
+      var updateProfileGraphError = err as UpdateProfileGraphError;
+      if (updateProfileGraphError === UpdateProfileGraphError.RequestContentIncomplete 
+        || updateProfileGraphError === UpdateProfileGraphError.ExistingProfileGraphAbsent)
+      {
+        translateIds.push('forms.settings.profileGraphs.errorAdjustFields');
+      }
+      this.translateService.get(translateIds).subscribe(messages => {
+        var message = "";
+        for(var key in messages) {
+          message +=  messages[key];
+        }
+        this.snackBarRef = this.snackBar.open(message, undefined, { duration: 9000 });
+      });
+    });
+   
+  }
+
+  stripUnwantedSeriesProperties(profileGraph: ProfileGraph) {
+    profileGraph.series = profileGraph.series.map(x => { return {label:x.label, obisCode:x.obisCode} });
+  }
+
+  resetForm() {
+    this.menuService.signalProfileGraphPagesChanged();
+    this.createMode = true;
+    this.form.resetForm();
+    this.formGroup.reset({ page: '' }); // Provide default value for the optional field.
+    this.getProfileGraphs();
   }
   
+  editProfileGraph(event: any) {
+    let profileGraph: ProfileGraph = event;
+
+    if (profileGraph == null || profileGraph == undefined) {
+      this.log.info("Skipping edit profile graph. Profile graph unspecified", event);
+      return;
+    }
+
+    this.dismissSnackBar();
+
+    this.log.debug("Editing profile graph");
+
+    let periodControl = this.formGroup.get('period');
+    periodControl.setValue(profileGraph.period);
+
+    let pageControl = this.formGroup.get('page');
+    pageControl.setValue(profileGraph.page);
+
+    let titleControl = this.formGroup.get('title');
+    titleControl.setValue(profileGraph.title);
+
+    let intervalControl = this.formGroup.get('interval');
+    intervalControl.setValue(profileGraph.interval);
+
+    let seriesControl = this.formGroup.get('series');
+    let seriesSelection = this.profileGraphSeries.filter(x => profileGraph.series.some(xx => x.label === xx.label && x.obisCode === xx.obisCode));
+    seriesControl.setValue(seriesSelection);
+
+    this.createMode = false;
+    this.updateProfileGraphId = { period: profileGraph.period, page: profileGraph.page, title: profileGraph.title };
+  }
+
   deleteProfileGraph(event: any) {
-    var profileGraph: ProfileGraph = event;
+    let profileGraph: ProfileGraph = event;
 
     if (profileGraph == null || profileGraph == undefined) {
       this.log.info("Skipping delete profile graph. Profile graph unspecified", event);
