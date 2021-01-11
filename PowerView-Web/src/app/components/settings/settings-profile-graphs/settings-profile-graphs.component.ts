@@ -240,6 +240,8 @@ export class SettingsProfileGraphsComponent implements OnInit {
 
     this.createMode = false;
     this.updateProfileGraphId = { period: profileGraph.period, page: profileGraph.page, title: profileGraph.title };
+
+    window.scrollTo(0, 0);
   }
 
   deleteProfileGraph(event: any) {
