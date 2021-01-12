@@ -48,7 +48,8 @@ namespace PowerView.Service.Test.Modules
     {
       // Arrange
       const string label = "label";
-      var serieNames = new[] { new SeriesName(label, ObisCode.ElectrActiveEnergyA14Delta), new SeriesName(label, ObisCode.ElectrActiveEnergyA14Period), new SeriesName(label, ObisCode.ElectrActualPowerP14) };
+      var serieNames = new[] { new SeriesName(label, ObisCode.ElectrActiveEnergyA14Delta), new SeriesName(label, ObisCode.ElectrActiveEnergyA14Period), 
+        new SeriesName(label, ObisCode.ElectrActualPowerP14), new SeriesName(label, ObisCode.ElectrActiveEnergyNetDelta) };
       serieNameRepository.Setup(snr => snr.GetSeriesNames(It.IsAny<TimeZoneInfo>())).Returns(serieNames);
 
       // Act
@@ -62,13 +63,16 @@ namespace PowerView.Service.Test.Modules
       Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
       var json = response.Body.DeserializeJson<TestProfileGraphSerieSetDto>();
       Assert.That(json.items, Is.Not.Null);
-      Assert.That(json.items.Length, Is.EqualTo(6));
+      Assert.That(json.items.Length, Is.EqualTo(9));
       AssertProfileGraphSerie("day", label, ObisCode.ElectrActiveEnergyA14Period, json.items[0]);
       AssertProfileGraphSerie("day", label, ObisCode.ElectrActualPowerP14, json.items[1]);
-      AssertProfileGraphSerie("month", label, ObisCode.ElectrActiveEnergyA14Delta, json.items[2]);
-      AssertProfileGraphSerie("month", label, ObisCode.ElectrActiveEnergyA14Period, json.items[3]);
-      AssertProfileGraphSerie("year", label, ObisCode.ElectrActiveEnergyA14Delta, json.items[4]);
-      AssertProfileGraphSerie("year", label, ObisCode.ElectrActiveEnergyA14Period, json.items[5]);
+      AssertProfileGraphSerie("day", label, ObisCode.ElectrActiveEnergyNetDelta, json.items[2]);
+      AssertProfileGraphSerie("month", label, ObisCode.ElectrActiveEnergyA14Delta, json.items[3]);
+      AssertProfileGraphSerie("month", label, ObisCode.ElectrActiveEnergyA14Period, json.items[4]);
+      AssertProfileGraphSerie("month", label, ObisCode.ElectrActiveEnergyNetDelta, json.items[5]);
+      AssertProfileGraphSerie("year", label, ObisCode.ElectrActiveEnergyA14Delta, json.items[6]);
+      AssertProfileGraphSerie("year", label, ObisCode.ElectrActiveEnergyA14Period, json.items[7]);
+      AssertProfileGraphSerie("year", label, ObisCode.ElectrActiveEnergyNetDelta, json.items[8]);
       serieNameRepository.Verify(snr => snr.GetSeriesNames(locationContext.TimeZoneInfo));
     }
 
