@@ -30,7 +30,7 @@ namespace PowerView.Service.Modules
 
     private dynamic PostLiveReadings(dynamic param)
     {
-      var liveReadings = liveReadingMapper.Map(Request.Headers.ContentType, Request.Body).ToArray();
+      var liveReadings = liveReadingMapper.Map(Request.Headers.ContentType, Request.Body).ToList();
 
       var response = new Response { StatusCode = HttpStatusCode.NoContent };
       try
@@ -47,7 +47,7 @@ namespace PowerView.Service.Modules
                                 string.Join(",", liveReadings.Select(r => r.Label)), response.StatusCode, (int)response.StatusCode);
         if (log.IsDebugEnabled)
         {
-          log.Debug(msg, e);
+          log.Info(msg, e);
         }
         else
         {

@@ -73,7 +73,7 @@ namespace PowerView.Model.Test.Repository
 
       var reg = DbContext.QueryTransaction<dynamic>("test", "SELECT * FROM LiveRegister WHERE ReadingId = @ReadingId;", new { ReadingId = rd.First() });
       var registerValues = liveReading.GetRegisterValues();
-      Assert.That(reg.Count, Is.EqualTo(registerValues.Length));
+      Assert.That(reg.Count, Is.EqualTo(registerValues.Count));
       var expectedRegisters = registerValues.Select(x => new { ObisCode = (long)x.ObisCode, x.Scale, Unit = (byte)x.Unit, x.Value }).ToArray();
       var actualRegisters = reg.Select(x => new { ObisCode = (long)x.ObisCode, Scale = (short)x.Scale, Unit = (byte)x.Unit, Value = (int)x.Value }).ToArray();
       Assert.That(actualRegisters, Is.EquivalentTo(expectedRegisters));

@@ -83,6 +83,10 @@ namespace PowerView.Model
 
     private static readonly Regex isDisconnectControl = new Regex(@"^0\.[0-9]\.96\.3\.10\.255$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
+    private const byte BCodeDelta = 65;
+    private const byte BCodePeriod = 66;
+    private const byte BCodeAverage = 67;
+
     private readonly byte a;
     private readonly byte b;
     private readonly byte c;
@@ -115,27 +119,29 @@ namespace PowerView.Model
 
     public bool IsCumulative { get { return IsElectricityCumulative || IsWaterCumulative || IsEnergyCumulative; } }
 
-    public bool IsDelta { get { return b == 65; } }
+    public bool IsDelta { get { return b == BCodeDelta; } }
 
-    public bool IsPeriod { get { return b == 66; } }
+    public bool IsPeriod { get { return b == BCodePeriod; } }
 
-    public bool IsAverage { get { return b == 67; } }
+    public bool IsAverage { get { return b == BCodeAverage; } }
 
     public bool IsDisconnectControl { get { return isDisconnectControl.IsMatch(ToString()); } }
 
+    public bool IsUtilitySpecific { get { return b >= 65 && b <= 127; } }
+
     public ObisCode ToDelta()
     {
-      return new ObisCode(new byte[] { a, 65, c, d, e, f });
+      return new ObisCode(new byte[] { a, BCodeDelta, c, d, e, f });
     }
 
     public ObisCode ToPeriod()
     {
-      return new ObisCode(new byte[] { a, 66, c, d, e, f });
+      return new ObisCode(new byte[] { a, BCodePeriod, c, d, e, f });
     }
 
     public ObisCode ToAverage()
     {
-      return new ObisCode(new byte[] { a, 67, c, d, e, f });
+      return new ObisCode(new byte[] { a, BCodeAverage, c, d, e, f });
     }
 
     public override bool Equals(object obj)

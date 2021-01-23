@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using PowerView.Model;
@@ -47,7 +48,7 @@ namespace PowerView.Service.Test.Modules
       // Assert
       Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
       readingAccepter.Verify(lrr => lrr.Accept(
-        It.Is<LiveReading[]>(lr => lr.Length == 1 && lr.First() == liveReading)));
+        It.Is<IList<LiveReading>>(lr => lr.Count == 1 && lr.First() == liveReading)));
     }
 
     [Test]
@@ -64,7 +65,7 @@ namespace PowerView.Service.Test.Modules
     public void LiveReadingPostRepositoryThrowsDataStoreException()
     {
       // Arrange
-      readingAccepter.Setup(ra => ra.Accept(It.IsAny<LiveReading[]>())).Throws(new DataStoreException());
+      readingAccepter.Setup(ra => ra.Accept(It.IsAny<IList<LiveReading>>())).Throws(new DataStoreException());
 
       // Act & Assert
       Assert.That(() => browser.Post("/api/devices/livereadings", with => with.HttpRequest()), Throws.TypeOf<Exception>());
@@ -74,7 +75,7 @@ namespace PowerView.Service.Test.Modules
     public void LiveReadingPostRepositoryThrowsDataStoreBusyException()
     {
       // Arrange
-      readingAccepter.Setup(ra => ra.Accept(It.IsAny<LiveReading[]>())).Throws(new DataStoreBusyException());
+      readingAccepter.Setup(ra => ra.Accept(It.IsAny<IList<LiveReading>>())).Throws(new DataStoreBusyException());
 
       // Act 
       var response = browser.Post("/api/devices/livereadings", with => with.HttpRequest());

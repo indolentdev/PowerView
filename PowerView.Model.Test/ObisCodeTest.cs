@@ -452,6 +452,24 @@ namespace PowerView.Model.Test
     }
 
     [Test]
+    [TestCase("1.65.1.8.0.255")]
+    [TestCase("1.66.1.8.0.255")]
+    [TestCase("1.67.1.7.0.255")]
+    [TestCase("1.65.1.1.1.1")]
+    [TestCase("1.127.1.1.1.1")]
+    public void IsUtilitySpecific(string obisCode)
+    {
+      // Arrange
+      ObisCode target = obisCode;
+
+      // Act
+      var result = target.IsUtilitySpecific;
+
+      // Assert
+      Assert.That(result, Is.True);
+    }
+
+    [Test]
     [TestCase("1.0.1.8.0.255")]
     [TestCase("1.0.2.8.0.255")]
     [TestCase("8.0.1.0.0.255")]

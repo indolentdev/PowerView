@@ -78,7 +78,7 @@ namespace PowerView.Service.Test.Mappers
       Assert.That(liveReading.DeviceId, Is.EqualTo(lr.DeviceId));
       Assert.That(liveReading.Timestamp, Is.EqualTo(lr.Timestamp));
       var registerValues = liveReading.GetRegisterValues();
-      Assert.That(registerValues, Has.Length.EqualTo(rvs.Length));
+      Assert.That(registerValues, Has.Count.EqualTo(rvs.Length));
       AssertRegisterValue(rv1, registerValues.First());
       AssertRegisterValue(rv2, registerValues.Last());
     }
@@ -186,7 +186,7 @@ namespace PowerView.Service.Test.Mappers
       Assert.That(liveReading.Timestamp, Is.EqualTo(new DateTime(2015, 3, 12, 19, 50, 0)));
       Assert.That(liveReading.Timestamp.Kind, Is.EqualTo(DateTimeKind.Utc));
       var registerValues = liveReading.GetRegisterValues();
-      Assert.That(registerValues, Has.Length.EqualTo(2));
+      Assert.That(registerValues, Has.Count.EqualTo(2));
       AssertRegisterValue(new RegisterValueDto { ObisCode=ObisCode.ElectrActiveEnergyA23.ToString(), Value=123, Scale=0, Unit="watthour" }, registerValues.First());
       AssertRegisterValue(new RegisterValueDto { ObisCode=ObisCode.ElectrActualPowerP23.ToString(), Value=456, Scale=0, Unit="watt" }, registerValues.Last());
     }
@@ -211,7 +211,7 @@ namespace PowerView.Service.Test.Mappers
       Assert.That(liveReading.Timestamp, Is.EqualTo(new DateTime(2015,3,12,19,50,0)));
       Assert.That(liveReading.Timestamp.Kind, Is.EqualTo(DateTimeKind.Utc));
       var registerValues = liveReading.GetRegisterValues();
-      Assert.That(registerValues, Has.Length.EqualTo(2));
+      Assert.That(registerValues, Has.Count.EqualTo(2));
       AssertRegisterValue(new RegisterValueDto{ ObisCode=ObisCode.ElectrActiveEnergyA23.ToString(),Value=123,Scale=0,Unit="watthour" }, registerValues.First());
       AssertRegisterValue(new RegisterValueDto{ ObisCode=ObisCode.ElectrActualPowerP23.ToString(),Value=456,Scale=0,Unit="watt" }, registerValues.Last());
     }
@@ -266,7 +266,7 @@ namespace PowerView.Service.Test.Mappers
 
       // Assert
       var registerValues = liveReading.GetRegisterValues();
-      Assert.That(registerValues, Has.Length.EqualTo(1));
+      Assert.That(registerValues, Has.Count.EqualTo(1));
       Assert.That(registerValues.First().ObisCode, Is.EqualTo(ObisCode.ElectrActiveEnergyA23));
     }
 
@@ -286,7 +286,7 @@ namespace PowerView.Service.Test.Mappers
 
       // Assert
       var registerValues = liveReading.GetRegisterValues();
-      Assert.That(registerValues, Has.Length.EqualTo(1));
+      Assert.That(registerValues, Has.Count.EqualTo(1));
       Assert.That(registerValues.First().ObisCode, Is.EqualTo(ObisCode.ElectrActualPowerP23));
     }
 
@@ -306,7 +306,7 @@ namespace PowerView.Service.Test.Mappers
 
       // Assert
       var registerValues = liveReading.GetRegisterValues();
-      Assert.That(registerValues, Has.Length.EqualTo(1));
+      Assert.That(registerValues, Has.Count.EqualTo(1));
     }
 
     [Test]
@@ -326,7 +326,7 @@ namespace PowerView.Service.Test.Mappers
 
       // Assert
       var registerValues = liveReading.GetRegisterValues();
-      Assert.That(registerValues, Has.Length.EqualTo(1));
+      Assert.That(registerValues, Has.Count.EqualTo(1));
     }
 
     [Test]
@@ -435,7 +435,7 @@ namespace PowerView.Service.Test.Mappers
 
       // Assert
       var registerValues = liveReading.GetRegisterValues();
-      Assert.That(registerValues, Has.Length.EqualTo(4));
+      Assert.That(registerValues, Has.Count.EqualTo(4));
       AssertRegisterValue(new RegisterValueDto { ObisCode=ObisCode.ElectrActualPowerP23L1.ToString(), Value=22, Scale=0, Unit="watt" }, registerValues[1]);
       AssertRegisterValue(new RegisterValueDto { ObisCode=ObisCode.ElectrActualPowerP23L2.ToString(), Value=33, Scale=0, Unit="watt" }, registerValues[2]);
       AssertRegisterValue(new RegisterValueDto { ObisCode=ObisCode.ElectrActualPowerP23L3.ToString(), Value=44, Scale=0, Unit="watt" }, registerValues[3]);
@@ -457,7 +457,7 @@ namespace PowerView.Service.Test.Mappers
 
       // Assert
       var registerValues = liveReading.GetRegisterValues();
-      Assert.That(registerValues, Has.Length.EqualTo(1));
+      Assert.That(registerValues, Has.Count.EqualTo(1));
     }
 
     private static void AssertRegisterValue(RegisterValueDto dto, RegisterValue rv)

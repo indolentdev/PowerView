@@ -9,7 +9,7 @@ namespace PowerView.Model
     private readonly string label;
     private readonly string deviceId;
     private readonly DateTime timestamp;
-    private readonly RegisterValue[] registers;
+    private readonly List<RegisterValue> registers;
 
     public LiveReading(string label, string deviceId, DateTime timestamp, IEnumerable<RegisterValue> registers)
     {
@@ -22,16 +22,16 @@ namespace PowerView.Model
       this.label = label;
       this.deviceId = deviceId;
       this.timestamp = timestamp;
-      this.registers = registers.ToArray();
+      this.registers = registers.ToList();
     }
 
     public string Label { get { return label; } }
     public string DeviceId { get { return deviceId; } }
     public DateTime Timestamp { get { return timestamp; } }
 
-    public RegisterValue[] GetRegisterValues()
+    public IReadOnlyList<RegisterValue> GetRegisterValues()
     {
-      return registers.ToArray();
+      return registers;
     }
   }
 }
