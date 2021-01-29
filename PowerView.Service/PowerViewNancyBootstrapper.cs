@@ -34,10 +34,24 @@ namespace PowerView.Service
 
     protected override void ConfigureConventions(NancyConventions nancyConventions)
     {
+      base.ConfigureConventions(nancyConventions);
+
+      nancyConventions.StaticContentsConventions.Clear();
+
+      var indexResponseBuilder = StaticContentConventionBuilder.AddFile("/web/index.html", Path.Combine(WebApplicationDirectory, "index.html"));
+      Func<NancyContext, string, Response> indexResponseBuilderFunc = (context, root) =>
+      {
+        var response = indexResponseBuilder(context, root);
+        if (response != null)
+        {
+          response.Headers.Add("Cache-control", "no-cache, no-store, must-revalidate");
+          response.Headers.Add("Pragma", "no-cache");
+        }
+        return response;
+      };
+      nancyConventions.StaticContentsConventions.Add(indexResponseBuilderFunc);
       nancyConventions.StaticContentsConventions.Add(StaticContentConventionBuilder.AddDirectory("web", WebApplicationDirectory));
       nancyConventions.StaticContentsConventions.Add(StaticContentConventionBuilder.AddDirectory("assets", Path.Combine(WebApplicationDirectory, "assets")));
-
-      base.ConfigureConventions(nancyConventions);
     }
 
     // https://github.com/NancyFx/Nancy.Bootstrappers.Autofac
