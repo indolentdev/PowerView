@@ -66,6 +66,9 @@ import { ProfileLast24hComponent } from './components/profiles/profile-last24h/p
 import { ProfileLast12mComponent } from './components/profiles/profile-last12m/profile-last12m.component';
 import { ProfileLast31dComponent } from './components/profiles/profile-last31d/profile-last31d.component';
 import { ExportHourlyComponent } from './components/export/export-hourly/export-hourly.component';
+import { HelpSeriesDescriptionsComponent } from './components/help/help-series-descriptions/help-series-descriptions.component';
+import { HelpSeriesDescriptionsTableComponent } from './components/help/help-series-descriptions-table/help-series-descriptions-table.component';
+import { SeriesMeasureKindsTableComponent } from './components/help/series-measure-kinds-table/series-measure-kinds-table.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -128,7 +131,10 @@ if (environment.useMockBackend == true) {
     ProfileLast24hComponent,
     ProfileLast12mComponent,
     ProfileLast31dComponent,
-    ExportHourlyComponent
+    ExportHourlyComponent,
+    HelpSeriesDescriptionsComponent,
+    HelpSeriesDescriptionsTableComponent,
+    SeriesMeasureKindsTableComponent
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,29 @@
+<h3>{{ 'headings.measureKinds' | translate }}</h3>
+<table mat-table [dataSource]="dataSource" class="center">
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef style="padding-right: 12px">{{ 'columns.name' | translate }}</th>
+      <td mat-cell *matCellDef="let v" style="padding-right: 12px">{{ 'help.series.kinds.' + v + '.title' | translate }}</td>
+    </ng-container>
+    <ng-container matColumnDef="associatedTo">
+      <th mat-header-cell *matHeaderCellDef style="padding-right: 12px">{{ 'columns.associatedTo' | translate }}</th>
+      <td mat-cell *matCellDef="let v" style="padding-right: 12px">{{ 'help.series.kinds.' + v + '.associatedTo' | translate }}</td>
+    </ng-container>
+    <ng-container matColumnDef="description">
+      <th mat-header-cell *matHeaderCellDef style="padding-right: 12px">{{ 'columns.description' | translate }}</th>
+      <td mat-cell *matCellDef="let v" style="padding-right: 12px">
+        <div style="max-width: 500px;word-wrap: break-all;">
+          {{ 'help.series.kinds.' + v + '.description' | translate }}
+        </div>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="hint">
+      <th mat-header-cell *matHeaderCellDef>{{ 'columns.hint' | translate }}</th>
+      <td mat-cell *matCellDef="let v">
+        <div style="max-width: 300px;word-wrap: break-all;">
+          {{ 'help.series.kinds.' + v + '.hint' | translate }}
+        </div>
+      </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+</table>

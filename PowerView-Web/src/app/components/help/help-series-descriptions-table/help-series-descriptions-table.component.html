@@ -1,0 +1,33 @@
+<h3>{{ 'headings.series' | translate }}</h3>
+<table mat-table [dataSource]="dataSource" class="center">
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef style="padding-right: 12px">{{ 'columns.name' | translate }}</th>
+      <td mat-cell *matCellDef="let v" style="padding-right: 12px">{{ 'serie.' + v | translate }}</td>
+    </ng-container>
+    <ng-container matColumnDef="measureKind">
+      <th mat-header-cell *matHeaderCellDef style="padding-right: 12px">{{ 'columns.measureKind' | translate }}</th>
+      <td mat-cell *matCellDef="let v" style="padding-right: 12px">{{ 'help.series.descriptions.' + v + '.measureKind' | translate }}</td>
+    </ng-container>
+    <ng-container matColumnDef="description">
+      <th mat-header-cell *matHeaderCellDef style="padding-right: 12px">{{ 'columns.description' | translate }}</th>
+      <td mat-cell *matCellDef="let v" style="padding-right: 12px">
+        <div style="max-width: 300px;word-wrap: break-all;">
+          {{ 'help.series.descriptions.' + v + '.description' | translate }}
+        </div>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="typicalUnits">
+      <th mat-header-cell *matHeaderCellDef style="padding-right: 12px">{{ 'columns.typicalUnits' | translate }}</th>
+      <td mat-cell *matCellDef="let v" style="padding-right: 12px">{{ 'help.series.descriptions.' + v + '.typicalUnits' | translate }}</td>
+    </ng-container>
+    <ng-container matColumnDef="hint">
+      <th mat-header-cell *matHeaderCellDef>{{ 'columns.hint' | translate }}</th>
+      <td mat-cell *matCellDef="let v">
+        <div style="max-width: 250px;word-wrap: break-all;">
+          {{ 'help.series.descriptions.' + v + '.hint' | translate }}
+        </div>
+      </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+</table>

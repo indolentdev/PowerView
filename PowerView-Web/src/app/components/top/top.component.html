@@ -111,4 +111,9 @@
   <button mat-menu-item [routerLink] ="['/settings/email/smtp']" >{{ 'menu.smtp' | translate }}</button>
 </mat-menu>
 
+<button mat-raised-button color="primary" [matMenuTriggerFor]="helpMenu">{{ 'menu.help' | translate }}</button>
+<mat-menu #helpMenu="matMenu">
+  <button mat-menu-item [routerLink] ="['/help/seriesdescriptions']" >{{ 'menu.seriesDescriptions' | translate }}</button>
+</mat-menu>
+
 </div>

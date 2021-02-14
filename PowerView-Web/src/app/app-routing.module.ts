@@ -18,6 +18,7 @@ import { SettingsRecipientsComponent } from './components/settings/settings-reci
 import { SettingsRelayControlsComponent } from './components/settings/settings-relay-controls/settings-relay-controls.component';
 import { SettingsSmtpComponent } from './components/settings/settings-smtp/settings-smtp.component';
 import { SettingsMqttComponent } from './components/settings/settings-mqtt/settings-mqtt.component';
+import { HelpSeriesDescriptionsComponent } from './components/help/help-series-descriptions/help-series-descriptions.component';
 
 const routes: Routes = [
   { path: 'profile/last24h', component: ProfileLast24hComponent },
@@ -37,6 +38,7 @@ const routes: Routes = [
   { path: 'settings/email/recipients', component: SettingsRecipientsComponent },
   { path: 'settings/email/smtp', component: SettingsSmtpComponent },
   { path: 'settings/mqtt', component: SettingsMqttComponent },
+  { path: 'help/seriesdescriptions', component: HelpSeriesDescriptionsComponent },
   { path: '**', component: DefaultComponent },
 ];
 

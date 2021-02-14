@@ -8,6 +8,7 @@
     "events": "Events",
     "export": "Export",
     "gauges": "Gauges",
+    "help": "Help",
     "hour": "Hourly",
     "latest": "Latest",
     "mqtt": "MQTT",
@@ -22,6 +23,7 @@
     "recipients": "Recipients",
     "relayControls": "Relay Controls",
     "seriesColors": "Series Colors",
+    "seriesDescriptions": "Series Descriptions",
     "settings": "Settings",
     "smtp": "SMTP"
   },
@@ -66,6 +68,7 @@
         "Custom": ""
       }
     },
+    "measureKinds": "Measure Kinds",
     "monthProfile": "Month Profile",
     "mqtt": "Configure MQTT Integration",
     "period": {
@@ -81,6 +84,8 @@
     "relayControlsAdd": "Add Relay Control",
     "relayControlsTable": "Relay Controls",
     "serieColors": "Configure Series Colors",
+    "series": "Series",
+    "seriesDescriptions": "Series Descriptions",
     "smtp": "Configure SMTP Server",
     "smtpInfo": "DO NOT use a personal account for SMTP configuration. The SMTP server must support simple logins. For example for GMail accounts do enable",
     "smtpInfoLink": "less secure app access",
@@ -90,7 +95,9 @@
   
   "columns": {
     "actions": "Actions",
+    "associatedTo": "Associated To",
     "color": "Color",
+    "description": "Description",
     "details": "Details",
     "detectTimestamp": "Detect Timestamp",
     "deviceId": "Device ID",
@@ -99,9 +106,11 @@
     "event": "Event",
     "from": "From",
     "gaugeValue": "Gauge Value",
+    "hint": "Hint",
     "interval": "Interval",
     "label": "Label",
     "maxAvgDuration": "Max Avg Duration",
+    "measureKind": "Measure Kind",
     "minAvgDisconnectToConnect": "Min Avg Value To Connect",
     "minAvgConnectToDisconnect": "Min Avg Value To Keep Connected",
     "monitorSerie": "Monitor Series",
@@ -115,6 +124,7 @@
     "title": "Title",
     "to": "To",
     "total": "Total",
+    "typicalUnits": "Typical Units",
     "unit": "Unit"
   },
 
@@ -320,7 +330,7 @@
     "1.0.42.7.0.255": "Produced Power L2", 
     "1.0.62.7.0.255": "Produced Power L3", 
     "15.0.223.0.0.255": "Temperature", 
-    "15.0.223.0.2.255": "Humidity", 
+    "15.0.223.0.2.255": "Relative Humidity", 
     "8.0.1.0.0.255": "Volume Total", 
     "8.65.1.0.0.255": "Volume Entry", 
     "8.66.1.0.0.255": "Volume", 
@@ -351,6 +361,66 @@
     "0.6.96.3.10.255": "Unit 6",
     "0.7.96.3.10.255": "Unit 7",
     "0.8.96.3.10.255": "Unit 8"
-  }
+  },
 
+  "help": {
+    "series": {
+      "descriptions": {
+        "1.0.1.7.0.255": { "measureKind": "Current", "description": "Imported/consumed electric power. All phases.", "typicalUnits": "Watt (W, kW)", "hint": "" }, 
+        "1.0.2.7.0.255": { "measureKind": "Current", "description": "Exported/produced electric power. All phases.", "typicalUnits": "Watt (W, kW)", "hint": "" }, 
+        "1.0.21.7.0.255": { "measureKind": "Current", "description": "Imported/consumed electric power. Phase L1.", "typicalUnits": "Watt (W, kW)", "hint": "" }, 
+        "1.0.41.7.0.255": { "measureKind": "Current", "description": "Imported/consumed electric power. Phase L2.", "typicalUnits": "Watt (W, kW)", "hint": "" }, 
+        "1.0.61.7.0.255": { "measureKind": "Current", "description": "Imported/consumed electric power. Phase L3.", "typicalUnits": "Watt (W, kW)", "hint": "" }, 
+        "1.0.22.7.0.255": { "measureKind": "Current", "description": "Exported/produced electric power. Phase L1.", "typicalUnits": "Watt (W, kW)", "hint": "" }, 
+        "1.0.42.7.0.255": { "measureKind": "Current", "description": "Exported/produced electric power. Phase L2.", "typicalUnits": "Watt (W, kW)", "hint": "" }, 
+        "1.0.62.7.0.255": { "measureKind": "Current", "description": "Exported/produced electric power. Phase L3.", "typicalUnits": "Watt (W, kW)", "hint": "" }, 
+        "1.0.1.8.0.255": { "measureKind": "Cumulative", "description": "Imported/consumed electric energy. All phases.", "typicalUnits": "Watt Hour (kWh, MWh)", "hint": "" },
+        "1.0.2.8.0.255": { "measureKind": "Cumulative", "description": "Exported/produced electric energy. All phases.", "typicalUnits": "Watt Hour (kWh, MWh)", "hint": "" },
+        "1.67.1.7.0.255": { "measureKind": "Entry average", "description": "Average imported/consumed electric power for an entry in the series. All phases.", "typicalUnits": "Watt (W, kW)", "hint": "" }, 
+        "1.67.2.7.0.255": { "measureKind": "Entry average", "description": "Average exported/produced electric power for an entry in the series. All phases.", "typicalUnits": "Watt (W, kW)", "hint": "" }, 
+        "1.65.1.8.0.255": { "measureKind": "Entry difference", "description": "Imported/consumed electric energy for an entry in the series. All phases.", "typicalUnits": "Watt Hour (kWh, MWh)", "hint": "" }, 
+        "1.65.2.8.0.255": { "measureKind": "Entry difference", "description": "Exported/produced electric energy for an entry in the series. All phases.", "typicalUnits": "Watt Hour (kWh, MWh)", "hint": "" }, 
+        "1.66.1.8.0.255": { "measureKind": "Period difference", "description": "Imported/consumed electric energy for the period of the series. All phases.", "typicalUnits": "Watt Hour (kWh, MWh)", "hint": "" }, 
+        "1.66.2.8.0.255": { "measureKind": "Period difference", "description": "Exported/produced electric energy for the period of the series. All phases.", "typicalUnits": "Watt Hour (kWh, MWh)", "hint": "" }, 
+        "1.65.16.8.0.255": { "measureKind": "Net entry difference", "description": "Net imported/consumed electric energy for an entry in the series. All phases.", "typicalUnits": "Watt Hour (kWh, MWh)", "hint": "For correct values use a series interval matching your billing period. E.g. for hourly billing use 60 min interval." },
+        "1.66.16.8.0.255": { "measureKind": "Net period difference", "description": "Net imported/consumed electric energy for the period of the series. All phases.", "typicalUnits": "Watt Hour (kWh, MWh)", "hint": "For correct values use a series interval matching your billing period. E.g. for hourly billing use 60 min interval." }, 
+
+        "8.0.2.0.0.255": { "measureKind": "Current", "description": "Imported/consumed water flow", "typicalUnits": "Litre/Hour (l/h)", "hint": "" }, 
+        "8.0.1.0.0.255": { "measureKind": "Cumulative", "description": "Imported/consumed water volume", "typicalUnits": "Cubic Metre (m3)", "hint": "" }, 
+        "8.67.2.0.0.255": { "measureKind": "Entry average", "description": "Average imported/consumed water flow", "typicalUnits": "Litre/Hour (l/h)", "hint": "" }, 
+        "8.65.1.0.0.255": { "measureKind": "Entry difference", "description": "Imported/consumed water volume for an entry in the series.", "typicalUnits": "Cubic Metre (m3)", "hint": "" }, 
+        "8.66.1.0.0.255": { "measureKind": "Period difference", "description": "Imported/consumed water volume for the period of the series.", "typicalUnits": "Cubic Metre (m3)", "hint": "" }, 
+
+        "6.0.8.0.0.255": { "measureKind": "Current", "description": "Imported/consumed hot water power", "typicalUnits": "Watt (W, kW)", "hint": "" },
+        "6.0.9.0.0.255": { "measureKind": "Current", "description": "Imported/consumed water flow", "typicalUnits": "Litre/Hour (l/h)", "hint": "" }, 
+        "6.0.10.0.0.255": { "measureKind": "Current", "description": "Imported/consumed hot water temperature. Inlet.", "typicalUnits": "Celsius (C)", "hint": "" }, 
+        "6.0.11.0.0.255": { "measureKind": "Current", "description": "Imported/consumed hot water temperature. Outlet.", "typicalUnits": "Celsius (C)", "hint": "" }, 
+
+        "6.67.8.0.0.255": { "measureKind": "Entry average", "description": "Average imported/consumed hot water power for an entry in the series.", "typicalUnits": "Watt (W, kW)", "hint": "" },
+        "6.67.9.0.0.255": { "measureKind": "Entry average", "description": "Average imported/consumed water flow for an entry in the series.", "typicalUnits": "Litre/Hour (l/h)", "hint": "" }, 
+
+        "6.0.1.0.0.255": { "measureKind": "Cumulative", "description": "Imported/consumed hot water energy", "typicalUnits": "Watt Hour (kWh, MWh)", "hint": "" }, 
+        "6.0.2.0.0.255": { "measureKind": "Cumulative", "description": "Imported/consumed water volume", "typicalUnits": "Cubic Metre (m3)", "hint": "" }, 
+        "6.65.1.0.0.255": { "measureKind": "Entry difference", "description": "Imported/consumed hot water energy for an entry in the series.", "typicalUnits": "Watt Hour (kWh, MWh)", "hint": "" },
+        "6.65.2.0.0.255": { "measureKind": "Entry difference", "description": "Imported/consumed water volume for an entry in the series.", "typicalUnits": "Cubic Metre (m3)", "hint": "" }, 
+        "6.66.1.0.0.255": { "measureKind": "Period difference", "description": "Imported/consumed hot water energy for the period of the series.", "typicalUnits": "Watt Hour (kWh, MWh)", "hint": "" }, 
+        "6.66.2.0.0.255": { "measureKind": "Period difference", "description": "Imported/consumed water volume for the period of the series.", "typicalUnits": "Cubic Metre (m3)", "hint": "" }, 
+
+        "15.0.223.0.0.255": { "measureKind": "Current", "description": "Ambient temperature", "typicalUnits": "Celsius (C)", "hint": "" }, 
+        "15.0.223.0.2.255": { "measureKind": "Current", "description": "", "typicalUnits": "Percentage (%)", "hint": "" },
+
+        "0.1.96.3.10.255": { "measureKind": "Current", "description": "Relay state", "typicalUnits": "No unit", "hint": "" }
+      },
+      "kinds": {
+        "current": { "title": "Current", "associatedTo": "Device, Label", "description": "Device current rate value.", "hint": "Typically Current values are relevant only on day profile graphs applying short intervals." },
+        "cumulative": { "title": "Cumulative", "associatedTo": "Device, Label", "description": "Device Lifetime value. Cumulative values may wrap if measurement exceeds the digits available in the device.", "hint": "" },
+        "entryAverage": { "title": "Entry average", "associatedTo": "Label", "description": "Calculated from two values in the Cumulative series. The difference between a value and its previous value in the series is converted to the average rate value for the duration.", "hint": "" },
+        "entryDifference": { "title": "Entry difference", "associatedTo": "Label", "description": "Calculated from two values in the Cumulative series. Is the difference between a value and its previous value in the series. When the previous Cumulative value is from a different device or a wrap has happened between the two values the calculation tries to account for the actual difference.", "hint": "" },
+        "periodDifference": { "title": "Period difference", "associatedTo": "Label", "description": "Calculated from two values in the Cumulative series. Is the difference between the base value and a later value. When the base Cumulative value is from a different device or a wrap has happened between the two values the calculation tries to account for the actual difference.", "hint": "" },
+        "netEntryDifference": { "title": "Net entry difference", "associatedTo": "Label", "description": "Calculated from two values in the Entry difference series. Is the positive difference between the corresponding import/consumed entry difference value and export/produced entry difference value.", "hint": "" },
+        "netPeriodDifference": { "title": "Net period difference", "associatedTo": "Label", "description": "Calculated from two values in the Period difference series. Is the positive difference between the corresponding import/consumed period difference value and export/produced period difference value.", "hint": "" }
+      }
+    }
+
+  }  
 }
