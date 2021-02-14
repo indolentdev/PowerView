@@ -51,7 +51,19 @@ namespace PowerView.Service
       };
       nancyConventions.StaticContentsConventions.Add(indexResponseBuilderFunc);
       nancyConventions.StaticContentsConventions.Add(StaticContentConventionBuilder.AddDirectory("web", WebApplicationDirectory));
-      nancyConventions.StaticContentsConventions.Add(StaticContentConventionBuilder.AddDirectory("assets", Path.Combine(WebApplicationDirectory, "assets")));
+      var assetsResponseBuilder = StaticContentConventionBuilder.AddDirectory("assets", Path.Combine(WebApplicationDirectory, "assets"));
+      Func<NancyContext, string, Response> assetsResponseBuilderFunc = (context, root) =>
+      {
+        var response = assetsResponseBuilder(context, root);
+        if (response != null)
+        {
+          response.Headers.Add("Cache-control", "no-cache, no-store, must-revalidate");
+          response.Headers.Add("Pragma", "no-cache");
+        }
+        return response;
+      };
+
+      nancyConventions.StaticContentsConventions.Add(assetsResponseBuilderFunc);
     }
 
     // https://github.com/NancyFx/Nancy.Bootstrappers.Autofac
