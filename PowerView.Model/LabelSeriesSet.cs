@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace PowerView.Model
 {
-  public class LabelSeriesSet<T> : IEnumerable<LabelSeries<T>> where T : struct, ISeries
+  public class LabelSeriesSet<T> : IEnumerable<LabelSeries<T>> where T : class, ISeries
   {
     private readonly List<LabelSeries<T>> labelSeries;
 

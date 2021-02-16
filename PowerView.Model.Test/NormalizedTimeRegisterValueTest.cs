@@ -10,7 +10,7 @@ namespace PowerView.Model.Test
     public void ConstructorThrows()
     {
       // Arrange
-      var timeRegisterValue = new TimeRegisterValue();
+      var timeRegisterValue = new TimeRegisterValue("d1", DateTime.UtcNow, new UnitValue());
 
       // Act & Assert
       Assert.That(() => new NormalizedTimeRegisterValue(timeRegisterValue, DateTime.Now), Throws.TypeOf<ArgumentOutOfRangeException>());
@@ -20,7 +20,7 @@ namespace PowerView.Model.Test
     public void ConstructorAndProperties()
     {
       // Arrange
-      var timeRegisterValue = new TimeRegisterValue();
+      var timeRegisterValue = new TimeRegisterValue("d1", DateTime.UtcNow, new UnitValue());
       var dt = DateTime.UtcNow;
 
       // Act
@@ -36,7 +36,7 @@ namespace PowerView.Model.Test
     public void NormalizeThrows()
     {
       // Arrange
-      var timeRegisterValue = new TimeRegisterValue();
+      var timeRegisterValue = new TimeRegisterValue("d1", DateTime.UtcNow, new UnitValue());
       var dt = DateTime.UtcNow;
       var target = new NormalizedTimeRegisterValue(timeRegisterValue, dt);
 
@@ -69,14 +69,14 @@ namespace PowerView.Model.Test
     public void ToStringTest()
     {
       // Arrange
-      var timeRegisterValue = new TimeRegisterValue();
+      var timeRegisterValue = new TimeRegisterValue("", DateTime.MinValue.ToUniversalTime(), new UnitValue());
       var dt = new DateTime(2019,04,18,15,27,11,DateTimeKind.Utc);
 
       // Act
       var target = new NormalizedTimeRegisterValue(timeRegisterValue, dt);
 
       // Assert
-      Assert.That(target.ToString(), Is.EqualTo("[timeRegisterValue=[deviceId=, timestamp=0001-01-01T00:00:00.0000000, unitValue=[value=0, unit=Watt]], normalizedTimestamp=2019-04-18T15:27:11.0000000Z]"));
+      Assert.That(target.ToString(), Is.EqualTo("[timeRegisterValue=[deviceId=, timestamp=0001-01-01T00:00:00.0000000Z, unitValue=[value=0, unit=Watt]], normalizedTimestamp=2019-04-18T15:27:11.0000000Z]"));
     }
 
     [Test]
@@ -91,6 +91,7 @@ namespace PowerView.Model.Test
       var t2 = new NormalizedTimeRegisterValue(timeRegisterValue1, dt1);
       var t3 = new NormalizedTimeRegisterValue(timeRegisterValue2, dt1);
       var t4 = new NormalizedTimeRegisterValue(timeRegisterValue1, dt2);
+      var t5 = (NormalizedTimeRegisterValue)null;
 
       // Act & Assert
       Assert.That(t1, Is.EqualTo(t2));
@@ -99,6 +100,8 @@ namespace PowerView.Model.Test
       Assert.That(t1.GetHashCode(), Is.Not.EqualTo(t3.GetHashCode()));
       Assert.That(t1, Is.Not.EqualTo(t4));
       Assert.That(t1.GetHashCode(), Is.Not.EqualTo(t4.GetHashCode()));
+      Assert.That(t1, Is.Not.EqualTo(t5));
+      Assert.That(t5, Is.Not.EqualTo(t1));
     }
 
     [Test]
@@ -111,10 +114,13 @@ namespace PowerView.Model.Test
       var t1 = new NormalizedTimeRegisterValue(timeRegisterValue1, dt1);
       var t2 = new NormalizedTimeRegisterValue(timeRegisterValue1, dt1);
       var t3 = new NormalizedTimeRegisterValue(timeRegisterValue2, dt1);
+      var t4 = (NormalizedTimeRegisterValue)null;
 
       // Act & Assert
       Assert.That(t1 == t2, Is.True);
       Assert.That(t1 == t3, Is.False);
+      Assert.That(t1 == t4, Is.False);
+      Assert.That(t4 == t1, Is.False);
     }
 
   }

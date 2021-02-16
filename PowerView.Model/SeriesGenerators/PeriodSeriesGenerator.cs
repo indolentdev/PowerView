@@ -51,7 +51,7 @@ namespace PowerView.Model.SeriesGenerators
 
     private static NormalizedTimeRegisterValue Sum(ICollection<NormalizedTimeRegisterValue> normalizedTimeRegisterValues)
     {
-      NormalizedTimeRegisterValue? addend = null;
+      NormalizedTimeRegisterValue addend = null;
       foreach (var normalizedTimeRegisterValue in normalizedTimeRegisterValues.OrderBy(x => x.OrderProperty))
       {
         if (addend == null)
@@ -60,18 +60,21 @@ namespace PowerView.Model.SeriesGenerators
           continue;
         }
 
-        if (normalizedTimeRegisterValue.TimeRegisterValue.UnitValue.Unit != addend.Value.TimeRegisterValue.UnitValue.Unit)
+        if (normalizedTimeRegisterValue.TimeRegisterValue.UnitValue.Unit != addend.TimeRegisterValue.UnitValue.Unit)
         {
           throw new DataMisalignedException("A calculation of a value sum was not possible. Units of values differ. Units:" +
-            normalizedTimeRegisterValue.TimeRegisterValue.UnitValue.Unit + ", " + addend.Value.TimeRegisterValue.UnitValue.Unit);
+            normalizedTimeRegisterValue.TimeRegisterValue.UnitValue.Unit + ", " + addend.TimeRegisterValue.UnitValue.Unit);
         }
 
-        var addendDeviceId = addend.Value.DeviceIdEquals(normalizedTimeRegisterValue) ? normalizedTimeRegisterValue.TimeRegisterValue.DeviceId : TimeRegisterValue.DummyDeviceId;
+        var addendDeviceId = addend.DeviceIdEquals(normalizedTimeRegisterValue) ? normalizedTimeRegisterValue.TimeRegisterValue.DeviceId : TimeRegisterValue.DummyDeviceId;
         addend = new NormalizedTimeRegisterValue(
-          new TimeRegisterValue(addendDeviceId, normalizedTimeRegisterValue.TimeRegisterValue.Timestamp, normalizedTimeRegisterValue.TimeRegisterValue.UnitValue.Value + addend.Value.TimeRegisterValue.UnitValue.Value, normalizedTimeRegisterValue.TimeRegisterValue.UnitValue.Unit),
+          new TimeRegisterValue(addendDeviceId, 
+            normalizedTimeRegisterValue.TimeRegisterValue.Timestamp, 
+            normalizedTimeRegisterValue.TimeRegisterValue.UnitValue.Value + addend.TimeRegisterValue.UnitValue.Value, 
+            normalizedTimeRegisterValue.TimeRegisterValue.UnitValue.Unit),
           normalizedTimeRegisterValue.NormalizedTimestamp);
       }
-      return addend.Value;
+      return addend;
     }
 
   }

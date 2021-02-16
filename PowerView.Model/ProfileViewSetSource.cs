@@ -8,7 +8,7 @@ namespace PowerView.Model
   {
     private readonly ICollection<ProfileGraph> profileGraphs;
     private readonly IDictionary<string, IList<DateTime>> intervalToCategories;
-    private readonly IDictionary<string, IDictionary<SeriesName, IEnumerable<NormalizedTimeRegisterValue?>>> intervalSeriesNameToValues;
+    private readonly IDictionary<string, IDictionary<SeriesName, IEnumerable<NormalizedTimeRegisterValue>>> intervalSeriesNameToValues;
 
     public ProfileViewSetSource(IEnumerable<ProfileGraph> profileGraphs, IList<IntervalGroup> intervalGroups)
     {
@@ -34,9 +34,9 @@ namespace PowerView.Model
       intervalSeriesNameToValues = intervalGroups.ToDictionary(x => x.Interval, GetSeriesNamesAndValues);
     }
 
-    private static IDictionary<SeriesName, IEnumerable<NormalizedTimeRegisterValue?>> GetSeriesNamesAndValues(IntervalGroup intervalGroup)
+    private static IDictionary<SeriesName, IEnumerable<NormalizedTimeRegisterValue>> GetSeriesNamesAndValues(IntervalGroup intervalGroup)
     {
-      var result = new Dictionary<SeriesName, IEnumerable<NormalizedTimeRegisterValue?>>();
+      var result = new Dictionary<SeriesName, IEnumerable<NormalizedTimeRegisterValue>>();
 
       var labelSeriesSet = intervalGroup.NormalizedLabelSeriesSet;
       foreach (var labelSeries in labelSeriesSet)
@@ -46,7 +46,7 @@ namespace PowerView.Model
           var seriesName = new SeriesName(labelSeries.Label, obisCode);
           var normalizedTimeRegisterValues = labelSeries[obisCode]
             .Where(x => x.TimeRegisterValue.Timestamp >= labelSeriesSet.Start && x.TimeRegisterValue.Timestamp < labelSeriesSet.End)
-            .Select(x => (NormalizedTimeRegisterValue?)x);
+            .Select(x => x);
           result.Add(seriesName, normalizedTimeRegisterValues);
         }
       }
@@ -73,7 +73,7 @@ namespace PowerView.Model
           var timeRegisterValues = 
                             (from categoryTimestamp in categories
                              join normalizedTimeRegisterValue in normalizedTimeRegisterValues
-                             on categoryTimestamp equals normalizedTimeRegisterValue.Value.NormalizedTimestamp 
+                             on categoryTimestamp equals normalizedTimeRegisterValue.NormalizedTimestamp 
                              into items
                              from timeRegisterValueOrNull in items.DefaultIfEmpty()
                              select timeRegisterValueOrNull)
@@ -81,8 +81,8 @@ namespace PowerView.Model
           var firstTimeRegisterValue = timeRegisterValues.FirstOrDefault(x => x != null);
           if (firstTimeRegisterValue == null) continue;
 
-          var valuesForCategories = timeRegisterValues.Select(x => x == null ? null : (double?)x.Value.TimeRegisterValue.UnitValue.Value);
-          var series = new Series(seriesName, firstTimeRegisterValue.Value.TimeRegisterValue.UnitValue.Unit, valuesForCategories);
+          var valuesForCategories = timeRegisterValues.Select(x => x == null ? null : (double?)x.TimeRegisterValue.UnitValue.Value);
+          var series = new Series(seriesName, firstTimeRegisterValue.TimeRegisterValue.UnitValue.Unit, valuesForCategories);
           profileGraphSeries.Add(series);
         }
 

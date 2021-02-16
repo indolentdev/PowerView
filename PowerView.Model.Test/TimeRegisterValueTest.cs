@@ -202,10 +202,9 @@ namespace PowerView.Model.Test
       var t4 = new TimeRegisterValue("1", dt, 11, 1, Unit.Watt);
       var t5 = new TimeRegisterValue("1", dt, 10, 2, Unit.Watt);
       var t6 = new TimeRegisterValue("1", dt, 10, 1, Unit.WattHour);
-      var t7 = new TimeRegisterValue();
-      var t8 = new TimeRegisterValue();
-      var t9 = new TimeRegisterValue("a", dt, 10, 1, Unit.Watt);
-      var t10 = new TimeRegisterValue("A", dt, 10, 1, Unit.Watt);
+      var t7 = new TimeRegisterValue("a", dt, 10, 1, Unit.Watt);
+      var t8 = new TimeRegisterValue("A", dt, 10, 1, Unit.Watt);
+      var t9 = (TimeRegisterValue)null;
 
       // Act & Assert
       Assert.That(t1, Is.EqualTo(t2));
@@ -218,12 +217,10 @@ namespace PowerView.Model.Test
       Assert.That(t1.GetHashCode(), Is.Not.EqualTo(t5.GetHashCode()));
       Assert.That(t1, Is.Not.EqualTo(t6));
       Assert.That(t1.GetHashCode(), Is.Not.EqualTo(t6.GetHashCode()));
-      Assert.That(t1, Is.Not.EqualTo(t7));
-      Assert.That(t1.GetHashCode(), Is.Not.EqualTo(t7.GetHashCode()));
       Assert.That(t7, Is.EqualTo(t8));
       Assert.That(t7.GetHashCode(), Is.EqualTo(t8.GetHashCode()));
-      Assert.That(t9, Is.EqualTo(t10));
-      Assert.That(t9.GetHashCode(), Is.EqualTo(t10.GetHashCode()));
+      Assert.That(t1, Is.Not.EqualTo(t9));
+      Assert.That(t9, Is.Not.EqualTo(t1));
     }
 
     [Test]
@@ -234,10 +231,13 @@ namespace PowerView.Model.Test
       var t1 = new TimeRegisterValue("1", dt, 10, 1, Unit.Watt);
       var t2 = new TimeRegisterValue("1", dt, 10, 1, Unit.Watt);
       var t3 = new TimeRegisterValue("1", dt, 11, 1, Unit.Watt);
+      var t4 = (TimeRegisterValue)null;
 
-        // Act & Assert
-        Assert.That(t1 == t2, Is.True);
-        Assert.That(t1 == t3, Is.False);
+      // Act & Assert
+      Assert.That(t1 == t2, Is.True);
+      Assert.That(t1 == t3, Is.False);
+      Assert.That(t1 == t4, Is.False);
+      Assert.That(t4 == t1, Is.False);
     }
 
   }

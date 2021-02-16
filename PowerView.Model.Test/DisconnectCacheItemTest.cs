@@ -36,7 +36,7 @@ namespace PowerView.Model.Test
     {
       // Arrange
       var rule = new Mock<IDisconnectRule>();
-      var trv1 = new TimeRegisterValue();
+      var trv1 = new TimeRegisterValue("d1", DateTime.UtcNow, new UnitValue());
       var target = new DisconnectCacheItem(rule.Object);
 
       // Act
@@ -51,8 +51,9 @@ namespace PowerView.Model.Test
     {
       // Arrange
       var rule = new Mock<IDisconnectRule>();
-      var trv1 = new TimeRegisterValue();
-      var trv2 = new TimeRegisterValue();
+      var dt = DateTime.UtcNow;
+      var trv1 = new TimeRegisterValue("d1", dt, new UnitValue());
+      var trv2 = new TimeRegisterValue("d1", dt, new UnitValue());
       var target = new DisconnectCacheItem(rule.Object);
 
       // Act
@@ -67,7 +68,7 @@ namespace PowerView.Model.Test
     {
       // Arrange
       var rule = new Mock<IDisconnectRule>();
-      var trv1 = new TimeRegisterValue();
+      var trv1 = new TimeRegisterValue("d1", DateTime.UtcNow, new UnitValue());
       var trv2 = new TimeRegisterValue("sn", DateTime.UtcNow, 1, Unit.Watt);
       var target = new DisconnectCacheItem(rule.Object);
 

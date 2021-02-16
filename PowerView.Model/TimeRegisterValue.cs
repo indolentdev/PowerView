@@ -1,8 +1,9 @@
 using System;
+using System.Collections.Generic;
 
 namespace PowerView.Model
 {
-  public struct TimeRegisterValue : IEquatable<TimeRegisterValue>, ISeries
+  public class TimeRegisterValue : IEquatable<TimeRegisterValue>, ISeries
   {
     public const string DummyDeviceId = "0";
 
@@ -96,33 +97,35 @@ namespace PowerView.Model
 
     public override bool Equals(object obj)
     {
-      if (obj == null) return false;
-      if (obj.GetType() != typeof(TimeRegisterValue)) return false;
-      var other = (TimeRegisterValue)obj;
-      return Equals(other);
+      var value = obj as TimeRegisterValue;
+      return Equals(value);
     }
 
-    public bool Equals(TimeRegisterValue other)
+    public bool Equals(TimeRegisterValue value)
     {
-      return DeviceIdEquals(other) && timestamp == other.timestamp && unitValue == other.UnitValue;
+      return value != null &&
+             DeviceIdEquals(value) &&
+             timestamp == value.timestamp &&
+             unitValue.Equals(value.unitValue);
     }
 
     public override int GetHashCode()
     {
-      unchecked
-      {
-        return (deviceId != null ? deviceId.ToLowerInvariant().GetHashCode() : 0) ^ timestamp.GetHashCode() ^ unitValue.GetHashCode();
-      }
+      var hashCode = 1356502293;
+      hashCode = hashCode * -1521134295 + deviceId != null ? deviceId.ToLowerInvariant().GetHashCode() : 0;
+      hashCode = hashCode * -1521134295 + timestamp.GetHashCode();
+      hashCode = hashCode * -1521134295 + EqualityComparer<UnitValue>.Default.GetHashCode(unitValue);
+      return hashCode;
     }
 
-    public static bool operator ==(TimeRegisterValue x, TimeRegisterValue y) 
+    public static bool operator ==(TimeRegisterValue value1, TimeRegisterValue value2)
     {
-      return x.Equals(y);
+      return EqualityComparer<TimeRegisterValue>.Default.Equals(value1, value2);
     }
 
-    public static bool operator !=(TimeRegisterValue x, TimeRegisterValue y) 
+    public static bool operator !=(TimeRegisterValue value1, TimeRegisterValue value2)
     {
-      return !(x == y);
+      return !(value1 == value2);
     }
 
   }

@@ -1,8 +1,9 @@
 using System;
+using System.Collections.Generic;
 
 namespace PowerView.Model
 {
-  public struct NormalizedTimeRegisterValue : IEquatable<NormalizedTimeRegisterValue>, ISeries
+  public class NormalizedTimeRegisterValue : IEquatable<NormalizedTimeRegisterValue>, ISeries
   {
     public const string DummyDeviceId = "0";
 
@@ -40,33 +41,33 @@ namespace PowerView.Model
 
     public override bool Equals(object obj)
     {
-      if (obj == null) return false;
-      if (obj.GetType() != typeof(NormalizedTimeRegisterValue)) return false;
-      var other = (NormalizedTimeRegisterValue)obj;
-      return Equals(other);
+      var value = obj as NormalizedTimeRegisterValue;
+      return Equals(value);
     }
 
-    public bool Equals(NormalizedTimeRegisterValue other)
+    public bool Equals(NormalizedTimeRegisterValue value)
     {
-      return timeRegisterValue.Equals(other.timeRegisterValue) && normalizedTimestamp.Equals(other.normalizedTimestamp);
+      return value != null &&
+             EqualityComparer<TimeRegisterValue>.Default.Equals(timeRegisterValue, value.timeRegisterValue) &&
+             normalizedTimestamp == value.normalizedTimestamp;
     }
 
     public override int GetHashCode()
     {
-      unchecked
-      {
-        return timeRegisterValue.GetHashCode() ^ normalizedTimestamp.GetHashCode();
-      }
+      var hashCode = 1321262762;
+      hashCode = hashCode * -1521134295 + EqualityComparer<TimeRegisterValue>.Default.GetHashCode(timeRegisterValue);
+      hashCode = hashCode * -1521134295 + normalizedTimestamp.GetHashCode();
+      return hashCode;
     }
 
-    public static bool operator ==(NormalizedTimeRegisterValue x, NormalizedTimeRegisterValue y) 
+    public static bool operator ==(NormalizedTimeRegisterValue value1, NormalizedTimeRegisterValue value2)
     {
-      return x.Equals(y);
+      return EqualityComparer<NormalizedTimeRegisterValue>.Default.Equals(value1, value2);
     }
 
-    public static bool operator !=(NormalizedTimeRegisterValue x, NormalizedTimeRegisterValue y) 
+    public static bool operator !=(NormalizedTimeRegisterValue value1, NormalizedTimeRegisterValue value2)
     {
-      return !(x == y);
+      return !(value1 == value2);
     }
 
   }

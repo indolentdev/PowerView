@@ -46,7 +46,10 @@ namespace PowerView.Model
       var decValue = (decimal)value;
       unchecked
       {
-        return decValue.GetHashCode() ^ unit.GetHashCode();
+        int hash = 17;
+        hash = hash * 23 + value.GetHashCode();
+        hash = hash * 23 + unit.GetHashCode();
+        return hash;
       }
     }
 

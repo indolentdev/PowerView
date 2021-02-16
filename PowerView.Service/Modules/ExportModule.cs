@@ -102,7 +102,7 @@ namespace PowerView.Service.Modules
           ObisCode = seriesName.ObisCode.ToString(),
           Values = hourlyValues.Select((x, i) =>
           {
-            if (x == default(NormalizedTimeRegisterValue))
+            if (x == null)
             {
               return new
               {
@@ -134,7 +134,8 @@ namespace PowerView.Service.Modules
 
     private static double? CalculateDiffValue(NormalizedTimeRegisterValue value, NormalizedTimeRegisterValue previousValue)
     {
-      if (previousValue.TimeRegisterValue.DeviceIdEquals(value.TimeRegisterValue) &&
+      if (previousValue != null &&
+        previousValue.TimeRegisterValue.DeviceIdEquals(value.TimeRegisterValue) &&
         previousValue.TimeRegisterValue.UnitValue.Unit == value.TimeRegisterValue.UnitValue.Unit)
       {
         var diffValueCandidate = value.TimeRegisterValue.UnitValue.Value - previousValue.TimeRegisterValue.UnitValue.Value;

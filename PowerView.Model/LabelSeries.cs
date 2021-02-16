@@ -7,7 +7,7 @@ using log4net;
 
 namespace PowerView.Model
 {
-  public class LabelSeries<T> : IEnumerable<ObisCode> where T: struct, ISeries
+  public class LabelSeries<T> : IEnumerable<ObisCode> where T: class, ISeries
   {
     private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 

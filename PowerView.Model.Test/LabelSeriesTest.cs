@@ -14,7 +14,7 @@ namespace PowerView.Model.Test
       // Arrange
       const string label = "label";
       var timeRegisterValues = new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> {
-        { "1.2.3.4.5.6", new [] { new TimeRegisterValue() } }
+        { "1.2.3.4.5.6", new [] { new TimeRegisterValue("d1", DateTime.UtcNow, new UnitValue()) } }
       };
 
       // Act & Assert
@@ -31,7 +31,7 @@ namespace PowerView.Model.Test
       // Arrange
       const string label = "label";
       var timeRegisterValues = new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> {
-        { "1.2.3.4.5.6", new [] { new TimeRegisterValue() } }
+        { "1.2.3.4.5.6", new [] { new TimeRegisterValue("d1", DateTime.UtcNow, new UnitValue()) } }
       };
 
       // Act
@@ -47,7 +47,7 @@ namespace PowerView.Model.Test
       // Arrange
       const string label = "label";
       var timeRegisterValues = new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> {
-        { "1.2.3.4.5.6", new [] { new TimeRegisterValue() } }
+        { "1.2.3.4.5.6", new [] { new TimeRegisterValue("d1", DateTime.UtcNow, new UnitValue()) } }
       };
       var target = new LabelSeries<TimeRegisterValue>(label, timeRegisterValues);
 
@@ -145,9 +145,10 @@ namespace PowerView.Model.Test
     {
       // Arrange
       const string label = "label";
+      var dt = DateTime.UtcNow;
       var obisCode = ObisCode.ColdWaterVolume1;
       var target = new LabelSeries<TimeRegisterValue>(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> {
-        { obisCode, new [] { new TimeRegisterValue() } } });
+        { obisCode, new [] { new TimeRegisterValue("d1", dt, new UnitValue()) } } });
 
       // Act
 
@@ -157,7 +158,7 @@ namespace PowerView.Model.Test
       // Assert
       Assert.That(cumulatives.Count, Is.EqualTo(1));
       Assert.That(cumulatives.ContainsKey(obisCode));
-      Assert.That(cumulatives[obisCode], Is.EqualTo(new[] { new TimeRegisterValue() }));
+      Assert.That(cumulatives[obisCode], Is.EqualTo(new[] { new TimeRegisterValue("d1", dt, new UnitValue()) }));
     }
 
     [Test]
