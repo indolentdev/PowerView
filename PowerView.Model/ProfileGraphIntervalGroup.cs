@@ -4,12 +4,12 @@ using System.Collections.ObjectModel;
 
 namespace PowerView.Model
 {
-  public class IntervalGroup
+  public class ProfileGraphIntervalGroup
   {
     private readonly Func<DateTime, DateTime> timeDivider;
     private readonly Func<DateTime, DateTime> getNext;
 
-    public IntervalGroup(TimeZoneInfo timeZoneinfo, DateTime start, string interval, IList<ProfileGraph> profileGraphs, LabelSeriesSet<TimeRegisterValue> labelSeriesSet)
+    public ProfileGraphIntervalGroup(TimeZoneInfo timeZoneinfo, DateTime start, string interval, IList<ProfileGraph> profileGraphs, LabelSeriesSet<TimeRegisterValue> labelSeriesSet)
     {
       var dateTimeHelper = new DateTimeHelper(timeZoneinfo, start);
       timeDivider = dateTimeHelper.GetDivider(interval);

@@ -101,12 +101,12 @@ namespace PowerView.Model.Test
       Assert.That(profileViewSet.PeriodTotals.First().UnitValue, Is.EqualTo(new UnitValue(2024, unit)));
     }
 
-    private static ProfileViewSetSource CreateTarget(ProfileGraph profileGraph, IntervalGroup intervalGroup)
+    private static ProfileViewSetSource CreateTarget(ProfileGraph profileGraph, ProfileGraphIntervalGroup intervalGroup)
     {
-      return CreateTarget(new ProfileGraph[] { profileGraph }, new IntervalGroup[] { intervalGroup });
+      return CreateTarget(new ProfileGraph[] { profileGraph }, new ProfileGraphIntervalGroup[] { intervalGroup });
     }
 
-    private static ProfileViewSetSource CreateTarget(IEnumerable<ProfileGraph> profileGraphs, IList<IntervalGroup> intervalGroups)
+    private static ProfileViewSetSource CreateTarget(IEnumerable<ProfileGraph> profileGraphs, IList<ProfileGraphIntervalGroup> intervalGroups)
     {
       return new ProfileViewSetSource(profileGraphs, intervalGroups);
     }
@@ -120,14 +120,14 @@ namespace PowerView.Model.Test
       return new ProfileGraph("day", "ThePage", title, interval, 1, seriesNames);
     }
 
-    private static IntervalGroup GetIntervalGroup(DateTime? firstTimestamp = null, int? fromFirstCount = null, DateTime? start = null, int? fromStartCount = null, TimeSpan? interval = null, int? baseValue = null, params ProfileGraph[] profileGraphs)
+    private static ProfileGraphIntervalGroup GetIntervalGroup(DateTime? firstTimestamp = null, int? fromFirstCount = null, DateTime? start = null, int? fromStartCount = null, TimeSpan? interval = null, int? baseValue = null, params ProfileGraph[] profileGraphs)
     {
       if (profileGraphs.Length == 0)
       {
         profileGraphs = new[] { GetProfileGraph() };
       }
       if (start == null) start = new DateTime(2019, 8, 26, 0, 0, 0, DateTimeKind.Local).ToUniversalTime();
-      var intervalGroup = new IntervalGroup(TimeZoneInfo.Local, start.Value, profileGraphs.First().Interval, profileGraphs, GetLabelSeriesSet(firstTimestamp, fromFirstCount, start, fromStartCount, interval, baseValue, profileGraphs));
+      var intervalGroup = new ProfileGraphIntervalGroup(TimeZoneInfo.Local, start.Value, profileGraphs.First().Interval, profileGraphs, GetLabelSeriesSet(firstTimestamp, fromFirstCount, start, fromStartCount, interval, baseValue, profileGraphs));
       intervalGroup.Prepare();
       return intervalGroup;
     }

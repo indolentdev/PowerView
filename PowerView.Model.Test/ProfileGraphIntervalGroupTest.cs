@@ -6,7 +6,7 @@ using NUnit.Framework;
 namespace PowerView.Model.Test
 {
   [TestFixture]
-  public class IntervalGroupTest
+  public class ProfileGraphIntervalGroupTest
   {
     [Test]
     public void ConstructorThrows()
@@ -19,14 +19,14 @@ namespace PowerView.Model.Test
       var labelSeriesSet = new LabelSeriesSet<TimeRegisterValue>(DateTime.UtcNow, DateTime.UtcNow + TimeSpan.FromDays(1), new LabelSeries<TimeRegisterValue>[0]);
 
       // Act & Assert
-      Assert.That(() => new IntervalGroup(null, start, interval, profileGraphs, labelSeriesSet), Throws.TypeOf<ArgumentNullException>());
-      Assert.That(() => new IntervalGroup(timeZoneInfo, DateTime.Now, interval, profileGraphs, labelSeriesSet), Throws.TypeOf<ArgumentOutOfRangeException>());
-      Assert.That(() => new IntervalGroup(timeZoneInfo, start, null, profileGraphs, labelSeriesSet), Throws.ArgumentNullException);
-      Assert.That(() => new IntervalGroup(timeZoneInfo, start, interval, null, labelSeriesSet), Throws.ArgumentNullException);
-      Assert.That(() => new IntervalGroup(timeZoneInfo, start, interval, profileGraphs, null), Throws.ArgumentNullException);
+      Assert.That(() => new ProfileGraphIntervalGroup(null, start, interval, profileGraphs, labelSeriesSet), Throws.TypeOf<ArgumentNullException>());
+      Assert.That(() => new ProfileGraphIntervalGroup(timeZoneInfo, DateTime.Now, interval, profileGraphs, labelSeriesSet), Throws.TypeOf<ArgumentOutOfRangeException>());
+      Assert.That(() => new ProfileGraphIntervalGroup(timeZoneInfo, start, null, profileGraphs, labelSeriesSet), Throws.ArgumentNullException);
+      Assert.That(() => new ProfileGraphIntervalGroup(timeZoneInfo, start, interval, null, labelSeriesSet), Throws.ArgumentNullException);
+      Assert.That(() => new ProfileGraphIntervalGroup(timeZoneInfo, start, interval, profileGraphs, null), Throws.ArgumentNullException);
 
-      Assert.That(() => new IntervalGroup(timeZoneInfo, start, string.Empty, profileGraphs, labelSeriesSet), Throws.TypeOf<ArgumentOutOfRangeException>());
-      Assert.That(() => new IntervalGroup(timeZoneInfo, start, "whatnot", profileGraphs, labelSeriesSet), Throws.TypeOf<ArgumentOutOfRangeException>());
+      Assert.That(() => new ProfileGraphIntervalGroup(timeZoneInfo, start, string.Empty, profileGraphs, labelSeriesSet), Throws.TypeOf<ArgumentOutOfRangeException>());
+      Assert.That(() => new ProfileGraphIntervalGroup(timeZoneInfo, start, "whatnot", profileGraphs, labelSeriesSet), Throws.TypeOf<ArgumentOutOfRangeException>());
     }
 
     [Test]
@@ -45,7 +45,7 @@ namespace PowerView.Model.Test
       });
 
       // Act
-      var target = new IntervalGroup(timeZoneInfo, start, interval, profileGraphs, labelSeriesSet);
+      var target = new ProfileGraphIntervalGroup(timeZoneInfo, start, interval, profileGraphs, labelSeriesSet);
 
       // Assert
       Assert.That(target.Interval, Is.EqualTo(interval));
@@ -72,7 +72,7 @@ namespace PowerView.Model.Test
         new LabelSeries<TimeRegisterValue>(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, new[] {
         new TimeRegisterValue("SN1", start, 1234, Unit.Watt) } } })
       });
-      var target = new IntervalGroup(timeZoneInfo, start, interval, profileGraphs, labelSeriesSet);
+      var target = new ProfileGraphIntervalGroup(timeZoneInfo, start, interval, profileGraphs, labelSeriesSet);
 
       // Act
       target.Prepare();
@@ -99,7 +99,7 @@ namespace PowerView.Model.Test
         new LabelSeries<TimeRegisterValue>(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, new[] {
         new TimeRegisterValue("SN1", start, 1234, Unit.Watt) } } })
       });
-      var target = new IntervalGroup(timeZoneInfo, start, interval, profileGraphs, labelSeriesSet);
+      var target = new ProfileGraphIntervalGroup(timeZoneInfo, start, interval, profileGraphs, labelSeriesSet);
 
       // Act
       target.Prepare();
@@ -126,7 +126,7 @@ namespace PowerView.Model.Test
         new LabelSeries<TimeRegisterValue>(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, new[] { 
         new TimeRegisterValue("SN1", start.AddMinutes(2), 1234, Unit.Watt) } } })
       });
-      var target = new IntervalGroup(timeZoneInfo, start, interval, profileGraphs, labelSeriesSet);
+      var target = new ProfileGraphIntervalGroup(timeZoneInfo, start, interval, profileGraphs, labelSeriesSet);
 
       // Act
       target.Prepare();
@@ -155,7 +155,7 @@ namespace PowerView.Model.Test
         new LabelSeries<TimeRegisterValue>(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, new[] {
         new TimeRegisterValue("SN1", start, 1234, Unit.Watt) } } })
       });
-      var target = new IntervalGroup(timeZoneInfo, start, interval, profileGraphs, labelSeriesSet);
+      var target = new ProfileGraphIntervalGroup(timeZoneInfo, start, interval, profileGraphs, labelSeriesSet);
 
       // Act
       target.Prepare();

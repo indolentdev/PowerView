@@ -121,7 +121,7 @@
     <Compile Include="SeriesGenerators\PeriodSeriesGeneratorTest.cs" />
     <Compile Include="SeriesGenerators\DeltaSeriesGeneratorTest.cs" />
     <Compile Include="SeriesGenerators\AverageActualSeriesGeneratorTest.cs" />
-    <Compile Include="IntervalGroupTest.cs" />
+    <Compile Include="ProfileGraphIntervalGroupTest.cs" />
     <Compile Include="ProfileViewSetSourceTest.cs" />
     <Compile Include="NormalizedTimeRegisterValueTest.cs" />
     <Compile Include="SeriesFromCumulativeGeneratorTest.cs" />

@@ -156,7 +156,7 @@
     <Compile Include="SeriesGenerators\ISingleInputSeriesGenerator.cs" />
     <Compile Include="SeriesGenerators\DeltaSeriesGenerator.cs" />
     <Compile Include="SeriesGenerators\AverageActualSeriesGenerator.cs" />
-    <Compile Include="IntervalGroup.cs" />
+    <Compile Include="ProfileGraphIntervalGroup.cs" />
     <Compile Include="ProfileViewSetSource.cs" />
     <Compile Include="NormalizedTimeRegisterValue.cs" />
     <Compile Include="SeriesFromCumulativeGenerator.cs" />

@@ -46,7 +46,7 @@ namespace PowerView.Service.Modules
       sw.Stop();
       if (log.IsDebugEnabled) log.DebugFormat("GetDiff timing - Get: {0}ms", sw.ElapsedMilliseconds);
 
-      var intervalGroup = new IntervalGroup(locationContext.TimeZoneInfo, fromDate.Value, "1-days", new ProfileGraph[0], lss);
+      var intervalGroup = new ProfileGraphIntervalGroup(locationContext.TimeZoneInfo, fromDate.Value, "1-days", new ProfileGraph[0], lss);
       sw.Restart();
       intervalGroup.Prepare();
       sw.Stop();

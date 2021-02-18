@@ -116,14 +116,14 @@ namespace PowerView.Service.Modules
       if (log.IsDebugEnabled) log.DebugFormat("GetProfile timing - GetLabelSeriesSet: {0}ms", sw.ElapsedMilliseconds);
 
       // group by interval and generate additional series
-      var intervalGroups = new List<IntervalGroup>(distinctIntervals.Count);
+      var intervalGroups = new List<ProfileGraphIntervalGroup>(distinctIntervals.Count);
       sw.Restart();
       foreach (var group in distinctIntervals)
       {
         var groupInterval = group.Key;
         var groupProfileGraphs = group.ToList();
 
-        var intervalGroup = new IntervalGroup(timeZoneInfo, start, groupInterval, groupProfileGraphs, labelSeriesSet);
+        var intervalGroup = new ProfileGraphIntervalGroup(timeZoneInfo, start, groupInterval, groupProfileGraphs, labelSeriesSet);
         intervalGroup.Prepare();
         intervalGroups.Add(intervalGroup);
       }

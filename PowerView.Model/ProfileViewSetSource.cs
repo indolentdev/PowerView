@@ -10,7 +10,7 @@ namespace PowerView.Model
     private readonly IDictionary<string, IList<DateTime>> intervalToCategories;
     private readonly IDictionary<string, IDictionary<SeriesName, IEnumerable<NormalizedTimeRegisterValue>>> intervalSeriesNameToValues;
 
-    public ProfileViewSetSource(IEnumerable<ProfileGraph> profileGraphs, IList<IntervalGroup> intervalGroups)
+    public ProfileViewSetSource(IEnumerable<ProfileGraph> profileGraphs, IList<ProfileGraphIntervalGroup> intervalGroups)
     {
       if (profileGraphs == null) throw new ArgumentNullException("profileGraphs");
       if (intervalGroups == null) throw new ArgumentNullException("intervalGroups");
@@ -34,7 +34,7 @@ namespace PowerView.Model
       intervalSeriesNameToValues = intervalGroups.ToDictionary(x => x.Interval, GetSeriesNamesAndValues);
     }
 
-    private static IDictionary<SeriesName, IEnumerable<NormalizedTimeRegisterValue>> GetSeriesNamesAndValues(IntervalGroup intervalGroup)
+    private static IDictionary<SeriesName, IEnumerable<NormalizedTimeRegisterValue>> GetSeriesNamesAndValues(ProfileGraphIntervalGroup intervalGroup)
     {
       var result = new Dictionary<SeriesName, IEnumerable<NormalizedTimeRegisterValue>>();
 
