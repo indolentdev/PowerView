@@ -234,7 +234,7 @@ namespace PowerView.Service.Test.Modules
       // Arrange
       var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
       var labels = new[] { "lbl1", "lbl2" };
-      var lss = new LabelSeriesSet<TimeRegisterValue>(today, today, new LabelSeries<TimeRegisterValue>[0]);
+      var lss = new TimeRegisterValueLabelSeriesSet(today, today, new TimeRegisterValueLabelSeries[0]);
       exportRepository.Setup(er => er.GetLiveCumulativeSeries(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<IList<string>>())).Returns(lss);
 
       // Act
@@ -271,7 +271,7 @@ namespace PowerView.Service.Test.Modules
           new TimeRegisterValue("S1", t3, 5, 2, Unit.CubicMetre)
         }
       );
-      var lss = new LabelSeriesSet<TimeRegisterValue>(t1, t3, new[] { ls });
+      var lss = new TimeRegisterValueLabelSeriesSet(t1, t3, new[] { ls });
       exportRepository.Setup(er => er.GetLiveCumulativeSeries(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<IList<string>>())).Returns(lss);
 
       // Act
@@ -324,7 +324,7 @@ namespace PowerView.Service.Test.Modules
         }
       });
 
-      var lss = new LabelSeriesSet<TimeRegisterValue>(t1, t2, new[] { ls1 });
+      var lss = new TimeRegisterValueLabelSeriesSet(t1, t2, new[] { ls1 });
       exportRepository.Setup(er => er.GetLiveCumulativeSeries(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<IList<string>>())).Returns(lss);
 
       // Act
@@ -373,7 +373,7 @@ namespace PowerView.Service.Test.Modules
             new TimeRegisterValue("S2", t2 + skew, 6, 3, Unit.WattHour)
         }
       );
-      var lss = new LabelSeriesSet<TimeRegisterValue>(t1, t2, new[] { ls1, ls2 });
+      var lss = new TimeRegisterValueLabelSeriesSet(t1, t2, new[] { ls1, ls2 });
       exportRepository.Setup(er => er.GetLiveCumulativeSeries(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<IList<string>>())).Returns(lss);
 
       // Act
@@ -425,7 +425,7 @@ namespace PowerView.Service.Test.Modules
             new TimeRegisterValue("S2", t3, 6, 3, Unit.WattHour)
         }
       );
-      var lss = new LabelSeriesSet<TimeRegisterValue>(t1, t2, new[] { ls1, ls2 });
+      var lss = new TimeRegisterValueLabelSeriesSet(t1, t2, new[] { ls1, ls2 });
       exportRepository.Setup(er => er.GetLiveCumulativeSeries(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<IList<string>>())).Returns(lss);
 
       // Act
@@ -465,7 +465,7 @@ namespace PowerView.Service.Test.Modules
           new TimeRegisterValue("S1", t2, 277777777, 2, Unit.Joule)
         }
       );
-      var lss = new LabelSeriesSet<TimeRegisterValue>(t1, t2, new[] { ls });
+      var lss = new TimeRegisterValueLabelSeriesSet(t1, t2, new[] { ls });
       exportRepository.Setup(er => er.GetLiveCumulativeSeries(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<IList<string>>())).Returns(lss);
 
       // Act
@@ -504,7 +504,7 @@ namespace PowerView.Service.Test.Modules
           new TimeRegisterValue("Other", t2, 3, 3, Unit.WattHour)
         }
       );
-      var lss = new LabelSeriesSet<TimeRegisterValue>(t1, t2, new[] { ls });
+      var lss = new TimeRegisterValueLabelSeriesSet(t1, t2, new[] { ls });
       exportRepository.Setup(er => er.GetLiveCumulativeSeries(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<IList<string>>())).Returns(lss);
 
       // Act
@@ -528,16 +528,16 @@ namespace PowerView.Service.Test.Modules
       }, json.series[0]);
     }
 
-    private static LabelSeries<TimeRegisterValue> CreateLabelSeries(string label, ObisCode obisCode, params TimeRegisterValue[] values)
+    private static TimeRegisterValueLabelSeries CreateLabelSeries(string label, ObisCode obisCode, params TimeRegisterValue[] values)
     {
       return CreateLabelSeries(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> {
         { obisCode, values }
       });
     }
 
-    private static LabelSeries<TimeRegisterValue> CreateLabelSeries(string label, IDictionary<ObisCode, IEnumerable<TimeRegisterValue>> values)
+    private static TimeRegisterValueLabelSeries CreateLabelSeries(string label, IDictionary<ObisCode, IEnumerable<TimeRegisterValue>> values)
     {
-      return new LabelSeries<TimeRegisterValue>(label, values);
+      return new TimeRegisterValueLabelSeries(label, values);
     }
 
     private static void AssertTimestamps(IEnumerable<DateTime> expected, string[] actual)

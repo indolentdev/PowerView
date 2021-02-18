@@ -9,7 +9,7 @@ namespace PowerView.Model
     private readonly Func<DateTime, DateTime> timeDivider;
     private readonly Func<DateTime, DateTime> getNext;
 
-    public IntervalGroup(TimeZoneInfo timeZoneinfo, DateTime start, string interval, LabelSeriesSet<TimeRegisterValue> labelSeriesSet)
+    public IntervalGroup(TimeZoneInfo timeZoneinfo, DateTime start, string interval, TimeRegisterValueLabelSeriesSet labelSeriesSet)
     {
       var dateTimeHelper = new DateTimeHelper(timeZoneinfo, start);
       timeDivider = dateTimeHelper.GetDivider(interval);
@@ -21,7 +21,7 @@ namespace PowerView.Model
     }
 
     public string Interval { get; private set; }
-    public LabelSeriesSet<TimeRegisterValue> LabelSeriesSet { get; private set; }
+    public TimeRegisterValueLabelSeriesSet LabelSeriesSet { get; private set; }
 
     public IList<DateTime> Categories { get; private set; }
     public LabelSeriesSet<NormalizedTimeRegisterValue> NormalizedLabelSeriesSet { get; private set; }

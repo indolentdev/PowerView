@@ -118,7 +118,7 @@ namespace PowerView.Service.Test.Modules
       var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
       var utcOneDay = today.AddDays(1);
       profileRepository.Setup(dpr => dpr.GetMonthProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
-        .Returns(new LabelSeriesSet<TimeRegisterValue>(today, utcOneDay, new LabelSeries<TimeRegisterValue>[0]));
+        .Returns(new TimeRegisterValueLabelSeriesSet(today, utcOneDay, new TimeRegisterValueLabelSeries[0]));
 
       // Act
       var response = browser.Get(DiffRoute, with =>
@@ -150,7 +150,7 @@ namespace PowerView.Service.Test.Modules
         {"1.0.1.8.0.255", new [] { new TimeRegisterValue("1", t1, 2, 6, Unit.WattHour), new TimeRegisterValue("1", t2, 3, 6, Unit.WattHour) } },
         {"1.0.2.8.0.255", new [] { new TimeRegisterValue("1", t1, 4, 6, Unit.WattHour) } }
       };
-      var lss = new LabelSeriesSet<TimeRegisterValue>(t1, today, new[] { new LabelSeries<TimeRegisterValue>("Label1", label1Values), new LabelSeries<TimeRegisterValue>("Label2", label2Values) });
+      var lss = new TimeRegisterValueLabelSeriesSet(t1, today, new[] { new TimeRegisterValueLabelSeries("Label1", label1Values), new TimeRegisterValueLabelSeries("Label2", label2Values) });
       profileRepository.Setup(pr => pr.GetMonthProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(lss);
 
       // Act
@@ -185,7 +185,7 @@ namespace PowerView.Service.Test.Modules
         {"1.0.1.8.0.255", new [] { new TimeRegisterValue("1", t1, 2, 6, Unit.WattHour), new TimeRegisterValue("1", t2, 3, 6, Unit.WattHour) } },
         {"1.0.2.8.0.255", new [] { new TimeRegisterValue("1", t1, 1, 6, Unit.WattHour), new TimeRegisterValue("1", t2, 2, 6, Unit.WattHour) } }
       };
-      var lss = new LabelSeriesSet<TimeRegisterValue>(t1, today, new[] { new LabelSeries<TimeRegisterValue>("Label1", labelValues) });
+      var lss = new TimeRegisterValueLabelSeriesSet(t1, today, new[] { new TimeRegisterValueLabelSeries("Label1", labelValues) });
       profileRepository.Setup(pr => pr.GetMonthProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(lss);
 
       // Act

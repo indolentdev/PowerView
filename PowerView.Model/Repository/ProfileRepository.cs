@@ -16,22 +16,22 @@ namespace PowerView.Model.Repository
     {
     }
 
-    public LabelSeriesSet<TimeRegisterValue> GetDayProfileSet(DateTime preStart, DateTime start, DateTime end)
+    public TimeRegisterValueLabelSeriesSet GetDayProfileSet(DateTime preStart, DateTime start, DateTime end)
     {
       return GetLabelSeriesSet(preStart, start, end, "LiveReading", "LiveRegister");
     }
 
-    public LabelSeriesSet<TimeRegisterValue> GetMonthProfileSet(DateTime preStart, DateTime start, DateTime end)
+    public TimeRegisterValueLabelSeriesSet GetMonthProfileSet(DateTime preStart, DateTime start, DateTime end)
     {
       return GetLabelSeriesSet(preStart, start, end, "DayReading", "DayRegister");
     }
 
-    public LabelSeriesSet<TimeRegisterValue> GetYearProfileSet(DateTime preStart, DateTime start, DateTime end)
+    public TimeRegisterValueLabelSeriesSet GetYearProfileSet(DateTime preStart, DateTime start, DateTime end)
     {
       return GetLabelSeriesSet(preStart, start, end, "MonthReading", "MonthRegister");
     }
 
-    private LabelSeriesSet<TimeRegisterValue> GetLabelSeriesSet(DateTime preStart, DateTime start, DateTime end, string readingTable, string registerTable)
+    private TimeRegisterValueLabelSeriesSet GetLabelSeriesSet(DateTime preStart, DateTime start, DateTime end, string readingTable, string registerTable)
     {
       if (preStart.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("preStart", "Must be UTC");
       if (start.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("start", "Must be UTC");
@@ -52,12 +52,12 @@ WHERE rea.Timestamp >= @From AND rea.Timestamp < @To;";
       var labelSeries = GetLabelSeries(resultSet);
 
       log.DebugFormat("Assembeled LabelSeriesSet args");
-      return new LabelSeriesSet<TimeRegisterValue>(start, end, labelSeries);
+      return new TimeRegisterValueLabelSeriesSet(start, end, labelSeries);
     }
 
-    private static List<LabelSeries<TimeRegisterValue>> GetLabelSeries(IEnumerable<dynamic> resultSet)
+    private static List<TimeRegisterValueLabelSeries> GetLabelSeries(IEnumerable<dynamic> resultSet)
     {
-      var labelSeries = new List<LabelSeries<TimeRegisterValue>>(5);
+      var labelSeries = new List<TimeRegisterValueLabelSeries>(5);
       var groupedByLabel = resultSet.GroupBy(r => { string s = r.Label; return s; }, r => r);
       foreach (IGrouping<string, dynamic> labelGroup in groupedByLabel)
       {
@@ -68,7 +68,7 @@ WHERE rea.Timestamp >= @From AND rea.Timestamp < @To;";
           obisCodeToTimeRegisterValues.Add(obisCodeGroup.Key, obisCodeGroup.Select(row =>
             new TimeRegisterValue((string)row.DeviceId, (DateTime)row.Timestamp, (int)row.Value, (short)row.Scale, (Unit)row.Unit)) );
         }
-        labelSeries.Add(new LabelSeries<TimeRegisterValue>(labelGroup.Key, obisCodeToTimeRegisterValues));
+        labelSeries.Add(new TimeRegisterValueLabelSeries(labelGroup.Key, obisCodeToTimeRegisterValues));
       }
       return labelSeries;
     }

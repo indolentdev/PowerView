@@ -55,7 +55,7 @@ namespace PowerView.Service.Test.Modules
       StubProfileGraph(profileGraph);
       var midnight = TimeZoneHelper.GetDenmarkTodayAsUtc();
       profileRepository.Setup(dpr => dpr.GetDayProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
-        .Returns(new LabelSeriesSet<TimeRegisterValue>(midnight, midnight.AddDays(1), new LabelSeries<TimeRegisterValue>[0]));
+        .Returns(new TimeRegisterValueLabelSeriesSet(midnight, midnight.AddDays(1), new TimeRegisterValueLabelSeries[0]));
 
       // Act
       browser.Get("/api/profile/day", with =>
@@ -98,7 +98,7 @@ namespace PowerView.Service.Test.Modules
       StubProfileGraph();
       var midnight = TimeZoneHelper.GetDenmarkTodayAsUtc();
       profileRepository.Setup(dpr => dpr.GetDayProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
-        .Returns(new LabelSeriesSet<TimeRegisterValue>(midnight, midnight.AddDays(1), new LabelSeries<TimeRegisterValue>[0]));
+        .Returns(new TimeRegisterValueLabelSeriesSet(midnight, midnight.AddDays(1), new TimeRegisterValueLabelSeries[0]));
 
       // Act
       browser.Get("/api/profile/day", with => 
@@ -174,7 +174,7 @@ namespace PowerView.Service.Test.Modules
         {"6.0.2.0.0.255", new [] { new TimeRegisterValue("1", t0, 2, 0, Unit.CubicMetre), new TimeRegisterValue("1", t1, 3, 0, Unit.CubicMetre), new TimeRegisterValue("1", t2, 4, 0, Unit.CubicMetre) } },
         {"6.0.9.0.0.255", new [] { new TimeRegisterValue("1", t1, 4, 0, Unit.CubicMetrePrHour), new TimeRegisterValue("1", t2, 5, 0, Unit.CubicMetrePrHour) } }
       };
-      var lss = new LabelSeriesSet<TimeRegisterValue>(midnight, midnight.AddDays(1), new [] {new LabelSeries<TimeRegisterValue>("Label1", label1Values)} );
+      var lss = new TimeRegisterValueLabelSeriesSet(midnight, midnight.AddDays(1), new [] {new TimeRegisterValueLabelSeries("Label1", label1Values)} );
       profileRepository.Setup(dpr => dpr.GetDayProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(lss);
 
       // Act
@@ -227,7 +227,7 @@ namespace PowerView.Service.Test.Modules
       StubProfileGraph(profileGraph);
       var midnight = TimeZoneHelper.GetDenmarkTodayAsUtc();
       profileRepository.Setup(dpr => dpr.GetMonthProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
-        .Returns(new LabelSeriesSet<TimeRegisterValue>(midnight, midnight.AddDays(1), new LabelSeries<TimeRegisterValue>[0]));
+        .Returns(new TimeRegisterValueLabelSeriesSet(midnight, midnight.AddDays(1), new TimeRegisterValueLabelSeries[0]));
 
       // Act
       browser.Get("/api/profile/month", with =>
@@ -271,7 +271,7 @@ namespace PowerView.Service.Test.Modules
       StubProfileGraph(profileGraph);
       var midnight = new DateTime(2019, 3, 31, 22, 0, 0, DateTimeKind.Utc); // Midnight Denmark time..
       profileRepository.Setup(dpr => dpr.GetMonthProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
-        .Returns(new LabelSeriesSet<TimeRegisterValue>(midnight, midnight.AddDays(1), new LabelSeries<TimeRegisterValue>[0]));
+        .Returns(new TimeRegisterValueLabelSeriesSet(midnight, midnight.AddDays(1), new TimeRegisterValueLabelSeries[0]));
 
       // Act
       browser.Get("/api/profile/month", with => 
@@ -345,7 +345,7 @@ namespace PowerView.Service.Test.Modules
       var label0Values = new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> {
         {"1.0.2.8.0.255", new [] { new TimeRegisterValue("1", t1, 4, 6, Unit.WattHour), new TimeRegisterValue("1", t3, 6, 6, Unit.WattHour) } }
       };
-      var lss = new LabelSeriesSet<TimeRegisterValue>(midnight, midnight.AddMonths(1), new [] {new LabelSeries<TimeRegisterValue>("Label1", label1Values), new LabelSeries<TimeRegisterValue>("Label0", label0Values)} );
+      var lss = new TimeRegisterValueLabelSeriesSet(midnight, midnight.AddMonths(1), new [] {new TimeRegisterValueLabelSeries("Label1", label1Values), new TimeRegisterValueLabelSeries("Label0", label0Values)} );
       profileRepository.Setup(dpr => dpr.GetMonthProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(lss);
 
       // Act
@@ -404,7 +404,7 @@ namespace PowerView.Service.Test.Modules
       StubProfileGraph(profileGraph);
       var midnight = new DateTime(2018, 12, 31, 23, 0, 0, DateTimeKind.Utc); // Midnight Denmark time..
       profileRepository.Setup(dpr => dpr.GetYearProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
-        .Returns(new LabelSeriesSet<TimeRegisterValue>(midnight, midnight.AddDays(1), new LabelSeries<TimeRegisterValue>[0]));
+        .Returns(new TimeRegisterValueLabelSeriesSet(midnight, midnight.AddDays(1), new TimeRegisterValueLabelSeries[0]));
 
       // Act
       browser.Get("/api/profile/year", with =>
@@ -448,7 +448,7 @@ namespace PowerView.Service.Test.Modules
       StubProfileGraph(profileGraph);
       var midnight = new DateTime(2018, 12, 31, 23, 0, 0, DateTimeKind.Utc); // Midnight Denmark time..
       profileRepository.Setup(dpr => dpr.GetYearProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
-        .Returns(new LabelSeriesSet<TimeRegisterValue>(midnight, midnight.AddMonths(12), new LabelSeries<TimeRegisterValue>[0]));
+        .Returns(new TimeRegisterValueLabelSeriesSet(midnight, midnight.AddMonths(12), new TimeRegisterValueLabelSeries[0]));
 
       // Act
       browser.Get("/api/profile/year", with => 
@@ -520,7 +520,7 @@ namespace PowerView.Service.Test.Modules
       var label2Values = new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> {
         {"1.0.2.8.0.255", new [] { new TimeRegisterValue("1", t1, 4, 6, Unit.WattHour), new TimeRegisterValue("1", t3, 6, 6, Unit.WattHour) } }
       };
-      var lss = new LabelSeriesSet<TimeRegisterValue>(t1, t1.AddMonths(12), new [] {new LabelSeries<TimeRegisterValue>("Label1", label1Values), new LabelSeries<TimeRegisterValue>("Label0", label2Values)} );
+      var lss = new TimeRegisterValueLabelSeriesSet(t1, t1.AddMonths(12), new [] {new TimeRegisterValueLabelSeries("Label1", label1Values), new TimeRegisterValueLabelSeries("Label0", label2Values)} );
       profileRepository.Setup(dpr => dpr.GetYearProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(lss);
 
       // Act

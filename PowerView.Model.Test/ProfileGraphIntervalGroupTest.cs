@@ -15,7 +15,7 @@ namespace PowerView.Model.Test
       var start = DateTime.Today.ToUniversalTime();
       const string interval = "5-minutes";
       var profileGraphs = new List<ProfileGraph>();
-      var labelSeriesSet = new LabelSeriesSet<TimeRegisterValue>(DateTime.UtcNow, DateTime.UtcNow + TimeSpan.FromDays(1), new LabelSeries<TimeRegisterValue>[0]);
+      var labelSeriesSet = new TimeRegisterValueLabelSeriesSet(DateTime.UtcNow, DateTime.UtcNow + TimeSpan.FromDays(1), new TimeRegisterValueLabelSeries[0]);
 
       // Act & Assert
       Assert.That(() => new ProfileGraphIntervalGroup(null, start, interval, profileGraphs, labelSeriesSet), Throws.TypeOf<ArgumentNullException>());
@@ -39,8 +39,8 @@ namespace PowerView.Model.Test
       ObisCode obisCode = "1.2.3.4.5.6";
       var profileGraph = new ProfileGraph("day", "The Page", "The Title", interval, 1, new[] { new SeriesName(label, obisCode) });
       var profileGraphs = new List<ProfileGraph> { profileGraph };
-      var labelSeriesSet = new LabelSeriesSet<TimeRegisterValue>(DateTime.UtcNow, DateTime.UtcNow + TimeSpan.FromDays(1), new[] {
-        new LabelSeries<TimeRegisterValue>(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, new[] { new TimeRegisterValue("d1", DateTime.UtcNow, new UnitValue()) } } })
+      var labelSeriesSet = new TimeRegisterValueLabelSeriesSet(DateTime.UtcNow, DateTime.UtcNow + TimeSpan.FromDays(1), new[] {
+        new TimeRegisterValueLabelSeries(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, new[] { new TimeRegisterValue("d1", DateTime.UtcNow, new UnitValue()) } } })
       });
 
       // Act

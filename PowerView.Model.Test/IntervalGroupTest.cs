@@ -15,7 +15,7 @@ namespace PowerView.Model.Test
       var timeZoneInfo = TimeZoneInfo.Local;
       var start = DateTime.Today.ToUniversalTime();
       const string interval = "5-minutes";
-      var labelSeriesSet = new LabelSeriesSet<TimeRegisterValue>(DateTime.UtcNow, DateTime.UtcNow + TimeSpan.FromDays(1), new LabelSeries<TimeRegisterValue>[0]);
+      var labelSeriesSet = new TimeRegisterValueLabelSeriesSet(DateTime.UtcNow, DateTime.UtcNow + TimeSpan.FromDays(1), new TimeRegisterValueLabelSeries[0]);
 
       // Act & Assert
       Assert.That(() => new IntervalGroup(null, start, interval, labelSeriesSet), Throws.TypeOf<ArgumentNullException>());
@@ -36,8 +36,8 @@ namespace PowerView.Model.Test
       const string label = "label";
       const string interval = "5-minutes";
       ObisCode obisCode = "1.2.3.4.5.6";
-      var labelSeriesSet = new LabelSeriesSet<TimeRegisterValue>(DateTime.UtcNow, DateTime.UtcNow + TimeSpan.FromDays(1), new[] {
-        new LabelSeries<TimeRegisterValue>(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, new[] { new TimeRegisterValue("d1", DateTime.UtcNow, new UnitValue()) } } })
+      var labelSeriesSet = new TimeRegisterValueLabelSeriesSet(DateTime.UtcNow, DateTime.UtcNow + TimeSpan.FromDays(1), new[] {
+        new TimeRegisterValueLabelSeries(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, new[] { new TimeRegisterValue("d1", DateTime.UtcNow, new UnitValue()) } } })
       });
 
       // Act
@@ -61,8 +61,8 @@ namespace PowerView.Model.Test
       var timeZoneInfo = TimeZoneInfo.Local;
       var start = DateTime.Today.ToUniversalTime();
       var end = start.AddDays(1);
-      var labelSeriesSet = new LabelSeriesSet<TimeRegisterValue>(start, end, new[] {
-        new LabelSeries<TimeRegisterValue>(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, new[] {
+      var labelSeriesSet = new TimeRegisterValueLabelSeriesSet(start, end, new[] {
+        new TimeRegisterValueLabelSeries(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, new[] {
         new TimeRegisterValue("SN1", start, 1234, Unit.Watt) } } })
       });
       var target = new IntervalGroup(timeZoneInfo, start, interval, labelSeriesSet);
@@ -86,8 +86,8 @@ namespace PowerView.Model.Test
       var timeZoneInfo = TimeZoneInfo.Utc;
       var start = new DateTime(2019, 3, 1, 00, 00, 00, DateTimeKind.Utc);
       var end = start.AddMonths(1);
-      var labelSeriesSet = new LabelSeriesSet<TimeRegisterValue>(start, end, new[] {
-        new LabelSeries<TimeRegisterValue>(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, new[] {
+      var labelSeriesSet = new TimeRegisterValueLabelSeriesSet(start, end, new[] {
+        new TimeRegisterValueLabelSeries(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, new[] {
         new TimeRegisterValue("SN1", start, 1234, Unit.Watt) } } })
       });
       var target = new IntervalGroup(timeZoneInfo, start, interval, labelSeriesSet);
@@ -111,8 +111,8 @@ namespace PowerView.Model.Test
       var timeZoneInfo = TimeZoneInfo.Local;
       var start = DateTime.Today.ToUniversalTime();
       var end = start.AddDays(1);
-      var labelSeriesSet = new LabelSeriesSet<TimeRegisterValue>(start, end, new[] {
-        new LabelSeries<TimeRegisterValue>(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, new[] { 
+      var labelSeriesSet = new TimeRegisterValueLabelSeriesSet(start, end, new[] {
+        new TimeRegisterValueLabelSeries(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, new[] { 
         new TimeRegisterValue("SN1", start.AddMinutes(2), 1234, Unit.Watt) } } })
       });
       var target = new IntervalGroup(timeZoneInfo, start, interval, labelSeriesSet);
@@ -138,8 +138,8 @@ namespace PowerView.Model.Test
       var timeZoneInfo = TimeZoneInfo.Local;
       var start = DateTime.Today.ToUniversalTime();
       var end = start.AddDays(1);
-      var labelSeriesSet = new LabelSeriesSet<TimeRegisterValue>(start, end, new[] {
-        new LabelSeries<TimeRegisterValue>(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, new[] {
+      var labelSeriesSet = new TimeRegisterValueLabelSeriesSet(start, end, new[] {
+        new TimeRegisterValueLabelSeries(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, new[] {
         new TimeRegisterValue("SN1", start, 1234, Unit.Watt) } } })
       });
       var target = new IntervalGroup(timeZoneInfo, start, interval, labelSeriesSet);

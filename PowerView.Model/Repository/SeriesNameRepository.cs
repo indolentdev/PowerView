@@ -31,14 +31,14 @@ namespace PowerView.Model.Repository
       IEnumerable<TimeRegisterValue> fakeTimeRegisterValues = new List<TimeRegisterValue> { new TimeRegisterValue("1", dt1, 1, 0, fakeUnit), new TimeRegisterValue("1", dt2, 2, 0, fakeUnit) };
 
       var labelGroups = labelsAndObisCodes.GroupBy(x => (string)x.Label, x => (ObisCode)(long)x.ObisCode);
-      var labelSeries = new List<LabelSeries<TimeRegisterValue>>(8);
+      var labelSeries = new List<TimeRegisterValueLabelSeries>(8);
       foreach (var labelToObisCodes in labelGroups)
       {
         var fakeObisToTimeRegisterValues = labelToObisCodes.Distinct().ToDictionary(oc => oc, x => fakeTimeRegisterValues);
-        var labelS = new LabelSeries<TimeRegisterValue>(labelToObisCodes.Key, fakeObisToTimeRegisterValues);
+        var labelS = new TimeRegisterValueLabelSeries(labelToObisCodes.Key, fakeObisToTimeRegisterValues);
         labelSeries.Add(labelS);
       }
-      var labelSeriesSet = new LabelSeriesSet<TimeRegisterValue>(dt1, dt2, labelSeries);
+      var labelSeriesSet = new TimeRegisterValueLabelSeriesSet(dt1, dt2, labelSeries);
       var intervalGroup = new IntervalGroup(timeZoneInfo, midnight, "5-minutes", labelSeriesSet);
       intervalGroup.Prepare();
 

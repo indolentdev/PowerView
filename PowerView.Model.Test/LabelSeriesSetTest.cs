@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using NUnit.Framework;
 
 namespace PowerView.Model.Test
@@ -50,53 +49,6 @@ namespace PowerView.Model.Test
 
       // Assert
       Assert.That(target, Is.EqualTo(labelSeries));
-    }
-
-    [Test]
-    public void NormalizeThrows()
-    {
-      // Arrange
-      var labelSeries = new[] {
-        new LabelSeries<TimeRegisterValue>("A", new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>>()),
-      };
-      var target = CreateTarget(DateTime.UtcNow, DateTime.UtcNow, labelSeries);
-
-      // Act
-      Assert.That(() => target.Normalize(null), Throws.ArgumentNullException);
-    }
-
-    [Test]
-    public void Normalize()
-    {
-      // Arrange
-      const string label = "label";
-      ObisCode obisCode = "1.2.3.4.5.6";
-      var now = DateTime.UtcNow;
-      var baseTime = new DateTime(now.Year, now.Month, now.Day, 18, 2, 12, DateTimeKind.Utc);
-      var timeRegisterValues = new[]
-      {
-        new TimeRegisterValue("sn1", baseTime, 11, Unit.WattHour),
-        new TimeRegisterValue("sn1", baseTime + TimeSpan.FromMinutes(4), 12, Unit.WattHour),
-        new TimeRegisterValue("sn1", baseTime + TimeSpan.FromMinutes(11), 13, Unit.WattHour),
-        new TimeRegisterValue("sn1", baseTime + TimeSpan.FromMinutes(16), 14, Unit.WattHour),
-        new TimeRegisterValue("sn1", baseTime + TimeSpan.FromMinutes(19), 15, Unit.WattHour),
-        new TimeRegisterValue("sn1", baseTime + TimeSpan.FromMinutes(25), 16, Unit.WattHour),
-      };
-      var labelSeries = new LabelSeries<TimeRegisterValue>(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, timeRegisterValues } });
-      var target = new LabelSeriesSet<TimeRegisterValue>(baseTime, baseTime + TimeSpan.FromMinutes(30), new[] { labelSeries });
-      var timeDivider = new DateTimeHelper(TimeZoneInfo.Local, DateTime.Today.ToUniversalTime()).GetDivider("10-minutes");
-
-      // Act
-      var target2 = target.Normalize(timeDivider);
-
-      // Assert
-      Assert.That(target2.Start, Is.EqualTo(target.Start));
-      Assert.That(target2.End, Is.EqualTo(target.End));
-      Assert.That(target2.Count(), Is.EqualTo(target.Count()));
-      Assert.That(target2.First()[obisCode], Is.EqualTo(new NormalizedTimeRegisterValue[]
-      {
-        timeRegisterValues[0].Normalize(timeDivider), timeRegisterValues[2].Normalize(timeDivider), timeRegisterValues[4].Normalize(timeDivider)
-      }));
     }
 
     [Test]

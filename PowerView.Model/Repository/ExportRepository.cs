@@ -16,14 +16,14 @@ namespace PowerView.Model.Repository
     {
     }
 
-    public LabelSeriesSet<TimeRegisterValue> GetLiveCumulativeSeries(DateTime from, DateTime to, IList<string> labels)
+    public TimeRegisterValueLabelSeriesSet GetLiveCumulativeSeries(DateTime from, DateTime to, IList<string> labels)
     {
       var labelSeriesSet = GetLabelSeriesSet(from, to, labels, "LiveReading", "LiveRegister", oc => oc.IsCumulative);
 
       return labelSeriesSet;
     }
 
-    private LabelSeriesSet<TimeRegisterValue> GetLabelSeriesSet(DateTime from, DateTime to, IList<string> labels, string readingTable, 
+    private TimeRegisterValueLabelSeriesSet GetLabelSeriesSet(DateTime from, DateTime to, IList<string> labels, string readingTable, 
       string registerTable, Func<ObisCode, bool> includeObisCode)
     {
       if (from.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("from", "Must be UTC");
@@ -46,12 +46,12 @@ WHERE rea.Timestamp >= @from AND rea.Timestamp < @to AND rea.Label IN @labels;";
       var labelSeries = GetLabelSeries(resultSet, includeObisCode);
 
       log.DebugFormat("Assembeled LabelSeriesSet args");
-      return new LabelSeriesSet<TimeRegisterValue>(from, to, labelSeries);
+      return new TimeRegisterValueLabelSeriesSet(from, to, labelSeries);
     }
 
-    private static List<LabelSeries<TimeRegisterValue>> GetLabelSeries(IEnumerable<dynamic> resultSet, Func<ObisCode, bool> includeObisCode)
+    private static List<TimeRegisterValueLabelSeries> GetLabelSeries(IEnumerable<dynamic> resultSet, Func<ObisCode, bool> includeObisCode)
     {
-      var labelSeries = new List<LabelSeries<TimeRegisterValue>>(5);
+      var labelSeries = new List<TimeRegisterValueLabelSeries>(5);
       var groupedByLabel = resultSet.GroupBy(r => { string s = r.Label; return s; }, r => r);
       foreach (IGrouping<string, dynamic> labelGroup in groupedByLabel)
       {
@@ -71,7 +71,7 @@ WHERE rea.Timestamp >= @from AND rea.Timestamp < @to AND rea.Label IN @labels;";
         }
         if (obisCodeToTimeRegisterValues.Count > 0)
         {
-          labelSeries.Add(new LabelSeries<TimeRegisterValue>(labelGroup.Key, obisCodeToTimeRegisterValues));
+          labelSeries.Add(new TimeRegisterValueLabelSeries(labelGroup.Key, obisCodeToTimeRegisterValues));
         }
       }
       return labelSeries;

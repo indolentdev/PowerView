@@ -11,7 +11,7 @@ namespace PowerView.Model
     {
     }
 
-    public new LabelSeriesSet<NormalizedTimeRegisterValue> Normalize(Func<DateTime, DateTime> timeDivider)
+    public LabelSeriesSet<NormalizedTimeRegisterValue> Normalize(Func<DateTime, DateTime> timeDivider)
     {
       if (timeDivider == null) throw new ArgumentNullException("timeDivider");
 
@@ -20,25 +20,6 @@ namespace PowerView.Model
       return new LabelSeriesSet<NormalizedTimeRegisterValue>(Start, End, timeRegisterValueLabelSeries.Count, 
         timeRegisterValueLabelSeries.Select(x => x.Normalize(timeDivider)));
     }
-/*
-    internal void Add(IList<LabelSeries<T>> list)
-    {
-      labelSeries.AddRange(list);
-    }
-
-    #region IEnumerable implementation
-    public IEnumerator<LabelSeries<T>> GetEnumerator()
-    {
-      return labelSeries.GetEnumerator();
-    }
-    #endregion
-    #region IEnumerable implementation
-    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-    {
-      return GetEnumerator();
-    }
-    #endregion
-*/       
   }
 
 }

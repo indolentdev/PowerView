@@ -120,9 +120,9 @@ namespace PowerView.Model.Test
       Assert.That(target, Is.EqualTo(new[] { labelSeries }));
     }
 */
-    private static LabelSeriesSet<TimeRegisterValue> CreateTarget(DateTime start, DateTime end, IList<LabelSeries<TimeRegisterValue>> labelSeries)
+    private static TimeRegisterValueLabelSeriesSet CreateTarget(DateTime start, DateTime end, IList<TimeRegisterValueLabelSeries> labelSeries)
     {
-      return new LabelSeriesSet<TimeRegisterValue>(start, end, labelSeries);
+      return new TimeRegisterValueLabelSeriesSet(start, end, labelSeries);
     }
 
   }

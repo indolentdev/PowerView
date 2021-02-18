@@ -29,13 +29,6 @@ namespace PowerView.Model
     public DateTime Start { get; private set; }
     public DateTime End { get; private set; }
 
-    public LabelSeriesSet<NormalizedTimeRegisterValue> Normalize(Func<DateTime, DateTime> timeDivider)
-    {
-      if (timeDivider == null) throw new ArgumentNullException("timeDivider");
-
-      return new LabelSeriesSet<NormalizedTimeRegisterValue>(Start, End, labelSeries.Count, labelSeries.Select(x => x.Normalize(timeDivider)));
-    }
-
     internal void Add(IList<LabelSeries<T>> list)
     {
       labelSeries.AddRange(list);

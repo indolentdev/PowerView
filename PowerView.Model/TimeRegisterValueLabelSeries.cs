@@ -1,21 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using log4net;
 
 namespace PowerView.Model
 {
   public class TimeRegisterValueLabelSeries : LabelSeries<TimeRegisterValue>
   {
-    private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
     public TimeRegisterValueLabelSeries(string label, IDictionary<ObisCode, IEnumerable<TimeRegisterValue>> timeRegisterValuesByObisCode)
       : base(label, timeRegisterValuesByObisCode)
     {
     }
 
-    public new LabelSeries<NormalizedTimeRegisterValue> Normalize(Func<DateTime, DateTime> timeDivider)
+    public LabelSeries<NormalizedTimeRegisterValue> Normalize(Func<DateTime, DateTime> timeDivider)
     {
       if (timeDivider == null) throw new ArgumentNullException("timeDivider");
 
@@ -31,32 +27,6 @@ namespace PowerView.Model
       }
       return new LabelSeries<NormalizedTimeRegisterValue>(Label, normalized);
     }
-/*
-    public void Add(IDictionary<ObisCode, IList<T>> series)
-    {
-      foreach (var s in series)
-      {
-        obisCodeSets.Add(s.Key, GetOrderedReadOnlyList(s.Value));
-      }
-    }
 
-    #region IEnumerable implementation
-
-    public IEnumerator<ObisCode> GetEnumerator()
-    {
-      return obisCodeSets.Keys.GetEnumerator();
-    }
-
-    #endregion
-
-    #region IEnumerable implementation
-
-    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-    {
-      return GetEnumerator();
-    }
-
-    #endregion
-*/
   }
 }
