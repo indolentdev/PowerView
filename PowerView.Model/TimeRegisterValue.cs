@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace PowerView.Model
 {
-  public class TimeRegisterValue : IEquatable<TimeRegisterValue>, ISeries
+  public class TimeRegisterValue : IEquatable<TimeRegisterValue>, IRegisterValue
   {
     public const string DummyDeviceId = "0";
 

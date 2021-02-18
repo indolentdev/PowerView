@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace PowerView.Model
 {
-  public class LabelSeries<T> : IEnumerable<ObisCode> where T: class, ISeries
+  public class LabelSeries<T> : IEnumerable<ObisCode> where T: class, IRegisterValue
   {
     private readonly Dictionary<ObisCode, IList<T>> obisCodeSets;
 

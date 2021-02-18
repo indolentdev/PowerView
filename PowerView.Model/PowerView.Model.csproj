@@ -160,7 +160,7 @@
     <Compile Include="ProfileViewSetSource.cs" />
     <Compile Include="NormalizedTimeRegisterValue.cs" />
     <Compile Include="SeriesFromCumulativeGenerator.cs" />
-    <Compile Include="ISeries.cs" />
+    <Compile Include="IRegisterValue.cs" />
     <Compile Include="LeakCharacteristicChecker.cs" />
     <Compile Include="Repository\EnvironmentRepository.cs" />
     <Compile Include="Repository\IEnvironmentRepository.cs" />

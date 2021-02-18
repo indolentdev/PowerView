@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace PowerView.Model
 {
-  public class LabelSeriesSet<T> : IEnumerable<LabelSeries<T>> where T : class, ISeries
+  public class LabelSeriesSet<T> : IEnumerable<LabelSeries<T>> where T : class, IRegisterValue
   {
     private readonly List<LabelSeries<T>> labelSeries;
 

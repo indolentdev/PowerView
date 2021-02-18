@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace PowerView.Model
 {
-  public class NormalizedTimeRegisterValue : IEquatable<NormalizedTimeRegisterValue>, ISeries
+  public class NormalizedTimeRegisterValue : IEquatable<NormalizedTimeRegisterValue>, IRegisterValue
   {
     public const string DummyDeviceId = "0";
 
@@ -21,11 +21,6 @@ namespace PowerView.Model
 
       this.timeRegisterValue = timeRegisterValue;
       this.normalizedTimestamp = normalizedTimestamp;
-    }
-
-    public NormalizedTimeRegisterValue Normalize(Func<DateTime, DateTime> timeDivider)
-    {
-      throw new NotSupportedException();
     }
 
     public bool DeviceIdEquals(NormalizedTimeRegisterValue normalizedTimeRegisterValue)
