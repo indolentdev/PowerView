@@ -134,7 +134,7 @@
     <Compile Include="Repository\ExportRepositoryTest.cs" />
     <Compile Include="DeviceIdTest.cs" />
     <Compile Include="SeriesGenerators\DiffByTimeSeriesGeneratorTest.cs" />
-    <Compile Include="PeriodRegisterValueTest.cs" />
+    <Compile Include="DurationRegisterValueTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

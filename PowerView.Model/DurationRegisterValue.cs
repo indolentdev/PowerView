@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace PowerView.Model
 {
-  public class PeriodRegisterValue : IEquatable<PeriodRegisterValue>
+  public class DurationRegisterValue : IEquatable<DurationRegisterValue>
   {
     private readonly DateTime startTimestamp;
     private readonly DateTime endTimestamp;
@@ -13,7 +13,7 @@ namespace PowerView.Model
     public DateTime EndTimestamp { get { return endTimestamp; } }
     public UnitValue UnitValue { get { return unitValue; } }
 
-    public PeriodRegisterValue(DateTime startTimestamp, DateTime endTimestamp, UnitValue unitValue)
+    public DurationRegisterValue(DateTime startTimestamp, DateTime endTimestamp, UnitValue unitValue)
     {
       if (startTimestamp.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("startTimestamp", "Must be UTC");
       if (endTimestamp.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("endTimestamp", "Must be UTC");
@@ -32,11 +32,11 @@ namespace PowerView.Model
 
     public override bool Equals(object obj)
     {
-      var value = obj as PeriodRegisterValue;
+      var value = obj as DurationRegisterValue;
       return Equals(value);
     }
 
-    public bool Equals(PeriodRegisterValue value)
+    public bool Equals(DurationRegisterValue value)
     {
       return value != null &&
              startTimestamp == value.startTimestamp &&
@@ -53,12 +53,12 @@ namespace PowerView.Model
       return hashCode;
     }
 
-    public static bool operator ==(PeriodRegisterValue value1, PeriodRegisterValue value2)
+    public static bool operator ==(DurationRegisterValue value1, DurationRegisterValue value2)
     {
-      return EqualityComparer<PeriodRegisterValue>.Default.Equals(value1, value2);
+      return EqualityComparer<DurationRegisterValue>.Default.Equals(value1, value2);
     }
 
-    public static bool operator !=(PeriodRegisterValue value1, PeriodRegisterValue value2)
+    public static bool operator !=(DurationRegisterValue value1, DurationRegisterValue value2)
     {
       return !(value1 == value2);
     }

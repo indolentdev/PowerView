@@ -172,7 +172,7 @@
     <Compile Include="DeviceId.cs" />
     <Compile Include="SeriesGenerators\IMultiInputSeriesGenerator.cs" />
     <Compile Include="SeriesGenerators\DiffByTimeSeriesGenerator.cs" />
-    <Compile Include="PeriodRegisterValue.cs" />
+    <Compile Include="DurationRegisterValue.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

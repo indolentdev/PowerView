@@ -4,7 +4,7 @@ using NUnit.Framework;
 namespace PowerView.Model.Test
 {
   [TestFixture]
-  public class PeriodRegisterValueTest
+  public class DurationRegisterValueTest
   {
     [Test]
     public void ConstructorThrows()
@@ -14,9 +14,9 @@ namespace PowerView.Model.Test
       var unitValue = new UnitValue();
 
       // Act & Assert
-      Assert.That(() => new PeriodRegisterValue(DateTime.Now, dt, unitValue), Throws.TypeOf<ArgumentOutOfRangeException>());
-      Assert.That(() => new PeriodRegisterValue(dt, DateTime.Now, unitValue), Throws.TypeOf<ArgumentOutOfRangeException>());
-      Assert.That(() => new PeriodRegisterValue(dt, dt.Subtract(TimeSpan.FromMilliseconds(1)), unitValue), Throws.TypeOf<ArgumentOutOfRangeException>());
+      Assert.That(() => new DurationRegisterValue(DateTime.Now, dt, unitValue), Throws.TypeOf<ArgumentOutOfRangeException>());
+      Assert.That(() => new DurationRegisterValue(dt, DateTime.Now, unitValue), Throws.TypeOf<ArgumentOutOfRangeException>());
+      Assert.That(() => new DurationRegisterValue(dt, dt.Subtract(TimeSpan.FromMilliseconds(1)), unitValue), Throws.TypeOf<ArgumentOutOfRangeException>());
     }
 
     [Test]
@@ -28,7 +28,7 @@ namespace PowerView.Model.Test
       var unitValue = new UnitValue(1, 2, Unit.Joule);
 
       // Act
-      var target = new PeriodRegisterValue(dtStart, dtEnd, unitValue);
+      var target = new DurationRegisterValue(dtStart, dtEnd, unitValue);
 
       // Assert
       Assert.That(target.StartTimestamp, Is.EqualTo(dtStart));
@@ -45,7 +45,7 @@ namespace PowerView.Model.Test
       var unitValue = new UnitValue(1, 2, Unit.Joule);
 
       // Act
-      var target = new PeriodRegisterValue(dtStart, dtEnd, unitValue);
+      var target = new DurationRegisterValue(dtStart, dtEnd, unitValue);
 
       // Assert
       Assert.That(target.ToString(), Is.EqualTo("[startTimestamp=2015-02-13T19:30:00.0000000Z, endTimestamp=2015-02-13T20:30:00.0000000Z, unitValue=[value=100, unit=Joule]]"));
@@ -58,11 +58,11 @@ namespace PowerView.Model.Test
       var dtStart = new DateTime(2015,02,13,19,30,00,DateTimeKind.Utc);
       var dtEnd = new DateTime(2015, 02, 13, 20, 30, 00, DateTimeKind.Utc);
       var unitValue = new UnitValue(1, 2, Unit.Joule);
-      var t1 = new PeriodRegisterValue(dtStart, dtEnd, unitValue);
-      var t2 = new PeriodRegisterValue(dtStart, dtEnd, unitValue);
-      var t3 = new PeriodRegisterValue(dtStart.AddMinutes(1), dtEnd, unitValue);
-      var t4 = new PeriodRegisterValue(dtStart, dtEnd.AddMinutes(1), unitValue);
-      var t5 = new PeriodRegisterValue(dtStart, dtEnd, new UnitValue());
+      var t1 = new DurationRegisterValue(dtStart, dtEnd, unitValue);
+      var t2 = new DurationRegisterValue(dtStart, dtEnd, unitValue);
+      var t3 = new DurationRegisterValue(dtStart.AddMinutes(1), dtEnd, unitValue);
+      var t4 = new DurationRegisterValue(dtStart, dtEnd.AddMinutes(1), unitValue);
+      var t5 = new DurationRegisterValue(dtStart, dtEnd, new UnitValue());
 
       // Act & Assert
       Assert.That(t1, Is.EqualTo(t2));
@@ -82,9 +82,9 @@ namespace PowerView.Model.Test
       var dtStart = new DateTime(2015, 02, 13, 19, 30, 00, DateTimeKind.Utc);
       var dtEnd = new DateTime(2015, 02, 13, 20, 30, 00, DateTimeKind.Utc);
       var unitValue = new UnitValue(1, 2, Unit.Joule);
-      var t1 = new PeriodRegisterValue(dtStart, dtEnd, unitValue);
-      var t2 = new PeriodRegisterValue(dtStart, dtEnd, unitValue);
-      var t3 = new PeriodRegisterValue(dtStart.AddMinutes(1), dtEnd, unitValue);
+      var t1 = new DurationRegisterValue(dtStart, dtEnd, unitValue);
+      var t2 = new DurationRegisterValue(dtStart, dtEnd, unitValue);
+      var t3 = new DurationRegisterValue(dtStart.AddMinutes(1), dtEnd, unitValue);
 
       // Act & Assert
       Assert.That(t1 == t2, Is.True);
