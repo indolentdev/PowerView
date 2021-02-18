@@ -39,7 +39,7 @@ namespace PowerView.Model.Repository
         labelSeries.Add(labelS);
       }
       var labelSeriesSet = new LabelSeriesSet<TimeRegisterValue>(dt1, dt2, labelSeries);
-      var intervalGroup = new ProfileGraphIntervalGroup(timeZoneInfo, midnight, "5-minutes", new ProfileGraph[0], labelSeriesSet);
+      var intervalGroup = new IntervalGroup(timeZoneInfo, midnight, "5-minutes", labelSeriesSet);
       intervalGroup.Prepare();
 
       var seriesNames = intervalGroup.NormalizedLabelSeriesSet
