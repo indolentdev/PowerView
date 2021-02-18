@@ -33,19 +33,6 @@ namespace PowerView.Model.Test
     }
 
     [Test]
-    public void NormalizeThrows()
-    {
-      // Arrange
-      var timeRegisterValue = new TimeRegisterValue("d1", DateTime.UtcNow, new UnitValue());
-      var dt = DateTime.UtcNow;
-      var target = new NormalizedTimeRegisterValue(timeRegisterValue, dt);
-
-      // Act & Assert
-      Assert.That(() => target.Normalize(null), Throws.TypeOf<NotSupportedException>());
-      Assert.That(() => target.Normalize(x => x), Throws.TypeOf<NotSupportedException>());
-    }
-
-    [Test]
     [TestCase("SN", "SN", true)]
     [TestCase("sn", "SN", true)]
     [TestCase(null, null, true)]

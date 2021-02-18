@@ -5,8 +5,6 @@ namespace PowerView.Model
 {
   public class NormalizedTimeRegisterValue : IEquatable<NormalizedTimeRegisterValue>, IRegisterValue
   {
-    public const string DummyDeviceId = "0";
-
     private readonly TimeRegisterValue timeRegisterValue;
     private readonly DateTime normalizedTimestamp;
 
