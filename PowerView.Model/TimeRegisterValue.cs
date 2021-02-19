@@ -111,11 +111,14 @@ namespace PowerView.Model
 
     public override int GetHashCode()
     {
-      var hashCode = 1356502293;
-      hashCode = hashCode * -1521134295 + deviceId != null ? deviceId.ToLowerInvariant().GetHashCode() : 0;
-      hashCode = hashCode * -1521134295 + timestamp.GetHashCode();
-      hashCode = hashCode * -1521134295 + EqualityComparer<UnitValue>.Default.GetHashCode(unitValue);
-      return hashCode;
+      unchecked
+      {
+        var hashCode = 1356502293;
+        hashCode = hashCode * -1521134295 + deviceId != null ? deviceId.ToLowerInvariant().GetHashCode() : 0;
+        hashCode = hashCode * -1521134295 + timestamp.GetHashCode();
+        hashCode = hashCode * -1521134295 + EqualityComparer<UnitValue>.Default.GetHashCode(unitValue);
+        return hashCode;
+      }
     }
 
     public static bool operator ==(TimeRegisterValue value1, TimeRegisterValue value2)

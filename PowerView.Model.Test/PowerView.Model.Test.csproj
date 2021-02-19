@@ -134,7 +134,7 @@
     <Compile Include="Repository\ExportRepositoryTest.cs" />
     <Compile Include="DeviceIdTest.cs" />
     <Compile Include="SeriesGenerators\DiffByTimeSeriesGeneratorTest.cs" />
-    <Compile Include="DurationRegisterValueTest.cs" />
+    <Compile Include="NormalizedDurationRegisterValueTest.cs" />
     <Compile Include="IntervalGroupTest.cs" />
     <Compile Include="TimeRegisterValueLabelSeriesTest.cs" />
     <Compile Include="TimeRegisterValueLabelSeriesSetTest.cs" />

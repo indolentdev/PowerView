@@ -47,10 +47,13 @@ namespace PowerView.Model
 
     public override int GetHashCode()
     {
-      var hashCode = 1321262762;
-      hashCode = hashCode * -1521134295 + EqualityComparer<TimeRegisterValue>.Default.GetHashCode(timeRegisterValue);
-      hashCode = hashCode * -1521134295 + normalizedTimestamp.GetHashCode();
-      return hashCode;
+      unchecked
+      {
+        var hashCode = 1321262762;
+        hashCode = hashCode * -1521134295 + EqualityComparer<TimeRegisterValue>.Default.GetHashCode(timeRegisterValue);
+        hashCode = hashCode * -1521134295 + normalizedTimestamp.GetHashCode();
+        return hashCode;
+      }
     }
 
     public static bool operator ==(NormalizedTimeRegisterValue value1, NormalizedTimeRegisterValue value2)

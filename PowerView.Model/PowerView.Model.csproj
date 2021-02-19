@@ -172,7 +172,7 @@
     <Compile Include="DeviceId.cs" />
     <Compile Include="SeriesGenerators\IMultiInputSeriesGenerator.cs" />
     <Compile Include="SeriesGenerators\DiffByTimeSeriesGenerator.cs" />
-    <Compile Include="DurationRegisterValue.cs" />
+    <Compile Include="NormalizedDurationRegisterValue.cs" />
     <Compile Include="IntervalGroup.cs" />
     <Compile Include="TimeRegisterValueLabelSeries.cs" />
     <Compile Include="TimeRegisterValueLabelSeriesSet.cs" />
