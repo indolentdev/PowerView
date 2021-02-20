@@ -21,6 +21,48 @@ namespace PowerView.Model
       this.normalizedTimestamp = normalizedTimestamp;
     }
 
+    public NormalizedDurationRegisterValue SubtractValue(NormalizedTimeRegisterValue baseValue)
+    {
+      var substractedValue = timeRegisterValue.UnitValue - baseValue.TimeRegisterValue.UnitValue;
+      var dValue = substractedValue.Value;
+
+      if (!DeviceIdEquals(baseValue))
+      {
+        var msg = string.Format("A calculation of a subtracted value was not possible. The values originate from different devices (device ids). Minuend:{0}, Subtrahend:{1}",
+          this, baseValue);
+        throw new DataMisalignedException(msg);
+      }
+
+      if (dValue < 0)
+      {
+        var maxValue = GetMaxValue(baseValue);
+        if (dValue * -1 < maxValue * 0.05) // Assume register quirk (e.g. meter reboot without proper data continuation/data restore)
+        {
+          dValue = 0;
+        }
+        else if (dValue * -1 > maxValue * 0.75) // Assume register wrap
+        {
+          dValue = (maxValue - baseValue.TimeRegisterValue.UnitValue.Value) + TimeRegisterValue.UnitValue.Value;
+        }
+        else
+        {
+          var msg = string.Format("A calculation of a subtracted value resulted in a negative result. Minuend:{0}, Subtrahend:{1}",
+            this, baseValue);
+          throw new DataMisalignedException(msg);
+        }
+      }
+
+      return new NormalizedDurationRegisterValue(baseValue.TimeRegisterValue.Timestamp, TimeRegisterValue.Timestamp,
+        baseValue.NormalizedTimestamp, NormalizedTimestamp, new UnitValue(dValue, substractedValue.Unit), TimeRegisterValue.DeviceId);
+    }
+
+    private static double GetMaxValue(NormalizedTimeRegisterValue normalizedTimeRegisterValue)
+    {
+      var longValue = Convert.ToInt64(normalizedTimeRegisterValue.TimeRegisterValue.UnitValue.Value);
+      var pow = longValue.ToString(System.Globalization.CultureInfo.InvariantCulture).Length;
+      return Math.Pow(10, pow);
+    }
+
     public bool DeviceIdEquals(NormalizedTimeRegisterValue normalizedTimeRegisterValue)
     {
       return TimeRegisterValue.DeviceIdEquals(normalizedTimeRegisterValue.TimeRegisterValue);

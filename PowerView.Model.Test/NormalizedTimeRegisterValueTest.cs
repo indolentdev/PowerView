@@ -33,6 +33,120 @@ namespace PowerView.Model.Test
     }
 
     [Test]
+    public void SubstractValue()
+    {
+      // Arrange
+      var dt = new DateTime(2015, 02, 13, 19, 30, 00, DateTimeKind.Utc);
+      var dtNorm = new DateTime(2015, 02, 13, 19, 00, 00, DateTimeKind.Utc);
+      var t1 = new NormalizedTimeRegisterValue(new TimeRegisterValue("DID", dt.AddMinutes(-5), 20, 1, Unit.Watt), dtNorm.AddMinutes(-5));
+      var t2 = new NormalizedTimeRegisterValue(new TimeRegisterValue("DID", dt, 21, 1, Unit.Watt), dtNorm);
+
+      // Act
+      var target = t2.SubtractValue(t1);
+
+      // Assert
+      Assert.That(target.Start, Is.EqualTo(t1.TimeRegisterValue.Timestamp));
+      Assert.That(target.End, Is.EqualTo(t2.TimeRegisterValue.Timestamp));
+      Assert.That(target.NormalizedStart, Is.EqualTo(t1.NormalizedTimestamp));
+      Assert.That(target.NormalizedEnd, Is.EqualTo(t2.NormalizedTimestamp));
+      Assert.That(target.UnitValue, Is.EqualTo(new UnitValue(10, Unit.Watt)));
+      Assert.That(target.DeviceIds, Is.EqualTo(new[] { "DID" }));
+    }
+
+    [Test]
+    public void SubstractValueDeviceIdCaseInsensitive()
+    {
+      // Arrange
+      var dt = new DateTime(2015, 02, 13, 19, 30, 00, DateTimeKind.Utc);
+      var dtNorm = new DateTime(2015, 02, 13, 19, 00, 00, DateTimeKind.Utc);
+      var t1 = new NormalizedTimeRegisterValue(new TimeRegisterValue("DID", dt.AddMinutes(-5), 20, 1, Unit.Watt), dtNorm.AddMinutes(-5));
+      var t2 = new NormalizedTimeRegisterValue(new TimeRegisterValue("did", dt, 21, 1, Unit.Watt), dtNorm);
+
+      // Act
+      var target = t2.SubtractValue(t1);
+
+      // Assert
+      Assert.That(target.Start, Is.EqualTo(t1.TimeRegisterValue.Timestamp));
+      Assert.That(target.End, Is.EqualTo(t2.TimeRegisterValue.Timestamp));
+      Assert.That(target.NormalizedStart, Is.EqualTo(t1.NormalizedTimestamp));
+      Assert.That(target.NormalizedEnd, Is.EqualTo(t2.NormalizedTimestamp));
+      Assert.That(target.UnitValue, Is.EqualTo(new UnitValue(10, Unit.Watt)));
+      Assert.That(target.DeviceIds, Is.EqualTo(new[] { "did" }));
+    }
+
+    [Test]
+    public void SubstractValueNegativeAssumeRegisterQuirk()
+    {
+      // Arrange
+      var dt = new DateTime(2015, 02, 13, 19, 30, 00, DateTimeKind.Utc);
+      var dtNorm = new DateTime(2015, 02, 13, 19, 00, 00, DateTimeKind.Utc);
+      var t1 = new NormalizedTimeRegisterValue(new TimeRegisterValue("DID", dt.AddMinutes(-5), 102, 0, Unit.Watt), dtNorm.AddMinutes(-5));
+      var t2 = new NormalizedTimeRegisterValue(new TimeRegisterValue("DID", dt, 101, 0, Unit.Watt), dtNorm);
+
+      // Act
+      var target = t2.SubtractValue(t1);
+
+      // Assert
+      Assert.That(target.UnitValue.Value, Is.EqualTo(0));
+    }
+
+    [Test]
+    public void SubstractValueNegativeAssumeRegisterWrap()
+    {
+      // Arrange
+      var dt = new DateTime(2015, 02, 13, 19, 30, 00, DateTimeKind.Utc);
+      var dtNorm = new DateTime(2015, 02, 13, 19, 00, 00, DateTimeKind.Utc);
+      var t1 = new NormalizedTimeRegisterValue(new TimeRegisterValue("DID", dt.AddMinutes(-5), 880, 0, Unit.Watt), dtNorm.AddMinutes(-5));
+      var t2 = new NormalizedTimeRegisterValue(new TimeRegisterValue("DID", dt, 10, 0, Unit.Watt), dtNorm);
+
+      // Act
+      var target = t2.SubtractValue(t1);
+
+      // Assert
+      Assert.That(target.UnitValue.Value, Is.EqualTo(1000 - 880 + 10));
+    }
+
+    [Test]
+    public void SubstractValueNegativeThrows()
+    {
+      // Arrange
+      var dt = new DateTime(2015, 02, 13, 19, 30, 00, DateTimeKind.Utc);
+      var dtNorm = new DateTime(2015, 02, 13, 19, 00, 00, DateTimeKind.Utc);
+      var t1 = new NormalizedTimeRegisterValue(new TimeRegisterValue("DID", dt.AddMinutes(-5), 880, 0, Unit.Watt), dtNorm.AddMinutes(-5));
+      var t2 = new NormalizedTimeRegisterValue(new TimeRegisterValue("DID", dt, 600, 0, Unit.Watt), dtNorm);
+
+      // Act & Assert
+      Assert.That(() => t2.SubtractValue(t1), Throws.TypeOf<DataMisalignedException>());
+    }
+
+    [Test]
+    public void SubstractValueCrossDeviceIdsThrows()
+    {
+      // Arrange
+      var dt = new DateTime(2015, 02, 13, 19, 30, 00, DateTimeKind.Utc);
+      var dtNorm = new DateTime(2015, 02, 13, 19, 00, 00, DateTimeKind.Utc);
+      var t1 = new NormalizedTimeRegisterValue(new TimeRegisterValue("DID1", dt.AddMinutes(-5), 600, 0, Unit.Watt), dtNorm.AddMinutes(-5));
+      var t2 = new NormalizedTimeRegisterValue(new TimeRegisterValue("DID2", dt, 600, 0, Unit.Watt), dtNorm);
+
+      // Act & Assert
+      Assert.That(() => t2.SubtractValue(t1), Throws.TypeOf<DataMisalignedException>());
+    }
+
+    [Test]
+    public void SubstractValueDifferentUnitsThrows()
+    {
+      // Arrange
+      var dt = new DateTime(2015, 02, 13, 19, 30, 00, DateTimeKind.Utc);
+      var dtNorm = new DateTime(2015, 02, 13, 19, 00, 00, DateTimeKind.Utc);
+      var t1 = new NormalizedTimeRegisterValue(new TimeRegisterValue("DID", dt.AddMinutes(-5), 20, 1, Unit.Watt), dtNorm.AddMinutes(-5));
+      var t2 = new NormalizedTimeRegisterValue(new TimeRegisterValue("DID", dt, 21, 1, Unit.WattHour), dtNorm);
+
+      // Act & Assert
+      Assert.That(() => t1.SubtractValue(t2), Throws.TypeOf<DataMisalignedException>());
+    }
+
+
+    [Test]
     [TestCase("SN", "SN", true)]
     [TestCase("sn", "SN", true)]
     [TestCase(null, null, true)]
