@@ -49,6 +49,11 @@ namespace PowerView.Model
       return obisCodeSets.Where(x => x.Key.IsCumulative).ToDictionary(x => x.Key, x => x.Value);
     }
 
+    public IDictionary<ObisCode, IList<T>> GetNonCumulativeSeries()
+    {
+      return obisCodeSets.Except(GetCumulativeSeries()).ToDictionary(x => x.Key, x => x.Value);
+    }
+
     public void Add(IDictionary<ObisCode, IList<T>> series)
     {
       foreach (var s in series)

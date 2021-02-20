@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace PowerView.Model
 {
-  public class NormalizedDurationRegisterValue : IEquatable<NormalizedDurationRegisterValue>
+  public class NormalizedDurationRegisterValue : IEquatable<NormalizedDurationRegisterValue>, IRegisterValue
   {
     private readonly DateTime start;
     private readonly DateTime end;
@@ -19,6 +19,8 @@ namespace PowerView.Model
     public DateTime NormalizedEnd { get { return normalizedEnd; } }
     public UnitValue UnitValue { get { return unitValue; } }
     public IReadOnlyList<string> DeviceIds { get { return deviceIds.AsReadOnly(); } }
+
+    public DateTime OrderProperty { get { return End; } }
 
     public NormalizedDurationRegisterValue(DateTime start, DateTime end, DateTime normalizedStart, DateTime normalizedEnd, UnitValue unitValue, params string[] deviceIds)
     {

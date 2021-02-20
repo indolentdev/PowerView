@@ -148,12 +148,51 @@ namespace PowerView.Model.Test
       var dt = DateTime.UtcNow;
       var obisCode = ObisCode.ColdWaterVolume1;
       var target = new LabelSeries<TimeRegisterValue>(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> {
-        { obisCode, new [] { new TimeRegisterValue("d1", dt, new UnitValue()) } } });
+        { obisCode, new [] { new TimeRegisterValue("d1", dt, new UnitValue()) } },
+        { ObisCode.ColdWaterFlow1, new [] { new TimeRegisterValue("d1", dt, new UnitValue()) } }
+      });
 
       // Act
 
       // Assert
       var cumulatives = target.GetCumulativeSeries();
+
+      // Assert
+      Assert.That(cumulatives.Count, Is.EqualTo(1));
+      Assert.That(cumulatives.ContainsKey(obisCode));
+      Assert.That(cumulatives[obisCode], Is.EqualTo(new[] { new TimeRegisterValue("d1", dt, new UnitValue()) }));
+    }
+
+    [Test]
+    public void GetNonCumulativeSeries_Empty()
+    {
+      // Arrange
+      const string label = "label";
+      var target = new LabelSeries<TimeRegisterValue>(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>>());
+
+      // Act
+      var nonCumulatives = target.GetNonCumulativeSeries();
+
+      // Assert
+      Assert.That(nonCumulatives, Is.Empty);
+    }
+
+    [Test]
+    public void GetNonCumulativeSeries()
+    {
+      // Arrange
+      const string label = "label";
+      var dt = DateTime.UtcNow;
+      var obisCode = ObisCode.ColdWaterFlow1;
+      var target = new LabelSeries<TimeRegisterValue>(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> {
+        { obisCode, new [] { new TimeRegisterValue("d1", dt, new UnitValue()) } },
+        { ObisCode.ColdWaterVolume1, new [] { new TimeRegisterValue("d1", dt, new UnitValue()) } }
+      });
+
+      // Act
+
+      // Assert
+      var cumulatives = target.GetNonCumulativeSeries();
 
       // Assert
       Assert.That(cumulatives.Count, Is.EqualTo(1));

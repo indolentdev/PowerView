@@ -66,7 +66,7 @@ namespace PowerView.Model.Test
       var labelSeries = new LabelSeries<TimeRegisterValue>(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, timeRegisterValues } });
 
       // Act
-      target.Add(new[] { labelSeries });
+      target.Add(labelSeries);
 
       // Assert
       Assert.That(target, Is.EqualTo(new[] { labelSeries }));

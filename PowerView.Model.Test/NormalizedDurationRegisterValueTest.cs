@@ -43,6 +43,7 @@ namespace PowerView.Model.Test
       Assert.That(target.NormalizedEnd, Is.EqualTo(normalizedEnd));
       Assert.That(target.UnitValue, Is.EqualTo(unitValue));
       Assert.That(target.DeviceIds, Is.EqualTo(deviceIds));
+      Assert.That(target.OrderProperty, Is.EqualTo(end));
     }
 
     [Test]

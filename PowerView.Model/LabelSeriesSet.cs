@@ -29,9 +29,9 @@ namespace PowerView.Model
     public DateTime Start { get; private set; }
     public DateTime End { get; private set; }
 
-    internal void Add(IList<LabelSeries<T>> list)
+    internal void Add(LabelSeries<T> ls)
     {
-      labelSeries.AddRange(list);
+      labelSeries.Add(ls);
     }
 
     #region IEnumerable implementation
