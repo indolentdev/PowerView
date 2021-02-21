@@ -1,26 +1,24 @@
-﻿using System;
+﻿using System.Linq;
 using System.Collections.Generic;
 
 namespace PowerView.Model.SeriesGenerators
 {
   public class DeltaSeriesGenerator : ISingleInputSeriesGenerator
   {
-    private readonly List<NormalizedTimeRegisterValue> generatedValues;
+    private readonly List<NormalizedDurationRegisterValue> generatedValues;
     private NormalizedTimeRegisterValue previous;
 
     public DeltaSeriesGenerator()
     {
-      generatedValues = new List<NormalizedTimeRegisterValue>(300);
+      generatedValues = new List<NormalizedDurationRegisterValue>(300);
     }
 
     public void CalculateNext(NormalizedTimeRegisterValue normalizedTimeRegisterValue)
     {
-      NormalizedTimeRegisterValue generatedValue;
+      NormalizedDurationRegisterValue generatedValue;
       if (generatedValues.Count == 0)
       {
-        generatedValue = new NormalizedTimeRegisterValue(
-          normalizedTimeRegisterValue.TimeRegisterValue.SubtractValue(normalizedTimeRegisterValue.TimeRegisterValue),
-          normalizedTimeRegisterValue.NormalizedTimestamp);
+        generatedValue = normalizedTimeRegisterValue.SubtractValue(normalizedTimeRegisterValue);
       }
       else
       {
@@ -28,13 +26,13 @@ namespace PowerView.Model.SeriesGenerators
         var substrahend = previous;
         if (!minutend.DeviceIdEquals(substrahend))
         {
-          generatedValue = new NormalizedTimeRegisterValue(
-            new TimeRegisterValue(minutend.TimeRegisterValue.DeviceId, minutend.TimeRegisterValue.Timestamp, 0, minutend.TimeRegisterValue.UnitValue.Unit),
-            minutend.NormalizedTimestamp);
+          generatedValue = new NormalizedDurationRegisterValue(substrahend.TimeRegisterValue.Timestamp, minutend.TimeRegisterValue.Timestamp,
+            substrahend.NormalizedTimestamp, minutend.NormalizedTimestamp, new UnitValue(0, minutend.TimeRegisterValue.UnitValue.Unit),
+            substrahend.TimeRegisterValue.DeviceId, minutend.TimeRegisterValue.DeviceId);
         }
         else
         {
-          generatedValue = new NormalizedTimeRegisterValue(minutend.TimeRegisterValue.SubtractValue(substrahend.TimeRegisterValue), minutend.NormalizedTimestamp);
+          generatedValue = minutend.SubtractValue(substrahend);
         }
       }
 
@@ -42,9 +40,16 @@ namespace PowerView.Model.SeriesGenerators
       generatedValues.Add(generatedValue);
     }
 
-    public IList<NormalizedTimeRegisterValue> GetGenerated()
+    public IList<NormalizedDurationRegisterValue> GetGeneratedDurations()
     {
       return generatedValues.AsReadOnly();
     }
+
+    public IList<NormalizedTimeRegisterValue> GetGenerated()
+    {
+      return generatedValues.Select(x => new NormalizedTimeRegisterValue(
+        new TimeRegisterValue(x.DeviceIds.Last(), x.End, x.UnitValue), x.NormalizedEnd)).ToList().AsReadOnly();
+    }
+
   }
 }
