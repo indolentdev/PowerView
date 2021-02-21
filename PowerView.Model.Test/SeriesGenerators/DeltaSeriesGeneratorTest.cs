@@ -363,6 +363,5 @@ namespace PowerView.Model.Test.SeriesGenerators
       return timeDivider;
     }
 
-
   }
 }

@@ -7,14 +7,14 @@ namespace PowerView.Model.SeriesGenerators
   public class PeriodSeriesGenerator : ISingleInputSeriesGenerator
   {
     private readonly List<NormalizedTimeRegisterValue> snReferenceValues;
-    private readonly Dictionary<string, NormalizedTimeRegisterValue> snTransitionValues;
-    private readonly List<NormalizedTimeRegisterValue> generatedValues;
+    private readonly Dictionary<string, NormalizedDurationRegisterValue> snTransitionValues;
+    private readonly List<NormalizedDurationRegisterValue> generatedValues;
 
     public PeriodSeriesGenerator()
     {
       snReferenceValues = new List<NormalizedTimeRegisterValue>(2);
-      snTransitionValues = new Dictionary<string, NormalizedTimeRegisterValue>(2);
-      generatedValues = new List<NormalizedTimeRegisterValue>(300);
+      snTransitionValues = new Dictionary<string, NormalizedDurationRegisterValue>(2);
+      generatedValues = new List<NormalizedDurationRegisterValue>(300);
     }
 
     public void CalculateNext(NormalizedTimeRegisterValue normalizedTimeRegisterValue)
@@ -31,17 +31,22 @@ namespace PowerView.Model.SeriesGenerators
         reference = normalizedTimeRegisterValue;
       }
 
-      var value = normalizedTimeRegisterValue.TimeRegisterValue.SubtractValue(reference.TimeRegisterValue);
-      var normalizedValue = new NormalizedTimeRegisterValue(value, normalizedTimeRegisterValue.NormalizedTimestamp);
-      snTransitionValues[GetTransitionKey(reference)] = normalizedValue;
+      var value = normalizedTimeRegisterValue.SubtractValue(reference);
+      snTransitionValues[GetTransitionKey(reference)] = value;
 
       var generatedValue = Sum(snTransitionValues.Values);
       generatedValues.Add(generatedValue);
     }
 
-    public IList<NormalizedTimeRegisterValue> GetGenerated()
+    public IList<NormalizedDurationRegisterValue> GetGeneratedDurations()
     {
       return generatedValues.AsReadOnly();
+    }
+
+    public IList<NormalizedTimeRegisterValue> GetGenerated()
+    {
+      return generatedValues.Select(x => new NormalizedTimeRegisterValue(
+        new TimeRegisterValue(x.DeviceIds.Count == 1 ? x.DeviceIds.First() : "0", x.End, x.UnitValue), x.NormalizedEnd)).ToList().AsReadOnly();
     }
 
     private static string GetTransitionKey(NormalizedTimeRegisterValue normalizedTimeRegisterValue)
@@ -49,9 +54,9 @@ namespace PowerView.Model.SeriesGenerators
       return string.Format("SN:{0}-RefTime:{1}", normalizedTimeRegisterValue.TimeRegisterValue.DeviceId, normalizedTimeRegisterValue.TimeRegisterValue.Timestamp.ToString("o"));
     }
 
-    private static NormalizedTimeRegisterValue Sum(ICollection<NormalizedTimeRegisterValue> normalizedTimeRegisterValues)
+    private static NormalizedDurationRegisterValue Sum(ICollection<NormalizedDurationRegisterValue> normalizedTimeRegisterValues)
     {
-      NormalizedTimeRegisterValue addend = null;
+      NormalizedDurationRegisterValue addend = null;
       foreach (var normalizedTimeRegisterValue in normalizedTimeRegisterValues.OrderBy(x => x.OrderProperty))
       {
         if (addend == null)
@@ -60,19 +65,17 @@ namespace PowerView.Model.SeriesGenerators
           continue;
         }
 
-        if (normalizedTimeRegisterValue.TimeRegisterValue.UnitValue.Unit != addend.TimeRegisterValue.UnitValue.Unit)
+        if (normalizedTimeRegisterValue.UnitValue.Unit != addend.UnitValue.Unit)
         {
           throw new DataMisalignedException("A calculation of a value sum was not possible. Units of values differ. Units:" +
-            normalizedTimeRegisterValue.TimeRegisterValue.UnitValue.Unit + ", " + addend.TimeRegisterValue.UnitValue.Unit);
+            normalizedTimeRegisterValue.UnitValue.Unit + ", " + addend.UnitValue.Unit);
         }
 
-        var addendDeviceId = addend.DeviceIdEquals(normalizedTimeRegisterValue) ? normalizedTimeRegisterValue.TimeRegisterValue.DeviceId : TimeRegisterValue.DummyDeviceId;
-        addend = new NormalizedTimeRegisterValue(
-          new TimeRegisterValue(addendDeviceId, 
-            normalizedTimeRegisterValue.TimeRegisterValue.Timestamp, 
-            normalizedTimeRegisterValue.TimeRegisterValue.UnitValue.Value + addend.TimeRegisterValue.UnitValue.Value, 
-            normalizedTimeRegisterValue.TimeRegisterValue.UnitValue.Unit),
-          normalizedTimeRegisterValue.NormalizedTimestamp);
+        var deviceIds = DeviceId.DistinctDeviceIds(addend.DeviceIds, normalizedTimeRegisterValue.DeviceIds);
+        addend = new NormalizedDurationRegisterValue(
+          addend.Start, normalizedTimeRegisterValue.End, addend.NormalizedStart, normalizedTimeRegisterValue.NormalizedEnd,
+          new UnitValue(addend.UnitValue.Value + normalizedTimeRegisterValue.UnitValue.Value, normalizedTimeRegisterValue.UnitValue.Unit),
+          deviceIds);
       }
       return addend;
     }

@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System.Collections.Generic;
+using NUnit.Framework;
 
 namespace PowerView.Model.Test
 {
@@ -22,5 +23,46 @@ namespace PowerView.Model.Test
       // Assert
       Assert.That(equals, Is.EqualTo(expected));
     }
+
+    [Test]
+    [TestCase("SN", "SN", new[] { "SN" })]
+    [TestCase("sn", "SN", new[] { "sn" })]
+    [TestCase(null, null, new[] { (string)null })]
+    [TestCase("SN", "XX", new[] { "SN", "XX" })]
+    [TestCase(null, "SN", new[] { null, "SN" })]
+    [TestCase("SN", null, new[] { "SN", null })]
+    public void DistinctDeviceIdsSingleArray(string d1, string d2, string[] expected)
+    {
+      // Arrange
+      IEnumerable<string> deviceIds = new[] { d1, d2 };
+
+      // Act
+      var distinctDeviceIds = DeviceId.DistinctDeviceIds(deviceIds);
+
+      // Assert
+      Assert.That(distinctDeviceIds, Is.EqualTo(expected));
+    }
+
+    [Test]
+    [TestCase("SN", "SN", new[] { "SN" })]
+    [TestCase("sn", "SN", new[] { "sn" })]
+    [TestCase(null, null, new[] { (string)null })]
+    [TestCase("SN", "XX", new[] { "SN", "XX" })]
+    [TestCase(null, "SN", new[] { null, "SN" })]
+    [TestCase("SN", null, new[] { "SN", null })]
+    public void DistinctDeviceIdsMultiArrays(string d1, string d2, string[] expected)
+    {
+      // Arrange
+      IEnumerable<string> deviceIds1 = new[] { d1 };
+      IEnumerable<string> deviceIds2 = new[] { d2 };
+
+      // Act
+      var distinctDeviceIds = DeviceId.DistinctDeviceIds(deviceIds1, deviceIds2);
+
+      // Assert
+      Assert.That(distinctDeviceIds, Is.EqualTo(expected));
+    }
+
+
   }
 }

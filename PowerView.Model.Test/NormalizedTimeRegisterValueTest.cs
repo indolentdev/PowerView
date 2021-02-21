@@ -145,7 +145,6 @@ namespace PowerView.Model.Test
       Assert.That(() => t1.SubtractValue(t2), Throws.TypeOf<DataMisalignedException>());
     }
 
-
     [Test]
     [TestCase("SN", "SN", true)]
     [TestCase("sn", "SN", true)]
