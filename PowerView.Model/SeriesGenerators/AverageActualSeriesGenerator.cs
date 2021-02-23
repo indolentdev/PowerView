@@ -1,26 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace PowerView.Model.SeriesGenerators
 {
   public class AverageActualSeriesGenerator : ISingleInputSeriesGenerator
   {
-    private readonly List<NormalizedTimeRegisterValue> generatedValues;
+    private readonly List<NormalizedDurationRegisterValue> generatedValues;
     private NormalizedTimeRegisterValue previous;
 
     public AverageActualSeriesGenerator()
     {
-      generatedValues = new List<NormalizedTimeRegisterValue>(300);
+      generatedValues = new List<NormalizedDurationRegisterValue>(300);
     }
 
     public void CalculateNext(NormalizedTimeRegisterValue normalizedTimeRegisterValue)
     {
-      NormalizedTimeRegisterValue generatedValue;
+      var actualUnit = GetActualUnit(normalizedTimeRegisterValue.TimeRegisterValue.UnitValue.Unit);
+
+      NormalizedDurationRegisterValue generatedValue;
       if (generatedValues.Count == 0)
       {
-        generatedValue = new NormalizedTimeRegisterValue(
-          new TimeRegisterValue(normalizedTimeRegisterValue.TimeRegisterValue.DeviceId, normalizedTimeRegisterValue.TimeRegisterValue.Timestamp, 0, GetActualUnit(normalizedTimeRegisterValue.TimeRegisterValue.UnitValue.Unit)),
-          normalizedTimeRegisterValue.NormalizedTimestamp);
+        generatedValue = new NormalizedDurationRegisterValue(
+          normalizedTimeRegisterValue.TimeRegisterValue.Timestamp, normalizedTimeRegisterValue.TimeRegisterValue.Timestamp,
+          normalizedTimeRegisterValue.NormalizedTimestamp, normalizedTimeRegisterValue.NormalizedTimestamp,
+          new UnitValue(0, actualUnit), normalizedTimeRegisterValue.TimeRegisterValue.DeviceId);
       }
       else
       {
@@ -28,19 +32,19 @@ namespace PowerView.Model.SeriesGenerators
         var substrahend = previous;
         if (!minutend.DeviceIdEquals(substrahend))
         {
-          generatedValue = new NormalizedTimeRegisterValue(
-            new TimeRegisterValue(minutend.TimeRegisterValue.DeviceId, minutend.TimeRegisterValue.Timestamp, 0, GetActualUnit(normalizedTimeRegisterValue.TimeRegisterValue.UnitValue.Unit)),
-            minutend.NormalizedTimestamp);
+          generatedValue = new NormalizedDurationRegisterValue(
+            substrahend.TimeRegisterValue.Timestamp, minutend.TimeRegisterValue.Timestamp, substrahend.NormalizedTimestamp, minutend.NormalizedTimestamp,
+            new UnitValue(0, actualUnit), substrahend.TimeRegisterValue.DeviceId, minutend.TimeRegisterValue.DeviceId);
         }
+        // Todo.. check for non-matching unit...
         else
         {
           var duration = minutend.TimeRegisterValue.Timestamp - substrahend.TimeRegisterValue.Timestamp;
-          var unit = GetActualUnit(minutend.TimeRegisterValue.UnitValue.Unit);
-          var delta = minutend.TimeRegisterValue.SubtractValue(substrahend.TimeRegisterValue).UnitValue.Value;
-          var averageActualValue = delta / duration.TotalHours;
-          generatedValue = new NormalizedTimeRegisterValue(
-            new TimeRegisterValue(minutend.TimeRegisterValue.DeviceId, minutend.TimeRegisterValue.Timestamp, averageActualValue, unit),
-            minutend.NormalizedTimestamp);
+          var delta = minutend.SubtractValue(substrahend).UnitValue.Value;
+          var averageActualValue = delta / duration.TotalHours; // assume average by hour..
+          generatedValue = new NormalizedDurationRegisterValue(
+            substrahend.TimeRegisterValue.Timestamp, minutend.TimeRegisterValue.Timestamp, substrahend.NormalizedTimestamp, minutend.NormalizedTimestamp,
+            new UnitValue(averageActualValue, actualUnit), minutend.TimeRegisterValue.DeviceId);
         }
       }
 
@@ -62,9 +66,15 @@ namespace PowerView.Model.SeriesGenerators
       return (Unit)250;
     }
 
-    public IList<NormalizedTimeRegisterValue> GetGenerated()
+    public IList<NormalizedDurationRegisterValue> GetGeneratedDurations()
     {
       return generatedValues.AsReadOnly();
+    }
+
+    public IList<NormalizedTimeRegisterValue> GetGenerated()
+    {
+      return generatedValues.Select(x => new NormalizedTimeRegisterValue(
+        new TimeRegisterValue(x.DeviceIds.Last(), x.End, x.UnitValue), x.NormalizedEnd)).ToList().AsReadOnly();
     }
   }
 }
