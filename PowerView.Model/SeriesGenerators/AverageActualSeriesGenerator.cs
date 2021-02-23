@@ -36,7 +36,12 @@ namespace PowerView.Model.SeriesGenerators
             substrahend.TimeRegisterValue.Timestamp, minutend.TimeRegisterValue.Timestamp, substrahend.NormalizedTimestamp, minutend.NormalizedTimestamp,
             new UnitValue(0, actualUnit), substrahend.TimeRegisterValue.DeviceId, minutend.TimeRegisterValue.DeviceId);
         }
-        // Todo.. check for non-matching unit...
+        else if (substrahend.TimeRegisterValue.UnitValue.Unit != minutend.TimeRegisterValue.UnitValue.Unit)
+        {
+          generatedValue = new NormalizedDurationRegisterValue(
+            substrahend.TimeRegisterValue.Timestamp, minutend.TimeRegisterValue.Timestamp, substrahend.NormalizedTimestamp, minutend.NormalizedTimestamp,
+            new UnitValue(0, actualUnit), minutend.TimeRegisterValue.DeviceId);
+        }
         else
         {
           var duration = minutend.TimeRegisterValue.Timestamp - substrahend.TimeRegisterValue.Timestamp;
