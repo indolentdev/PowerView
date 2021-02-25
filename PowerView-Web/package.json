@@ -30,7 +30,7 @@
     "core-js": "^3.8.1",
     "export-to-csv": "^0.2.1",
     "highcharts": "^8.2.2",
-    "highcharts-angular": "^2.8.2",
+    "highcharts-angular": "^2.10.0",
     "moment": "^2.29.1",
     "ngx-color-picker": "^11.0.0",
     "ngx-logger": "^4.1.9",
