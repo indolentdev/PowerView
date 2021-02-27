@@ -33,7 +33,7 @@
     "highcharts-angular": "^2.10.0",
     "moment": "^2.29.1",
     "ngx-color-picker": "^11.0.0",
-    "ngx-logger": "^4.1.9",
+    "ngx-logger": "^4.2.1",
     "npm": "^7.6.0",
     "rxjs": "^6.6.3",
     "ts-mockito": "^2.6.1",
