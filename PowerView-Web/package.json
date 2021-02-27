@@ -34,7 +34,7 @@
     "moment": "^2.29.1",
     "ngx-color-picker": "^11.0.0",
     "ngx-logger": "^4.1.9",
-    "npm": "^6.14.9",
+    "npm": "^7.6.0",
     "rxjs": "^6.6.3",
     "ts-mockito": "^2.6.1",
     "tslib": "^2.0.0",
