@@ -31,7 +31,7 @@ namespace PowerView.Model.SeriesGenerators
         reference = normalizedTimeRegisterValue;
       }
 
-      var value = normalizedTimeRegisterValue.SubtractValue(reference);
+      var value = normalizedTimeRegisterValue.SubtractAccommodateWrap(reference);
       snTransitionValues[GetTransitionKey(reference)] = value;
 
       var generatedValue = Sum(snTransitionValues.Values);

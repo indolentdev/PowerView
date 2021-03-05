@@ -33,7 +33,7 @@ namespace PowerView.Model.Test
     }
 
     [Test]
-    public void SubstractValue()
+    public void SubtractAccommodateWrap()
     {
       // Arrange
       var dt = new DateTime(2015, 02, 13, 19, 30, 00, DateTimeKind.Utc);
@@ -42,7 +42,7 @@ namespace PowerView.Model.Test
       var t2 = new NormalizedTimeRegisterValue(new TimeRegisterValue("DID", dt, 21, 1, Unit.Watt), dtNorm);
 
       // Act
-      var target = t2.SubtractValue(t1);
+      var target = t2.SubtractAccommodateWrap(t1);
 
       // Assert
       Assert.That(target.Start, Is.EqualTo(t1.TimeRegisterValue.Timestamp));
@@ -54,7 +54,7 @@ namespace PowerView.Model.Test
     }
 
     [Test]
-    public void SubstractValueDeviceIdCaseInsensitive()
+    public void SubtractAccommodateWrapDeviceIdCaseInsensitive()
     {
       // Arrange
       var dt = new DateTime(2015, 02, 13, 19, 30, 00, DateTimeKind.Utc);
@@ -63,7 +63,7 @@ namespace PowerView.Model.Test
       var t2 = new NormalizedTimeRegisterValue(new TimeRegisterValue("did", dt, 21, 1, Unit.Watt), dtNorm);
 
       // Act
-      var target = t2.SubtractValue(t1);
+      var target = t2.SubtractAccommodateWrap(t1);
 
       // Assert
       Assert.That(target.Start, Is.EqualTo(t1.TimeRegisterValue.Timestamp));
@@ -75,7 +75,7 @@ namespace PowerView.Model.Test
     }
 
     [Test]
-    public void SubstractValueNegativeAssumeRegisterQuirk()
+    public void SubtractAccommodateWrapNegativeAssumeRegisterQuirk()
     {
       // Arrange
       var dt = new DateTime(2015, 02, 13, 19, 30, 00, DateTimeKind.Utc);
@@ -84,14 +84,14 @@ namespace PowerView.Model.Test
       var t2 = new NormalizedTimeRegisterValue(new TimeRegisterValue("DID", dt, 101, 0, Unit.Watt), dtNorm);
 
       // Act
-      var target = t2.SubtractValue(t1);
+      var target = t2.SubtractAccommodateWrap(t1);
 
       // Assert
       Assert.That(target.UnitValue.Value, Is.EqualTo(0));
     }
 
     [Test]
-    public void SubstractValueNegativeAssumeRegisterWrap()
+    public void SubtractAccommodateWrapNegativeAssumeRegisterWrap()
     {
       // Arrange
       var dt = new DateTime(2015, 02, 13, 19, 30, 00, DateTimeKind.Utc);
@@ -100,14 +100,14 @@ namespace PowerView.Model.Test
       var t2 = new NormalizedTimeRegisterValue(new TimeRegisterValue("DID", dt, 10, 0, Unit.Watt), dtNorm);
 
       // Act
-      var target = t2.SubtractValue(t1);
+      var target = t2.SubtractAccommodateWrap(t1);
 
       // Assert
       Assert.That(target.UnitValue.Value, Is.EqualTo(1000 - 880 + 10));
     }
 
     [Test]
-    public void SubstractValueNegativeThrows()
+    public void SubtractAccommodateWrapNegativeThrows()
     {
       // Arrange
       var dt = new DateTime(2015, 02, 13, 19, 30, 00, DateTimeKind.Utc);
@@ -116,11 +116,11 @@ namespace PowerView.Model.Test
       var t2 = new NormalizedTimeRegisterValue(new TimeRegisterValue("DID", dt, 600, 0, Unit.Watt), dtNorm);
 
       // Act & Assert
-      Assert.That(() => t2.SubtractValue(t1), Throws.TypeOf<DataMisalignedException>());
+      Assert.That(() => t2.SubtractAccommodateWrap(t1), Throws.TypeOf<DataMisalignedException>());
     }
 
     [Test]
-    public void SubstractValueCrossDeviceIdsThrows()
+    public void SubtractAccommodateWrapCrossDeviceIdsThrows()
     {
       // Arrange
       var dt = new DateTime(2015, 02, 13, 19, 30, 00, DateTimeKind.Utc);
@@ -129,11 +129,11 @@ namespace PowerView.Model.Test
       var t2 = new NormalizedTimeRegisterValue(new TimeRegisterValue("DID2", dt, 600, 0, Unit.Watt), dtNorm);
 
       // Act & Assert
-      Assert.That(() => t2.SubtractValue(t1), Throws.TypeOf<DataMisalignedException>());
+      Assert.That(() => t2.SubtractAccommodateWrap(t1), Throws.TypeOf<DataMisalignedException>());
     }
 
     [Test]
-    public void SubstractValueDifferentUnitsThrows()
+    public void SubtractAccommodateWrapDifferentUnitsThrows()
     {
       // Arrange
       var dt = new DateTime(2015, 02, 13, 19, 30, 00, DateTimeKind.Utc);
@@ -142,7 +142,7 @@ namespace PowerView.Model.Test
       var t2 = new NormalizedTimeRegisterValue(new TimeRegisterValue("DID", dt, 21, 1, Unit.WattHour), dtNorm);
 
       // Act & Assert
-      Assert.That(() => t1.SubtractValue(t2), Throws.TypeOf<DataMisalignedException>());
+      Assert.That(() => t1.SubtractAccommodateWrap(t2), Throws.TypeOf<DataMisalignedException>());
     }
 
     [Test]

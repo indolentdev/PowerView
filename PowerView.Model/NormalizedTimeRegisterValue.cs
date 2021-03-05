@@ -21,7 +21,12 @@ namespace PowerView.Model
       this.normalizedTimestamp = normalizedTimestamp;
     }
 
-    public NormalizedDurationRegisterValue SubtractValue(NormalizedTimeRegisterValue baseValue)
+    public NormalizedDurationRegisterValue SubtractAccommodateWrap(NormalizedTimeRegisterValue baseValue)
+    {
+      return Subtract(baseValue, treatWrap:true);
+    }
+
+    private NormalizedDurationRegisterValue Subtract(NormalizedTimeRegisterValue baseValue, bool treatWrap)
     {
       var substractedValue = timeRegisterValue.UnitValue - baseValue.TimeRegisterValue.UnitValue;
       var dValue = substractedValue.Value;
@@ -33,14 +38,14 @@ namespace PowerView.Model
         throw new DataMisalignedException(msg);
       }
 
-      if (dValue < 0)
+      if (dValue < 0 && treatWrap)
       {
         var maxValue = GetMaxValue(baseValue);
-        if (dValue * -1 < maxValue * 0.05) // Assume register quirk (e.g. meter reboot without proper data continuation/data restore)
+        if (dValue < 0 && dValue * -1 < maxValue * 0.05) // Assume register quirk (e.g. meter reboot without proper data continuation/data restore)
         {
           dValue = 0;
         }
-        else if (dValue * -1 > maxValue * 0.75) // Assume register wrap
+        else if (dValue < 0 && dValue * -1 > maxValue * 0.75) // Assume register wrap
         {
           dValue = (maxValue - baseValue.TimeRegisterValue.UnitValue.Value) + TimeRegisterValue.UnitValue.Value;
         }

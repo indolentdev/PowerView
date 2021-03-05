@@ -18,7 +18,7 @@ namespace PowerView.Model.SeriesGenerators
       NormalizedDurationRegisterValue generatedValue;
       if (generatedValues.Count == 0)
       {
-        generatedValue = normalizedTimeRegisterValue.SubtractValue(normalizedTimeRegisterValue);
+        generatedValue = normalizedTimeRegisterValue.SubtractAccommodateWrap(normalizedTimeRegisterValue);
       }
       else
       {
@@ -32,7 +32,7 @@ namespace PowerView.Model.SeriesGenerators
         }
         else
         {
-          generatedValue = minutend.SubtractValue(substrahend);
+          generatedValue = minutend.SubtractAccommodateWrap(substrahend);
         }
       }
 

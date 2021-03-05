@@ -45,7 +45,7 @@ namespace PowerView.Model.SeriesGenerators
         else
         {
           var duration = minutend.TimeRegisterValue.Timestamp - substrahend.TimeRegisterValue.Timestamp;
-          var delta = minutend.SubtractValue(substrahend).UnitValue.Value;
+          var delta = minutend.SubtractAccommodateWrap(substrahend).UnitValue.Value;
           var averageActualValue = delta / duration.TotalHours; // assume average by hour..
           generatedValue = new NormalizedDurationRegisterValue(
             substrahend.TimeRegisterValue.Timestamp, minutend.TimeRegisterValue.Timestamp, substrahend.NormalizedTimestamp, minutend.NormalizedTimestamp,
