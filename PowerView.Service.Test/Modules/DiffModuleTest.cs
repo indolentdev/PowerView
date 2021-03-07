@@ -173,37 +173,6 @@ namespace PowerView.Service.Test.Modules
       AssertDiffRegister("Label2", ObisCode.ElectrActiveEnergyA14Period, t1, t2, 1000, "kWh", json.registers.Last());
     }
 
-    [Test]
-    [TestCase("1.66.16.8.0.255")]
-    public void GetFiltersCertainPeriodObisCodes(string excludedObisCode)
-    {
-      // Arrange
-      var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
-      var t1 = today - TimeSpan.FromDays(2);
-      var t2 = today - TimeSpan.FromDays(1);
-      var labelValues = new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> {
-        {"1.0.1.8.0.255", new [] { new TimeRegisterValue("1", t1, 2, 6, Unit.WattHour), new TimeRegisterValue("1", t2, 3, 6, Unit.WattHour) } },
-        {"1.0.2.8.0.255", new [] { new TimeRegisterValue("1", t1, 1, 6, Unit.WattHour), new TimeRegisterValue("1", t2, 2, 6, Unit.WattHour) } }
-      };
-      var lss = new TimeRegisterValueLabelSeriesSet(t1, today, new[] { new TimeRegisterValueLabelSeries("Label1", labelValues) });
-      profileRepository.Setup(pr => pr.GetMonthProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(lss);
-
-      // Act
-      var response = browser.Get(DiffRoute, with =>
-      {
-        with.HttpRequest();
-        with.HostName("localhost");
-        with.Query("from", t1.ToString("o"));
-        with.Query("to", today.ToString("o"));
-      });
-
-      // Assert
-      Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-      var json = response.Body.DeserializeJson<DiffRoot>();
-      var filtered = json.registers.Where(x => x.obisCode == excludedObisCode).ToList();
-      Assert.That(filtered, Is.Empty);
-    }
-
     private static void AssertDiffRegister(string label, ObisCode obisCode, DateTime from, DateTime to, double value, string unit, DiffRegister actual)
     {
       Assert.That(actual, Is.Not.Null);

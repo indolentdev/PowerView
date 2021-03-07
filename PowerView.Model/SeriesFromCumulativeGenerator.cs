@@ -78,10 +78,8 @@ namespace PowerView.Model
     {
       var activeEnergyNetDeltaGenerator = new { ObisCode = ObisCode.ElectrActiveEnergyNetDelta, 
         Generator = new DiffByTimeSeriesGenerator(ObisCode.ElectrActiveEnergyA14Delta, ObisCode.ElectrActiveEnergyA23Delta) };
-      var activeEnergyNetPeriodGenerator = new { ObisCode = ObisCode.ElectrActiveEnergyNetPeriod,
-        Generator = new DiffByTimeSeriesGenerator(ObisCode.ElectrActiveEnergyA14Period, ObisCode.ElectrActiveEnergyA23Period) };
 
-      var generators = new[] { activeEnergyNetDeltaGenerator, activeEnergyNetPeriodGenerator };
+      var generators = new[] { activeEnergyNetDeltaGenerator };
 
       var satisfiedGenerators = generators.Where(x => x.Generator.IsSatisfiedBy(result)).ToList();
 

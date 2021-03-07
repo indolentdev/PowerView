@@ -315,7 +315,6 @@
     "1.65.1.8.0.255": "Forbrugt Energi Punkt", 
     "1.66.1.8.0.255": "Forbrugt Energi", 
     "1.65.16.8.0.255": "Netto Forbrugt Energi Punkt", 
-    "1.66.16.8.0.255": "Netto Forbrugt Energi", 
     "1.0.1.7.0.255": "Forbrugt Effekt", 
     "1.67.1.7.0.255": "Gns. Forbrugt Effekt", 
     "1.0.21.7.0.255": "Forbrugt Effekt L1", 
@@ -383,7 +382,6 @@
         "1.66.1.8.0.255": { "measureKind": "Periode forskel", "description": "Importeret/forbrugt elektrisk energi for seriens periode. Alle faser.", "typicalUnits": "Watt-time (kWh, MWh)", "hint": "" }, 
         "1.66.2.8.0.255": { "measureKind": "Periode forskel", "description": "Eksporteret/produceret elektrisk energi for seriens periode. Alle faser.", "typicalUnits": "Watt-time (kWh, MWh)", "hint": "" }, 
         "1.65.16.8.0.255": { "measureKind": "Netto punkt forskel", "description": "Netto importeret/forbrugt elektrisk energi for et punkt i serien. Alle faser.", "typicalUnits": "Watt-time (kWh, MWh)", "hint": "For korrekte værdier benyt med et serie interval der modsvarer afregningsperioden. F.eks. ved timeafregning benyt 60 min interval." },
-        "1.66.16.8.0.255": { "measureKind": "Netto periode forskel", "description": "Netto importeret/forbrugt elektrisk energi for seriens periode. Alle faser.", "typicalUnits": "Watt-time (kWh, MWh)", "hint": "For korrekte værdier benyt med et serie interval der modsvarer afregningsperioden. F.eks. ved timeafregning benyt 60 min interval." }, 
 
         "8.0.2.0.0.255": { "measureKind": "Aktuel", "description": "Importeret/forbrugt vand gennemstrømning", "typicalUnits": "Liter/Time (l/h)", "hint": "" }, 
         "8.0.1.0.0.255": { "measureKind": "Kumulativ", "description": "Importeret/forbrugt vand volume", "typicalUnits": "Kubikmeter (m3)", "hint": "" }, 

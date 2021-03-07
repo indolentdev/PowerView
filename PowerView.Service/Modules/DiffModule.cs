@@ -81,11 +81,9 @@ namespace PowerView.Service.Modules
 
     private static IEnumerable<object> MapItems(LabelSeriesSet<NormalizedTimeRegisterValue> labelSeriesSet)
     {
-      var excludedPeriodObisCodes = new[] { ObisCode.ElectrActiveEnergyNetPeriod };
       foreach (var labelSeries in labelSeriesSet)
       {
-        var periodObisCodes = labelSeries.Where(oc => oc.IsPeriod)
-          .Where(oc => !excludedPeriodObisCodes.Contains(oc)).ToList();
+        var periodObisCodes = labelSeries.Where(oc => oc.IsPeriod).ToList();
         foreach (var obisCode in periodObisCodes)
         {
           var normalizedTimeRegisterValues = labelSeries[obisCode];

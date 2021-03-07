@@ -80,7 +80,6 @@ namespace PowerView.Model.Test
 
       // Assert
       Assert.That(result.Keys, Contains.Item(ObisCode.ElectrActiveEnergyNetDelta));
-      Assert.That(result.Keys, Contains.Item(ObisCode.ElectrActiveEnergyNetPeriod));
     }
 
     private static NormalizedTimeRegisterValue Normalize(TimeRegisterValue timeRegisterValue, string interval = "60-minutes")

@@ -9,7 +9,6 @@ namespace PowerView.Service.Test.Mappers
     [Test]
     [TestCase("1.66.1.8.0.255")]
     [TestCase("1.66.2.8.0.255")]
-    [TestCase("1.66.16.8.0.255")]
     [TestCase("8.66.1.0.0.255")]
     [TestCase("9.66.1.0.0.255")]
     [TestCase("6.66.1.0.0.255")]
@@ -50,7 +49,6 @@ namespace PowerView.Service.Test.Mappers
     [Test]
     [TestCase("1.66.1.8.0.255")]
     [TestCase("1.66.2.8.0.255")]
-    [TestCase("1.66.16.8.0.255")]
     [TestCase("6.66.1.0.0.255")]
     public void MapToSerieYAxisEnergyPeriod(string obisCode)
     {

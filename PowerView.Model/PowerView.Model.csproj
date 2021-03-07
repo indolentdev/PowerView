@@ -203,6 +203,7 @@
     <EmbeddedResource Include="Repository\DbVersion\19\ddl.sql" />
     <EmbeddedResource Include="Repository\DbVersion\20\ddl.sql" />
     <EmbeddedResource Include="Repository\DbVersion\21\ddl.sql" />
+    <EmbeddedResource Include="Repository\DbVersion\22\ddl.sql" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Repository\" />
@@ -227,5 +228,6 @@
     <Folder Include="Repository\DbVersion\19\" />
     <Folder Include="Repository\DbVersion\20\" />
     <Folder Include="Repository\DbVersion\21\" />
+    <Folder Include="Repository\DbVersion\22\" />
   </ItemGroup>
 </Project>
