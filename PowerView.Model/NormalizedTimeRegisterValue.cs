@@ -23,14 +23,6 @@ namespace PowerView.Model
 
     public NormalizedDurationRegisterValue SubtractAccommodateWrap(NormalizedTimeRegisterValue baseValue)
     {
-      return Subtract(baseValue, treatWrap:true);
-    }
-
-    private NormalizedDurationRegisterValue Subtract(NormalizedTimeRegisterValue baseValue, bool treatWrap)
-    {
-      var substractedValue = timeRegisterValue.UnitValue - baseValue.TimeRegisterValue.UnitValue;
-      var dValue = substractedValue.Value;
-
       if (!DeviceIdEquals(baseValue))
       {
         var msg = string.Format("A calculation of a subtracted value was not possible. The values originate from different devices (device ids). Minuend:{0}, Subtrahend:{1}",
@@ -38,27 +30,60 @@ namespace PowerView.Model
         throw new DataMisalignedException(msg);
       }
 
-      if (dValue < 0 && treatWrap)
+      return Subtract(baseValue, SubtractNegativeValueHanlding.QuirkAndWrap);
+    }
+
+    public NormalizedDurationRegisterValue SubtractNotNegative(NormalizedTimeRegisterValue baseValue)
+    {
+      return Subtract(baseValue, SubtractNegativeValueHanlding.NotNegative);
+    }
+
+    private enum SubtractNegativeValueHanlding
+    {
+      None,
+      QuirkAndWrap,
+      NotNegative
+    }
+
+    private NormalizedDurationRegisterValue Subtract(NormalizedTimeRegisterValue baseValue, SubtractNegativeValueHanlding handling)
+    {
+      var substractedValue = timeRegisterValue.UnitValue - baseValue.TimeRegisterValue.UnitValue;
+      var dValue = substractedValue.Value;
+
+      if (dValue < 0)
       {
-        var maxValue = GetMaxValue(baseValue);
-        if (dValue < 0 && dValue * -1 < maxValue * 0.05) // Assume register quirk (e.g. meter reboot without proper data continuation/data restore)
+        if (handling == SubtractNegativeValueHanlding.QuirkAndWrap)
+        {
+          dValue = HandleQuirkAndWrap(baseValue, dValue);
+        }
+        else if (handling == SubtractNegativeValueHanlding.NotNegative)
         {
           dValue = 0;
-        }
-        else if (dValue < 0 && dValue * -1 > maxValue * 0.75) // Assume register wrap
-        {
-          dValue = (maxValue - baseValue.TimeRegisterValue.UnitValue.Value) + TimeRegisterValue.UnitValue.Value;
-        }
-        else
-        {
-          var msg = string.Format("A calculation of a subtracted value resulted in a negative result. Minuend:{0}, Subtrahend:{1}",
-            this, baseValue);
-          throw new DataMisalignedException(msg);
         }
       }
 
       return new NormalizedDurationRegisterValue(baseValue.TimeRegisterValue.Timestamp, TimeRegisterValue.Timestamp,
         baseValue.NormalizedTimestamp, NormalizedTimestamp, new UnitValue(dValue, substractedValue.Unit), TimeRegisterValue.DeviceId);
+    }
+
+    private double HandleQuirkAndWrap(NormalizedTimeRegisterValue baseValue, double dValue)
+    {
+      var maxValue = GetMaxValue(baseValue);
+      if (dValue * -1 < maxValue * 0.05) // Assume register quirk (e.g. meter reboot without proper data continuation/data restore)
+      {
+        dValue = 0;
+      }
+      else if (dValue * -1 > maxValue * 0.75) // Assume register wrap
+      {
+        dValue = (maxValue - baseValue.TimeRegisterValue.UnitValue.Value) + TimeRegisterValue.UnitValue.Value;
+      }
+      else
+      {
+        var msg = string.Format("A calculation of a subtracted value resulted in a negative result. Minuend:{0}, Subtrahend:{1}",
+          this, baseValue);
+        throw new DataMisalignedException(msg);
+      }
+      return dValue;
     }
 
     private static double GetMaxValue(NormalizedTimeRegisterValue normalizedTimeRegisterValue)

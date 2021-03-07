@@ -146,6 +146,93 @@ namespace PowerView.Model.Test
     }
 
     [Test]
+    public void SubtractNotNegative()
+    {
+      // Arrange
+      var dt = new DateTime(2015, 02, 13, 19, 30, 00, DateTimeKind.Utc);
+      var dtNorm = new DateTime(2015, 02, 13, 19, 00, 00, DateTimeKind.Utc);
+      var t1 = new NormalizedTimeRegisterValue(new TimeRegisterValue("DID", dt.AddMinutes(-5), 20, 1, Unit.Watt), dtNorm.AddMinutes(-5));
+      var t2 = new NormalizedTimeRegisterValue(new TimeRegisterValue("DID", dt, 21, 1, Unit.Watt), dtNorm);
+
+      // Act
+      var target = t2.SubtractNotNegative(t1);
+
+      // Assert
+      Assert.That(target.Start, Is.EqualTo(t1.TimeRegisterValue.Timestamp));
+      Assert.That(target.End, Is.EqualTo(t2.TimeRegisterValue.Timestamp));
+      Assert.That(target.NormalizedStart, Is.EqualTo(t1.NormalizedTimestamp));
+      Assert.That(target.NormalizedEnd, Is.EqualTo(t2.NormalizedTimestamp));
+      Assert.That(target.UnitValue, Is.EqualTo(new UnitValue(10, Unit.Watt)));
+      Assert.That(target.DeviceIds, Is.EqualTo(new[] { "DID" }));
+    }
+
+    [Test]
+    public void SubtractNotNegativeDeviceIdCaseInsensitive()
+    {
+      // Arrange
+      var dt = new DateTime(2015, 02, 13, 19, 30, 00, DateTimeKind.Utc);
+      var dtNorm = new DateTime(2015, 02, 13, 19, 00, 00, DateTimeKind.Utc);
+      var t1 = new NormalizedTimeRegisterValue(new TimeRegisterValue("DID", dt.AddMinutes(-5), 20, 1, Unit.Watt), dtNorm.AddMinutes(-5));
+      var t2 = new NormalizedTimeRegisterValue(new TimeRegisterValue("did", dt, 21, 1, Unit.Watt), dtNorm);
+
+      // Act
+      var target = t2.SubtractNotNegative(t1);
+
+      // Assert
+      Assert.That(target.Start, Is.EqualTo(t1.TimeRegisterValue.Timestamp));
+      Assert.That(target.End, Is.EqualTo(t2.TimeRegisterValue.Timestamp));
+      Assert.That(target.NormalizedStart, Is.EqualTo(t1.NormalizedTimestamp));
+      Assert.That(target.NormalizedEnd, Is.EqualTo(t2.NormalizedTimestamp));
+      Assert.That(target.UnitValue, Is.EqualTo(new UnitValue(10, Unit.Watt)));
+      Assert.That(target.DeviceIds, Is.EqualTo(new[] { "did" }));
+    }
+
+    [Test]
+    public void SubtractNotNegativeNegativeToZero()
+    {
+      // Arrange
+      var dt = new DateTime(2015, 02, 13, 19, 30, 00, DateTimeKind.Utc);
+      var dtNorm = new DateTime(2015, 02, 13, 19, 00, 00, DateTimeKind.Utc);
+      var t1 = new NormalizedTimeRegisterValue(new TimeRegisterValue("DID", dt.AddMinutes(-5), 880, 0, Unit.Watt), dtNorm.AddMinutes(-5));
+      var t2 = new NormalizedTimeRegisterValue(new TimeRegisterValue("DID", dt, 10, 0, Unit.Watt), dtNorm);
+
+      // Act
+      var target = t2.SubtractNotNegative(t1);
+
+      // Assert
+      Assert.That(target.UnitValue.Value, Is.Zero);
+    }
+
+    [Test]
+    public void SubtractNotNegativeCrossDeviceIds()
+    {
+      // Arrange
+      var dt = new DateTime(2015, 02, 13, 19, 30, 00, DateTimeKind.Utc);
+      var dtNorm = new DateTime(2015, 02, 13, 19, 00, 00, DateTimeKind.Utc);
+      var t1 = new NormalizedTimeRegisterValue(new TimeRegisterValue("DID1", dt.AddMinutes(-5), 600, 0, Unit.Watt), dtNorm.AddMinutes(-5));
+      var t2 = new NormalizedTimeRegisterValue(new TimeRegisterValue("DID2", dt, 700, 0, Unit.Watt), dtNorm);
+
+      // Act
+      var target = t2.SubtractNotNegative(t1);
+
+      // Assert
+      Assert.That(target.UnitValue.Value, Is.EqualTo(100));
+    }
+
+    [Test]
+    public void SubtractNotNegativeDifferentUnitsThrows()
+    {
+      // Arrange
+      var dt = new DateTime(2015, 02, 13, 19, 30, 00, DateTimeKind.Utc);
+      var dtNorm = new DateTime(2015, 02, 13, 19, 00, 00, DateTimeKind.Utc);
+      var t1 = new NormalizedTimeRegisterValue(new TimeRegisterValue("DID", dt.AddMinutes(-5), 20, 1, Unit.Watt), dtNorm.AddMinutes(-5));
+      var t2 = new NormalizedTimeRegisterValue(new TimeRegisterValue("DID", dt, 21, 1, Unit.WattHour), dtNorm);
+
+      // Act & Assert
+      Assert.That(() => t1.SubtractNotNegative(t2), Throws.TypeOf<DataMisalignedException>());
+    }
+
+    [Test]
     [TestCase("SN", "SN", true)]
     [TestCase("sn", "SN", true)]
     [TestCase(null, null, true)]
