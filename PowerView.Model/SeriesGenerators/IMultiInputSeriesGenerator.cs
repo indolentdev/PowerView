@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace PowerView.Model.SeriesGenerators
 {
   public interface IMultiInputSeriesGenerator
   {
-    bool IsSatisfiedBy(IDictionary<ObisCode, IList<NormalizedTimeRegisterValue>> values);
+    bool IsSatisfiedBy(IDictionary<ObisCode, IEnumerable<NormalizedDurationRegisterValue>> values);
 
-    void CalculateNext(DateTime normalizedTimestamp, IDictionary<ObisCode, TimeRegisterValue> obisCodeRegisterValues);
+    void CalculateNext(IDictionary<ObisCode, NormalizedDurationRegisterValue> obisCodeRegisterValues);
 
-    IList<NormalizedTimeRegisterValue> GetGenerated();
+    IList<NormalizedDurationRegisterValue> GetGenerated();
   }
 }

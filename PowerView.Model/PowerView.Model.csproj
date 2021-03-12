@@ -171,11 +171,12 @@
     <Compile Include="Repository\IExportRepository.cs" />
     <Compile Include="DeviceId.cs" />
     <Compile Include="SeriesGenerators\IMultiInputSeriesGenerator.cs" />
-    <Compile Include="SeriesGenerators\DiffByTimeSeriesGenerator.cs" />
+    <Compile Include="SeriesGenerators\DiffByTimeSeriesGeneratorOld.cs" />
     <Compile Include="NormalizedDurationRegisterValue.cs" />
     <Compile Include="IntervalGroup.cs" />
     <Compile Include="TimeRegisterValueLabelSeries.cs" />
     <Compile Include="TimeRegisterValueLabelSeriesSet.cs" />
+    <Compile Include="SeriesGenerators\DiffByTimeSeriesGenerator.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

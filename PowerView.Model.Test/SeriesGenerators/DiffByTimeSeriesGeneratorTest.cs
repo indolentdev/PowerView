@@ -17,10 +17,10 @@ namespace PowerView.Model.Test.SeriesGenerators
     public void IsSatisfiedBy(string minutendObisCode, string substrahendObisCoe, bool expectedResult)
     {
       // Arrange
-      var dict = new Dictionary<ObisCode, IList<NormalizedTimeRegisterValue>>
+      var dict = new Dictionary<ObisCode, IEnumerable<NormalizedDurationRegisterValue>>
       {
-        { "1.2.3.4.5.6", new List<NormalizedTimeRegisterValue>() },
-        { "6.5.4.3.2.1", new List<NormalizedTimeRegisterValue>() }
+        { "1.2.3.4.5.6", new List<NormalizedDurationRegisterValue>() },
+        { "6.5.4.3.2.1", new List<NormalizedDurationRegisterValue>() }
       };
 
       var target = new DiffByTimeSeriesGenerator(minutendObisCode, substrahendObisCoe);
@@ -29,7 +29,6 @@ namespace PowerView.Model.Test.SeriesGenerators
       Assert.That(target.IsSatisfiedBy(dict), Is.EqualTo(expectedResult));
     }
 
-
     [Test]
     public void JustOneOfTheTwoNeededObisCode()
     {
@@ -37,14 +36,13 @@ namespace PowerView.Model.Test.SeriesGenerators
       var unit = Unit.WattHour;
       var dt = new DateTime(2015, 02, 13, 00, 01, 00, DateTimeKind.Local).ToUniversalTime();
       ObisCode obisCode1 = "1.2.3.4.5.6";
-      var v11 = new { ObisCode = obisCode1, Value = new TimeRegisterValue("1", dt, 210, 1, unit) };
+      var v11 = new { ObisCode = obisCode1, Value = Value(dt, 12, unit) };
       var values = GetDictionary(v11);
-      var normalizedTimestamp = NormalizeTimestamp(dt, "5-minutes");
 
       var target = new DiffByTimeSeriesGenerator(obisCode1, "6.6.6.6.6.6");
 
       // Act
-      target.CalculateNext(normalizedTimestamp, values);
+      target.CalculateNext(values);
       var generatedValues = target.GetGenerated();
 
       // Assert
@@ -52,22 +50,21 @@ namespace PowerView.Model.Test.SeriesGenerators
     }
 
     [Test]
-    public void DifferentDeviceIds()
+    public void NormalizedTimestampsDoNotMatch()
     {
       // Arrange
       var unit = Unit.WattHour;
       var dt = new DateTime(2015, 02, 13, 00, 01, 00, DateTimeKind.Local).ToUniversalTime();
       ObisCode obisCode1 = "1.2.3.4.5.6";
       ObisCode obisCode2 = "6.5.4.3.2.1";
-      var v11 = new { ObisCode = obisCode1, Value = new TimeRegisterValue("ID-1", dt, 210, 1, unit) };
-      var v21 = new { ObisCode = obisCode2, Value = new TimeRegisterValue("ID-2", dt, 210, 1, unit) };
+      var v11 = new { ObisCode = obisCode1, Value = Value(dt, 12, unit) };
+      var v21 = new { ObisCode = obisCode2, Value = Value(dt.AddMinutes(10), 12, unit) };
       var values = GetDictionary(v11, v21);
-      var normalizedTimestamp = NormalizeTimestamp(dt, "5-minutes");
 
       var target = new DiffByTimeSeriesGenerator(obisCode1, obisCode2);
 
       // Act
-      target.CalculateNext(normalizedTimestamp, values);
+      target.CalculateNext(values);
       var generatedValues = target.GetGenerated();
 
       // Assert
@@ -81,15 +78,14 @@ namespace PowerView.Model.Test.SeriesGenerators
       var dt = new DateTime(2015, 02, 13, 00, 01, 00, DateTimeKind.Local).ToUniversalTime();
       ObisCode obisCode1 = "1.2.3.4.5.6";
       ObisCode obisCode2 = "6.5.4.3.2.1";
-      var v11 = new { ObisCode = obisCode1, Value = new TimeRegisterValue("1", dt, 210, 1, Unit.WattHour) };
-      var v21 = new { ObisCode = obisCode2, Value = new TimeRegisterValue("1", dt, 210, 1, Unit.Joule) };
+      var v11 = new { ObisCode = obisCode1, Value = Value(dt, 12, Unit.WattHour) };
+      var v21 = new { ObisCode = obisCode2, Value = Value(dt, 12, Unit.Joule) };
       var values = GetDictionary(v11, v21);
-      var normalizedTimestamp = NormalizeTimestamp(dt, "5-minutes");
 
       var target = new DiffByTimeSeriesGenerator(obisCode1, obisCode2);
 
       // Act
-      target.CalculateNext(normalizedTimestamp, values);
+      target.CalculateNext(values);
       var generatedValues = target.GetGenerated();
 
       // Assert
@@ -106,20 +102,42 @@ namespace PowerView.Model.Test.SeriesGenerators
       var dt = new DateTime(2015, 02, 13, 00, 01, 00, DateTimeKind.Local).ToUniversalTime();
       ObisCode obisCode1 = "1.2.3.4.5.6";
       ObisCode obisCode2 = "6.5.4.3.2.1";
-      var v11 = new { ObisCode = obisCode1, Value = new TimeRegisterValue("1", dt, minutend, 0, unit) };
-      var v21 = new { ObisCode = obisCode2, Value = new TimeRegisterValue("1", dt, substrahend, 0, unit) };
+      var v11 = new { ObisCode = obisCode1, Value = Value(dt, minutend, unit) };
+      var v21 = new { ObisCode = obisCode2, Value = Value(dt, substrahend, unit) };
       var values = GetDictionary(v11, v21);
-      var normalizedTimestamp = NormalizeTimestamp(dt, "5-minutes");
 
       var target = new DiffByTimeSeriesGenerator(obisCode1, obisCode2);
 
       // Act
-      target.CalculateNext(normalizedTimestamp, values);
+      target.CalculateNext(values);
       var generatedValues = target.GetGenerated();
 
       // Assert
-      var expectedValue = new NormalizedTimeRegisterValue(new TimeRegisterValue("1", dt, difference, unit), normalizedTimestamp);
+      var expectedValue = Value(dt, difference, unit);
       Assert.That(generatedValues, Is.EqualTo(new [] { expectedValue }));
+    }
+
+    [Test]
+    public void ValuesWithDifferentDeviceIds()
+    {
+      // Arrange
+      var unit = Unit.WattHour;
+      var dt = new DateTime(2015, 02, 13, 00, 01, 00, DateTimeKind.Local).ToUniversalTime();
+      ObisCode obisCode1 = "1.2.3.4.5.6";
+      ObisCode obisCode2 = "6.5.4.3.2.1";
+      var v11 = new { ObisCode = obisCode1, Value = Value(dt, 22, unit, deviceIds: new [] { "DevID1" }) };
+      var v21 = new { ObisCode = obisCode2, Value = Value(dt, 10, unit, deviceIds: new [] { "DevID2" }) };
+      var values = GetDictionary(v11, v21);
+
+      var target = new DiffByTimeSeriesGenerator(obisCode1, obisCode2);
+
+      // Act
+      target.CalculateNext(values);
+      var generatedValues = target.GetGenerated();
+
+      // Assert
+      var firstItemDeviceIds = generatedValues.Select(x => x.DeviceIds).First();
+      Assert.That(firstItemDeviceIds, Is.EqualTo(new string[] { "DevID1", "DevID2" }));
     }
 
     [Test]
@@ -130,78 +148,54 @@ namespace PowerView.Model.Test.SeriesGenerators
       var dt = new DateTime(2015, 02, 13, 00, 01, 00, DateTimeKind.Local).ToUniversalTime();
       ObisCode obisCode1 = "1.2.3.4.5.6";
       ObisCode obisCode2 = "6.5.4.3.2.1";
-      var v11 = new { ObisCode = obisCode1, Value = new TimeRegisterValue("1", dt, 123, 0, unit) };
-      var v21 = new { ObisCode = obisCode2, Value = new TimeRegisterValue("1", dt, 100, 0, unit) };
-      var v12 = new { ObisCode = obisCode1, Value = new TimeRegisterValue("1", dt + TimeSpan.FromHours(1), 234, 0, unit) };
-      var v22 = new { ObisCode = obisCode2, Value = new TimeRegisterValue("1", dt + TimeSpan.FromHours(1), 100, 0, unit) };
-      var v13 = new { ObisCode = obisCode1, Value = new TimeRegisterValue("1", dt + TimeSpan.FromHours(2), 12, 0, unit) };
-      var v23 = new { ObisCode = obisCode2, Value = new TimeRegisterValue("1", dt + TimeSpan.FromHours(2), 13, 0, unit) };
-      var dtNormalized = NormalizeTimestamp(dt, "60-minutes");
+      var v11 = new { ObisCode = obisCode1, Value = Value(dt, 123, unit, "60-minutes") };
+      var v21 = new { ObisCode = obisCode2, Value = Value(dt, 100, unit, "60-minutes") };
+      var v12 = new { ObisCode = obisCode1, Value = Value(dt + TimeSpan.FromHours(1), 234, unit, "60-minutes") };
+      var v22 = new { ObisCode = obisCode2, Value = Value(dt + TimeSpan.FromHours(1), 100, unit, "60-minutes") };
+      var v13 = new { ObisCode = obisCode1, Value = Value(dt + TimeSpan.FromHours(2), 12, unit, "60-minutes") };
+      var v23 = new { ObisCode = obisCode2, Value = Value(dt + TimeSpan.FromHours(2), 13, unit, "60-minutes") };
       var target = new DiffByTimeSeriesGenerator(obisCode1, obisCode2);
 
       // Act
-      target.CalculateNext(dtNormalized, GetDictionary(v11, v21));
-      target.CalculateNext(dtNormalized + TimeSpan.FromHours(1), GetDictionary(v12, v22));
-      target.CalculateNext(dtNormalized + TimeSpan.FromHours(2), GetDictionary(v13, v23));
+      target.CalculateNext(GetDictionary(v11, v21));
+      target.CalculateNext(GetDictionary(v12, v22));
+      target.CalculateNext(GetDictionary(v13, v23));
       var generatedValues = target.GetGenerated();
 
       // Assert
-      var expectedValue1 = new NormalizedTimeRegisterValue(new TimeRegisterValue("1", dt, 23, unit), dtNormalized);
-      var expectedValue2 = new NormalizedTimeRegisterValue(new TimeRegisterValue("1", dt + TimeSpan.FromHours(1), 134, unit), dtNormalized + TimeSpan.FromHours(1));
-      var expectedValue3 = new NormalizedTimeRegisterValue(new TimeRegisterValue("1", dt + TimeSpan.FromHours(2), 0, unit), dtNormalized + TimeSpan.FromHours(2));
+      var expectedValue1 = new NormalizedDurationRegisterValue(v11.Value.Start, v11.Value.End, v11.Value.NormalizedStart, v11.Value.NormalizedEnd, new UnitValue(23, v11.Value.UnitValue.Unit), v11.Value.DeviceIds.ToArray());
+      var expectedValue2 = new NormalizedDurationRegisterValue(v12.Value.Start, v12.Value.End, v12.Value.NormalizedStart, v12.Value.NormalizedEnd, new UnitValue(134, v12.Value.UnitValue.Unit), v12.Value.DeviceIds.ToArray());
+      var expectedValue3 = new NormalizedDurationRegisterValue(v13.Value.Start, v13.Value.End, v13.Value.NormalizedStart, v13.Value.NormalizedEnd, new UnitValue(0, v13.Value.UnitValue.Unit), v13.Value.DeviceIds.ToArray());
       Assert.That(generatedValues, Is.EqualTo(new[] { expectedValue1, expectedValue2, expectedValue3 }));
     }
 
     [Test]
-    public void MeanTimestampMinutendTimestampLarger()
+    public void TimestampMinutendTimestampLarger()
     {
       // Arrange
       var unit = Unit.WattHour;
       var dt = new DateTime(2015, 02, 13, 00, 01, 00, DateTimeKind.Local).ToUniversalTime();
       ObisCode obisCode1 = "1.2.3.4.5.6";
       ObisCode obisCode2 = "6.5.4.3.2.1";
-      var v11 = new { ObisCode = obisCode1, Value = new TimeRegisterValue("1", dt + TimeSpan.FromMinutes(2), 210, 1, unit) };
-      var v21 = new { ObisCode = obisCode2, Value = new TimeRegisterValue("1", dt, 210, 1, unit) };
+      var v11 = new { ObisCode = obisCode1, Value = Value(dt + TimeSpan.FromMinutes(2), 210, unit) };
+      var v21 = new { ObisCode = obisCode2, Value = Value(dt, 200, unit) };
       var values = GetDictionary(v11, v21);
-      var normalizedTimestamp = NormalizeTimestamp(dt, "5-minutes");
 
       var target = new DiffByTimeSeriesGenerator(obisCode1, obisCode2);
 
       // Act
-      target.CalculateNext(normalizedTimestamp, values);
+      target.CalculateNext(values);
       var generatedValues = target.GetGenerated();
 
       // Assert
-      Assert.That(generatedValues.Select(x => x.TimeRegisterValue.Timestamp).ToList(), Is.EqualTo(new[] { dt + TimeSpan.FromMinutes(1) }));
+      Assert.That(generatedValues.Select(x => x.Start).ToList(), Is.EqualTo(new[] { dt }));
+      Assert.That(generatedValues.Select(x => x.End).ToList(), Is.EqualTo(new[] { dt + TimeSpan.FromMinutes(2+5) }));
     }
 
-    [Test]
-    public void MeanTimestampSubstrahendTimestampLarger()
-    {
-      // Arrange
-      var unit = Unit.WattHour;
-      var dt = new DateTime(2015, 02, 13, 00, 01, 00, DateTimeKind.Local).ToUniversalTime();
-      ObisCode obisCode1 = "1.2.3.4.5.6";
-      ObisCode obisCode2 = "6.5.4.3.2.1";
-      var v11 = new { ObisCode = obisCode1, Value = new TimeRegisterValue("1", dt, 210, 1, unit) };
-      var v21 = new { ObisCode = obisCode2, Value = new TimeRegisterValue("1", dt + TimeSpan.FromMinutes(2), 210, 1, unit) };
-      var values = GetDictionary(v11, v21);
-      var normalizedTimestamp = NormalizeTimestamp(dt, "5-minutes");
-
-      var target = new DiffByTimeSeriesGenerator(obisCode1, obisCode2);
-
-      // Act
-      target.CalculateNext(normalizedTimestamp, values);
-      var generatedValues = target.GetGenerated();
-
-      // Assert
-      Assert.That(generatedValues.Select(x => x.TimeRegisterValue.Timestamp).ToList(), Is.EqualTo(new[] { dt + TimeSpan.FromMinutes(1) }));
-    }
-
-    private static IDictionary<ObisCode, TimeRegisterValue> GetDictionary(params dynamic[] values)
+    private static IDictionary<ObisCode, NormalizedDurationRegisterValue> GetDictionary(params dynamic[] values)
     {
       var dict = values
-        .Select(x => new { ObisCode = (ObisCode)x.ObisCode, Value = (TimeRegisterValue)x.Value })
+        .Select(x => new { ObisCode = (ObisCode)x.ObisCode, Value = (NormalizedDurationRegisterValue)x.Value })
         .GroupBy(x => x.ObisCode)
         .ToDictionary(x => x.Key)
         .ToDictionary(x => x.Key, xx => xx.Value.Single().Value);
@@ -212,16 +206,31 @@ namespace PowerView.Model.Test.SeriesGenerators
 
     private static NormalizedTimeRegisterValue Normalize(TimeRegisterValue timeRegisterValue, string interval = "5-minutes")
     {
-      var dateTimeHelper = new DateTimeHelper(TimeZoneInfo.Local, new DateTime(2015, 02, 13, 00, 00, 00, DateTimeKind.Local).ToUniversalTime());
+      var dateTimeHelper = GetDateTimeHelper();
       var timeDivider = dateTimeHelper.GetDivider(interval);
       return new NormalizedTimeRegisterValue(timeRegisterValue, timeDivider(timeRegisterValue.Timestamp));
     }
 
     private static DateTime NormalizeTimestamp(DateTime timestamp, string interval = "5-minutes")
     {
-      var dateTimeHelper = new DateTimeHelper(TimeZoneInfo.Local, new DateTime(2015, 02, 13, 00, 00, 00, DateTimeKind.Local).ToUniversalTime());
+      var dateTimeHelper = GetDateTimeHelper();
       var timeDivider = dateTimeHelper.GetDivider(interval);
       return timeDivider(timestamp);
+    }
+
+    private static NormalizedDurationRegisterValue Value(DateTime timestamp, double value, Unit unit, string interval = "5-minutes", params string[] deviceIds)
+    {
+      var dateTimeHelper = GetDateTimeHelper();
+      var end = dateTimeHelper.GetNext(interval)(timestamp);
+      var timeDivider = dateTimeHelper.GetDivider(interval);
+      return new NormalizedDurationRegisterValue(timestamp, end, NormalizeTimestamp(timestamp, interval), NormalizeTimestamp(end, interval),
+        new UnitValue(value, unit), deviceIds);
+    }
+
+    private static DateTimeHelper GetDateTimeHelper()
+    {
+      var dateTimeHelper = new DateTimeHelper(TimeZoneInfo.Local, new DateTime(2015, 02, 13, 00, 00, 00, DateTimeKind.Local).ToUniversalTime());
+      return dateTimeHelper;
     }
 
 

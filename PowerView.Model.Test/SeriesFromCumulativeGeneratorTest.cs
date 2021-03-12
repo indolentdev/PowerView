@@ -8,7 +8,7 @@ namespace PowerView.Model.Test
   public class SeriesFromCumulativeGeneratorTest
   {
     [Test]
-    public void GenerateSeriesFromCumulativeNotCumulative()
+    public void GenerateNotCumulative()
     {
       // Arrange
       var obisCode = ObisCode.ElectrActualPowerP14;
@@ -24,7 +24,7 @@ namespace PowerView.Model.Test
     }
 
     [Test]
-    public void GenerateSeriesFromCumulativePeriodsAndDeltas()
+    public void GeneratePeriodsAndDeltas()
     {
       // Arrange
       var obisCode = ObisCode.ElectrActiveEnergyA14;
@@ -46,7 +46,7 @@ namespace PowerView.Model.Test
     [TestCase("9.0.1.0.0.255", "9.67.2.0.0.255")]
     [TestCase("6.0.1.0.0.255", "6.67.8.0.0.255")]
     [TestCase("6.0.2.0.0.255", "6.67.9.0.0.255")]
-    public void GenerateSeriesFromCumulativeAverages(string obisCode, string expectedAverage)
+    public void GenerateAverages(string obisCode, string expectedAverage)
     {
       // Arrange
       var utcNow = DateTime.UtcNow;
@@ -61,7 +61,83 @@ namespace PowerView.Model.Test
     }
 
     [Test]
-    public void GenerateSeriesFromCumulativeDiffs()
+    public void GenerateDiffs()
+    {
+      // Arrange
+      var utcNow = DateTime.UtcNow;
+      var oneHour = TimeSpan.FromHours(1);
+      var dict = new Dictionary<ObisCode, IList<NormalizedTimeRegisterValue>>
+      {
+        { ObisCode.ElectrActiveEnergyA14, new[] { Normalize(new TimeRegisterValue("sn1", utcNow, 14, Unit.WattHour)),
+            Normalize(new TimeRegisterValue("sn1", utcNow + oneHour, 20, Unit.WattHour)), Normalize(new TimeRegisterValue("sn1", utcNow + oneHour + oneHour, 23, Unit.WattHour)) } },
+        { ObisCode.ElectrActiveEnergyA23, new[] { Normalize(new TimeRegisterValue("sn1", utcNow, 2, Unit.WattHour)),
+            Normalize(new TimeRegisterValue("sn1", utcNow + oneHour, 4, Unit.WattHour)), Normalize(new TimeRegisterValue("sn1", utcNow + oneHour+ oneHour, 5, Unit.WattHour)) } }
+      };
+      var target = new SeriesFromCumulativeGenerator();
+
+      // Act
+      var result = target.Generate(dict);
+
+      // Assert
+      Assert.That(result.Keys, Contains.Item(ObisCode.ElectrActiveEnergyNetDelta));
+    }
+
+
+    [Test]
+    public void GenerateOldNotCumulative()
+    {
+      // Arrange
+      var obisCode = ObisCode.ElectrActualPowerP14;
+      var utcNow = DateTime.UtcNow;
+      var normalizedTimeRegisterValues = new[] { Normalize(new TimeRegisterValue("sn1", utcNow, 14, Unit.Watt)), Normalize(new TimeRegisterValue("sn1", utcNow + TimeSpan.FromHours(1), 11, Unit.Watt)) };
+      var target = new SeriesFromCumulativeGenerator();
+
+      // Act
+      var result = target.GenerateOld(new Dictionary<ObisCode, IList<NormalizedTimeRegisterValue>> { { obisCode, normalizedTimeRegisterValues } });
+
+      // Assert
+      Assert.That(result, Is.Empty);
+    }
+
+    [Test]
+    public void GenerateOldPeriodsAndDeltas()
+    {
+      // Arrange
+      var obisCode = ObisCode.ElectrActiveEnergyA14;
+      var utcNow = DateTime.UtcNow;
+      var normalizedTimeRegisterValues = new[] { Normalize(new TimeRegisterValue("sn1", utcNow, 14, Unit.WattHour)), Normalize(new TimeRegisterValue("sn1", utcNow + TimeSpan.FromHours(1), 18, Unit.WattHour)) };
+      var target = new SeriesFromCumulativeGenerator();
+
+      // Act
+      var result = target.GenerateOld(new Dictionary<ObisCode, IList<NormalizedTimeRegisterValue>> { { obisCode, normalizedTimeRegisterValues } });
+
+      // Assert
+      Assert.That(result.Keys, Is.EquivalentTo(new ObisCode[] { ObisCode.ElectrActiveEnergyA14Delta, ObisCode.ElectrActiveEnergyA14Period, ObisCode.ElectrActualPowerP14Average }));
+    }
+
+    [Test]
+    [TestCase("1.0.1.8.0.255", "1.67.1.7.0.255")]
+    [TestCase("1.0.2.8.0.255", "1.67.2.7.0.255")]
+    [TestCase("8.0.1.0.0.255", "8.67.2.0.0.255")]
+    [TestCase("9.0.1.0.0.255", "9.67.2.0.0.255")]
+    [TestCase("6.0.1.0.0.255", "6.67.8.0.0.255")]
+    [TestCase("6.0.2.0.0.255", "6.67.9.0.0.255")]
+    public void GenerateOldAverages(string obisCode, string expectedAverage)
+    {
+      // Arrange
+      var utcNow = DateTime.UtcNow;
+      var normalizedTimeRegisterValues = new[] { Normalize(new TimeRegisterValue("sn1", utcNow, 14, Unit.WattHour)), Normalize(new TimeRegisterValue("sn1", utcNow + TimeSpan.FromHours(1), 11, Unit.WattHour)) };
+      var target = new SeriesFromCumulativeGenerator();
+
+      // Act
+      var result = target.GenerateOld(new Dictionary<ObisCode, IList<NormalizedTimeRegisterValue>> { { obisCode, normalizedTimeRegisterValues } });
+
+      // Assert
+      Assert.That(result.Keys, Contains.Item((ObisCode)expectedAverage));
+    }
+
+    [Test]
+    public void GenerateOldDiffs()
     {
       // Arrange
       var utcNow = DateTime.UtcNow;
@@ -76,7 +152,7 @@ namespace PowerView.Model.Test
       var target = new SeriesFromCumulativeGenerator();
 
       // Act
-      var result = target.Generate(dict);
+      var result = target.GenerateOld(dict);
 
       // Assert
       Assert.That(result.Keys, Contains.Item(ObisCode.ElectrActiveEnergyNetDelta));

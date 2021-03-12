@@ -49,6 +49,7 @@ namespace PowerView.Model.Test
 
       Assert.That(target.Categories, Is.Null);
       Assert.That(target.NormalizedLabelSeriesSet, Is.Null);
+      Assert.That(target.NormalizedDurationLabelSeriesSet, Is.Null);
     }
 
     [Test]
@@ -116,6 +117,7 @@ namespace PowerView.Model.Test
         new TimeRegisterValue("SN1", start.AddMinutes(2), 1234, Unit.Watt) } } })
       });
       var target = new IntervalGroup(timeZoneInfo, start, interval, labelSeriesSet);
+      var divider = new DateTimeHelper(timeZoneInfo, start).GetDivider(interval);
 
       // Act
       target.Prepare();
@@ -123,9 +125,16 @@ namespace PowerView.Model.Test
       // Assert
       Assert.That(target.NormalizedLabelSeriesSet, Is.Not.Null);
       Assert.That(target.NormalizedLabelSeriesSet.Count(), Is.EqualTo(1));
-      var labelSeries = target.NormalizedLabelSeriesSet.First();
-      Assert.That(labelSeries.Count(), Is.EqualTo(1));
-      Assert.That(labelSeries[labelSeries.First()], Is.EqualTo(new[] { new NormalizedTimeRegisterValue(new TimeRegisterValue("SN1", start.AddMinutes(2), 1234, Unit.Watt), start) }));
+      var labelSeriesTime = target.NormalizedLabelSeriesSet.First();
+      Assert.That(labelSeriesTime.Count(), Is.EqualTo(1));
+      Assert.That(labelSeriesTime[labelSeriesTime.First()], Is.EqualTo(new[] { new NormalizedTimeRegisterValue(new TimeRegisterValue("SN1", start.AddMinutes(2), 1234, Unit.Watt), start) }));
+
+      Assert.That(target.NormalizedDurationLabelSeriesSet, Is.Not.Null);
+      Assert.That(target.NormalizedDurationLabelSeriesSet.Count(), Is.EqualTo(1));
+      var labelSeriesDuration = target.NormalizedDurationLabelSeriesSet.First();
+      Assert.That(labelSeriesDuration.Count(), Is.EqualTo(1));
+      Assert.That(labelSeriesDuration[labelSeriesDuration.First()], Is.EqualTo(new[] { 
+        new NormalizedDurationRegisterValue(start.AddMinutes(2), start.AddMinutes(2), divider(start.AddMinutes(2)), divider(start.AddMinutes(2)), new UnitValue(1234, Unit.Watt), "SN1") }));
     }
 
     [Test]
@@ -150,6 +159,9 @@ namespace PowerView.Model.Test
       // Assert
       Assert.That(target.NormalizedLabelSeriesSet.Count(), Is.EqualTo(1));
       Assert.That(target.NormalizedLabelSeriesSet.First().Count(), Is.EqualTo(4));
+
+      Assert.That(target.NormalizedDurationLabelSeriesSet.Count(), Is.EqualTo(1));
+      Assert.That(target.NormalizedDurationLabelSeriesSet.First().Count(), Is.EqualTo(3));
     }
 
   }

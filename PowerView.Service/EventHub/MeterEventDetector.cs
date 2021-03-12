@@ -60,7 +60,7 @@ namespace PowerView.Service.EventHub
       foreach (var labelSeries in labelSeriesSet)
       {
         var generator = new SeriesFromCumulativeGenerator();
-        labelSeries.Add(generator.Generate(labelSeries.GetCumulativeSeries()));
+        labelSeries.Add(generator.GenerateOld(labelSeries.GetCumulativeSeries()));
       }
     }
 
