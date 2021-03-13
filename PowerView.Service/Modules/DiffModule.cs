@@ -52,7 +52,7 @@ namespace PowerView.Service.Modules
       sw.Stop();
       if (log.IsDebugEnabled) log.DebugFormat("GetDiff timing - Normalize, generate: {0}ms", sw.ElapsedMilliseconds);
 
-      var registers = MapItems(intervalGroup.NormalizedLabelSeriesSet).ToList();
+      var registers = MapItems(intervalGroup.NormalizedDurationLabelSeriesSet).ToList();
       var r = new {
         From = fromDate.Value.ToString("o"),
         To = toDate.Value.ToString("o"),
@@ -79,22 +79,21 @@ namespace PowerView.Service.Modules
       }
     }
 
-    private static IEnumerable<object> MapItems(LabelSeriesSet<NormalizedTimeRegisterValue> labelSeriesSet)
+    private static IEnumerable<object> MapItems(LabelSeriesSet<NormalizedDurationRegisterValue> labelSeriesSet)
     {
       foreach (var labelSeries in labelSeriesSet)
       {
         var periodObisCodes = labelSeries.Where(oc => oc.IsPeriod).ToList();
         foreach (var obisCode in periodObisCodes)
         {
-          var normalizedTimeRegisterValues = labelSeries[obisCode];
-          if (normalizedTimeRegisterValues.Count < 2) continue;
-          var first = normalizedTimeRegisterValues.First();
-          var last = normalizedTimeRegisterValues.Last();
+          var normalizedDurationRegisterValues = labelSeries[obisCode];
+          if (normalizedDurationRegisterValues.Count < 2) continue;
+          var last = normalizedDurationRegisterValues.Last();
 
           yield return new { labelSeries.Label, ObisCode=obisCode.ToString(),
-            From = first.TimeRegisterValue.Timestamp.ToString("o"), To = last.TimeRegisterValue.Timestamp.ToString("o"), 
-            Value = ValueAndUnitMapper.Map(last.TimeRegisterValue.UnitValue.Value, last.TimeRegisterValue.UnitValue.Unit),
-            Unit = ValueAndUnitMapper.Map(last.TimeRegisterValue.UnitValue.Unit) };
+            From = last.Start.ToString("o"), To = last.End.ToString("o"), 
+            Value = ValueAndUnitMapper.Map(last.UnitValue.Value, last.UnitValue.Unit),
+            Unit = ValueAndUnitMapper.Map(last.UnitValue.Unit) };
         }
       }
     }

@@ -147,8 +147,8 @@ namespace PowerView.Service.Test.Modules
         {"8.0.1.0.0.255", new [] { new TimeRegisterValue("1", t1, 2, 2, Unit.CubicMetre), new TimeRegisterValue("1", t2, 3, 2, Unit.CubicMetre) } }
       };
       var label2Values = new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> {
-        {"1.0.1.8.0.255", new [] { new TimeRegisterValue("1", t1, 2, 6, Unit.WattHour), new TimeRegisterValue("1", t2, 3, 6, Unit.WattHour) } },
-        {"1.0.2.8.0.255", new [] { new TimeRegisterValue("1", t1, 4, 6, Unit.WattHour) } }
+        {"1.0.1.8.0.255", new [] { new TimeRegisterValue("2", t1, 2, 6, Unit.WattHour), new TimeRegisterValue("2", t2, 3, 6, Unit.WattHour) } },
+        {"1.0.2.8.0.255", new [] { new TimeRegisterValue("2", t1, 4, 6, Unit.WattHour) } }
       };
       var lss = new TimeRegisterValueLabelSeriesSet(t1, today, new[] { new TimeRegisterValueLabelSeries("Label1", label1Values), new TimeRegisterValueLabelSeries("Label2", label2Values) });
       profileRepository.Setup(pr => pr.GetMonthProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(lss);
