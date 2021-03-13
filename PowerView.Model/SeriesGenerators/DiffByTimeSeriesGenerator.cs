@@ -41,19 +41,8 @@ namespace PowerView.Model.SeriesGenerators
         return;
       }
 
-      // TODO: Move substraction else where?
-      var differenceValue = minutend.UnitValue.Value - substrahend.UnitValue.Value;
-      if (differenceValue < 0)
-      {
-        differenceValue = 0;
-      }
-      var difference = new UnitValue(differenceValue, minutend.UnitValue.Unit);
-      var start = new DateTime(Math.Min(minutend.Start.Ticks, substrahend.Start.Ticks), DateTimeKind.Utc);
-      var end = new DateTime(Math.Max(minutend.End.Ticks, substrahend.End.Ticks), DateTimeKind.Utc);
-      var generatedValue = new NormalizedDurationRegisterValue(start, end, minutend.NormalizedStart, minutend.NormalizedEnd,
-        difference, DeviceId.DistinctDeviceIds(minutend.DeviceIds.Concat(substrahend.DeviceIds)));
-
-      generatedValues.Add(generatedValue);
+      var value = minutend.SubtractNotNegative(substrahend);
+      generatedValues.Add(value);
     }
 
     public IList<NormalizedDurationRegisterValue> GetGenerated()

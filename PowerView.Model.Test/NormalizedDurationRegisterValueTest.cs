@@ -47,6 +47,53 @@ namespace PowerView.Model.Test
     }
 
     [Test]
+    public void SubtractNotNegative()
+    {
+      // Arrange
+      var dt = new DateTime(2015, 02, 13, 19, 31, 00, DateTimeKind.Utc);
+      var t1 = GetTarget(dt.AddMinutes(1), 20, Unit.Watt, deviceIds: new string[] { "DID1" });
+      var t2 = GetTarget(dt, 21, Unit.Watt, deviceIds: new string[] { "did2" });
+
+      // Act
+      var target = t2.SubtractNotNegative(t1);
+
+      // Assert
+      Assert.That(target.Start, Is.EqualTo(dt));
+      Assert.That(target.End, Is.EqualTo(dt.AddMinutes(6)));
+      Assert.That(target.NormalizedStart, Is.EqualTo(NormalizeTimestamp(dt)));
+      Assert.That(target.NormalizedEnd, Is.EqualTo(NormalizeTimestamp(dt.AddMinutes(5))));
+      Assert.That(target.UnitValue, Is.EqualTo(new UnitValue(1, Unit.Watt)));
+      Assert.That(target.DeviceIds, Is.EqualTo(new[] { "did2", "DID1" }));
+    }
+
+    [Test]
+    public void SubtractNotNegativeNegativeToZero()
+    {
+      // Arrange
+      var dt = new DateTime(2015, 02, 13, 19, 30, 00, DateTimeKind.Utc);
+      var t1 = GetTarget(dt, 22, Unit.Watt);
+      var t2 = GetTarget(dt, 21, Unit.Watt);
+
+      // Act
+      var target = t2.SubtractNotNegative(t1);
+
+      // Assert
+      Assert.That(target.UnitValue.Value, Is.Zero);
+    }
+
+    [Test]
+    public void SubtractNotNegativeDifferentUnitsThrows()
+    {
+      // Arrange
+      var dt = new DateTime(2015, 02, 13, 19, 30, 00, DateTimeKind.Utc);
+      var t1 = GetTarget(dt, 20, Unit.Watt);
+      var t2 = GetTarget(dt, 21, Unit.Joule);
+
+      // Act & Assert
+      Assert.That(() => t1.SubtractNotNegative(t2), Throws.TypeOf<DataMisalignedException>());
+    }
+
+    [Test]
     public void ToStringTest()
     {
       // Arrange
@@ -118,6 +165,29 @@ namespace PowerView.Model.Test
       Assert.That(t1 == t2, Is.True);
       Assert.That(t1 == t3, Is.False);
     }
+
+    private static DateTime NormalizeTimestamp(DateTime timestamp, string interval = "5-minutes")
+    {
+      var dateTimeHelper = GetDateTimeHelper();
+      var timeDivider = dateTimeHelper.GetDivider(interval);
+      return timeDivider(timestamp);
+    }
+
+    private static NormalizedDurationRegisterValue GetTarget(DateTime timestamp, double value, Unit unit, string interval = "5-minutes", params string[] deviceIds)
+    {
+      var dateTimeHelper = GetDateTimeHelper();
+      var end = dateTimeHelper.GetNext(interval)(timestamp);
+      var timeDivider = dateTimeHelper.GetDivider(interval);
+      return new NormalizedDurationRegisterValue(timestamp, end, NormalizeTimestamp(timestamp, interval), NormalizeTimestamp(end, interval),
+        new UnitValue(value, unit), deviceIds);
+    }
+
+    private static DateTimeHelper GetDateTimeHelper()
+    {
+      var dateTimeHelper = new DateTimeHelper(TimeZoneInfo.Local, new DateTime(2015, 02, 13, 00, 00, 00, DateTimeKind.Local).ToUniversalTime());
+      return dateTimeHelper;
+    }
+
 
   }
 }

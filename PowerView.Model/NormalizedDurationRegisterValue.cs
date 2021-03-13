@@ -39,6 +39,26 @@ namespace PowerView.Model
       this.deviceIds = deviceIds.ToList();
     }
 
+    public NormalizedDurationRegisterValue SubtractNotNegative(NormalizedDurationRegisterValue baseValue)
+    {
+      var substractedValue = UnitValue - baseValue.UnitValue;
+      var dValue = substractedValue.Value;
+
+      if (dValue < 0)
+      {
+        dValue = 0;
+      }
+
+      var newStart = new DateTime(Math.Min(Start.Ticks, baseValue.Start.Ticks), DateTimeKind.Utc);
+      var newEnd = new DateTime(Math.Max(End.Ticks, baseValue.End.Ticks), DateTimeKind.Utc);
+      var newNormStart = new DateTime(Math.Min(NormalizedStart.Ticks, baseValue.NormalizedStart.Ticks), DateTimeKind.Utc);
+      var newNormEnd = new DateTime(Math.Max(NormalizedEnd.Ticks, baseValue.NormalizedEnd.Ticks), DateTimeKind.Utc);
+      var newValue = new NormalizedDurationRegisterValue(newStart, newEnd, newNormStart, newNormEnd,
+        new UnitValue(dValue, substractedValue.Unit), DeviceId.DistinctDeviceIds(DeviceIds.Concat(baseValue.DeviceIds)));
+
+      return newValue;
+    }
+
     public override string ToString()
     {
       return string.Format(System.Globalization.CultureInfo.InvariantCulture, "[start={0}, end={1}, normalizedStart={2}, normalizedEnd={3}, unitValue={4}, deviceIds=[{5}]]", 
