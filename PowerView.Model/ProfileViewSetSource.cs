@@ -8,7 +8,7 @@ namespace PowerView.Model
   {
     private readonly ICollection<ProfileGraph> profileGraphs;
     private readonly IDictionary<string, IList<DateTime>> intervalToCategories;
-    private readonly IDictionary<string, IDictionary<SeriesName, IEnumerable<NormalizedTimeRegisterValue>>> intervalSeriesNameToValues;
+    private readonly IDictionary<string, IDictionary<SeriesName, IEnumerable<NormalizedDurationRegisterValue>>> intervalSeriesNameToValues;
 
     public ProfileViewSetSource(IEnumerable<ProfileGraph> profileGraphs, IList<ProfileGraphIntervalGroup> intervalGroups)
     {
@@ -34,18 +34,18 @@ namespace PowerView.Model
       intervalSeriesNameToValues = intervalGroups.ToDictionary(x => x.Interval, GetSeriesNamesAndValues);
     }
 
-    private static IDictionary<SeriesName, IEnumerable<NormalizedTimeRegisterValue>> GetSeriesNamesAndValues(ProfileGraphIntervalGroup intervalGroup)
+    private static IDictionary<SeriesName, IEnumerable<NormalizedDurationRegisterValue>> GetSeriesNamesAndValues(ProfileGraphIntervalGroup intervalGroup)
     {
-      var result = new Dictionary<SeriesName, IEnumerable<NormalizedTimeRegisterValue>>();
+      var result = new Dictionary<SeriesName, IEnumerable<NormalizedDurationRegisterValue>>();
 
-      var labelSeriesSet = intervalGroup.NormalizedLabelSeriesSet;
+      var labelSeriesSet = intervalGroup.NormalizedDurationLabelSeriesSet;
       foreach (var labelSeries in labelSeriesSet)
       {
         foreach (var obisCode in labelSeries)
         {
           var seriesName = new SeriesName(labelSeries.Label, obisCode);
           var normalizedTimeRegisterValues = labelSeries[obisCode]
-            .Where(x => x.TimeRegisterValue.Timestamp >= labelSeriesSet.Start && x.TimeRegisterValue.Timestamp < labelSeriesSet.End)
+            .Where(x => x.End >= labelSeriesSet.Start && x.End < labelSeriesSet.End)
             .Select(x => x);
           result.Add(seriesName, normalizedTimeRegisterValues);
         }
@@ -69,20 +69,20 @@ namespace PowerView.Model
             continue;
           }
 
-          var normalizedTimeRegisterValues = intervalSeriesNameToValues[profileGraph.Interval][seriesName];
-          var timeRegisterValues = 
+          var normalizedDurationRegisterValues = intervalSeriesNameToValues[profileGraph.Interval][seriesName];
+          var values = 
                             (from categoryTimestamp in categories
-                             join normalizedTimeRegisterValue in normalizedTimeRegisterValues
-                             on categoryTimestamp equals normalizedTimeRegisterValue.NormalizedTimestamp 
+                             join normalizedTimeRegisterValue in normalizedDurationRegisterValues
+                             on categoryTimestamp equals normalizedTimeRegisterValue.NormalizedEnd 
                              into items
                              from timeRegisterValueOrNull in items.DefaultIfEmpty()
                              select timeRegisterValueOrNull)
                              .ToList();
-          var firstTimeRegisterValue = timeRegisterValues.FirstOrDefault(x => x != null);
-          if (firstTimeRegisterValue == null) continue;
+          var firstValue = values.FirstOrDefault(x => x != null);
+          if (firstValue == null) continue;
 
-          var valuesForCategories = timeRegisterValues.Select(x => x == null ? null : (double?)x.TimeRegisterValue.UnitValue.Value);
-          var series = new Series(seriesName, firstTimeRegisterValue.TimeRegisterValue.UnitValue.Unit, valuesForCategories);
+          var valuesForCategories = values.Select(x => x == null ? null : (double?)x.UnitValue.Value);
+          var series = new Series(seriesName, firstValue.UnitValue.Unit, valuesForCategories);
           profileGraphSeries.Add(series);
         }
 

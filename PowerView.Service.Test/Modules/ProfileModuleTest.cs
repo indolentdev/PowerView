@@ -160,8 +160,8 @@ namespace PowerView.Service.Test.Modules
     {
       // Arrange
       var profileGraph1 = new ProfileGraph("day", "thePage", "Import", "5-minutes", 1, new[] { 
-        new SeriesName("Label1", "6.0.1.0.0.255"), new SeriesName("Label1", "6.66.1.0.0.255"), new SeriesName("Label1", "6.67.8.0.0.255"), 
-        new SeriesName("Label1", "6.0.2.0.0.255"), new SeriesName("Label1", "6.66.2.0.0.255"), new SeriesName("Label1", "6.67.9.0.0.255"),
+        new SeriesName("Label1", "6.66.1.0.0.255"), new SeriesName("Label1", "6.67.8.0.0.255"), 
+        new SeriesName("Label1", "6.66.2.0.0.255"), new SeriesName("Label1", "6.67.9.0.0.255"),
         new SeriesName("Label1", "6.0.9.0.0.255")
       });
       StubProfileGraph(profileGraph1);
@@ -196,10 +196,6 @@ namespace PowerView.Service.Test.Modules
         title = profileGraph1.Title,
         categories = Enumerable.Range(0, 288).Select(i => midnight.AddMinutes(i * 5)).Select(ToStringMinute).ToArray(),
         series = new [] {
-          new ViewModelProfileSerie { label = "Label1", obisCode = "6.0.1.0.0.255", unit = "kWh", serietype = "ST_6.0.1.0.0.255", serieyaxis = "YA_6.0.1.0.0.255", seriecolor = "SC_Label1_6.0.1.0.0.255", 
-            values = new object[] { 2000, 3000 }.Concat(Enumerable.Repeat<object>(null, 286)).ToArray() },
-          new ViewModelProfileSerie { label = "Label1", obisCode = "6.0.2.0.0.255", unit = "m3", serietype = "ST_6.0.2.0.0.255", serieyaxis = "YA_6.0.2.0.0.255", seriecolor = "SC_Label1_6.0.2.0.0.255", 
-            values = new object[] { 3, 4 }.Concat(Enumerable.Repeat<object>(null, 286)).ToArray() },
           new ViewModelProfileSerie { label = "Label1", obisCode = "6.0.9.0.0.255", unit = "l/h", serietype = "ST_6.0.9.0.0.255", serieyaxis = "YA_6.0.9.0.0.255", seriecolor = "SC_Label1_6.0.9.0.0.255", 
             values = new object[] { 4000, 5000 }.Concat(Enumerable.Repeat<object>(null, 286)).ToArray() },
           new ViewModelProfileSerie { label = "Label1", obisCode = "6.66.1.0.0.255", unit = "kWh", serietype = "ST_6.66.1.0.0.255", serieyaxis = "YA_6.66.1.0.0.255", seriecolor = "SC_Label1_6.66.1.0.0.255", 
@@ -331,9 +327,9 @@ namespace PowerView.Service.Test.Modules
     {
       // Arrange
       var profileGraph1 = new ProfileGraph("month", "thePage", "Import", "1-days", 1, 
-        new[] { new SeriesName("Label1", "1.0.1.8.0.255"), new SeriesName("Label1", "1.66.1.8.0.255"), new SeriesName("Label1", "1.65.1.8.0.255") });
+        new[] { new SeriesName("Label1", "1.66.1.8.0.255"), new SeriesName("Label1", "1.65.1.8.0.255") });
       var profileGraph2 = new ProfileGraph("month", "thePage", "Export", "1-days", 2, 
-        new[] { new SeriesName("Label0", "1.0.2.8.0.255"), new SeriesName("Label0", "1.66.2.8.0.255"), new SeriesName("Label0", "1.65.2.8.0.255") });
+        new[] { new SeriesName("Label0", "1.66.2.8.0.255"), new SeriesName("Label0", "1.65.2.8.0.255") });
       StubProfileGraph(profileGraph1, profileGraph2);
       var midnight = new DateTime(2019, 3, 31, 22, 0, 0, DateTimeKind.Utc); // Midnight Denmark time..
       var t1 = midnight;
@@ -366,8 +362,6 @@ namespace PowerView.Service.Test.Modules
         title = profileGraph1.Title,
         categories = Enumerable.Range(0, 30).Select(i => midnight.AddDays(i)).Select(ToStringDay).ToArray(),
         series = new [] {
-          new ViewModelProfileSerie { label = "Label1", obisCode = "1.0.1.8.0.255", unit = "kWh", serietype = "ST_1.0.1.8.0.255", serieyaxis = "YA_1.0.1.8.0.255", seriecolor = "SC_Label1_1.0.1.8.0.255", 
-            values = new object[] { 2000, 3000 }.Concat(Enumerable.Repeat<object>(null, 28)).ToArray() },
           new ViewModelProfileSerie { label = "Label1", obisCode = "1.65.1.8.0.255", unit = "kWh", serietype = "ST_1.65.1.8.0.255", serieyaxis = "YA_1.65.1.8.0.255", seriecolor = "SC_Label1_1.65.1.8.0.255", 
             values = new object[] { 0, 1000 }.Concat(Enumerable.Repeat<object>(null, 28)).ToArray() }, 
           new ViewModelProfileSerie { label = "Label1", obisCode = "1.66.1.8.0.255", unit = "kWh", serietype = "ST_1.66.1.8.0.255", serieyaxis = "YA_1.66.1.8.0.255", seriecolor = "SC_Label1_1.66.1.8.0.255", 
@@ -380,8 +374,6 @@ namespace PowerView.Service.Test.Modules
         title = profileGraph2.Title,
         categories = Enumerable.Range(0, 30).Select(i => midnight.AddDays(i)).Select(ToStringDay).ToArray(),
         series = new [] {
-          new ViewModelProfileSerie { label = "Label0", obisCode = "1.0.2.8.0.255", unit = "kWh", serietype = "ST_1.0.2.8.0.255", serieyaxis = "YA_1.0.2.8.0.255", seriecolor = "SC_Label0_1.0.2.8.0.255", 
-            values = new object[] { 4000, null, 6000 }.Concat(Enumerable.Repeat<object>(null, 27)).ToArray() },
           new ViewModelProfileSerie { label = "Label0", obisCode = "1.65.2.8.0.255", unit = "kWh", serietype = "ST_1.65.2.8.0.255", serieyaxis = "YA_1.65.2.8.0.255", seriecolor = "SC_Label0_1.65.2.8.0.255", 
             values = new object[] { 0, null, 2000 }.Concat(Enumerable.Repeat<object>(null, 27)).ToArray() }, 
           new ViewModelProfileSerie { label = "Label0", obisCode = "1.66.2.8.0.255", unit = "kWh", serietype = "ST_1.66.2.8.0.255", serieyaxis = "YA_1.66.2.8.0.255", seriecolor = "SC_Label0_1.66.2.8.0.255", 
@@ -506,9 +498,9 @@ namespace PowerView.Service.Test.Modules
     {
       // Arrange
       var profileGraph1 = new ProfileGraph("month", "thePage", "Import", "1-months", 1,
-        new[] { new SeriesName("Label1", "1.0.1.8.0.255"), new SeriesName("Label1", "1.66.1.8.0.255"), new SeriesName("Label1", "1.65.1.8.0.255") });
+        new[] { new SeriesName("Label1", "1.66.1.8.0.255"), new SeriesName("Label1", "1.65.1.8.0.255") });
       var profileGraph2 = new ProfileGraph("month", "thePage", "Export", "1-months", 2,
-        new[] { new SeriesName("Label0", "1.0.2.8.0.255"), new SeriesName("Label0", "1.66.2.8.0.255"), new SeriesName("Label0", "1.65.2.8.0.255") });
+        new[] { new SeriesName("Label0", "1.66.2.8.0.255"), new SeriesName("Label0", "1.65.2.8.0.255") });
       StubProfileGraph(profileGraph1, profileGraph2);
       var midnight = new DateTime(2018, 12, 31, 23, 0, 0, DateTimeKind.Utc); // Midnight Denmark time..
       var t1 = midnight;
@@ -541,8 +533,6 @@ namespace PowerView.Service.Test.Modules
         title = profileGraph1.Title,
         categories = GetMonthDateTimes(midnight).Select(ToStringMonth).ToArray(),
         series = new [] {
-          new ViewModelProfileSerie { label = "Label1", obisCode = "1.0.1.8.0.255", unit = "kWh", serietype = "ST_1.0.1.8.0.255", serieyaxis = "YA_1.0.1.8.0.255", seriecolor = "SC_Label1_1.0.1.8.0.255", 
-            values = new object[] { 2000, 3000 }.Concat(Enumerable.Repeat<object>(null, 10)).ToArray() },
           new ViewModelProfileSerie { label = "Label1", obisCode = "1.65.1.8.0.255", unit = "kWh", serietype = "ST_1.65.1.8.0.255", serieyaxis = "YA_1.65.1.8.0.255", seriecolor = "SC_Label1_1.65.1.8.0.255", 
             values = new object[] { 0, 1000 }.Concat(Enumerable.Repeat<object>(null, 10)).ToArray() }, 
           new ViewModelProfileSerie { label = "Label1", obisCode = "1.66.1.8.0.255", unit = "kWh", serietype = "ST_1.66.1.8.0.255", serieyaxis = "YA_1.66.1.8.0.255", seriecolor = "SC_Label1_1.66.1.8.0.255", 
@@ -555,8 +545,6 @@ namespace PowerView.Service.Test.Modules
         title = profileGraph2.Title,
         categories = GetMonthDateTimes(midnight).Select(ToStringMonth).ToArray(),
         series = new [] {
-          new ViewModelProfileSerie { label = "Label0", obisCode = "1.0.2.8.0.255", unit = "kWh", serietype = "ST_1.0.2.8.0.255", serieyaxis = "YA_1.0.2.8.0.255", seriecolor = "SC_Label0_1.0.2.8.0.255", 
-            values = new object[] { 4000, null, 6000 }.Concat(Enumerable.Repeat<object>(null, 9)).ToArray() },
           new ViewModelProfileSerie { label = "Label0", obisCode = "1.65.2.8.0.255", unit = "kWh", serietype = "ST_1.65.2.8.0.255", serieyaxis = "YA_1.65.2.8.0.255", seriecolor = "SC_Label0_1.65.2.8.0.255", 
             values = new object[] { 0, null, 2000 }.Concat(Enumerable.Repeat<object>(null, 9)).ToArray() }, 
           new ViewModelProfileSerie { label = "Label0", obisCode = "1.66.2.8.0.255", unit = "kWh", serietype = "ST_1.66.2.8.0.255", serieyaxis = "YA_1.66.2.8.0.255", seriecolor = "SC_Label0_1.66.2.8.0.255", 
