@@ -42,8 +42,8 @@ namespace PowerView.Model.Repository
       var intervalGroup = new IntervalGroup(timeZoneInfo, midnight, "5-minutes", labelSeriesSet);
       intervalGroup.Prepare();
 
-      var seriesNames = intervalGroup.NormalizedLabelSeriesSet
-        .SelectMany(ls => ls.Where(oc => !oc.IsCumulative).Select(oc => new SeriesName(ls.Label, oc)))
+      var seriesNames = intervalGroup.NormalizedDurationLabelSeriesSet
+        .SelectMany(ls => ls.Select(oc => new SeriesName(ls.Label, oc)))
         .ToList();
       return seriesNames;
     }

@@ -53,6 +53,7 @@ namespace PowerView.Model.Test
 
       Assert.That(target.Categories, Is.Null);
       Assert.That(target.NormalizedLabelSeriesSet, Is.Null);
+      Assert.That(target.NormalizedDurationLabelSeriesSet, Is.Null);
     }
 
   }
