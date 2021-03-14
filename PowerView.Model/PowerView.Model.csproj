@@ -171,7 +171,6 @@
     <Compile Include="Repository\IExportRepository.cs" />
     <Compile Include="DeviceId.cs" />
     <Compile Include="SeriesGenerators\IMultiInputSeriesGenerator.cs" />
-    <Compile Include="SeriesGenerators\DiffByTimeSeriesGeneratorOld.cs" />
     <Compile Include="NormalizedDurationRegisterValue.cs" />
     <Compile Include="IntervalGroup.cs" />
     <Compile Include="TimeRegisterValueLabelSeries.cs" />

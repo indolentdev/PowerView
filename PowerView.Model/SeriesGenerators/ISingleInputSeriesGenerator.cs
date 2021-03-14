@@ -6,6 +6,6 @@ namespace PowerView.Model.SeriesGenerators
   {
     void CalculateNext(NormalizedTimeRegisterValue timeRegisterValue);
 
-    IList<NormalizedTimeRegisterValue> GetGenerated();
+    IList<NormalizedDurationRegisterValue> GetGeneratedDurations();
   }
 }

@@ -36,13 +36,6 @@ namespace PowerView.Model
 
       NormalizedDurationLabelSeriesSet = new LabelSeriesSet<NormalizedDurationRegisterValue>(NormalizedLabelSeriesSet.Start, NormalizedLabelSeriesSet.End,
         TransformToNormalizedDurations(NormalizedLabelSeriesSet).ToList());
-
-      // TODO: Remove this once nobody is using "duration normalized" values from the NormalizedLablSeriesSet.
-      foreach (var labelSeries in NormalizedLabelSeriesSet)
-      {
-        var generator = new SeriesFromCumulativeGenerator();
-        labelSeries.Add(generator.GenerateOld(labelSeries.GetCumulativeSeries()));
-      }
     }
 
     private List<DateTime> GetCategories()

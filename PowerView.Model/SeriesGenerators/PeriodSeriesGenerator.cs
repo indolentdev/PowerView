@@ -43,12 +43,6 @@ namespace PowerView.Model.SeriesGenerators
       return generatedValues.AsReadOnly();
     }
 
-    public IList<NormalizedTimeRegisterValue> GetGenerated()
-    {
-      return generatedValues.Select(x => new NormalizedTimeRegisterValue(
-        new TimeRegisterValue(x.DeviceIds.Count == 1 ? x.DeviceIds.First() : "0", x.End, x.UnitValue), x.NormalizedEnd)).ToList().AsReadOnly();
-    }
-
     private static string GetTransitionKey(NormalizedTimeRegisterValue normalizedTimeRegisterValue)
     {
       return string.Format("SN:{0}-RefTime:{1}", normalizedTimeRegisterValue.TimeRegisterValue.DeviceId, normalizedTimeRegisterValue.TimeRegisterValue.Timestamp.ToString("o"));

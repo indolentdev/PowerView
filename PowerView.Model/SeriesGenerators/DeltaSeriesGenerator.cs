@@ -44,12 +44,5 @@ namespace PowerView.Model.SeriesGenerators
     {
       return generatedValues.AsReadOnly();
     }
-
-    public IList<NormalizedTimeRegisterValue> GetGenerated()
-    {
-      return generatedValues.Select(x => new NormalizedTimeRegisterValue(
-        new TimeRegisterValue(x.DeviceIds.Last(), x.End, x.UnitValue), x.NormalizedEnd)).ToList().AsReadOnly();
-    }
-
   }
 }

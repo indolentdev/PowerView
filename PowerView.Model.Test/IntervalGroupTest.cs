@@ -158,7 +158,7 @@ namespace PowerView.Model.Test
 
       // Assert
       Assert.That(target.NormalizedLabelSeriesSet.Count(), Is.EqualTo(1));
-      Assert.That(target.NormalizedLabelSeriesSet.First().Count(), Is.EqualTo(4));
+      Assert.That(target.NormalizedLabelSeriesSet.First().Count(), Is.EqualTo(1));
 
       Assert.That(target.NormalizedDurationLabelSeriesSet.Count(), Is.EqualTo(1));
       Assert.That(target.NormalizedDurationLabelSeriesSet.First().Count(), Is.EqualTo(3));
