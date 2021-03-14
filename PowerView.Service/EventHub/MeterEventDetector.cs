@@ -34,11 +34,10 @@ namespace PowerView.Service.EventHub
       var preStart = localMidnightAsUtc.Subtract(TimeSpan.FromMinutes(30));
       var labelSeriesSet = profileRepository.GetDayProfileSet(preStart, localMidnightAsUtc, end);
 
-      var timeDivider = new DateTimeHelper(locationContext.TimeZoneInfo, localMidnightAsUtc).GetDivider("5-minutes");
-      var normalizedLabelSeriesSet = labelSeriesSet.Normalize(timeDivider);
-      GenerateSeriesFromCumulative(normalizedLabelSeriesSet);
-          
-      var meterEventCandidates = GetMeterEventCandidates(timestamp, localMidnightAsUtc, normalizedLabelSeriesSet).ToArray();
+      var intervalGroup = new IntervalGroup(locationContext.TimeZoneInfo, localMidnightAsUtc, "5-minutes", labelSeriesSet);
+      intervalGroup.Prepare();
+
+      var meterEventCandidates = GetMeterEventCandidates(timestamp, localMidnightAsUtc, intervalGroup.NormalizedDurationLabelSeriesSet).ToArray();
       if (meterEventCandidates.Length == 0)
       {
         return;
@@ -55,16 +54,7 @@ namespace PowerView.Service.EventHub
       meterEventRepository.AddMeterEvents(newMeterEvents);
     }
 
-    private void GenerateSeriesFromCumulative(LabelSeriesSet<NormalizedTimeRegisterValue> labelSeriesSet)
-    {
-      foreach (var labelSeries in labelSeriesSet)
-      {
-        var generator = new SeriesFromCumulativeGenerator();
-        labelSeries.Add(generator.GenerateOld(labelSeries.GetCumulativeSeries()));
-      }
-    }
-
-    private IEnumerable<MeterEvent> GetMeterEventCandidates(DateTime timestamp, DateTime localMidnightAsUtc, LabelSeriesSet<NormalizedTimeRegisterValue> labelSeriesSet)
+    private IEnumerable<MeterEvent> GetMeterEventCandidates(DateTime timestamp, DateTime localMidnightAsUtc, LabelSeriesSet<NormalizedDurationRegisterValue> labelSeriesSet)
     {
       var coldWaterVolume1Delta = ObisCode.ColdWaterVolume1Delta;
       foreach (var labelSeries in labelSeriesSet)

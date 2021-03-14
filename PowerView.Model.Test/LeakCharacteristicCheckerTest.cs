@@ -12,7 +12,7 @@ namespace PowerView.Model.Test
     public void HasLeakCharacteristicThrows()
     {
       // Arrange
-      var labelSeries = new LabelSeries<NormalizedTimeRegisterValue>("Lbl", new Dictionary<ObisCode, IEnumerable<NormalizedTimeRegisterValue>>());
+      var labelSeries = new LabelSeries<NormalizedDurationRegisterValue>("Lbl", new Dictionary<ObisCode, IEnumerable<NormalizedDurationRegisterValue>>());
       var obisCode = ObisCode.ColdWaterVolume1Delta;
       var dateTime = DateTime.UtcNow;
       var target = new LeakCharacteristicChecker();
@@ -30,9 +30,11 @@ namespace PowerView.Model.Test
       // Arrange
       ObisCode oc = ObisCode.ColdWaterVolume1Delta;
       var time = new DateTime(2016, 12, 29, 0, 29, 0, DateTimeKind.Utc);
-      var values = Enumerable.Range(0, 13).Select(i => new TimeRegisterValue("1", time.AddMinutes(i * 30), 0.5, Unit.CubicMetre));
-      var normalizedTimeRegisterValues = new Dictionary<ObisCode, IEnumerable<NormalizedTimeRegisterValue>> { { oc, values.Select(x => new NormalizedTimeRegisterValue(x, x.Timestamp)) } };
-      var labelSeries = new LabelSeries<NormalizedTimeRegisterValue>("Label", normalizedTimeRegisterValues);
+      var values = Enumerable.Range(0, 13).Select(i =>
+        new NormalizedDurationRegisterValue(time.AddMinutes(i * 30 - 30), time.AddMinutes(i * 30), time.AddMinutes(i * 30 - 30), time.AddMinutes(i * 30),
+        new UnitValue(0.5, Unit.CubicMetre)));
+      var normalizedDurationRegisterValues = new Dictionary<ObisCode, IEnumerable<NormalizedDurationRegisterValue>> { { oc, values } };
+      var labelSeries = new LabelSeries<NormalizedDurationRegisterValue>("Label", normalizedDurationRegisterValues);
       var start = new DateTime(2016, 12, 29, 0, 0, 0, DateTimeKind.Utc);
       var end = new DateTime(2016, 12, 29, 6, 0, 0, DateTimeKind.Utc);
       var target = new LeakCharacteristicChecker();
@@ -50,9 +52,11 @@ namespace PowerView.Model.Test
       // Arrange
       ObisCode oc = ObisCode.ColdWaterVolume1Delta;
       var time = new DateTime(2016, 12, 29, 0, 29, 0, DateTimeKind.Utc);
-      var values = Enumerable.Range(0, 13).Select(i => new TimeRegisterValue("1", time.AddMinutes(i * 30), 0, Unit.CubicMetre));
-      var normalizedTimeRegisterValues = new Dictionary<ObisCode, IEnumerable<NormalizedTimeRegisterValue>> { { oc, values.Select(x => new NormalizedTimeRegisterValue(x, x.Timestamp)) } };
-      var labelSeries = new LabelSeries<NormalizedTimeRegisterValue>("Label", normalizedTimeRegisterValues);
+      var values = Enumerable.Range(0, 13).Select(i =>
+        new NormalizedDurationRegisterValue(time.AddMinutes(i * 30 - 30), time.AddMinutes(i * 30), time.AddMinutes(i * 30 - 30), time.AddMinutes(i * 30),
+        new UnitValue(0, Unit.CubicMetre)));
+      var normalizedDurationRegisterValues = new Dictionary<ObisCode, IEnumerable<NormalizedDurationRegisterValue>> { { oc, values } };
+      var labelSeries = new LabelSeries<NormalizedDurationRegisterValue>("Label", normalizedDurationRegisterValues);
       var start = new DateTime(2016, 12, 29, 0, 0, 0, DateTimeKind.Utc);
       var end = new DateTime(2016, 12, 29, 6, 0, 0, DateTimeKind.Utc);
       var target = new LeakCharacteristicChecker();
@@ -70,9 +74,11 @@ namespace PowerView.Model.Test
       // Arrange
       ObisCode oc = ObisCode.ColdWaterVolume1Delta;
       var time = new DateTime(2016, 12, 29, 0, 29, 0, DateTimeKind.Utc);
-      var values = Enumerable.Range(0, 8).Select(i => new TimeRegisterValue("1", time.AddMinutes(i * 30), i * Math.Pow(10, -3), Unit.CubicMetre));
-      var normalizedTimeRegisterValues = new Dictionary<ObisCode, IEnumerable<NormalizedTimeRegisterValue>> { { oc, values.Select(x => new NormalizedTimeRegisterValue(x, x.Timestamp)) } };
-      var labelSeries = new LabelSeries<NormalizedTimeRegisterValue>("Label", normalizedTimeRegisterValues);
+      var values = Enumerable.Range(0, 8).Select(i =>
+        new NormalizedDurationRegisterValue(time.AddMinutes(i * 30 - 30), time.AddMinutes(i * 30), time.AddMinutes(i * 30 - 30), time.AddMinutes(i * 30),
+        new UnitValue(i * Math.Pow(10, -3), Unit.CubicMetre)));
+      var normalizedDurationRegisterValues = new Dictionary<ObisCode, IEnumerable<NormalizedDurationRegisterValue>> { { oc, values } };
+      var labelSeries = new LabelSeries<NormalizedDurationRegisterValue>("Label", normalizedDurationRegisterValues);
       var start = new DateTime(2016, 12, 29, 0, 0, 0, DateTimeKind.Utc);
       var end = new DateTime(2016, 12, 29, 6, 0, 0, DateTimeKind.Utc);
       var target = new LeakCharacteristicChecker();

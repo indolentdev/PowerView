@@ -10,12 +10,12 @@ namespace PowerView.Model
   {
     private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-    public UnitValue? GetLeakCharacteristic(LabelSeries<NormalizedTimeRegisterValue> labelSeries, ObisCode obisCode, DateTime start, DateTime end)
+    public UnitValue? GetLeakCharacteristic(LabelSeries<NormalizedDurationRegisterValue> labelSeries, ObisCode obisCode, DateTime start, DateTime end)
     {
-      return GetLeakCharacteristic(labelSeries, obisCode, start, end, sv => sv.TimeRegisterValue.Timestamp.Hour);
+      return GetLeakCharacteristic(labelSeries, obisCode, start, end, x => x.End.Hour);
     }
 
-    public UnitValue? GetLeakCharacteristic(LabelSeries<NormalizedTimeRegisterValue> labelSeries, ObisCode obisCode, DateTime start, DateTime end, Func<NormalizedTimeRegisterValue, int> timeGroupFunc, int minGroups = 5)
+    public UnitValue? GetLeakCharacteristic(LabelSeries<NormalizedDurationRegisterValue> labelSeries, ObisCode obisCode, DateTime start, DateTime end, Func<NormalizedDurationRegisterValue, int> timeGroupFunc, int minGroups = 5)
     {
       if (labelSeries == null) throw new ArgumentNullException("labelSeries");
       if (!obisCode.IsDelta) throw new ArgumentOutOfRangeException("obisCode", "Must be a delta obis code");
@@ -23,14 +23,14 @@ namespace PowerView.Model
       if (end.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("end", "Must be UTC");
       if (timeGroupFunc == null) throw new ArgumentNullException("timeGroupFunc");
 
-      var obisCodeTimeRegisterValues = labelSeries[obisCode];
-      var timeRegisterValues = obisCodeTimeRegisterValues.Where(sv => sv.TimeRegisterValue.Timestamp > start && sv.TimeRegisterValue.Timestamp < end).ToList();
+      var obisCodeValues = labelSeries[obisCode];
+      var values = obisCodeValues.Where(x => x.End > start && x.End < end).ToList();
       var hourly = new Dictionary<int, UnitValue>(6);
       try
       {
-        foreach (var grouping in timeRegisterValues.GroupBy(timeGroupFunc, sv => sv))
+        foreach (var grouping in values.GroupBy(timeGroupFunc, sv => sv))
         {
-          hourly.Add(grouping.Key, grouping.Select(sv => sv.TimeRegisterValue.UnitValue).Sum());
+          hourly.Add(grouping.Key, grouping.Select(sv => sv.UnitValue).Sum());
         }
       }
       catch (DataMisalignedException e)
