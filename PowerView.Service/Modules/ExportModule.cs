@@ -31,6 +31,7 @@ namespace PowerView.Service.Modules
       this.locationContext = locationContext;
 
       Get["export/labels"] = GetLabels;
+      Get["export/gauges/hourly"] = GetHourlyGaugesExport;
       Get["export/hourly"] = GetHourlyExport;
     }
 
@@ -45,6 +46,87 @@ namespace PowerView.Service.Modules
         .ToList();
  
       return Response.AsJson(r);
+    }
+
+    private dynamic GetHourlyGaugesExport(dynamic param)
+    {
+      var fromDate = GetDateTime("from");
+      var toDate = GetDateTime("to");
+      var labels = GetStrings("labels");
+
+      if (fromDate == null || toDate == null || labels == null || labels.Count == 0)
+      {
+        return HttpStatusCode.BadRequest;
+      }
+
+      var labelSeriesSet = exportRepository.GetLiveCumulativeSeries(fromDate.Value, toDate.Value, labels);
+      var intervalGroup = new IntervalGroup(locationContext.TimeZoneInfo, fromDate.Value, "60-minutes", labelSeriesSet);
+      intervalGroup.Prepare();
+
+      var falttened = intervalGroup.NormalizedLabelSeriesSet
+        .OrderBy(x => x.Label)
+        .SelectMany(x => x, (ls, oc) => new { ls.Label, ObisCode = oc, Values = ls[oc] })
+        .SelectMany(x => x.Values, (x, value) => new { x.Label, x.ObisCode, NormalizedValue = value });
+
+      var hours = falttened
+        .Select(x => x.NormalizedValue.NormalizedTimestamp)
+        .Distinct()
+        .OrderBy(x => x)
+        .ToList();
+
+      var seriesGroups = falttened.GroupBy(x => new SeriesName(x.Label, x.ObisCode), x => x.NormalizedValue);
+      var exportSeries = GetExportGaugeSeries(hours, seriesGroups);
+
+      var r = new { Timestamps = hours, Series = exportSeries };
+      return Response.AsJson(r);
+    }
+
+    private static IList<object> GetExportGaugeSeries(IList<DateTime> hours, IEnumerable<IGrouping<SeriesName, NormalizedTimeRegisterValue>> seriesGroups)
+    {
+      var exportSeries = new List<object>(); // matches dto
+
+      foreach (var group in seriesGroups)
+      {
+        var seriesName = group.Key;
+
+        var hourlyValues = hours
+          .GroupJoin(group, x => x, x => x.NormalizedTimestamp, (hour, normalizedValues) => new { hour, normalizedValues })
+          .SelectMany(x => x.normalizedValues.DefaultIfEmpty(), (joinItem, normalizedValue) => new { joinItem.hour, normalizedValue })
+          .OrderBy(x => x.hour)
+          .Select(x => x.normalizedValue)
+          .ToList();
+
+        var completeHourlyValues = new
+        {
+          seriesName.Label,
+          ObisCode = seriesName.ObisCode.ToString(),
+          Values = hourlyValues.Select((x, i) =>
+          {
+            if (x == null)
+            {
+              return new
+              {
+                Timestamp = (DateTime?)null,
+                Value = (double?)null,
+                Unit = (string)null,
+                DeviceId = (string)null
+              };
+            }
+
+            var unit = x.TimeRegisterValue.UnitValue.Unit;
+            return new
+            {
+              Timestamp = (DateTime?)x.TimeRegisterValue.Timestamp,
+              Value = ValueAndUnitMapper.Map(x.TimeRegisterValue.UnitValue.Value, unit),
+              Unit = ValueAndUnitMapper.Map(unit),
+              DeviceId = x.TimeRegisterValue.DeviceId
+            };
+          }).ToList()
+        };
+        exportSeries.Add(completeHourlyValues);
+      }
+
+      return exportSeries;
     }
 
     private dynamic GetHourlyExport(dynamic param)

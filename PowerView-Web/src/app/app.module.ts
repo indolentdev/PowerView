@@ -69,6 +69,8 @@ import { ExportHourlyComponent } from './components/export/export-hourly/export-
 import { HelpSeriesDescriptionsComponent } from './components/help/help-series-descriptions/help-series-descriptions.component';
 import { HelpSeriesDescriptionsTableComponent } from './components/help/help-series-descriptions-table/help-series-descriptions-table.component';
 import { SeriesMeasureKindsTableComponent } from './components/help/series-measure-kinds-table/series-measure-kinds-table.component';
+import { ExportComponent } from './components/export/export/export.component';
+import { ExportGaugesHourlyComponent } from './components/export/export-gauges-hourly/export-gauges-hourly.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -134,7 +136,9 @@ if (environment.useMockBackend == true) {
     ExportHourlyComponent,
     HelpSeriesDescriptionsComponent,
     HelpSeriesDescriptionsTableComponent,
-    SeriesMeasureKindsTableComponent
+    SeriesMeasureKindsTableComponent,
+    ExportComponent,
+    ExportGaugesHourlyComponent
   ],
   imports: [
     BrowserModule,

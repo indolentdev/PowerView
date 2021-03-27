@@ -94,8 +94,16 @@
 
 <button mat-raised-button color="primary" [matMenuTriggerFor]="exportMenu">{{ 'menu.export' | translate }}</button>
 <mat-menu #exportMenu="matMenu">
-  <button mat-menu-item [routerLink] ="['/export/hourly']" >{{ 'menu.hour' | translate }}</button>
+  <button mat-menu-item [matMenuTriggerFor]="exportGaugesMenu">{{ 'menu.gauges' | translate }}</button>
+  <button mat-menu-item [matMenuTriggerFor]="exportDiffsMenu">{{ 'menu.diff' | translate }}</button>
 </mat-menu>
+<mat-menu #exportGaugesMenu="matMenu">
+  <button mat-menu-item [routerLink] ="['/export/gauges/hourly']" >{{ 'menu.hourly' | translate }}</button>
+</mat-menu>
+<mat-menu #exportDiffsMenu="matMenu">
+  <button mat-menu-item [routerLink] ="['/export/diffs/hourly']" >{{ 'menu.hourly' | translate }}</button>
+</mat-menu>
+
 
 <button mat-raised-button color="primary" [matMenuTriggerFor]="settingsMenu">{{ 'menu.settings' | translate }}</button>
 <mat-menu #settingsMenu="matMenu">

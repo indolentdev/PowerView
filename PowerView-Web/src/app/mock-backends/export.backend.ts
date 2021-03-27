@@ -1,6 +1,7 @@
 import { HttpRequest, HttpResponse, HttpEvent } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+import { exportGaugesHourly } from './exportGaugesHourly.json.js';
 import { exportHourly } from './exportHourly.json.js';
 
 export function exportBackend(url: string, method: string, request: HttpRequest<any>): Observable<HttpEvent<any>> {
@@ -10,6 +11,16 @@ export function exportBackend(url: string, method: string, request: HttpRequest<
             resp.next(new HttpResponse({
                 status: 200,
                 body: ["yksi", "kaksi", "kolme"]
+            }));
+            resp.complete();
+        });
+    }
+
+    if (url.endsWith('export/gauges/hourly') && method === "GET") {
+        return new Observable(resp => {
+            resp.next(new HttpResponse({
+                status: 200,
+                body: exportGaugesHourly
             }));
             resp.complete();
         });            
