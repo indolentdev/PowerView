@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { DataService } from './data.service';
 import { Observable, of } from 'rxjs';
 import { ExportSpec } from '../model/exportSpec';
-import { ExportSeriesSet } from '../model/exportSeriesSet';
 import { ExportSeriesDiffSet } from '../model/exportSeriesDiffSet';
 import { ExportSeriesGaugeSet } from '../model/exportSeriesGaugeSet';
 
@@ -45,11 +44,4 @@ export class ExportService {
     return this.dataService.get<ExportSeriesGaugeSet>(constLocal.gaugesHourly, params, new ExportSeriesGaugeSet);
   }
 
-  public getHourlyExport(labels: string[], from: Moment, to: Moment): Observable<ExportSeriesSet> {
-    var params = new HttpParams()
-      .set("labels", labels.join())
-      .set("from", from.toISOString())
-      .set("to", to.toISOString());
-    return this.dataService.get<ExportSeriesSet>(constLocal.hourly, params, new ExportSeriesSet);
-  }
 }
