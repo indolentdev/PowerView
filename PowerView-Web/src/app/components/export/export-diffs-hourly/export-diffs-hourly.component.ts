@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
 import { ExportSpec } from '../../../model/exportSpec';
-import { ExportSeriesGaugeSet } from '../../../model/exportSeriesGaugeSet';
+import { ExportSeriesDiffSet } from '../../../model/exportSeriesDiffSet';
 import { ExportService } from '../../../services/export.service';
 import { ExportToCsv } from 'export-to-csv';
 
@@ -10,11 +10,11 @@ import { Moment } from 'moment'
 import * as moment from 'moment';
 
 @Component({
-  selector: 'app-export-gauges-hourly',
-  templateUrl: './export-gauges-hourly.component.html',
-  styleUrls: ['./export-gauges-hourly.component.css']
+  selector: 'app-export-diffs-hourly',
+  templateUrl: './export-diffs-hourly.component.html',
+  styleUrls: ['./export-diffs-hourly.component.css']
 })
-export class ExportGaugesHourlyComponent implements OnInit {
+export class ExportDiffsHourlyComponent implements OnInit {
 
   constructor(private log: NGXLogger, private exportService: ExportService, private translateService: TranslateService) { }
 
@@ -22,7 +22,7 @@ export class ExportGaugesHourlyComponent implements OnInit {
   }
 
   onExport(exportSpec: ExportSpec) {
-    this.exportService.getGaugesExportHourly(exportSpec).subscribe(exportSeriesSet => {
+    this.exportService.getDiffsExportHourly(exportSpec).subscribe(exportSeriesSet => {
       const labelCount = exportSeriesSet.series
         .map(x => x.label)
         .filter((lbl, i, arr) => arr.findIndex(l => l === lbl) === i) // distinct
@@ -54,10 +54,10 @@ export class ExportGaugesHourlyComponent implements OnInit {
     });
   }
 
-  private getRows(exportSeriesSet: ExportSeriesGaugeSet): any[] {
+  private getRows(exportSeriesSet: ExportSeriesDiffSet): any[] {
     let data = [];
 
-    for (let ix = 0; ix < exportSeriesSet.timestamps.length; ix++) {
+    for (let ix = 0; ix < exportSeriesSet.periods.length; ix++) {
       let row = {};
 
       let name = "";
@@ -68,17 +68,17 @@ export class ExportGaugesHourlyComponent implements OnInit {
 
         let exportValue = s.values[ix];
 
-        name = this.translateService.instant("export.columnNameLabelTimestamp", params);
-        row[name] = (exportValue.timestamp === undefined || exportValue.timestamp == null) ? "" : moment(exportValue.timestamp).format("YYYY-MM-DD HH:mm:ss");
+        name = this.translateService.instant("export.columnNameLabelFrom", params);
+        row[name] = (exportValue.from === undefined || exportValue.from == null) ? "" : moment(exportValue.from).format("YYYY-MM-DD HH:mm:ss");
+
+        name = this.translateService.instant("export.columnNameLabelTo", params);
+        row[name] = (exportValue.to === undefined || exportValue.to == null) ? "" : moment(exportValue.to).format("YYYY-MM-DD HH:mm:ss");
 
         name = this.translateService.instant("export.columnNameLabel", params);
         row[name] = (exportValue.value === undefined || exportValue.value == null) ? "" : exportValue.value.toString();
 
         name = this.translateService.instant("export.columnNameLabelUnit", params);
         row[name] = (exportValue.unit === undefined || exportValue.unit == null) ? "" : exportValue.unit;
-
-        name = this.translateService.instant("export.columnNameLabelDeviceId", params);
-        row[name] = (exportValue.deviceId === undefined || exportValue.deviceId == null) ? "" : exportValue.deviceId;
       });
 
       data.push(row);

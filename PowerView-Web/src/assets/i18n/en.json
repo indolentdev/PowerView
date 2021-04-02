@@ -53,6 +53,7 @@
     "emailRecipientsInfo": "Register email recipients to receive event notifications; water meter leak",
     "emailRecipientsTable": "Email Recipients",
     "events": "Events",
+    "exportDiffsHourly": "Export Diffs Hourly",
     "exportGaugesHourly": "Export Gauges Hourly",
     "exportHourly": "Export Hourly",
     "last12mProfile": "Last 12 Months Profile",
@@ -283,10 +284,10 @@
 
   "export": {
     "buttonGetExport": "Get Export",
-    "columnNameHour": "Hour",
     "columnNameLabel": "{{label}} {{valueName}}",
-    "columnNameLabelDiff": "{{label}} {{valueName}} Diff",
     "columnNameLabelTimestamp": "{{label}} {{valueName}} Timestamp",
+    "columnNameLabelFrom": "{{label}} {{valueName}} From",
+    "columnNameLabelTo": "{{label}} {{valueName}} To",
     "columnNameLabelUnit": "{{label}} {{valueName}} Unit",
     "columnNameLabelDeviceId": "{{label}} {{valueName}} Device ID",
     "filename": "{{timestamp}}-Export-{{labelCount}}-Labels",

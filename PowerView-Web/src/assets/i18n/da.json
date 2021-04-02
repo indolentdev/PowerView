@@ -53,6 +53,7 @@
     "emailRecipientsInfo": "Registrer e-mail modtagere for at modtage besked om hændelser; vand måler lækage",
     "emailRecipientsTable": "E-mail Modtagere",
     "events": "Hændelser",
+    "exportDiffsHourly": "Eksport Forskelle Time",
     "exportGaugesHourly": "Eksport Tællerstande Time",
     "exportHourly": "Eksport Time",
     "last12mProfile": "Profil for Seneste 12 Måneder",
@@ -283,10 +284,10 @@
 
   "export": {
     "buttonGetExport": "Hent Eksport",
-    "columnNameHour": "Time",
     "columnNameLabel": "{{label}} {{valueName}}",
-    "columnNameLabelDiff": "{{label}} {{valueName}} Forskel",
     "columnNameLabelTimestamp": "{{label}} {{valueName}} Tidspunkt",
+    "columnNameLabelFrom": "{{label}} {{valueName}} Fra",
+    "columnNameLabelTo": "{{label}} {{valueName}} Til",
     "columnNameLabelUnit": "{{label}} {{valueName}} Enhed",
     "columnNameLabelDeviceId": "{{label}} {{valueName}} Apparat ID",
     "filename": "{{timestamp}}-Eksport-{{labelCount}}-Etiketter",

@@ -31,6 +31,7 @@ namespace PowerView.Service.Modules
       this.locationContext = locationContext;
 
       Get["export/labels"] = GetLabels;
+      Get["export/diffs/hourly"] = GetHourlyDiffsExport;
       Get["export/gauges/hourly"] = GetHourlyGaugesExport;
       Get["export/hourly"] = GetHourlyExport;
     }
@@ -46,6 +47,140 @@ namespace PowerView.Service.Modules
         .ToList();
  
       return Response.AsJson(r);
+    }
+
+    private dynamic GetHourlyDiffsExport(dynamic param)
+    {
+      var fromDate = GetDateTime("from");
+      var toDate = GetDateTime("to");
+      var labels = GetStrings("labels");
+
+      if (fromDate == null || toDate == null || labels == null || labels.Count == 0)
+      {
+        return HttpStatusCode.BadRequest;
+      }
+
+      var labelSeriesSet = exportRepository.GetLiveCumulativeSeries(fromDate.Value, toDate.Value, labels);
+      var intervalGroup = new IntervalGroup(locationContext.TimeZoneInfo, fromDate.Value, "60-minutes", labelSeriesSet);
+      intervalGroup.Prepare();
+
+      var falttened = intervalGroup.NormalizedDurationLabelSeriesSet
+        .OrderBy(x => x.Label)
+        .SelectMany(x => x, (ls, oc) => new { ls.Label, ObisCode = oc, Values = ls[oc] })
+        .Where(x => x.ObisCode.IsDelta)
+        .SelectMany(x => x.Values, (x, value) => new { x.Label, x.ObisCode, NormalizedValue = value });
+
+      var periods = falttened
+        .Select(x => new Period(x.NormalizedValue.NormalizedStart, x.NormalizedValue.NormalizedEnd))
+        .Distinct()
+        .OrderBy(x => x)
+        .ToList();
+
+      var seriesGroups = falttened.GroupBy(x => new SeriesName(x.Label, x.ObisCode), x => x.NormalizedValue);
+      var exportSeries = GetExportDiffSeries(periods, seriesGroups);
+
+      var r = new { Periods = periods, Series = exportSeries };
+      return Response.AsJson(r);
+    }
+
+    private static IList<object> GetExportDiffSeries(IList<Period> periods, IEnumerable<IGrouping<SeriesName, NormalizedDurationRegisterValue>> seriesGroups)
+    {
+      var exportSeries = new List<object>(); // matches dto
+
+      foreach (var group in seriesGroups)
+      {
+        var seriesName = group.Key;
+
+        var hourlyValues = periods
+          .GroupJoin(group, x => x, x => new Period(x.NormalizedStart, x.NormalizedEnd), (period, normalizedValues) => new { period, normalizedValues })
+          .SelectMany(x => x.normalizedValues.DefaultIfEmpty(), (joinItem, normalizedValue) => new { joinItem.period, normalizedValue })
+          .OrderBy(x => x.period)
+          .Select(x => x.normalizedValue)
+          .ToList();
+
+        var completeHourlyValues = new
+        {
+          seriesName.Label,
+          ObisCode = seriesName.ObisCode.ToString(),
+          Values = hourlyValues.Select((x, i) =>
+          {
+            if (x == null)
+            {
+              return new
+              {
+                From = (DateTime?)null,
+                To = (DateTime?)null,
+                Value = (double?)null,
+                Unit = (string)null
+              };
+            }
+
+            var unit = x.UnitValue.Unit;
+            return new
+            {
+              From = (DateTime?)x.Start,
+              To = (DateTime?)x.End,
+              Value = ValueAndUnitMapper.Map(x.UnitValue.Value, unit),
+              Unit = ValueAndUnitMapper.Map(unit)
+            };
+          }).ToList()
+        };
+        exportSeries.Add(completeHourlyValues);
+      }
+
+      return exportSeries;
+    }
+
+    internal class Period : IEquatable<Period>, IComparable<Period>
+    {
+      public Period(DateTime from, DateTime to)
+      {
+        From = from;
+        To = to;
+      }
+
+      public DateTime From { get; }
+      public DateTime To { get; }
+
+      public int CompareTo(Period other)
+      {
+        if (From != other.From)
+        {
+          return From.CompareTo(other.From);
+        }
+        else
+        {
+          return To.CompareTo(other.To);
+        }
+      }
+
+      public override bool Equals(object obj)
+      {
+        return Equals(obj as Period);
+      }
+
+      public bool Equals(Period other)
+      {
+        return other != null && From == other.From && To == other.To;
+      }
+
+      public override int GetHashCode()
+      {
+        var hashCode = -1781160927;
+        hashCode = hashCode * -1521134295 + From.GetHashCode();
+        hashCode = hashCode * -1521134295 + To.GetHashCode();
+        return hashCode;
+      }
+
+      public static bool operator ==(Period period1, Period period2)
+      {
+        return EqualityComparer<Period>.Default.Equals(period1, period2);
+      }
+
+      public static bool operator !=(Period period1, Period period2)
+      {
+        return !(period1 == period2);
+      }
     }
 
     private dynamic GetHourlyGaugesExport(dynamic param)

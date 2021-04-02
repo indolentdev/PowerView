@@ -179,6 +179,7 @@
     <Compile Include="TimeZoneHelper.cs" />
     <Compile Include="IntervalTriggerTest.cs" />
     <Compile Include="Modules\ExportModuleTest.cs" />
+    <Compile Include="Modules\PeriodTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
