@@ -68,7 +68,8 @@ namespace PowerView.Service.Modules
         .OrderBy(x => x.Label)
         .SelectMany(x => x, (ls, oc) => new { ls.Label, ObisCode = oc, Values = ls[oc] })
         .Where(x => x.ObisCode.IsDelta)
-        .SelectMany(x => x.Values, (x, value) => new { x.Label, x.ObisCode, NormalizedValue = value });
+        .SelectMany(x => x.Values, (x, value) => new { x.Label, x.ObisCode, NormalizedValue = value })
+        .Where(x => x.NormalizedValue.NormalizedStart != x.NormalizedValue.NormalizedEnd);
 
       var periods = falttened
         .Select(x => new Period(x.NormalizedValue.NormalizedStart, x.NormalizedValue.NormalizedEnd))

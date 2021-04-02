@@ -290,12 +290,10 @@ namespace PowerView.Service.Test.Modules
       // Assert
       Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
       var json = response.Body.DeserializeJson<ExportDiffsRoot>();
-      AssertPeriods(new[] { new ExportModule.Period(t1-skew, t1-skew), new ExportModule.Period(t1-skew, t2-skew),
-        new ExportModule.Period(t2-skew, t3-skew) }, json.periods);
+      AssertPeriods(new[] { new ExportModule.Period(t1-skew, t2-skew), new ExportModule.Period(t2-skew, t3-skew) }, json.periods);
 
       Assert.That(json.series, Has.Length.EqualTo(1));
       AssertExportDiffSeries(ls.Label, obisCode.ToDelta(), new dynamic[] {
-        new { From = t1, To = t1, Value = (double?)0, Unit = "m3" },
         new { From = t1, To = t2, Value = (double?)100, Unit = "m3" },
         new { From = t2, To = t3, Value = (double?)200, Unit = "m3" }
       }, json.series[0]);
@@ -344,19 +342,16 @@ namespace PowerView.Service.Test.Modules
       // Assert
       Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
       var json = response.Body.DeserializeJson<ExportDiffsRoot>();
-      AssertPeriods(new[] { new ExportModule.Period(t1 - skew, t1 - skew), new ExportModule.Period(t1 - skew, t2 - skew) }, json.periods);
+      AssertPeriods(new[] { new ExportModule.Period(t1 - skew, t2 - skew) }, json.periods);
 
       Assert.That(json.series, Has.Length.EqualTo(3));
       AssertExportDiffSeries(ls1.Label, obisCode1.ToDelta(), new dynamic[] {
-        new { From = t1, To = t1, Value = 0, Unit = "kWh" },
         new { From = t1, To = t2, Value = 5, Unit = "kWh" },
       }, json.series[0]);
       AssertExportDiffSeries(ls1.Label, obisCode2.ToDelta(), new dynamic[] {
-        new { From = t1 + skew, To = t1 + skew, Value = 0, Unit = "kWh" },
         new { From = t1 + skew, To = t2 + skew, Value = 2, Unit = "kWh" },
       }, json.series[1]);
       AssertExportDiffSeries(ls1.Label, ObisCode.ElectrActiveEnergyNetDelta, new dynamic[] {
-        new { From = t1, To = t1 + skew, Value = 0, Unit = "kWh" },
         new { From = t1, To = t2 + skew, Value = 3, Unit = "kWh" },
       }, json.series[2]);
     }
@@ -398,15 +393,13 @@ namespace PowerView.Service.Test.Modules
       // Assert
       Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
       var json = response.Body.DeserializeJson<ExportDiffsRoot>();
-      AssertPeriods(new[] { new ExportModule.Period(t1 - skew, t1 - skew), new ExportModule.Period(t1 - skew, t2 - skew) }, json.periods);
+      AssertPeriods(new[] { new ExportModule.Period(t1 - skew, t2 - skew) }, json.periods);
 
       Assert.That(json.series, Has.Length.EqualTo(2));
       AssertExportDiffSeries(ls1.Label, obisCode.ToDelta(), new dynamic[] {
-        new { From = t1, To = t1, Value = 0, Unit = "m3" },
         new { From = t1, To = t2, Value = 100, Unit = "m3" },
       }, json.series[0]);
       AssertExportDiffSeries(ls2.Label, obisCode.ToDelta(), new dynamic[] {
-        new { From = t1 + skew, To = t1 + skew, Value = 0, Unit = "kWh" },
         new { From = t1 + skew, To = t2 + skew, Value = 2, Unit = "kWh" },
       }, json.series[1]);
     }
@@ -444,12 +437,10 @@ namespace PowerView.Service.Test.Modules
       // Assert
       Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
       var json = response.Body.DeserializeJson<ExportDiffsRoot>();
-      AssertPeriods(new[] { new ExportModule.Period(t1 - skew, t1 - skew), new ExportModule.Period(t1 - skew, t2 - skew),
-        new ExportModule.Period(t2 - skew, t3 - skew) }, json.periods);
+      AssertPeriods(new[] { new ExportModule.Period(t1 - skew, t2 - skew), new ExportModule.Period(t2 - skew, t3 - skew) }, json.periods);
 
       Assert.That(json.series, Has.Length.EqualTo(1));
       AssertExportDiffSeries(ls.Label, obisCode.ToDelta(), new dynamic[] {
-        new { From = t1, To = t1, Value = 0, Unit = "kWh" },
         new { From = t1, To = t2, Value = 0, Unit = "kWh" },
         new { From = t2, To = t3, Value = 1, Unit = "kWh" },
       }, json.series[0]);
