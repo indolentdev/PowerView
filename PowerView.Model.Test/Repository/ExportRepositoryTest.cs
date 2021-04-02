@@ -111,6 +111,50 @@ namespace PowerView.Model.Test.Repository
       Assert.That(labelProfile[ObisCode.ElectrActiveEnergyA14].Count(), Is.EqualTo(3));
     }
 
+    [Test]
+    public void GetLiveCumulativeSeriesStartBoundary()
+    {
+      // Arrange
+      const string label = "TheLabel";
+      var timestamp = new DateTime(2015, 02, 13, 22, 0, 0, DateTimeKind.Local).ToUniversalTime();
+      Insert(new Db.LiveReading { Label = label, DeviceId = "1", Timestamp = timestamp },
+        new Db.LiveRegister { ObisCode = ObisCode.ElectrActiveEnergyA14, Value = 1, Unit = (byte)Unit.WattHour });
+      var target = CreateTarget();
+      var start = timestamp;
+      var end = start + TimeSpan.FromDays(1);
+
+      // Act
+      var labelSeriesSet = target.GetLiveCumulativeSeries(start, end, new[] { label });
+
+      // Assert
+      Assert.That(labelSeriesSet, Is.Not.Null);
+      Assert.That(labelSeriesSet.Start, Is.EqualTo(start));
+      Assert.That(labelSeriesSet.End, Is.EqualTo(end));
+      Assert.That(labelSeriesSet.Count(), Is.EqualTo(1));
+    }
+
+    [Test]
+    public void GetLiveCumulativeSeriesEndBoundary()
+    {
+      // Arrange
+      const string label = "TheLabel";
+      var timestamp = new DateTime(2015, 02, 13, 22, 0, 0, DateTimeKind.Local).ToUniversalTime();
+      Insert(new Db.LiveReading { Label = label, DeviceId = "1", Timestamp = timestamp },
+        new Db.LiveRegister { ObisCode = ObisCode.ElectrActiveEnergyA14, Value = 1, Unit = (byte)Unit.WattHour });
+      var target = CreateTarget();
+      var start = timestamp - TimeSpan.FromDays(1);
+      var end = timestamp;
+
+      // Act
+      var labelSeriesSet = target.GetLiveCumulativeSeries(start, end, new[] { label });
+
+      // Assert
+      Assert.That(labelSeriesSet, Is.Not.Null);
+      Assert.That(labelSeriesSet.Start, Is.EqualTo(start));
+      Assert.That(labelSeriesSet.End, Is.EqualTo(end));
+      Assert.That(labelSeriesSet.Count(), Is.EqualTo(1));
+    }
+
     private void Insert<TReading, TRegister>(TReading reading, params TRegister[] registers) 
       where TReading : class, IDbReading
       where TRegister : class, IDbRegister

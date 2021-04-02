@@ -37,7 +37,7 @@ namespace PowerView.Model.Repository
       var sqlQuery = @"
 SELECT rea.Label,rea.DeviceId,rea.Timestamp,reg.ObisCode,reg.Value,reg.Scale,reg.Unit 
 FROM {0} AS rea JOIN {1} AS reg ON rea.Id=reg.ReadingId
-WHERE rea.Timestamp >= @from AND rea.Timestamp < @to AND rea.Label IN @labels;";
+WHERE rea.Timestamp >= @from AND rea.Timestamp <= @to AND rea.Label IN @labels;";
       sqlQuery = string.Format(CultureInfo.InvariantCulture, sqlQuery, readingTable, registerTable);
       log.DebugFormat("Querying {0}", readingTable);
 
