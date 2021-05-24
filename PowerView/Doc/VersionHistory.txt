@@ -1,3 +1,6 @@
+PowerView version 0.0.33 - Xxxx 20xx
+- TODO
+
 PowerView version 0.0.32 - April 2021
 - Series descriptions
 - Automaticly calculate series for electricity net consumed energy
