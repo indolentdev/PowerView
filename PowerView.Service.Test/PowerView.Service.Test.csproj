@@ -113,7 +113,7 @@
       <HintPath>..\packages\System.Net.WebSockets.Client.4.3.2\lib\net46\System.Net.WebSockets.Client.dll</HintPath>
     </Reference>
     <Reference Include="MQTTnet">
-      <HintPath>..\packages\MQTTnet.3.0.13\lib\net461\MQTTnet.dll</HintPath>
+      <HintPath>..\packages\MQTTnet.3.0.15\lib\net461\MQTTnet.dll</HintPath>
     </Reference>
     <Reference Include="MimeKit">
       <HintPath>..\packages\MimeKit.2.10.1\lib\net47\MimeKit.dll</HintPath>
