@@ -45,7 +45,7 @@ namespace PowerView.Model.Repository
         }
       }
         
-      var timeZoneInfo = TimeZoneInfo.Local;
+      var timeZoneInfo = ToTimeZoneInfo(TimeZoneInfo.Local.Id);
       log.DebugFormat("Using operating system time zone: {0}:{1}", timeZoneInfo.Id, timeZoneInfo.DisplayName);
       return timeZoneInfo;
     }

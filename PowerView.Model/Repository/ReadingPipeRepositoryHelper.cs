@@ -9,7 +9,7 @@ namespace PowerView.Model.Repository
     public static DateTime Reduce<TDstReading>(DateTime zonedDateTime)
       where TDstReading : class, IDbReading
     {
-      if (zonedDateTime.Kind != DateTimeKind.Unspecified) throw new ArgumentOutOfRangeException("zonedDateTime", "Must be Unspecified");
+      if (zonedDateTime.Kind != DateTimeKind.Unspecified) throw new ArgumentOutOfRangeException("zonedDateTime", "Must be Unspecified. Was:" + zonedDateTime.Kind);
 
       var typeName = typeof(TDstReading).Name;
       switch (typeName)
@@ -31,7 +31,7 @@ namespace PowerView.Model.Repository
     public static bool IsGreaterThanResolutionFraction<TDstReading>(double fraction, DateTime zonedDateTime)
       where TDstReading : class, IDbReading
     {
-      if (zonedDateTime.Kind != DateTimeKind.Unspecified) throw new ArgumentOutOfRangeException("zonedDateTime", "Must be Unspecified");
+      if (zonedDateTime.Kind != DateTimeKind.Unspecified) throw new ArgumentOutOfRangeException("zonedDateTime", "Must be Unspecified. Was:" + zonedDateTime.Kind);
 
       var baseDateTime = Reduce<TDstReading>(zonedDateTime);
       var progression = zonedDateTime - baseDateTime;

@@ -1,5 +1,5 @@
 PowerView version 0.0.33 - Xxxx 20xx
-- TODO
+- Fixed a bug where time conversion would fail on Windows
 
 PowerView version 0.0.32 - April 2021
 - Series descriptions
