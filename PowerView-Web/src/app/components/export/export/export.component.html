@@ -37,6 +37,18 @@
       </mat-form-field>
   
       <br/>
+
+      <mat-form-field style="width:13em">
+        <mat-select placeholder="{{ 'forms.export.placeholderDecimalSeparator' | translate }}" formControlName="decimalSeparator" id="decimalSeparator" required (selectionChange)="decimalSeparatorChangeEvent($event)">
+          <mat-option *ngFor="let opt of decimalSeparators" [value]="opt.name">
+            {{ 'forms.export.decimalSeparators.' + opt.name | translate }}
+          </mat-option>
+        </mat-select>
+        <mat-hint align="end">{{ 'forms.export.hintDecimalSeparator' | translate }}</mat-hint>
+        <mat-error *ngIf="hasError('decimalSeparator', 'required')">{{ 'forms.export.valErrors.required' | translate }}</mat-error>
+      </mat-form-field>
+  
+      <br/>
   
       <button mat-raised-button style="margin:5px;" type="submit" [disabled]="!formGroup.valid">{{ 'export.buttonGetExport' | translate }}</button>
   

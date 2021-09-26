@@ -131,6 +131,18 @@
   },
 
   "forms": {
+    "export": {
+      "hintDecimalSeparator": "Choose decimal separator",
+      "placeholderDecimalSeparator": "Decimal Separator",
+      "valErrors": {
+        "required": "Required"
+      },
+      "decimalSeparators": {
+        "dot": ". (period)",
+        "comma": ", (comma)",
+        "locale": "Browser default"
+      }
+    },
     "settings": {
       "emailRecipients": {
         "buttonActionDelete": "Delete",

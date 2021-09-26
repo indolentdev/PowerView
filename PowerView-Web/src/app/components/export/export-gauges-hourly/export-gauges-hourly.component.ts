@@ -40,7 +40,7 @@ export class ExportGaugesHourlyComponent implements OnInit {
           fieldSeparator: ';',
           filename: filename,
           quoteStrings: '',
-          decimalSeparator: 'locale',
+          decimalSeparator: exportSpec.decimalSeparator,
           showLabels: true,
           showTitle: false,
           useTextFile: false,
@@ -72,7 +72,7 @@ export class ExportGaugesHourlyComponent implements OnInit {
         row[name] = (exportValue.timestamp === undefined || exportValue.timestamp == null) ? "" : moment(exportValue.timestamp).format("YYYY-MM-DD HH:mm:ss");
 
         name = this.translateService.instant("export.columnNameLabel", params);
-        row[name] = (exportValue.value === undefined || exportValue.value == null) ? "" : exportValue.value.toString();
+        row[name] = (exportValue.value === undefined || exportValue.value == null) ? "" : exportValue.value;
 
         name = this.translateService.instant("export.columnNameLabelUnit", params);
         row[name] = (exportValue.unit === undefined || exportValue.unit == null) ? "" : exportValue.unit;

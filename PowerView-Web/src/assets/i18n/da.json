@@ -131,6 +131,18 @@
   },
 
   "forms": {
+    "export": {
+      "hintDecimalSeparator": "Vælg decimal separator",
+      "placeholderDecimalSeparator": "Decimal Separator",
+      "valErrors": {
+        "required": "Påkrævet"
+      },
+      "decimalSeparators": {
+        "dot": ". (punktum)",
+        "comma": ", (komma)",
+        "locale": "Browser valgt"
+      }
+    },
     "settings": {
       "emailRecipients": {
         "buttonActionDelete": "Slet",

@@ -12,6 +12,7 @@ import * as moment from 'moment';
 const labelsParam = "labels";
 const fromParam = "from";
 const toParam = "to";
+const decimalSeparatorParam = "decimalSeparator";
 
 @Component({
   selector: 'app-export',
@@ -30,6 +31,8 @@ export class ExportComponent implements OnInit {
 
   labels: string[];
 
+  decimalSeparators: any[];
+
   formGroup: FormGroup;
   @ViewChild('form', { static: true }) form;
 
@@ -42,10 +45,14 @@ export class ExportComponent implements OnInit {
     this.formGroup = new FormGroup({
       labels: new FormControl('', [Validators.required]),
       fromDate: new FormControl('', [Validators.required]),
-      toDate: new FormControl('', [Validators.required])
+      toDate: new FormControl('', [Validators.required]),
+      decimalSeparator: new FormControl('', [Validators.required])
     });
 
     this.getLabels();
+    this.decimalSeparators = [ { name: "locale", value: "locale" }, { name: "dot", value: "." }, { name: "comma", value: "," } ];
+
+    this.setDecimalSeparator("locale");
 
     this.route.queryParamMap.subscribe(queryParams => {
       let labelsArray = [];
@@ -68,6 +75,10 @@ export class ExportComponent implements OnInit {
       let toDateCtl = this.getControl("toDate");
       const toDateString = queryParams.get(toParam);
       this.parseDateSetFormControl(toDateString, toDateCtl);
+
+      const decimalSeparatorString = queryParams.get(decimalSeparatorParam);
+      var decimalSeparatorItem = this.fetchDecimalSeparator(decimalSeparatorString);
+      this.setDecimalSeparator(decimalSeparatorItem.name);
     });    
   }
 
@@ -78,6 +89,19 @@ export class ExportComponent implements OnInit {
         this.labels = x;
       });
     }
+  }
+
+  private setDecimalSeparator(value: string): void {
+    this.getControl("decimalSeparator").patchValue(value);
+  }
+
+  private fetchDecimalSeparator(name: string): any {
+    var match = this.decimalSeparators.find(x => x.name === name);
+    if (match === undefined)
+    {
+      match = this.fetchDecimalSeparator("locale");
+    }
+    return match;
   }
 
   public getControl(controlName: string): AbstractControl {
@@ -129,6 +153,15 @@ export class ExportComponent implements OnInit {
     this.navigate({ labels: labels });
   }
 
+  decimalSeparatorChangeEvent(event) {
+    if (event == null) return;
+    if (event.value == null) return;
+
+    let decimalSeparator = event.value;
+
+    this.navigate({ decimalSeparator: decimalSeparator });
+  }
+
   private navigate(queryParams: any): void {
     this.router.navigate([], {
       relativeTo: this.route,
@@ -138,15 +171,22 @@ export class ExportComponent implements OnInit {
     });
   }
 
+  public hasError(controlName: string, errorName: string) {
+    return this.formGroup.controls[controlName].hasError(errorName);
+  }
+
   public submitForm(formGroupValue: any) {
     if (!this.formGroup.valid) {
       return;
     }
 
+    let decimalSeparatorValue = this.fetchDecimalSeparator(formGroupValue.decimalSeparator).value;
+
     if (formGroupValue.labels != null && formGroupValue.labels.length > 0 &&
       formGroupValue.fromDate != null && moment(formGroupValue.fromDate).isValid() &&
       formGroupValue.toDate != null && moment(formGroupValue.toDate).isValid() ) {
         let exportSpec =  { labels: formGroupValue.labels, 
+          decimalSeparator: decimalSeparatorValue,
           from: moment(formGroupValue.fromDate), to: moment(formGroupValue.toDate) };
         this.navigate({ labels: null, to: null, from: null });
         this.form.resetForm();
