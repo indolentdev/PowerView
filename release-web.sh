@@ -7,7 +7,7 @@ then
 fi
 
 cd PowerView-Web
-ng build --prod --aot --outputHashing=all --base-href /web --deploy-url /web/
+ng build --configuration production --aot --outputHashing=all --base-href /web --deploy-url /web/
 if [ $? -ne 0 ]
 then
   cd ..
