@@ -1,4 +1,3 @@
-import { isUndefined } from "util";
 import { HttpClient, HttpHeaders, HttpParams, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of, throwError, EMPTY } from 'rxjs';
@@ -61,7 +60,7 @@ export class DataService {
     return (error: any): Observable<T> => {
       this.logError(method, urlPath, error);
 
-      if (isUndefined(errorResult))
+      if (errorResult === undefined)
       {
         return EMPTY;
       }
