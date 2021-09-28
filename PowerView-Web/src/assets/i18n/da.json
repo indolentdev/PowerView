@@ -429,8 +429,7 @@
         "entryAverage": { "title": "Punkt gennemsnit", "associatedTo": "Etiket", "description": "Beregnet fra to værdier i Kumulativ serien. Forskellen mellem en værdi og dens forrige værdi i serien konverteres til gennemsnitlig rate for varigheden.", "hint": "" },
         "entryDifference": { "title": "Punkt forskel", "associatedTo": "Etiket", "description": "Beregnet fra to værdier i Kumulativ serien. Er forskellen mellem en værdi og dens forrige værdi i serien. Når den forrige Kumulative værdi er fra en anden enhed eller værdien er rullet rundt mellem de to værdier forsøger beregningen at udregne den faktiske forskel.", "hint": "" },
         "periodDifference": { "title": "Periode forskel", "associatedTo": "Etiket", "description": "Beregnet fra to værdier i Kumulativ serien. Er forskellen mellem base værdien og en senere værdi i serien. Når base Kumulativ værdien er fra en anden enhed eller værdien er rullet rundt mellem de to værdier forsøger beregningen at udregne den faktiske forskel.", "hint": "" },
-        "netEntryDifference": { "title": "Netto punkt forskel", "associatedTo": "Etiket", "description": "Beregnet fra to værdier i Punkt forskel serien. Er den positive forskel mellem importeret/forbrugt Punkt forskel værdien og eksporteret/produceret Punkt forskel værdien.", "hint": "" },
-        "netPeriodDifference": { "title": "Netto periode forskel", "associatedTo": "Etiket", "description": "Beregnet fra to værdier i Periode forskel serien. Er den positive forskel mellem importeret/forbrugt Periode forskel værdien og eksporteret/produceret Periode forskel værdien.", "hint": "" }
+        "netEntryDifference": { "title": "Netto punkt forskel", "associatedTo": "Etiket", "description": "Beregnet fra to værdier i Punkt forskel serien. Er den positive forskel mellem importeret/forbrugt Punkt forskel værdien og eksporteret/produceret Punkt forskel værdien.", "hint": "" }
       }
     }
     
