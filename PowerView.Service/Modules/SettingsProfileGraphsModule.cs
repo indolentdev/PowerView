@@ -46,7 +46,7 @@ namespace PowerView.Service.Modules
       var timeZoneInfo = locationContext.TimeZoneInfo;
       var serieNames = serieNameRepository.GetSeriesNames(timeZoneInfo);
 
-      var day = serieNames.Where(sn => !sn.ObisCode.IsDelta || sn.ObisCode == ObisCode.ElectrActiveEnergyNetDelta)
+      var day = serieNames.Where(sn => !sn.ObisCode.IsDelta || sn.ObisCode == ObisCode.ElectrActiveEnergyA14NetDelta)
         .Select(sn => new { Period = "day", sn.Label, ObisCode = sn.ObisCode.ToString() });
       var month = serieNames.Where(sn => sn.ObisCode.IsDelta || sn.ObisCode.IsPeriod)
         .Select(sn => new { Period = "month", sn.Label, ObisCode = sn.ObisCode.ToString() });

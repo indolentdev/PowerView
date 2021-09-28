@@ -30,7 +30,7 @@ namespace PowerView.Service.Mappers
       }
 
       if (obisCode == ObisCode.ElectrActiveEnergyA14Delta || obisCode == ObisCode.ElectrActiveEnergyA23Delta ||
-         obisCode == ObisCode.ElectrActiveEnergyNetDelta || obisCode == ObisCode.HeatEnergyEnergy1Delta)
+         obisCode == ObisCode.ElectrActiveEnergyA14NetDelta || obisCode == ObisCode.HeatEnergyEnergy1Delta)
       {
         return "energyDelta";
       }

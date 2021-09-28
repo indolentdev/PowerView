@@ -62,13 +62,13 @@ namespace PowerView.Model.Test.Repository
     }
 
     [Test]
-    public void ActiveEnergyNetDelta()
+    public void ActiveEnergyA14NetDelta()
     {
       // Arrange
       var target = CreateTarget();
 
       // Act
-      var color = target.GetColor(ObisCode.ElectrActiveEnergyNetDelta);
+      var color = target.GetColor(ObisCode.ElectrActiveEnergyA14NetDelta);
 
       // Assert
       Assert.That(color, Is.EqualTo("#FFCC00"));

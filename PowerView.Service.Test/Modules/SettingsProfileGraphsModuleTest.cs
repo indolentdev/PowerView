@@ -49,7 +49,7 @@ namespace PowerView.Service.Test.Modules
       // Arrange
       const string label = "label";
       var serieNames = new[] { new SeriesName(label, ObisCode.ElectrActiveEnergyA14Delta), new SeriesName(label, ObisCode.ElectrActiveEnergyA14Period), 
-        new SeriesName(label, ObisCode.ElectrActualPowerP14), new SeriesName(label, ObisCode.ElectrActiveEnergyNetDelta) };
+        new SeriesName(label, ObisCode.ElectrActualPowerP14), new SeriesName(label, ObisCode.ElectrActiveEnergyA14NetDelta) };
       serieNameRepository.Setup(snr => snr.GetSeriesNames(It.IsAny<TimeZoneInfo>())).Returns(serieNames);
 
       // Act
@@ -66,13 +66,13 @@ namespace PowerView.Service.Test.Modules
       Assert.That(json.items.Length, Is.EqualTo(9));
       AssertProfileGraphSerie("day", label, ObisCode.ElectrActiveEnergyA14Period, json.items[0]);
       AssertProfileGraphSerie("day", label, ObisCode.ElectrActualPowerP14, json.items[1]);
-      AssertProfileGraphSerie("day", label, ObisCode.ElectrActiveEnergyNetDelta, json.items[2]);
+      AssertProfileGraphSerie("day", label, ObisCode.ElectrActiveEnergyA14NetDelta, json.items[2]);
       AssertProfileGraphSerie("month", label, ObisCode.ElectrActiveEnergyA14Delta, json.items[3]);
       AssertProfileGraphSerie("month", label, ObisCode.ElectrActiveEnergyA14Period, json.items[4]);
-      AssertProfileGraphSerie("month", label, ObisCode.ElectrActiveEnergyNetDelta, json.items[5]);
+      AssertProfileGraphSerie("month", label, ObisCode.ElectrActiveEnergyA14NetDelta, json.items[5]);
       AssertProfileGraphSerie("year", label, ObisCode.ElectrActiveEnergyA14Delta, json.items[6]);
       AssertProfileGraphSerie("year", label, ObisCode.ElectrActiveEnergyA14Period, json.items[7]);
-      AssertProfileGraphSerie("year", label, ObisCode.ElectrActiveEnergyNetDelta, json.items[8]);
+      AssertProfileGraphSerie("year", label, ObisCode.ElectrActiveEnergyA14NetDelta, json.items[8]);
       serieNameRepository.Verify(snr => snr.GetSeriesNames(locationContext.TimeZoneInfo));
     }
 

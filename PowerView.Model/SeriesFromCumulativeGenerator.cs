@@ -48,7 +48,7 @@ namespace PowerView.Model
     {
       var activeEnergyNetDeltaGenerator = new
       {
-        ObisCode = ObisCode.ElectrActiveEnergyNetDelta,
+        ObisCode = ObisCode.ElectrActiveEnergyA14NetDelta,
         Generator = new DiffByTimeSeriesGenerator(ObisCode.ElectrActiveEnergyA14Delta, ObisCode.ElectrActiveEnergyA23Delta)
       };
 

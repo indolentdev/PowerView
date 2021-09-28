@@ -10,7 +10,7 @@ namespace PowerView.Model.Repository
       { ObisCode.ElectrActualPowerP14Average, "#FFCC00" },
       { ObisCode.ElectrActiveEnergyA14Delta, "#FFCC00" },
       { ObisCode.ElectrActiveEnergyA14Period, "#FFF5CC" },
-      { ObisCode.ElectrActiveEnergyNetDelta, "#FFCC00" },
+      { ObisCode.ElectrActiveEnergyA14NetDelta, "#FFCC00" },
       { ObisCode.ElectrActualPowerP23, "#FFFF00" },
       { ObisCode.ElectrActualPowerP23Average, "#FFFF00" },
       { ObisCode.ElectrActiveEnergyA23Delta, "#FFFF00" },

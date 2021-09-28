@@ -350,7 +350,7 @@ namespace PowerView.Service.Test.Modules
       AssertExportDiffSeries(ls1.Label, obisCode2.ToDelta(), new dynamic[] {
         new { From = t1 + skew, To = t2 + skew, Value = 2, Unit = "kWh" },
       }, json.series[1]);
-      AssertExportDiffSeries(ls1.Label, ObisCode.ElectrActiveEnergyNetDelta, new dynamic[] {
+      AssertExportDiffSeries(ls1.Label, ObisCode.ElectrActiveEnergyA14NetDelta, new dynamic[] {
         new { From = t1, To = t2 + skew, Value = 3, Unit = "kWh" },
       }, json.series[2]);
     }
