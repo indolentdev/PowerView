@@ -17,7 +17,7 @@ namespace PowerView.Model.Test.Repository
       var obisCodes = GetObisCodes().ToArray();
 
       // Assert
-      Assert.That(obisCodes.Length, Is.EqualTo(41), "Remember to extend this test fixture when adding obis code definitions");
+      Assert.That(obisCodes.Length, Is.EqualTo(42), "Remember to extend this test fixture when adding obis code definitions");
     }
 
     [Test]
@@ -121,6 +121,19 @@ namespace PowerView.Model.Test.Repository
 
       // Act
       var color = target.GetColor(ObisCode.ElectrActiveEnergyA23Delta);
+
+      // Assert
+      Assert.That(color, Is.EqualTo("#FFFF00"));
+    }
+
+    [Test]
+    public void ActiveEnergyA23NetDelta()
+    {
+      // Arrange
+      var target = CreateTarget();
+
+      // Act
+      var color = target.GetColor(ObisCode.ElectrActiveEnergyA23NetDelta);
 
       // Assert
       Assert.That(color, Is.EqualTo("#FFFF00"));

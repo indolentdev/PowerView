@@ -304,28 +304,31 @@ namespace PowerView.Service.Test.Modules
       // Arrange
       var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
       var skew = TimeSpan.FromMinutes(5); // To verify normalization.
-      var t1 = today - TimeSpan.FromHours(2) + skew;
-      var t2 = today - TimeSpan.FromHours(1) + skew;
-      var obisCode1 = ObisCode.ElectrActiveEnergyA14;
-      var obisCode2 = ObisCode.ElectrActiveEnergyA23;
+      var t1 = today - TimeSpan.FromHours(3) + skew;
+      var t2 = today - TimeSpan.FromHours(2) + skew;
+      var t3 = today - TimeSpan.FromHours(1) + skew;
+      var a14 = ObisCode.ElectrActiveEnergyA14;
+      var a23 = ObisCode.ElectrActiveEnergyA23;
       var ls1 = CreateLabelSeries("label1", new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>>
       {
-        { obisCode1, new[]
+        { a14, new[]
           {
             new TimeRegisterValue("S1", t1, 2, 3, Unit.WattHour),
-            new TimeRegisterValue("S1", t2, 7, 3, Unit.WattHour)
+            new TimeRegisterValue("S1", t2, 7, 3, Unit.WattHour),
+            new TimeRegisterValue("S1", t3, 10, 3, Unit.WattHour)
           }
         },
         {
-          obisCode2, new[]
+          a23, new[]
           {
             new TimeRegisterValue("S2", t1 + skew, 4, 3, Unit.WattHour),
-            new TimeRegisterValue("S2", t2 + skew, 6, 3, Unit.WattHour)
+            new TimeRegisterValue("S2", t2 + skew, 6, 3, Unit.WattHour),
+            new TimeRegisterValue("S2", t3 + skew, 13, 3, Unit.WattHour)
           }
         }
       });
 
-      var lss = new TimeRegisterValueLabelSeriesSet(t1, t2, new[] { ls1 });
+      var lss = new TimeRegisterValueLabelSeriesSet(t1, t3, new[] { ls1 });
       exportRepository.Setup(er => er.GetLiveCumulativeSeries(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<IList<string>>())).Returns(lss);
 
       // Act
@@ -341,18 +344,25 @@ namespace PowerView.Service.Test.Modules
       // Assert
       Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
       var json = response.Body.DeserializeJson<ExportDiffsRoot>();
-      AssertPeriods(new[] { new ExportModule.Period(t1 - skew, t2 - skew) }, json.periods);
+      AssertPeriods(new[] { new ExportModule.Period(t1 - skew, t2 - skew), new ExportModule.Period(t2 - skew, t3 - skew) }, json.periods);
 
-      Assert.That(json.series, Has.Length.EqualTo(3));
-      AssertExportDiffSeries(ls1.Label, obisCode1.ToDelta(), new dynamic[] {
+      Assert.That(json.series, Has.Length.EqualTo(4));
+      AssertExportDiffSeries(ls1.Label, a14.ToDelta(), new dynamic[] {
         new { From = t1, To = t2, Value = 5, Unit = "kWh" },
+        new { From = t2, To = t3, Value = 3, Unit = "kWh" },
       }, json.series[0]);
-      AssertExportDiffSeries(ls1.Label, obisCode2.ToDelta(), new dynamic[] {
+      AssertExportDiffSeries(ls1.Label, a23.ToDelta(), new dynamic[] {
         new { From = t1 + skew, To = t2 + skew, Value = 2, Unit = "kWh" },
+        new { From = t2 + skew, To = t3 + skew, Value = 7, Unit = "kWh" },
       }, json.series[1]);
       AssertExportDiffSeries(ls1.Label, ObisCode.ElectrActiveEnergyA14NetDelta, new dynamic[] {
         new { From = t1, To = t2 + skew, Value = 3, Unit = "kWh" },
+        new { From = t2, To = t3 + skew, Value = 0, Unit = "kWh" },
       }, json.series[2]);
+      AssertExportDiffSeries(ls1.Label, ObisCode.ElectrActiveEnergyA23NetDelta, new dynamic[] {
+        new { From = t1, To = t2 + skew, Value = 0, Unit = "kWh" },
+        new { From = t2, To = t3 + skew, Value = 4, Unit = "kWh" },
+      }, json.series[3]);
     }
 
     [Test]

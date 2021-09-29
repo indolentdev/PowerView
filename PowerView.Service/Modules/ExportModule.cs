@@ -142,6 +142,11 @@ namespace PowerView.Service.Modules
       public DateTime From { get; }
       public DateTime To { get; }
 
+      public override string ToString()
+      {
+        return string.Format(CultureInfo.InvariantCulture, "Period [From:{0}, To:{1}]", From.ToString("o") , To.ToString("o"));
+      }
+
       public int CompareTo(Period other)
       {
         if (From != other.From)

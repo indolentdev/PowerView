@@ -46,13 +46,18 @@ namespace PowerView.Model
 
     private void GenerateMultiInputSeries(Dictionary<ObisCode, IEnumerable<NormalizedDurationRegisterValue>> result)
     {
-      var activeEnergyNetDeltaGenerator = new
+      var activeEnergyA14NetDeltaGenerator = new
       {
         ObisCode = ObisCode.ElectrActiveEnergyA14NetDelta,
         Generator = new DiffByTimeSeriesGenerator(ObisCode.ElectrActiveEnergyA14Delta, ObisCode.ElectrActiveEnergyA23Delta)
       };
+      var activeEnergyA23NetDeltaGenerator = new
+      {
+        ObisCode = ObisCode.ElectrActiveEnergyA23NetDelta,
+        Generator = new DiffByTimeSeriesGenerator(ObisCode.ElectrActiveEnergyA23Delta, ObisCode.ElectrActiveEnergyA14Delta)
+      };
 
-      var generators = new[] { activeEnergyNetDeltaGenerator };
+      var generators = new[] { activeEnergyA14NetDeltaGenerator, activeEnergyA23NetDeltaGenerator };
 
       var satisfiedGenerators = generators.Where(x => x.Generator.IsSatisfiedBy(result)).ToList();
 

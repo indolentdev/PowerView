@@ -396,6 +396,7 @@
         "1.66.1.8.0.255": { "measureKind": "Period difference", "description": "Imported/consumed electric energy for the period of the series. All phases.", "typicalUnits": "Watt Hour (kWh, MWh)", "hint": "" }, 
         "1.66.2.8.0.255": { "measureKind": "Period difference", "description": "Exported/produced electric energy for the period of the series. All phases.", "typicalUnits": "Watt Hour (kWh, MWh)", "hint": "" }, 
         "1.65.16.8.0.255": { "measureKind": "Net entry difference", "description": "Net imported/consumed electric energy for an entry in the series. All phases.", "typicalUnits": "Watt Hour (kWh, MWh)", "hint": "For correct values use a series interval matching your billing period. E.g. for hourly billing use 60 min interval." },
+        "1.65.26.8.0.255": { "measureKind": "Net entry difference", "description": "Net exported/produced electric energy for an entry in the series. All phases.", "typicalUnits": "Watt Hour (kWh, MWh)", "hint": "For correct values use a series interval matching your billing period. E.g. for hourly billing use 60 min interval." },
 
         "8.0.2.0.0.255": { "measureKind": "Current", "description": "Imported/consumed water flow", "typicalUnits": "Litre/Hour (l/h)", "hint": "" }, 
         "8.0.1.0.0.255": { "measureKind": "Cumulative", "description": "Imported/consumed water volume", "typicalUnits": "Cubic Metre (m3)", "hint": "" }, 

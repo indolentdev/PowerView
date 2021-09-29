@@ -128,6 +128,7 @@ namespace PowerView.Model.Test
       Assert.That(ObisCode.ElectrActiveEnergyA23, Is.EqualTo(new byte[] {1,0,2,8,0,255}));
       Assert.That(ObisCode.ElectrActiveEnergyA23Delta, Is.EqualTo(new byte[] {1,65,2,8,0,255}));
       Assert.That(ObisCode.ElectrActiveEnergyA23Period, Is.EqualTo(new byte[] {1,66,2,8,0,255}));
+      Assert.That(ObisCode.ElectrActiveEnergyA23NetDelta, Is.EqualTo(new byte[] { 1, 65, 26, 8, 0, 255 }));
       Assert.That(ObisCode.ElectrActualPowerP23, Is.EqualTo(new byte[] {1,0,2,7,0,255}));
       Assert.That(ObisCode.ElectrActualPowerP23Average, Is.EqualTo(new byte[] {1,67,2,7,0,255}));
       Assert.That(ObisCode.ElectrActualPowerP23L1, Is.EqualTo(new byte[] {1,0,22,7,0,255}));
@@ -381,6 +382,7 @@ namespace PowerView.Model.Test
     [TestCase("1.65.1.8.0.255")]
     [TestCase("1.65.16.8.0.255")]
     [TestCase("1.65.2.8.0.255")]
+    [TestCase("1.65.26.8.0.255")]
     [TestCase("8.65.1.0.0.255")]
     [TestCase("6.65.1.0.0.255")]
     [TestCase("6.65.2.0.0.255")]
@@ -530,7 +532,7 @@ namespace PowerView.Model.Test
       var definedObisCodes = ObisCode.GetDefined();
 
       // Assert
-      Assert.That(definedObisCodes.Count(), Is.EqualTo(41));
+      Assert.That(definedObisCodes.Count(), Is.EqualTo(42));
     }
   }
 }

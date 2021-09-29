@@ -15,6 +15,7 @@ namespace PowerView.Model.Repository
       { ObisCode.ElectrActualPowerP23Average, "#FFFF00" },
       { ObisCode.ElectrActiveEnergyA23Delta, "#FFFF00" },
       { ObisCode.ElectrActiveEnergyA23Period, "#FFFFCC" },
+      { ObisCode.ElectrActiveEnergyA23NetDelta, "#FFFF00" },
       { ObisCode.ColdWaterFlow1, "#330066" },
       { ObisCode.ColdWaterFlow1Average, "#330066" },
       { ObisCode.ColdWaterVolume1Delta, "#330066" }, 
