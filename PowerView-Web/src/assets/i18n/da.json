@@ -337,6 +337,7 @@
     "1.0.2.8.0.255": "Produceret Energi Total", 
     "1.65.2.8.0.255": "Produceret Energi Punkt", 
     "1.66.2.8.0.255": "Produceret Energi", 
+    "1.65.26.8.0.255": "Netto Produceret Energi Punkt", 
     "1.0.2.7.0.255": "Produceret Effekt", 
     "1.67.2.7.0.255": "Gns. Produceret Effekt", 
     "1.0.22.7.0.255": "Produceret Effekt L1", 

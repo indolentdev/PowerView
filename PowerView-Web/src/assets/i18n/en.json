@@ -337,6 +337,7 @@
     "1.0.2.8.0.255": "Produced Energy Total", 
     "1.65.2.8.0.255": "Produced Energy Entry", 
     "1.66.2.8.0.255": "Produced Energy", 
+    "1.65.26.8.0.255": "Net Produced Energy Entry", 
     "1.0.2.7.0.255": "Produced Power", 
     "1.67.2.7.0.255": "Avg. Produced Power", 
     "1.0.22.7.0.255": "Produced Power L1", 
