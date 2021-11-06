@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Globalization;
-using System.Linq;
 using NUnit.Framework;
 
 namespace PowerView.Model.Test
@@ -214,9 +213,15 @@ namespace PowerView.Model.Test
     [TestCase("2019-02-28T23:00:00.000Z", "1-days", "2019-03-31T23:01:00.000Z", "2019-03-31T22:00:00.000Z")] // Norm -> DST
     [TestCase("2019-02-28T23:00:00.000Z", "1-days", "2019-04-30T23:01:00.000Z", "2019-04-30T22:00:00.000Z")] // After Norm -> DST
     [TestCase("2019-06-30T22:00:00.000Z", "1-days", "2019-10-26T22:01:00.000Z", "2019-10-26T22:00:00.000Z")] // Before DST -> Norm
-    [TestCase("2019-06-30T22:00:00.000Z", "1-days", "2019-10-27T22:01:00.000Z", "2019-10-27T23:00:00.000Z")] // DST -> Norm
-    [TestCase("2019-06-30T22:00:00.000Z", "1-days", "2019-10-28T22:01:00.000Z", "2019-10-28T23:00:00.000Z")] // After DST -> Norm
+    [TestCase("2019-06-30T22:00:00.000Z", "1-days", "2019-10-27T22:01:00.000Z", "2019-10-26T22:00:00.000Z")] // DST -> Norm
+    [TestCase("2019-06-30T22:00:00.000Z", "1-days", "2019-10-28T22:01:00.000Z", "2019-10-27T23:00:00.000Z")] // After DST -> Norm
     [TestCase("2019-06-30T22:00:00.000Z", "1-days", "2019-10-28T23:01:00.000Z", "2019-10-28T23:00:00.000Z")] // After DST -> Norm
+    [TestCase("2020-02-29T23:00:00.000Z", "1-days", "2020-03-28T22:55:00.000Z", "2020-03-27T23:00:00.000Z")] // Before Norm -> DST
+    [TestCase("2020-02-29T23:00:00.000Z", "1-days", "2020-03-29T21:55:00.000Z", "2020-03-28T23:00:00.000Z")] // Norm -> DST
+    [TestCase("2020-02-29T23:00:00.000Z", "1-days", "2020-03-30T21:55:00.000Z", "2020-03-29T22:00:00.000Z")] // After Norm -> DST
+    [TestCase("2020-09-30T22:00:00.000Z", "1-days", "2020-10-24T21:55:00.000Z", "2020-10-23T22:00:00.000Z")] // Before DST -> Norm
+    [TestCase("2020-09-30T22:00:00.000Z", "1-days", "2020-10-25T22:55:00.000Z", "2020-10-24T22:00:00.000Z")] // DST -> Norm
+    [TestCase("2020-09-30T22:00:00.000Z", "1-days", "2020-10-26T22:55:00.000Z", "2020-10-25T23:00:00.000Z")] // After DST -> Norm
 
     [TestCase("2019-05-27T22:00:00.000Z", "1-months", "2019-06-25T02:37:00.000Z", "2019-05-27T22:00:00.000Z")]
     [TestCase("2019-05-27T22:00:00.000Z", "1-months", "2019-07-02T02:37:00.000Z", "2019-06-27T22:00:00.000Z")]
@@ -248,7 +253,6 @@ namespace PowerView.Model.Test
       Assert.That(dateTime, Is.EqualTo(outDateTime));
       Assert.That(dateTime.Kind, Is.EqualTo(outDateTime.Kind));
     }
-
 
     private static TimeZoneInfo GetTimeZoneInfo()
     {

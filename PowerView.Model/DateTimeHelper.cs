@@ -109,50 +109,78 @@ namespace PowerView.Model
         case "minutes":
           var minutes = TimeSpan.FromMinutes(ToDouble(intervalElements[0]));
           if (minutes.TotalHours > 1 || (minutes.Hours == 0 && minutes.Minutes == 0) || minutes.Milliseconds != 0) throw new ArgumentOutOfRangeException("interval", interval, "Minute part invalid");
-          return dt =>
-          {
-            var divided = Divide(dt, origin, minutes);
-            return divided; // Do not adjust for DST on minute (hour) resolution
-          };
+          return dt => DivideMinutes(minutes, dt);
 
         case "days":
           var days = TimeSpan.FromDays(ToDouble(intervalElements[0]));
           if ((int)days.TotalDays != 1) throw new ArgumentOutOfRangeException("interval", interval, "Day part invalid");
-          return dt =>
-          {
-            var divided = Divide(dt, origin, days);
-            return AdjustForDst(timeZoneInfo, origin, divided);
-          };
+          return dt => DivideDays(days, dt);
 
         case "months":
           if (ToInt32(intervalElements[0]) != 1) throw new ArgumentOutOfRangeException("interval", interval, "Month part invalid");
-          var lastDayOfMonth = origin.Day == DateTime.DaysInMonth(origin.Year, origin.Month);
-          return dt =>
-          {
-            var year = dt.Year;
-            var month = dt.Month;
-            if (dt.TimeOfDay < origin.TimeOfDay || 
-                (dt.TimeOfDay < origin.TimeOfDay + TimeSpan.FromHours(1) && !timeZoneInfo.IsDaylightSavingTime(dt) && timeZoneInfo.IsDaylightSavingTime(origin)) )
-            {
-              month--;
-              if (month == 0)
-              {
-                month = 12;
-                year--;
-              }
-            }
-
-            var daysInMonth = DateTime.DaysInMonth(year, month);
-            var day = lastDayOfMonth ? daysInMonth : Math.Min(origin.Day, daysInMonth);
-
-            var divided = new DateTime(year, month, day, origin.Hour, origin.Minute, origin.Second, origin.Millisecond, dt.Kind);
-            var adjusted = AdjustForDst(timeZoneInfo, origin, divided);
-            return adjusted;
-          };
+          return DivideMonths;
 
         default:
           throw new ArgumentOutOfRangeException("interval", interval, "Unknown interval");
       }
+    }
+
+    private DateTime DivideMinutes(TimeSpan minutes, DateTime dt)
+    {
+      var divided = Divide(dt, origin, minutes);
+      return divided; // Do not do adjustments for DST changes on minute (hour) resolution
+    }
+
+    private DateTime DivideDays(TimeSpan days, DateTime dt)
+    {
+      var originIsDst = timeZoneInfo.IsDaylightSavingTime(origin);
+      var dtIsDst = timeZoneInfo.IsDaylightSavingTime(dt);
+      if (originIsDst == dtIsDst)
+      {
+        return Divide(dt, origin, days);
+      }
+
+      var oneDay = TimeSpan.FromDays(1);
+      var dtClosestOriginWithSameDstStatus = origin;
+      while (dtClosestOriginWithSameDstStatus < dt && timeZoneInfo.IsDaylightSavingTime(dtClosestOriginWithSameDstStatus + oneDay) == originIsDst)
+      {
+        dtClosestOriginWithSameDstStatus += oneDay;
+      }
+
+      var dst = dtIsDst ? TimeSpan.FromHours(-1) : TimeSpan.FromHours(1);
+      if (dt - dtClosestOriginWithSameDstStatus <= oneDay + dst) // on the day of dst change
+      {
+        return dtClosestOriginWithSameDstStatus;
+      }
+
+      // after the day of dst change
+      var originAfterDst = dtClosestOriginWithSameDstStatus + oneDay + dst;
+      var adjusted = Divide(dt, originAfterDst, days);
+      return adjusted;
+    }
+
+    private DateTime DivideMonths(DateTime dt)
+    {
+      var year = dt.Year;
+      var month = dt.Month;
+      if (dt.TimeOfDay < origin.TimeOfDay ||
+          (dt.TimeOfDay < origin.TimeOfDay + TimeSpan.FromHours(1) && !timeZoneInfo.IsDaylightSavingTime(dt) && timeZoneInfo.IsDaylightSavingTime(origin)))
+      {
+        month--;
+        if (month == 0)
+        {
+          month = 12;
+          year--;
+        }
+      }
+
+      var lastDayOfMonth = origin.Day == DateTime.DaysInMonth(origin.Year, origin.Month);
+      var daysInMonth = DateTime.DaysInMonth(year, month);
+      var day = lastDayOfMonth ? daysInMonth : Math.Min(origin.Day, daysInMonth);
+
+      var divided = new DateTime(year, month, day, origin.Hour, origin.Minute, origin.Second, origin.Millisecond, dt.Kind);
+      var adjusted = AdjustForDst(timeZoneInfo, origin, divided);
+      return adjusted;
     }
 
     private static string[] SplitInterval(string interval)
