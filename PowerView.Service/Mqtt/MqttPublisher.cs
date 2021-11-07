@@ -6,7 +6,7 @@ using log4net;
 using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Client.Options;
-using MQTTnet.Diagnostics;
+using MQTTnet.Diagnostics.Logger;
 using MQTTnet.Exceptions;
 using PowerView.Model;
 
@@ -54,11 +54,11 @@ namespace PowerView.Service.Mqtt
         .WithNoKeepAlive()
         .Build();
 
-      var mqttNetLogger = new MqttNetLogger();
+      var mqttNetLogger = new MqttNetEventLogger();
       mqttNetLogger.LogMessagePublished += (sender, e) => log.Debug(e.LogMessage);
       using (var mqttClient = new MqttFactory().CreateMqttClient(mqttNetLogger))
       {
-        mqttClient.UseConnectedHandler(e => { log.DebugFormat("Connected to MQTT server {0}:{1}. ResultCode:{2}", config.Server, config.Port, e.AuthenticateResult.ResultCode ); });
+        mqttClient.UseConnectedHandler(e => { log.DebugFormat("Connected to MQTT server {0}:{1}. ResultCode:{2}", config.Server, config.Port, e.ConnectResult.ResultCode ); });
         mqttClient.UseDisconnectedHandler(e => { log.Debug("Disconnected MQTT server" + (e.Exception == null ? string.Empty : " with error"), e.Exception); });
 
         try

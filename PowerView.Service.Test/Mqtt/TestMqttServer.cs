@@ -5,7 +5,7 @@ using System.Net.Sockets;
 using System.Reflection;
 using log4net;
 using MQTTnet;
-using MQTTnet.Diagnostics;
+using MQTTnet.Diagnostics.Logger;
 using MQTTnet.Server;
 using NUnit.Framework;
 using PowerView.Model;
@@ -56,7 +56,7 @@ namespace PowerView.Service.Test.Mqtt
         .WithDefaultEndpointBoundIPV6Address(IPAddress.None)
         .Build();
 
-      var mqttNetLogger = new MqttNetLogger();
+      var mqttNetLogger = new MqttNetEventLogger();
       mqttNetLogger.LogMessagePublished += (sender, e) => log.Debug(e.LogMessage);
       mqttServer = new MqttFactory().CreateMqttServer(mqttNetLogger);
       mqttServer.UseApplicationMessageReceivedHandler(e => published.Add(e));
