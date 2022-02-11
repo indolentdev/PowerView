@@ -1,6 +1,7 @@
 PowerView version 0.0.33 - Xxxx 20xx
 - Automaticly calculate series for electricity net produced energy
 - File exports allow user to decide decimal separator
+- Improved stability of MQTT connection establishment
 - Fixed a bug where time conversion would fail on Windows
 - Fixed a bug where the month profile would skip the day after daylight saving to standard time change.
 

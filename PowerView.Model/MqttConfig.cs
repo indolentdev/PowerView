@@ -14,8 +14,11 @@ namespace PowerView.Model
 
     private const string defaultServer = "localhost";
     private const ushort defaultPort = 1883;
+    private readonly TimeSpan defaultTimeout = TimeSpan.FromSeconds(10);
 
-    public MqttConfig(string server, ushort port, bool enabled)
+    private readonly TimeSpan? timeout;
+
+    public MqttConfig(string server, ushort port, bool enabled, TimeSpan? timeout = null)
     {
       if (string.IsNullOrEmpty(server))
       {
@@ -25,6 +28,7 @@ namespace PowerView.Model
       Server = server;
       Port = port;
       PublishEnabled = enabled;
+      this.timeout = timeout;
     }
 
     internal MqttConfig(ICollection<KeyValuePair<string, string>> mqttSettings)
@@ -65,6 +69,7 @@ namespace PowerView.Model
     public string Server { get; private set; }
     public ushort Port { get; private set; }
     public bool PublishEnabled { get; private set; }
+    public TimeSpan Timeout { get { return timeout != null ? timeout.Value : defaultTimeout; } }
 
     internal ICollection<KeyValuePair<string, string>> GetSettings()
     {

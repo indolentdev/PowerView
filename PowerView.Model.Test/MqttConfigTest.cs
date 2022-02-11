@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using NUnit.Framework;
 
 namespace PowerView.Model.Test
@@ -16,6 +17,7 @@ namespace PowerView.Model.Test
 
       // Assert
       Assert.That(target.Server, Is.EqualTo("localhost"));
+      Assert.That(target.Timeout, Is.EqualTo(TimeSpan.FromSeconds(10)));
     }
 
     [Test]
@@ -24,12 +26,13 @@ namespace PowerView.Model.Test
       // Arrange
 
       // Act
-      var target = new MqttConfig("theServer", 1234, true);
+      var target = new MqttConfig("theServer", 1234, true, TimeSpan.FromSeconds(2));
 
       // Assert
       Assert.That(target.Server, Is.EqualTo("theServer"));
       Assert.That(target.Port, Is.EqualTo(1234));
       Assert.That(target.PublishEnabled, Is.True);
+      Assert.That(target.Timeout, Is.EqualTo(TimeSpan.FromSeconds(2)));
     }
 
     [Test]
@@ -50,6 +53,7 @@ namespace PowerView.Model.Test
       Assert.That(target.Server, Is.EqualTo("TheServer"));
       Assert.That(target.Port, Is.EqualTo(1234));
       Assert.That(target.PublishEnabled, Is.True);
+      Assert.That(target.Timeout, Is.EqualTo(TimeSpan.FromSeconds(10)));
     }
 
     [Test]
@@ -73,6 +77,7 @@ namespace PowerView.Model.Test
       Assert.That(target.Server, Is.EqualTo("localhost"));
       Assert.That(target.Port, Is.EqualTo(1883));
       Assert.That(target.PublishEnabled, Is.False);
+      Assert.That(target.Timeout, Is.EqualTo(TimeSpan.FromSeconds(10)));
     }
 
     [Test]

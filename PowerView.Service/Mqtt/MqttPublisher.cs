@@ -50,7 +50,7 @@ namespace PowerView.Service.Mqtt
         .WithClientId(string.Empty)
         .WithCleanSession(true)
         .WithTcpServer(config.Server, config.Port)
-        .WithCommunicationTimeout(TimeSpan.FromSeconds(1))
+        .WithCommunicationTimeout(config.Timeout)
         .WithNoKeepAlive()
         .Build();
 

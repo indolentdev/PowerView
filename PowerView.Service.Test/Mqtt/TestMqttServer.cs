@@ -45,7 +45,7 @@ namespace PowerView.Service.Test.Mqtt
 
     public MqttConfig GetClientConfig()
     {
-      return new MqttConfig(ServerName, (ushort)Port, true);
+      return new MqttConfig(ServerName, (ushort)Port, true, TimeSpan.FromSeconds(0.5));
     }
 
     public void Start()
