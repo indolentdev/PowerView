@@ -54,7 +54,7 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Net.Http" />
     <Reference Include="log4net">
-      <HintPath>..\packages\log4net.2.0.13\lib\net45\log4net.dll</HintPath>
+      <HintPath>..\packages\log4net.2.0.14\lib\net45\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Castle.Core">
       <HintPath>..\packages\Castle.Core.4.4.1\lib\net45\Castle.Core.dll</HintPath>
@@ -113,7 +113,7 @@
       <HintPath>..\packages\System.Net.WebSockets.Client.4.3.2\lib\net46\System.Net.WebSockets.Client.dll</HintPath>
     </Reference>
     <Reference Include="MQTTnet">
-      <HintPath>..\packages\MQTTnet.3.1.0\lib\net461\MQTTnet.dll</HintPath>
+      <HintPath>..\packages\MQTTnet.3.1.2\lib\net461\MQTTnet.dll</HintPath>
     </Reference>
     <Reference Include="MimeKit">
       <HintPath>..\packages\MimeKit.2.15.1\lib\net47\MimeKit.dll</HintPath>
