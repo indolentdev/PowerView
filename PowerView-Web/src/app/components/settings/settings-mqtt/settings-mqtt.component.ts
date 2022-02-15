@@ -22,7 +22,8 @@ export class SettingsMqttComponent implements OnInit {
     this.formGroup = new FormGroup({
       server: new FormControl('', [Validators.required, Validators.minLength(7), Validators.maxLength(39)]),
       port: new FormControl('', [Validators.required, Validators.min(1), Validators.max(65535)]),
-      publishEnabled: new FormControl('', [])
+      publishEnabled: new FormControl('', []),
+      clientId: new FormControl('', [Validators.required, Validators.minLength(1), Validators.maxLength(23), Validators.pattern('^[a-zA-Z0-9]+$')])
     });
     this.getMqttParams();
   }
@@ -32,6 +33,7 @@ export class SettingsMqttComponent implements OnInit {
       this.formGroup.controls["server"].setValue(mqttParams.server);
       this.formGroup.controls["port"].setValue(mqttParams.port);
       this.formGroup.controls["publishEnabled"].setValue(mqttParams.publishEnabled);
+      this.formGroup.controls["clientId"].setValue(mqttParams.clientId);
     });
   }
 

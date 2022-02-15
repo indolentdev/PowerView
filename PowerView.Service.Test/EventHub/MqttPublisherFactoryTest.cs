@@ -47,7 +47,7 @@ namespace PowerView.Service.Test.EventHub
       var repoDisposable = new Mock<IDisposable>();
       factory.Setup(f => f.Create<ISettingRepository>()).Returns(new Owned<ISettingRepository>(settingsRepository.Object, repoDisposable.Object));
 
-      var mqttConfig = new MqttConfig("theServer", 1234, true);
+      var mqttConfig = new MqttConfig("theServer", 1234, true, "theClientId");
       settingsRepository.Setup(sr => sr.GetMqttConfig()).Returns(mqttConfig);
 
       var mqttPublisher = new Mock<IMqttPublisher>();
@@ -94,7 +94,7 @@ namespace PowerView.Service.Test.EventHub
       var repoDisposable = new Mock<IDisposable>();
       factory.Setup(f => f.Create<ISettingRepository>()).Returns(new Owned<ISettingRepository>(settingsRepository.Object, repoDisposable.Object));
 
-      var mqttConfig = new MqttConfig("theServer", 1234, false);
+      var mqttConfig = new MqttConfig("theServer", 1234, false, "theClientId");
       settingsRepository.Setup(sr => sr.GetMqttConfig()).Returns(mqttConfig);
 
       var liveReadings = new LiveReading[1];

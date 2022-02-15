@@ -1,1 +1,1 @@
-export let settingsMqtt = {"server":"192.168.1.108","port":"1888","publishEnabled":false};
+export let settingsMqtt = {"server":"192.168.1.108","port":"1888","publishEnabled":false,"clientId":"PWClientId"};

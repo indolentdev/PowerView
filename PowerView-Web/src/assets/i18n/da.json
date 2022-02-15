@@ -177,15 +177,20 @@
         "errorTest": "Test fejlede. ",
         "errorTestNoConnection": "Ingen forbindelse.",
         "errorAdjustFields": "Tilpas server adresse eller server port.",
+        "hintClientId": "For eksempel: PowerView",
         "hintPort": "For eksempel: 1883",
         "hintServer": "For eksempel: 192.168.0.123",
+        "placeholderClientId": "PowerView klient identifikator på MQTT serveren",
         "placeholderPort": "MQTT Server Port",
         "placeholderServer": "MQTT Server IP Adresse",
         "checkPublishReadings": "Send Aflæsninger",
         "valErrors": {
+          "invalidCharacters": "Benyt kun tegn 0-9 a-z A-Z",
           "max_65535": "Højest 65535",
+          "maxLength_23": "Maksimum 23 tegn",
           "maxLength_39": "Maksimum 39 tegn",
           "min_1": "Mindst 1",
+          "minLength_1": "Minimum 1 tegn",
           "minLength_7": "Minimum 7 tegn",
           "required": "Påkrævet"
         }

@@ -213,14 +213,14 @@ namespace PowerView.Model.Test.Repository
     public void UpsertMqttConfigInsert()
     {
       // Arrange
-      var mqttConfig = new MqttConfig("TheMqttServer", 12345, true);
+      var mqttConfig = new MqttConfig("TheMqttServer", 12345, true, "TheClientId");
       var target = CreateTarget();
 
       // Act
       target.UpsertMqttConfig(mqttConfig);
 
       // Assert
-      AssertMqttConfig("TheMqttServer", "12345", "True");
+      AssertMqttConfig("TheMqttServer", "12345", "True", "TheClientId");
     }
 
     [Test]
@@ -228,24 +228,25 @@ namespace PowerView.Model.Test.Repository
     {
       // Arrange
       var target = CreateTarget();
-      target.UpsertMqttConfig(new MqttConfig("Some server", 55555, false));
-      var mqttConfig = new MqttConfig("TheMqttServer", 12345, true);
+      target.UpsertMqttConfig(new MqttConfig("Some server", 55555, false, "SomeClientId"));
+      var mqttConfig = new MqttConfig("TheMqttServer", 12345, true, "TheClientId");
 
       // Act
       target.UpsertMqttConfig(mqttConfig);
 
       // Assert
-      AssertMqttConfig("TheMqttServer", "12345", "True");
+      AssertMqttConfig("TheMqttServer", "12345", "True", "TheClientId");
     }
 
-    private void AssertMqttConfig(string server, string port, string enabled)
+    private void AssertMqttConfig(string server, string port, string enabled, string clientId)
     {
       var mqttSettings = DbContext.QueryTransaction<Db.Setting>("", "SELECT * FROM Setting WHERE Name like @mqtt;", new { mqtt = "MQTT_%" });
-      Assert.That(mqttSettings.Count, Is.EqualTo(3));
+      Assert.That(mqttSettings.Count, Is.EqualTo(4));
 
       AssertExists("MQTT_Server", server);
       AssertExists("MQTT_Port", port);
       AssertExists("MQTT_PublishEnabled", enabled);
+      AssertExists("MQTT_ClientId", clientId);
     }
 
     [Test]

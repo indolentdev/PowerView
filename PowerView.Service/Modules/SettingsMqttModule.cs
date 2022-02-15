@@ -37,7 +37,7 @@ namespace PowerView.Service.Modules
       var mqttConfig = settingRepository.GetMqttConfig();
 
       var r = new { Server = mqttConfig.Server, Port = mqttConfig.Port.ToString(CultureInfo.InvariantCulture),
-        PublishEnabled = mqttConfig.PublishEnabled };
+        PublishEnabled = mqttConfig.PublishEnabled, ClientId = mqttConfig.ClientId };
 
       return Response.AsJson(r);
     }
@@ -47,7 +47,7 @@ namespace PowerView.Service.Modules
       var mqttConfig = GetMqttConfig();
       if (mqttConfig == null)
       {
-        var description = new { Description = "PublishEnabled, Server or Port properties absent or empty" };
+        var description = new { Description = "PublishEnabled, Server, Port or ClientId properties absent or empty" };
         return Response.AsJson(description, HttpStatusCode.UnsupportedMediaType);
       }
 
@@ -59,17 +59,17 @@ namespace PowerView.Service.Modules
     {
       var mqttConfigDto = this.Bind<MqttConfigDto>();
         
-      if (mqttConfigDto.PublishEnabled == null || string.IsNullOrEmpty(mqttConfigDto.Server) || mqttConfigDto.Port == null)
+      if (mqttConfigDto.PublishEnabled == null || string.IsNullOrEmpty(mqttConfigDto.Server) || mqttConfigDto.Port == null || mqttConfigDto.ClientId == null)
       {
-        log.WarnFormat("Set MQTT configuration failed. Properties are null or empty. PublishEnabled:{0}, Server:{1}, Port:{2}",
-                       mqttConfigDto.PublishEnabled, mqttConfigDto.Server, mqttConfigDto.Port);
+        log.WarnFormat("Set MQTT configuration failed. Properties are null or empty. PublishEnabled:{0}, Server:{1}, Port:{2}, ClientId:{3}",
+                       mqttConfigDto.PublishEnabled, mqttConfigDto.Server, mqttConfigDto.Port, mqttConfigDto.ClientId);
         return null;
       }
 
       ushort port;
       if (!ushort.TryParse(mqttConfigDto.Port, NumberStyles.Integer, CultureInfo.InvariantCulture, out port)) return null;
 
-      return new MqttConfig(mqttConfigDto.Server, port,mqttConfigDto.PublishEnabled.Value);
+      return new MqttConfig(mqttConfigDto.Server, port, mqttConfigDto.PublishEnabled.Value, mqttConfigDto.ClientId);
     }
 
     private dynamic TestSettings(dynamic param)
@@ -77,7 +77,7 @@ namespace PowerView.Service.Modules
       var mqttConfig = GetMqttConfig();
       if (mqttConfig == null)
       {
-        var description = new { Description = "PublishEnabled, Server or Port properties absent or empty" };
+        var description = new { Description = "PublishEnabled, Server, Port or ClientId properties absent or empty" };
         return Response.AsJson(description, HttpStatusCode.UnsupportedMediaType);
       }
 

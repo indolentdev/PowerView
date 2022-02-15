@@ -44,10 +44,23 @@ namespace PowerView.Service.Mqtt
       }
     }
 
+    private void LogMqtt(MqttNetLogMessage logMessage)
+    {
+      if (logMessage.Level == MqttNetLogLevel.Error)
+      {
+        log.Warn(logMessage); 
+      }
+      else 
+      {
+        log.Debug(logMessage);
+      }
+    }
+
     private async Task PublishInner(MqttConfig config, ICollection<LiveReading> liveReadings)
     {
       var opts = new MqttClientOptionsBuilder()
-        .WithClientId(string.Empty)
+        .WithProtocolVersion(MQTTnet.Formatter.MqttProtocolVersion.V500)
+        .WithClientId(config.ClientId)
         .WithCleanSession(true)
         .WithTcpServer(config.Server, config.Port)
         .WithCommunicationTimeout(config.Timeout)
@@ -55,7 +68,7 @@ namespace PowerView.Service.Mqtt
         .Build();
 
       var mqttNetLogger = new MqttNetEventLogger();
-      mqttNetLogger.LogMessagePublished += (sender, e) => log.Debug(e.LogMessage);
+      mqttNetLogger.LogMessagePublished += (sender, e) => LogMqtt(e.LogMessage);
       using (var mqttClient = new MqttFactory().CreateMqttClient(mqttNetLogger))
       {
         mqttClient.UseConnectedHandler(e => { log.DebugFormat("Connected to MQTT server {0}:{1}. ResultCode:{2}", config.Server, config.Port, e.ConnectResult.ResultCode ); });

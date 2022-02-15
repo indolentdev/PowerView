@@ -108,7 +108,8 @@ export function settingsBackend(url: string, method: string, request: HttpReques
                 body: {
                     server: settingsMqtt.server,
                     port: settingsMqtt.port,
-                    publishEnabled: settingsMqtt.publishEnabled
+                    publishEnabled: settingsMqtt.publishEnabled,
+                    clientId: settingsMqtt.clientId
                 }
             }));
             resp.complete();

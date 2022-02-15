@@ -41,7 +41,7 @@ namespace PowerView.Service.Test.Modules
     public void GetSettings()
     {
       // Arrange
-      var mqttConfig = new MqttConfig("theServer", 1234, true);
+      var mqttConfig = new MqttConfig("theServer", 1234, true, "theClientId");
       settingRepository.Setup(sr => sr.GetMqttConfig()).Returns(mqttConfig);
 
       // Act
@@ -63,7 +63,7 @@ namespace PowerView.Service.Test.Modules
     public void PutSettings()
     {
       // Arrange
-      var mqttConfigDto = new TestMqttConfigDto { publishEnabled = true, server = "theServer", port = "1234" };
+      var mqttConfigDto = new TestMqttConfigDto { publishEnabled = true, server = "theServer", port = "1234", clientId = "theClientId" };
 
       // Act
       var response = browser.Put(MqttRoute, with =>
@@ -93,7 +93,7 @@ namespace PowerView.Service.Test.Modules
 
       // Assert
       Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.UnsupportedMediaType));
-      Assert.That(response.Body.AsString(), Contains.Substring("PublishEnabled, Server or Port properties absent or empty"));
+      Assert.That(response.Body.AsString(), Contains.Substring("PublishEnabled, Server, Port or ClientId properties absent or empty"));
     }
 
     [Test]
@@ -112,7 +112,7 @@ namespace PowerView.Service.Test.Modules
 
       // Assert
       Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.UnsupportedMediaType));
-      Assert.That(response.Body.AsString(), Contains.Substring("PublishEnabled, Server or Port properties absent or empty"));
+      Assert.That(response.Body.AsString(), Contains.Substring("PublishEnabled, Server, Port or ClientId properties absent or empty"));
     }
 
     [Test]
@@ -129,14 +129,14 @@ namespace PowerView.Service.Test.Modules
 
       // Assert
       Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.UnsupportedMediaType));
-      Assert.That(response.Body.AsString(), Contains.Substring("PublishEnabled, Server or Port properties absent or empty"));
+      Assert.That(response.Body.AsString(), Contains.Substring("PublishEnabled, Server, Port or ClientId properties absent or empty"));
     }
 
     [Test]
     public void TestMqttNotAvailable()
     {
       // Arrange
-      var mqttConfigDto = new TestMqttConfigDto { publishEnabled = true, server = "theServer", port = "1234" };
+      var mqttConfigDto = new TestMqttConfigDto { publishEnabled = true, server = "theServer", port = "1234", clientId = "theClientId" };
       mqttPublisher.Setup(mp => mp.Publish(It.IsAny<MqttConfig>(), It.IsAny<LiveReading[]>())).Throws(new MqttException());
 
       // Act
@@ -155,7 +155,7 @@ namespace PowerView.Service.Test.Modules
     public void TestMqtt()
     {
       // Arrange
-      var mqttConfigDto = new TestMqttConfigDto { publishEnabled = true, server = "theServer", port = "1234" };
+      var mqttConfigDto = new TestMqttConfigDto { publishEnabled = true, server = "theServer", port = "1234", clientId = "theClientId" };
 
       // Act
       var response = browser.Put(MqttTestRoute, with =>
@@ -176,6 +176,7 @@ namespace PowerView.Service.Test.Modules
       public string server { get; set; }
       public string port { get; set; }
       public bool publishEnabled { get; set; }
+      public string clientId { get; set; }
     }
 
   }

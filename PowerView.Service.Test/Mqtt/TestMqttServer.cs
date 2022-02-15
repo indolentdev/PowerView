@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
+using System.Threading.Tasks;
 using log4net;
 using MQTTnet;
 using MQTTnet.Diagnostics.Logger;
+using MQTTnet.Protocol;
 using MQTTnet.Server;
 using NUnit.Framework;
 using PowerView.Model;
@@ -18,15 +20,24 @@ namespace PowerView.Service.Test.Mqtt
 
     private IMqttServer mqttServer;
     private List<MqttApplicationMessageReceivedEventArgs> published;
+    private List<MqttConnectionValidatorContext> connections;
 
     public readonly string ServerName = "localhost";
+    public readonly string ClientId = "PWClientId";
     public int Port { get; private set; }
     public IList<MqttApplicationMessageReceivedEventArgs> Published { get { return published; } }
+    public IList<MqttConnectionValidatorContext> Connections { get { return connections; } }
 
     public TestMqttServer()
     {
       published = new List<MqttApplicationMessageReceivedEventArgs>();
+      connections = new List<MqttConnectionValidatorContext>();
       Port = FreeTcpPort();
+    }
+
+    internal void AssertConnectionCount(int count)
+    {
+      Assert.That(connections.Count, Is.EqualTo(count));
     }
 
     internal void AssertPublishCount(int count)
@@ -45,7 +56,7 @@ namespace PowerView.Service.Test.Mqtt
 
     public MqttConfig GetClientConfig()
     {
-      return new MqttConfig(ServerName, (ushort)Port, true, TimeSpan.FromSeconds(0.5));
+      return new MqttConfig(ServerName, (ushort)Port, true, ClientId, TimeSpan.FromSeconds(0.75));
     }
 
     public void Start()
@@ -54,6 +65,11 @@ namespace PowerView.Service.Test.Mqtt
         .WithDefaultEndpointPort(Port)
         .WithDefaultEndpointBoundIPAddress(IPAddress.Loopback)
         .WithDefaultEndpointBoundIPV6Address(IPAddress.None)
+        .WithConnectionValidator(x => 
+        {
+          x.ReasonCode = MqttConnectReasonCode.Success;
+          connections.Add(x); 
+        })
         .Build();
 
       var mqttNetLogger = new MqttNetEventLogger();

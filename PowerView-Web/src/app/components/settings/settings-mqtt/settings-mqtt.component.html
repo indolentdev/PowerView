@@ -25,6 +25,17 @@
     <br/>
 
     <mat-checkbox formControlName="publishEnabled" id="publishEnabled">{{ 'forms.settings.mqtt.checkPublishReadings' | translate }}</mat-checkbox>
+    <br/>
+    <br/>
+
+    <mat-form-field style="width:17em">
+      <input matInput type="text" placeholder="{{ 'forms.settings.mqtt.placeholderClientId' | translate }}" formControlName="clientId" id="clientId" required>
+      <mat-hint align="end">{{ 'forms.settings.mqtt.hintClientId' | translate }}</mat-hint>
+      <mat-error *ngIf="hasError('clientId', 'required')">{{ 'forms.settings.mqtt.valErrors.required' | translate }}</mat-error>
+      <mat-error *ngIf="hasError('clientId', 'minlength')">{{ 'forms.settings.mqtt.valErrors.minLength_1' | translate }}</mat-error>
+      <mat-error *ngIf="hasError('clientId', 'maxlength')">{{ 'forms.settings.mqtt.valErrors.maxLength_23' | translate }}</mat-error>
+      <mat-error *ngIf="hasError('clientId', 'pattern')">{{ 'forms.settings.mqtt.valErrors.invalidCharacters' | translate }}</mat-error>
+    </mat-form-field>
 
     <br/>
     <br/>

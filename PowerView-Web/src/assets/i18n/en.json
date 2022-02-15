@@ -177,15 +177,20 @@
         "errorTest": "Test failed. ",
         "errorTestNoConnection": "No connection.",
         "errorAdjustFields": "Adjust server address or server port.",
+        "hintClientId": "For example: PowerView",
         "hintPort": "For example: 1883",
         "hintServer": "For example: 192.168.0.123",
+        "placeholderClientId": "PowerView client identifier on the MQTT server",
         "placeholderPort": "MQTT Server Port",
         "placeholderServer": "MQTT Server IP Address",
         "checkPublishReadings": "Publish Readings",
         "valErrors": {
+          "invalidCharacters": "Use only characters 0-9 a-z A-Z",
           "max_65535": "Maximum value is 65535",
+          "maxLength_23": "Maximum 23 characters",
           "maxLength_39": "Maximum 39 characters",
           "min_1": "Minimum value is 1",
+          "minLength_1": "Minimum 1 character",
           "minLength_7": "Minimum 7 characters",
           "required": "Required"
         }

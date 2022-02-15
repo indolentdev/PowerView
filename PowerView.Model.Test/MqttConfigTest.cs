@@ -13,11 +13,12 @@ namespace PowerView.Model.Test
       // Arrange
 
       // Act
-      var target = new MqttConfig(null, 1, true);
+      var target = new MqttConfig(null, 1, true, null);
 
       // Assert
       Assert.That(target.Server, Is.EqualTo("localhost"));
-      Assert.That(target.Timeout, Is.EqualTo(TimeSpan.FromSeconds(10)));
+      Assert.That(target.ClientId, Is.EqualTo("PowerView"));
+      Assert.That(target.Timeout, Is.EqualTo(TimeSpan.FromSeconds(15)));
     }
 
     [Test]
@@ -26,12 +27,13 @@ namespace PowerView.Model.Test
       // Arrange
 
       // Act
-      var target = new MqttConfig("theServer", 1234, true, TimeSpan.FromSeconds(2));
+      var target = new MqttConfig("theServer", 1234, true, "theClientId", TimeSpan.FromSeconds(2));
 
       // Assert
       Assert.That(target.Server, Is.EqualTo("theServer"));
       Assert.That(target.Port, Is.EqualTo(1234));
       Assert.That(target.PublishEnabled, Is.True);
+      Assert.That(target.ClientId, Is.EqualTo("theClientId"));
       Assert.That(target.Timeout, Is.EqualTo(TimeSpan.FromSeconds(2)));
     }
 
@@ -44,6 +46,7 @@ namespace PowerView.Model.Test
         new KeyValuePair<string, string>("MQTT_Server", "TheServer"),
         new KeyValuePair<string, string>("MQTT_Port", "1234"),
         new KeyValuePair<string, string>("MQTT_PublishEnabled", "True"),
+        new KeyValuePair<string, string>("MQTT_ClientId", "TheClientId"),
       };
 
       // Act
@@ -53,7 +56,8 @@ namespace PowerView.Model.Test
       Assert.That(target.Server, Is.EqualTo("TheServer"));
       Assert.That(target.Port, Is.EqualTo(1234));
       Assert.That(target.PublishEnabled, Is.True);
-      Assert.That(target.Timeout, Is.EqualTo(TimeSpan.FromSeconds(10)));
+      Assert.That(target.ClientId, Is.EqualTo("TheClientId"));
+      Assert.That(target.Timeout, Is.EqualTo(TimeSpan.FromSeconds(15)));
     }
 
     [Test]
@@ -77,23 +81,25 @@ namespace PowerView.Model.Test
       Assert.That(target.Server, Is.EqualTo("localhost"));
       Assert.That(target.Port, Is.EqualTo(1883));
       Assert.That(target.PublishEnabled, Is.False);
-      Assert.That(target.Timeout, Is.EqualTo(TimeSpan.FromSeconds(10)));
+      Assert.That(target.ClientId, Is.EqualTo("PowerView"));
+      Assert.That(target.Timeout, Is.EqualTo(TimeSpan.FromSeconds(15)));
     }
 
     [Test]
     public void GetSettings()
     {
       // Arrange
-      var target = new MqttConfig("theServer", 1234, true);
+      var target = new MqttConfig("theServer", 1234, true, "theClientId");
 
       // Act
       var settings = target.GetSettings();
 
       // Assert
-      Assert.That(settings.Count, Is.EqualTo(3));
+      Assert.That(settings.Count, Is.EqualTo(4));
       Assert.That(settings, Contains.Item(new KeyValuePair<string, string>("MQTT_Server", "theServer")));
       Assert.That(settings, Contains.Item(new KeyValuePair<string, string>("MQTT_Port", "1234")));
       Assert.That(settings, Contains.Item(new KeyValuePair<string, string>("MQTT_PublishEnabled", "True")));
+      Assert.That(settings, Contains.Item(new KeyValuePair<string, string>("MQTT_ClientId", "theClientId")));
     }
   }
 }
