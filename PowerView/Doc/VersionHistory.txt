@@ -1,4 +1,4 @@
-PowerView version 0.0.33 - Xxxx 20xx
+PowerView version 0.0.33 - February 2022
 - Automaticly calculate series for electricity net produced energy
 - File exports allow user to decide decimal separator
 - MQTT updated to version 5. User defined MQTT ClientId and improved connection establishment stability
