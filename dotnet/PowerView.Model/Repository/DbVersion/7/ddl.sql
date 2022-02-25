@@ -1,0 +1,8 @@
+CREATE TABLE SerieColor (Id INTEGER PRIMARY KEY, Label NVARCHAR(10) NOT NULL, ObisCode INTEGER NOT NULL, Color NCHAR(7) NOT NULL);
+CREATE UNIQUE INDEX SerieColorIX ON SerieColor (Label, ObisCode);
+
+DELETE FROM StreamPosition;
+DELETE FROM DayRegister;
+DELETE FROM DayReading;
+DELETE FROM MonthRegister;
+DELETE FROM MonthReading;
