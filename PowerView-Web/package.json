@@ -31,7 +31,7 @@
     "export-to-csv": "^0.2.1",
     "highcharts": "^9.3.2",
     "highcharts-angular": "^2.10.0",
-    "moment": "^2.29.1",
+    "moment": "^2.29.2",
     "ngx-color-picker": "^11.0.0",
     "ngx-logger": "^4.3.3",
     "npm": "^8.3.2",
