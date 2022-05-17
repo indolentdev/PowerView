@@ -14,16 +14,15 @@ namespace PowerView.Service.DisconnectControl
   {
     private readonly ILogger logger;
     private readonly IServiceProvider serviceProvider;
-    private readonly EventQueue eventQueue;
+    private readonly IEventQueue eventQueue;
     private readonly IDisconnectCache disconnectCache;
     private volatile IDictionary<ISeriesName, bool> statusReadCopy;
 
-    public DisconnectWarden(ILogger<DisconnectWarden> logger, ILoggerFactory loggerFactory, IServiceProvider serviceProvider)
+    public DisconnectWarden(ILogger<DisconnectWarden> logger, IServiceProvider serviceProvider, IEventQueue eventQueue)
     {
-      if (loggerFactory == null) throw new ArgumentNullException(nameof(loggerFactory));
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
       this.serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
-      eventQueue = new EventQueue(loggerFactory.CreateLogger<EventQueue>());
+      this.eventQueue = eventQueue ?? throw new ArgumentNullException(nameof(eventQueue));
       disconnectCache = new DisconnectCache();
       statusReadCopy = new Dictionary<ISeriesName, bool>(0);
     }

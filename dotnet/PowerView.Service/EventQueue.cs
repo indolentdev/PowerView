@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace PowerView.Service
 {
-  internal class EventQueue : IDisposable
+  internal class EventQueue : IEventQueue
   {
     private readonly ILogger logger;
     private readonly object eventsSyncRoot;

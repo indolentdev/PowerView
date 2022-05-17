@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace PowerView.Model
 {
-  public class LeakCharacteristicChecker
+  public class LeakCharacteristicChecker : ILeakCharacteristicChecker
   {
     private readonly ILogger<LeakCharacteristicChecker> logger;
 
@@ -40,7 +40,7 @@ namespace PowerView.Model
       }
       catch (DataMisalignedException e)
       {
-        logger.LogInformation(e, "Unable to check of leak characteristic. Data error");
+        logger.LogInformation(e, "Unable to check for leak characteristic. Data error");
         return null;
       }
 

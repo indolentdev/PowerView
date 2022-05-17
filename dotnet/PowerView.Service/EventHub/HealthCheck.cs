@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 using PowerView.Model.Repository;
 
 namespace PowerView.Service.EventHub
@@ -11,41 +12,36 @@ namespace PowerView.Service.EventHub
     private readonly TimeSpan minimumDayInterval = TimeSpan.FromDays(1);
 
     private readonly IIntervalTrigger intervalTrigger;
-    private readonly IFactory factory;
 
-    public HealthCheck(ILogger<HealthCheck> logger, IIntervalTrigger intervalTrigger, IFactory factory)
+    public HealthCheck(ILogger<HealthCheck> logger, IIntervalTrigger intervalTrigger)
     {
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
       this.intervalTrigger = intervalTrigger ?? throw new ArgumentNullException(nameof(intervalTrigger));
-      this.factory = factory ?? throw new ArgumentNullException(nameof(factory));
 
       this.intervalTrigger.Setup(new TimeSpan(0, 15, 0), TimeSpan.FromDays(1));
     }
 
-    public void DailyCheck(DateTime dateTime)
+    public void DailyCheck(IServiceScope serviceScope, DateTime dateTime)
     {
+      if (serviceScope == null) throw new ArgumentNullException(nameof(serviceScope));
+
       if (!intervalTrigger.IsTriggerTime(dateTime))
       {
         return;
       }
-        
-      using (var ownedDbCheck = factory.Create<IDbCheck>())
-      {
-        logger.LogInformation("Performing database check");
-        try
-        {
-          ownedDbCheck.Value.CheckDatabase();
-          logger.LogInformation("Database check completed");
-        }
-        catch (DataStoreCorruptException e)
-        {
-          logger.LogError(e, "Database check detected issue(s)");
-          using (var ownedExitSignalProvider = factory.Create<IExitSignalProvider>())
-          {
-             ownedExitSignalProvider.Value.FireExitEvent();
-          }
-        }
 
+      var dbCheck = serviceScope.ServiceProvider.GetRequiredService<IDbCheck>();
+      logger.LogInformation("Performing database check");
+      try
+      {
+        dbCheck.CheckDatabase();
+        logger.LogInformation("Database check completed");
+      }
+      catch (DataStoreCorruptException e)
+      {
+        logger.LogError(e, "Database check detected issue(s)");
+        var exitSignalProvider = serviceScope.ServiceProvider.GetRequiredService<IExitSignalProvider>();
+        exitSignalProvider.FireExitEvent();
       }
 
       intervalTrigger.Advance(dateTime);

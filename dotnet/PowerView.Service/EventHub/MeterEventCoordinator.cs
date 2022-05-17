@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace PowerView.Service.EventHub
 {
@@ -8,19 +9,19 @@ namespace PowerView.Service.EventHub
   {
     private readonly ILogger logger;
     private readonly IIntervalTrigger intervalTrigger;
-    private readonly IFactory factory;
 
-    public MeterEventCoordinator(ILogger<MeterEventCoordinator> logger, IIntervalTrigger intervalTrigger, IFactory factory)
+    public MeterEventCoordinator(ILogger<MeterEventCoordinator> logger, IIntervalTrigger intervalTrigger)
     {
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
       this.intervalTrigger = intervalTrigger ?? throw new ArgumentNullException(nameof(intervalTrigger));
-      this.factory = factory ?? throw new ArgumentNullException(nameof(factory));
 
       this.intervalTrigger.Setup(new TimeSpan(6, 0, 0), TimeSpan.FromDays(1)); // Time of day is discrete dependency on MeterEventDetector... :/
     }
 
-    public void DetectAndNotify(DateTime dateTime)
+    public void DetectAndNotify(IServiceScope serviceScope, DateTime dateTime)
     {
+      if (serviceScope == null) throw new ArgumentNullException(nameof(serviceScope));
+
       if (!intervalTrigger.IsTriggerTime(dateTime))
       {
         return;
@@ -28,15 +29,11 @@ namespace PowerView.Service.EventHub
 
       logger.LogDebug("Trigger time occurred. Running Detector. {0}", dateTime.ToString("O"));
 
-      using (var ownedMeterEventDetector = factory.Create<IMeterEventDetector>())
-      {
-        ownedMeterEventDetector.Value.DetectMeterEvents(dateTime);
-      }
+      var meterEventDetector = serviceScope.ServiceProvider.GetRequiredService<IMeterEventDetector>();
+      meterEventDetector.DetectMeterEvents(dateTime);
 
-      using (var ownedMeterEventNotifier = factory.Create<IMeterEventNotifier>())
-      {
-        ownedMeterEventNotifier.Value.NotifyEmailRecipients();
-      }
+      var meterEventNotifier = serviceScope.ServiceProvider.GetRequiredService<IMeterEventNotifier>();
+      meterEventNotifier.NotifyEmailRecipients();
 
       intervalTrigger.Advance(dateTime);
     }
