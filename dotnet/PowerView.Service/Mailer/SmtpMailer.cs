@@ -28,18 +28,30 @@ namespace PowerView.Service.Mailer
 
       using (var client = new SmtpClient())
       {
+        client.Timeout = 10 * 1000;
+        client.SslProtocols = System.Security.Authentication.SslProtocols.None;
         client.ServerCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) =>
         {
           if (sslPolicyErrors == System.Net.Security.SslPolicyErrors.None) return true;
+
+          var chainDigest = new System.Text.StringBuilder();
+          foreach (var element in chain.ChainElements)
+          {
+            if (chainDigest.Length > 0) chainDigest.Append(", ");
+            chainDigest.Append(element.Certificate.Subject).Append("(");
+            chainDigest.Append(string.Join(",", element.ChainElementStatus.Select(x => $"{x.StatusInformation}[{x.Status}]")));
+            chainDigest.Append(")");
+          }
+
           if (certificate.Subject.Contains("CN=" + smtpConfig.Server.ToLowerInvariant()))
           {
-            logger.LogDebug("Accepting smtp server certificate with subject '{0}' and policy error(s):{1}",
-                           certificate.Subject, sslPolicyErrors);
+            logger.LogDebug("Accepting smtp server certificate with subject '{0}' and policy error(s):{1}. Chain digest:{2}",
+                           certificate.Subject, sslPolicyErrors, chainDigest);
             return true;
           }
 
-          logger.LogError("Could not validate smtp mail server certificate. Certificate Subject:{0}, Error(s):{1}",
-                          certificate, sslPolicyErrors);
+          logger.LogError("Could not validate smtp mail server certificate. Certificate Subject:{0}, Error(s):{1}. Chain digest:{2}",
+                          certificate, sslPolicyErrors, chainDigest);
           return false;
         };
 
@@ -82,24 +94,52 @@ namespace PowerView.Service.Mailer
 
     private void Connect(SmtpConfig smtpConfig, SmtpClient client)
     {
+      logger.LogDebug("Connecting smtp client. {0}:{1}", smtpConfig.Server, smtpConfig.Port);
+
+      var exceptions = new List<Exception>(2);
+
       try
       {
-        logger.LogDebug("Connecting smtp client. {0}:{1}", smtpConfig.Server, smtpConfig.Port);
-        client.Connect(smtpConfig.Server, smtpConfig.Port, SecureSocketOptions.StartTls);
+        Connect(smtpConfig, client, SecureSocketOptions.StartTls);
+        return;
+      }
+      catch (ConnectMailerException e)
+      {
+        exceptions.Add(e);
+      }
+
+      try
+      {
+        Connect(smtpConfig, client, SecureSocketOptions.SslOnConnect);
+        return;
+      }
+      catch (ConnectMailerException e)
+      {
+        exceptions.Add(e);
+      }
+
+      throw new ConnectMailerException("Failed all attemts connecting to smtp server", new AggregateException(exceptions));
+    }
+
+    private void Connect(SmtpConfig smtpConfig, SmtpClient client, SecureSocketOptions secureSocketOptions)
+    {
+      try
+      {
+        client.Connect(smtpConfig.Server, smtpConfig.Port, secureSocketOptions);
       }
       catch (System.Net.Sockets.SocketException e)
       {
-        var msg = string.Format(CultureInfo.InvariantCulture, "Failed connecting to the smtp server. Address:{0}, Port:{1}", smtpConfig.Server, smtpConfig.Port);
+        var msg = string.Format(CultureInfo.InvariantCulture, "Failed connecting to the smtp server. Address:{0}, Port:{1}, SecureSocketOptions:{2}", smtpConfig.Server, smtpConfig.Port, secureSocketOptions);
         throw new ConnectMailerException(msg, e);
       }
       catch (NotSupportedException e)
       {
-        var msg = string.Format(CultureInfo.InvariantCulture, "Failed establising secure session with smtp server. Address:{0}, Port:{1}", smtpConfig.Server, smtpConfig.Port);
+        var msg = string.Format(CultureInfo.InvariantCulture, "Failed establising secure session with smtp server. Address:{0}, Port:{1}, SecureSocketOptions:{2}", smtpConfig.Server, smtpConfig.Port, secureSocketOptions);
         throw new ConnectMailerException(msg, e);
       }
-      catch (Exception e) // On mono throws Mono.Btls.MonoBtlsException :/
+      catch (MailKit.Security.SslHandshakeException e)
       {
-        var msg = string.Format(CultureInfo.InvariantCulture, "Certificate authentication failed for smtp server. Address:{0}, Port:{1}", smtpConfig.Server, smtpConfig.Port);
+        var msg = string.Format(CultureInfo.InvariantCulture, "Certificate authentication failed for smtp server. Address:{0}, Port:{1}, SecureSocketOptions:{2}", smtpConfig.Server, smtpConfig.Port, secureSocketOptions);
         throw new ConnectMailerException(msg, e);
       }
     }
