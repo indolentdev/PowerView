@@ -62,12 +62,12 @@ namespace PowerView.Service.EventHub
       var cultureInfos = CultureInfo.GetCultures(CultureTypes.SpecificCultures)
                         .Where(ci => ci.EnglishName.Contains(country)).ToArray();
 
-      if (cultureInfos.Length == 0)
+      if (cultureInfos.Length != 1)
       {
         return null;
       }
 
-      return cultureInfos.First().Name; // Hmm.. Here we assume the first CultureInfo is the best one .. but that may not be the case....
+      return cultureInfos.First().Name;
     }
 
     private LocationDto GetLocationContentFromIpAddress()

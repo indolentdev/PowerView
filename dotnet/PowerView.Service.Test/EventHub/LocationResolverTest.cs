@@ -163,7 +163,7 @@ namespace PowerView.Service.Test.EventHub
       target.Resolve();
 
       // Assert
-      settingRepository.Verify(r => r.Upsert(Settings.CultureInfoName, "da-DK"));
+      settingRepository.Verify(x => x.Upsert(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
     }
 
     private void SetupHttpFactory(string responseContent)

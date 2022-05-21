@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
+  <title>Configuring PowerView</title>
+  <meta name="generator" content="Bluefish 2.2.10" />
+</head>
+
+<body>
+<h1>Configuring PowerView Advanced</h1>
+
+<p>This page lists the advanced PowerView configuration options for more customized setups.</p>
+
+<p></p>
+
+<h2>Configuring Services</h2>
+
+<p>PowerView can capture PV registers from an inverter by intercepting requests sent to 
+pvoutput.org <a href="http://pvoutput.org/help.html#api-addstatus" >add status</a>. To setup
+PowerView extend the &lt;Service&gt; element:</p>
+<pre>	&lt;Service&gt;
+		&lt;BaseUrl value="http://localhost:47362" /&gt;
+		&lt;PvOutputFacade&gt;
+			&lt;PvDeviceLabel value="Inverter" /&gt;
+		&lt;/PvOutputFacade&gt;
+	&lt;/Service&gt;</pre>
+
+<p>The PvOutputFacade element declars parameters needed for PowerView to provide the pvoutput.org
+<a href="http://pvoutput.org/help.html#api-addstatus" >add status</a> facade. The PvDeviceLabel 
+defines the device label name applied for photovoltic readings accepted through the pvoutput.org facade. 
+PowerView requires a device id for each device providing data. PowerView can extract the inverter 
+device id from the PV data if possible, by default PowerView assumes the device id is contained 
+in the "v12" PV data parameterset.</p> 
+
+<p>If the inverter device does not provide its device id PowerView allows
+explicit declaring the inverter device id:</p>
+
+<pre>	&lt;Service&gt;
+		&lt;BaseUrl value="http://localhost:47362" /&gt;
+		&lt;PvOutputFacade&gt;
+			&lt;PvDeviceLabel value="Inverter" /&gt;
+			&lt;PvDeviceId value="12345678" /&gt;
+		&lt;/PvOutputFacade&gt;
+	&lt;/Service&gt;</pre>
+	
+<p>If at all possible have the inverter provide the device id in the PV data. Explicitly declaring 
+the inverter device id should be a last resort. When explicitly declaring 
+the inverter device id make sure to update the value if the inverter is replaced. 
+Failing to update the inverter device id appropriately will cause wrong energy production summaries
+in PowerView.</p>
+
+<h2>Configuring Database</h2>
+
+<p>Normally PowerView will use time zone culture information based on the public ip address. In case that 
+does not suffice PowerView allows explicit configuration of the time zone and culture info in the 
+&lt;Database&gt; element:</p>
+<pre>	&lt;Database&gt;
+		&lt;Name value="/var/lib/PowerView/PowerView.sqlite3" /&gt;
+		&lt;Backup&gt;
+			&lt;MinimumIntervalDays value="14" /&gt;
+			&lt;MaximumCount value="5" /&gt;
+		&lt;/Backup&gt;
+		&lt;TimeZone value="Europe/Copenhagen" /&gt;
+		&lt;CultureInfo value="da-DK" /&gt;
+	&lt;/Database&gt;</pre>
+
+<p>Set the TimeZone element value according to the time zone. Note the supported time zone
+names vary between Microsoft and Linux. Set the CultureInfo element value according to
+the preferred language. Possible culture info values can be found <a href="http://azuliadesigns.com/list-net-culture-country-codes/" >here</a>.</p>
+
+<h2>Configuring Registers</h2>
+
+<p>A reading consists of registers, with a register being a certain meter or inverter value
+at a certain point in time. For instance meter consumption power; 700 Watt measured at 7 
+in the morning, or meter consumption energy; 4312 WattHour measured at 8 in the evening.</p>
+
+<p>Inside PowerView regsters are identified by OBIS codes - a part of the DLMS/COSEM standard.
+However OBIS codes are not human readable, therefore PowerView maps OBIS codes to readable
+names used in data visualization.</p>
+
+<p>Registers are configured in the following section of the configuration file:</p>
+<pre>	&lt;Register&gt;
+		&lt;Calculations&gt;
+			...
+		&lt;/Calculations&gt;
+	&lt;/Register&gt;</pre>
+
+<p>Note: Not all OBIS codes used by PowerView are DLMS/COSEM standard defined.</p>
+
+<h3>Calculated Registers</h3>
+
+<p>The Calculations element defines sub elements for defining additional
+summary registers based on available registers. The summary registers are
+calculated using simple addition and subtraction operators. A Calculation
+element consists of an output label and output OBIS code and the input
+template formula. In the template formula a register is expressed using the
+form <i>Main:1.2.3.4.5.6</i> where "Main" is the input label name and 
+"1.2.3.4.5.6" is the input OBIS code.</p>
+
+<p>A Calculation example:</p>
+<pre>	&lt;Calculation label="Family" obiscode="1.200.1.8.0.200" template="Main:1.0.1.8.0.200 - Main:1.0.2.8.0.200" /&gt;</pre>
+
+</body>
+</html>

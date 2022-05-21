@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
+  <title>Installing PowerView</title>
+  <meta name="generator" content="Bluefish 2.2.10" />
+</head>
+
+<body>
+<h1>Installing PowerView</h1>
+
+<p>Describes installing and running PowerView.</p>
+
+<h2>Raspberry Pi</h2>
+
+<h3>Install</h3>
+
+<p>Follow this procedure to install PowerView on a Raspberry Pi running Raspbian
+Buster. It is assumed that the PowerView.exe.config file in the
+unzipped folder already has the correct configuration settings.</p>
+<ol>
+  <li>Copy the unzipped folder containing PowerView to the Raspberry pi, e.g.
+    using a USB flash dongle or via LAN. For this procedure /home/pi/PowerView is
+    used for the temporary folder from where PowerView is installed.</li>
+  <li>Start a terminal and change directory into /home/pi/PowerView</li>
+  <li>Execute the command: <code>chmod +x InstallPowerView.sh && sudo ./InstallPowerView.sh</code></li>
+  <li>Assuming all went well remove the /home/pi/PowerView folder</li>
+  <li>Reboot the box to launch PowerView as part of startup.</li>
+</ol>
+
+<p>After install PowerView is placed in: /opt/PowerView/. PowerView process log file
+is: /var/log/PowerView.log.</p>
+
+<p></p>
+
+<h3>Monitor log file</h3>
+
+<p>To view the PowerView log file one option is to use tail. In a terminal write:
+<code>tail -n 100 -f /var/log/PowerView.log</code> to follow the log file (do
+Ctrl+X Ctrl+C to exit the tail).</p>
+
+<p></p>
+
+<h3>Stopping</h3>
+
+<p>PowerView can be stopped using the provided stop script: StopPowerView.sh. Change
+directory into /opt/PowerView and run: <code>sudo ./StopPowerView.sh</code>.</p>
+
+<p></p>
+
+<h2>Linux</h2>
+
+<p>Depending on Linux distribution the Raspberry Pi procedure may work (should
+work on ubuntu). If not, then manually copy the PowerView folder to where you want
+it. The file named "PowerView" should be compatible with init.d requirements,
+though you may need to tailor some paths/files. If all else fails run PowerView
+using the command: <code>sudo mono PowerView.exe</code>.</p>
+
+<p></p>
+
+<h2>Windows</h2>
+
+<p>The PowerView distribution package does not come with an installer for Windows,
+you are on your own. A rough guide; copy the PowerView folder to where you want
+it. To run PowerView simply run: <code>PowerView.exe</code>.</p>
+
+<p></p>
+
+<h1>Visualizing readings</h1>
+
+<p>When PowerView is running and using a browser from a device connected to the
+home area network navigate to the following URL:  
+<code>http://{IP address of PowerView Box}:47362</code> which takes you to the
+default visualization page.</p>
+
+<p></p>
+
+<p></p>
+</body>
+</html>

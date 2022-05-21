@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
+  <title>HTTP Interface</title>
+  <meta name="generator" content="Bluefish 2.2.10" />
+</head>
+
+<body>
+<h1>HTTP Interface</h1>
+
+<p>PowerView provides a HTTP interface which supports JSON content.</p>
+
+<h2>Metering Value Ingestion</h2>
+
+<p>Endpoint for ingesting metering values into PowerView for storage and presentation.</p> 
+
+<p>Request:</p>
+
+<pre>
+POST /api/devices/livereadings HTTP/1.1
+Host: [IP-Address-Or-HostName]:47362
+Content-Type: application/json
+</pre>
+
+<p>Request Content Property Description:</p>
+
+<table border="1" style="width:1000px">
+ <tr>
+   <td>Property Name</td>
+   <td>Description</td>
+   <td>Data type</td>
+ </tr>
+ <tr>
+   <td>Items</td>
+   <td>Array of meter reading objects</td>
+   <td>array</td>
+ </tr>
+ <tr>
+   <td>Label</td>
+   <td>The user defined name of the metering performed. The label value should remain unchanged if the physical meter is replaced.</td>
+   <td>string</td>
+ </tr>
+ <tr>
+   <td>DeviceId</td>
+   <td>The hardware id of the meter from which the register values originates, for example the serial number. This value should change whenever the meter is exchanged.</td>
+   <td>string</td>
+ </tr>
+ <tr>
+   <td>Timestamp</td>
+   <td>The universal coordinated time of the register values.</td>
+   <td>string. Applies format: yyyy-MM-ddTHH-mm-ssZ. yyyy: 4 digit year. MM: 2 digit month. dd: 2 digit day. HH: 2 digit 24h hour.
+   mm: 2 digit minute. ss: 2 digit second.</td>
+ </tr>
+ <tr>
+   <td>RegisterValues</td>
+   <td>Array of register values read of the meter</td>
+   <td>array</td>
+ </tr> 
+ <tr>
+   <td>ObisCode</td>
+   <td>The DLMS/COSEM ObisCode identifying the value measured</td>
+   <td>string</td>
+ </tr> 
+ <tr>
+   <td>Value</td>
+   <td>The numeric value of the register. Consists only of digits, no thousand seperators or decimal points.</td>
+   <td>number</td>
+ </tr> 
+ <tr>
+   <td>Scale</td>
+   <td>The numer value which is the power of 10 multiplied with Value. Set to 0 to apply Value without multiplier.</td>
+   <td>number</td>
+ </tr> 
+ <tr>
+   <td>Unit</td>
+   <td>The unit of the value represent by Value and Scale.</td>
+   <td>string</td>
+ </tr> 
+</table>
+
+<p>DLMS/COSEM ObisCodes and Units:</p>
+
+<table border="1" style="width:1000px">
+ <tr>
+   <td>ObisCode</td>
+   <td>Description</td>
+   <td>Supported Units</td>
+ </tr>
+ <tr>
+   <td>1.0.1.8.0.255</td>
+   <td>Accumulated Electricity Imported Active Energy. A14. A+</td>
+   <td>WattHour</td>
+ </tr>
+ <tr>
+   <td>1.0.2.8.0.255</td>
+   <td>Accumulated Electricity Exported Active Energy. A23. A-</td>
+   <td>WattHour</td>
+ </tr>
+ <tr>
+   <td>1.0.1.7.0.255</td>
+   <td>Electricity Import Current Power. P14</td>
+   <td>Watt</td>
+ </tr>
+ <tr>
+   <td>1.0.2.7.0.255</td>
+   <td>Electricity Export Current Power. P23</td>
+   <td>Watt</td>
+ </tr>
+ <tr>
+   <td>1.0.21.7.0.255</td>
+   <td>Electricity Import Current Power L1. P14 L1</td>
+   <td>Watt</td>
+ </tr>
+ <tr>
+   <td>1.0.41.7.0.255</td>
+   <td>Electricity Import Current Power L2. P14 L2</td>
+   <td>Watt</td>
+ </tr>
+ <tr>
+   <td>1.0.61.7.0.255</td>
+   <td>Electricity Import Current Power L3. P14 L3</td>
+   <td>Watt</td>
+ </tr>
+ <tr>
+   <td>1.0.22.7.0.255</td>
+   <td>Electricity Export Current Power L1. P23 L1</td>
+   <td>Watt</td>
+ </tr>
+ <tr>
+   <td>1.0.42.7.0.255</td>
+   <td>Electricity Export Current Power L2. P23 L2</td>
+   <td>Watt</td>
+ </tr>
+ <tr>
+   <td>1.0.62.7.0.255</td>
+   <td>Electricity Export Current Power L3. P23 L3</td>
+   <td>Watt</td>
+ </tr>
+ <tr>
+   <td>8.0.1.0.0.255</td>
+   <td>Accumulated Cold Water Imported Volume</td>
+   <td>CubicMetre</td>
+ </tr>
+ <tr>
+   <td>8.0.2.0.0.255</td>
+   <td>Cold Water Import Current Flow</td>
+   <td>CubicMetrePrHour</td>
+ </tr>
+  <tr>
+   <td>9.0.1.0.0.255</td>
+   <td>Accumulated Hot Water Imported Volume</td>
+   <td>CubicMetre</td>
+ </tr>
+ <tr>
+   <td>9.0.2.0.0.255</td>
+   <td>Hot Water Import Current Flow</td>
+   <td>CubicMetrePrHour</td>
+ </tr>
+ <tr>
+   <td>6.0.1.0.0.255</td>
+   <td>Accumulated Heat Imported Energy</td>
+   <td>WattHour</td>
+ </tr>
+ <tr>
+   <td>6.0.8.0.0.255</td>
+   <td>Heat Import Current Power</td>
+   <td>Watt</td>
+ </tr>
+ <tr>
+   <td>6.0.10.0.0.255</td>
+   <td>Heat Import Current Inlet Temperature</td>
+   <td>DegreeCelsius</td>
+ </tr>
+ <tr>
+   <td>6.0.11.0.0.255</td>
+   <td>Heat Import Current Return Temperature</td>
+   <td>DegreeCelsius</td>
+ </tr>
+ <tr>
+   <td>6.0.2.0.0.255</td>
+   <td>Accumulated Heat Imported Volume</td>
+   <td>CubicMetre</td>
+ </tr>
+ <tr>
+   <td>6.0.9.0.0.255</td>
+   <td>Heat Import Current Flow</td>
+   <td>CubicMetrePrHour</td>
+ </tr>
+</table>
+
+<p>Example Request Content:</p>
+
+<pre>
+{
+   "Items":[
+      {
+         "Label":"Heater",
+         "DeviceId":"15906168",
+         "Timestamp":"2019-10-26T19:55:00Z",
+         "RegisterValues":[
+            {
+               "ObisCode":"1.0.1.8.0.255",
+               "Value":1780112,
+               "Scale":1,
+               "Unit":"WattHour"
+            },
+            {
+               "ObisCode":"1.0.1.7.0.255",
+               "Value":70,
+               "Scale":0,
+               "Unit":"Watt"
+            }
+         ]
+      },
+      {
+         "Label":"Water",
+         "DeviceId":"66127449",
+         "Timestamp":"2019-10-26T19:54:28Z",
+         "RegisterValues":[
+            {
+               "ObisCode":"8.0.1.0.0.255",
+               "Value":367934,
+               "Scale":-3,
+               "Unit":"CubicMetre"
+            }
+         ]
+      }
+   ]
+}
+</pre>
+
+<p>Example Success Response:</p>
+
+<pre>
+HTTP/1.1 204 No Content
+</pre>
+
+<p>Example Error Response:</p>
+
+<pre>
+HTTP/1.1 503 Service Unavailable
+</pre>
+
+For 503 Service Unavailable response the client may retry the request later.
+
+</body>
+</html>
