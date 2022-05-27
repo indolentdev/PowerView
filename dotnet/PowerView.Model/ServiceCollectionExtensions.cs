@@ -10,6 +10,8 @@ namespace PowerView.Model
             serviceCollection.AddTransient<IDbContextFactory, DbContextFactory>();
             serviceCollection.AddScoped<IDbContext>(sp => sp.GetRequiredService<IDbContextFactory>().CreateContext());
 
+            serviceCollection.AddTransient<ILeakCharacteristicChecker, LeakCharacteristicChecker>();
+
             serviceCollection.AddTransient<IObisColorProvider, ObisColorProvider>();
             serviceCollection.AddSingleton<LocationContext>();
             serviceCollection.AddTransient<ILocationContext>(sp => sp.GetRequiredService<LocationContext>());

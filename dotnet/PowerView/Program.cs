@@ -7,7 +7,7 @@ var app = builder.Build();
 
 startup.Configure(app, app.Environment);
 
-var serviceOptions = app.Services.GetRequiredService<Microsoft.Extensions.Options.IOptions<PowerView.Configuration.ServiceOptions>>();
+var serviceOptions = app.Services.GetRequiredService<Microsoft.Extensions.Options.IOptions<PowerView.Service.ServiceOptions>>();
 
 app.Run(serviceOptions.Value.BaseUrl);
 

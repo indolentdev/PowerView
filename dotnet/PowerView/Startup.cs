@@ -1,5 +1,5 @@
-using PowerView.Configuration;
 using PowerView.Model;
+using PowerView.Service;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 /*
@@ -41,6 +41,7 @@ namespace PowerView
             services.Configure<Database2Options>(Configuration.GetSection("Database"));
 
             services.AddDatabase();
+            services.AddServices();
 
             // Add services to the container.
 

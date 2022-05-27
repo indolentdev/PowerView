@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.Extensions.Options;
 
 
-namespace PowerView.Configuration
+namespace PowerView.Service
 {
     public class PvOutputOptions : IOptions<PvOutputOptions>
     {
@@ -10,10 +10,10 @@ namespace PowerView.Configuration
         public Uri PvOutputAddStatusUrl { get; set; } = new Uri("http://pvoutput.org/service/r2/addstatus.jsp");
 
         [MinLength(1)]
-        public string? PvDeviceLabel { get; set; }
+        public string PvDeviceLabel { get; set; }
 
         [MinLength(1)]
-        public string? PvDeviceId { get; set;}
+        public string PvDeviceId { get; set;}
 
         [MinLength(1)]
         public string PvDeviceIdParam { get; set; } = "v12";

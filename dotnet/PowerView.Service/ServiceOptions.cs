@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.Extensions.Options;
 
 
-namespace PowerView.Configuration
+namespace PowerView.Service
 {
     public class ServiceOptions : IOptions<ServiceOptions>
     {
