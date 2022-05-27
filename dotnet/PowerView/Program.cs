@@ -1,4 +1,19 @@
 var builder = WebApplication.CreateBuilder(args);
+var startup = new PowerView.Startup(builder.Configuration);
+
+startup.ConfigureServices(builder.Services);
+
+var app = builder.Build();
+
+startup.Configure(app, app.Environment);
+
+var serviceOptions = app.Services.GetRequiredService<Microsoft.Extensions.Options.IOptions<PowerView.Configuration.ServiceOptions>>();
+
+app.Run(serviceOptions.Value.BaseUrl);
+
+/*
+var builder = WebApplication.CreateBuilder(args);
+
 
 // Add services to the container.
 
@@ -18,8 +33,23 @@ if (app.Environment.IsDevelopment())
 
 //app.UseHttpsRedirection();
 
+//app.UseFileServer(new FileServerOptions{ });
+app.UseDefaultFiles();
+var cacheMaxAgeOneWeek = (60 * 60 * 24 * 7).ToString();
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(Path.Combine(builder.Environment.ContentRootPath, "PowerView-Web")),
+    RequestPath = "/web",
+    OnPrepareResponse = ctx =>
+    {
+        ctx.Context.Response.Headers.Append(
+             "Cache-Control", $"public, max-age={cacheMaxAgeOneWeek}");
+    }
+});
+
 //app.UseAuthorization();
 
 app.MapControllers();
 
 app.Run();
+*/

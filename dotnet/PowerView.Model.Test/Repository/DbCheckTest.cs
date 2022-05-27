@@ -46,7 +46,7 @@ namespace PowerView.Model.Test.Repository
         DbContext dbContext = null;
         try
         {
-          dbContext = (DbContext)new DbContextFactory(corruptDbName).CreateContext();
+          dbContext = (DbContext)new DbContextFactory(new DatabaseOptions { Name = corruptDbName }).CreateContext();
           var target = CreateTarget(dbContext);
 
           // Act && Assert
@@ -94,7 +94,7 @@ namespace PowerView.Model.Test.Repository
 
     private DbCheck CreateTarget(DbContext dbContext)
     {
-      return new DbCheck(dbContext, 30);
+      return new DbCheck(dbContext, new DatabaseCheckOptions { IntegrityCheckCommandTimeout = 30 });
     }
 
   }
