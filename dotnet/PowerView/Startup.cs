@@ -42,6 +42,8 @@ namespace PowerView
 
             services.AddDatabase();
             services.AddServices();
+            services.AddTransient<IDbSetup, DbSetup>();
+            services.AddTransient<ILocationSetup, LocationSetup>();
 
             // Add services to the container.
 

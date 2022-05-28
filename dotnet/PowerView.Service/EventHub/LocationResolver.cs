@@ -22,7 +22,7 @@ namespace PowerView.Service.EventHub
       this.settingRepository = settingRepository ?? throw new ArgumentNullException(nameof(settingRepository));
     }
 
-    public void Resolve()
+    public void ResolveToDatabase()
     {
       var locationDto = GetLocationContentFromIpAddress();
 

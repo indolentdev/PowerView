@@ -7,6 +7,6 @@ namespace PowerView.Service.EventHub
   /// </summary>
   public interface ILocationResolver
   {
-    void Resolve();
+    void ResolveToDatabase();
   }
 }

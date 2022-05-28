@@ -34,7 +34,7 @@ namespace PowerView.Service.Test.EventHub
     }
 
     [Test]
-    public void ResolveHttpError()
+    public void ResolveToDatabaseHttpError()
     {
       // Arrange
       var request = new HttpWebRequestMock();
@@ -43,70 +43,70 @@ namespace PowerView.Service.Test.EventHub
       var target = CreateTarget();
 
       // Act
-      target.Resolve();
+      target.ResolveToDatabase();
 
       // Assert
       settingRepository.Verify(x => x.Upsert(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
     }
 
     [Test]
-    public void ResolveJsonError()
+    public void ResolveToDatabaseJsonError()
     {
       // Arrange
       SetupHttpFactory("Bad json object");
       var target = CreateTarget();
 
       // Act
-      target.Resolve();
+      target.ResolveToDatabase();
 
       // Assert
       settingRepository.Verify(x => x.Upsert(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
     }
 
     [Test]
-    public void ResolveEmptyContentError()
+    public void ResolveToDatabaseEmptyContentError()
     {
       // Arrange
       SetupHttpFactory(string.Empty);
       var target = CreateTarget();
 
       // Act
-      target.Resolve();
+      target.ResolveToDatabase();
 
       // Assert
       settingRepository.Verify(x => x.Upsert(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
     }
 
     [Test]
-    public void ResolveContentError()
+    public void ResolveToDatabaseContentError()
     {
       // Arrange
       SetupHttpFactory("{\"status\":\"failed\"}");
       var target = CreateTarget();
 
       // Act
-      target.Resolve();
+      target.ResolveToDatabase();
 
       // Assert
       settingRepository.Verify(x => x.Upsert(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
     }
 
     [Test]
-    public void ResolveSuccessNoProperties()
+    public void ResolveToDatabaseSuccessNoProperties()
     {
       // Arrange
       SetupHttpFactory("{\"status\":\"success\"}");
       var target = CreateTarget();
 
       // Act
-      target.Resolve();
+      target.ResolveToDatabase();
 
       // Assert
       settingRepository.Verify(x => x.Upsert(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
     }
 
     [Test]
-    public void ResolveTimeZone()
+    public void ResolveToDatabaseTimeZone()
     {
       // Arrange
       var timeZoneId = "TheTimeZone";
@@ -115,14 +115,14 @@ namespace PowerView.Service.Test.EventHub
       var target = CreateTarget();
 
       // Act
-      target.Resolve();
+      target.ResolveToDatabase();
 
       // Assert
       settingRepository.Verify(r => r.Upsert(Settings.TimeZoneId, timeZoneId));
     }
 
     [Test]
-    public void ResolveCountryToOneCultureInfo()
+    public void ResolveToDatabaseCountryToOneCultureInfo()
     {
       // Arrange
       SetupHttpFactory("{\"status\":\"success\",\"country\":\"Czechia\"}");
@@ -130,14 +130,14 @@ namespace PowerView.Service.Test.EventHub
       var target = CreateTarget();
 
       // Act
-      target.Resolve();
+      target.ResolveToDatabase();
 
       // Assert
       settingRepository.Verify(r => r.Upsert(Settings.CultureInfoName, "cs-CZ"));
     }
 
     [Test]
-    public void ResolveCountryToNoCultureInfo()
+    public void ResolveToDatabaseCountryToNoCultureInfo()
     {
       // Arrange
       SetupHttpFactory("{\"status\":\"success\",\"country\":\"CountryThatDoesNotExist\"}");
@@ -145,14 +145,14 @@ namespace PowerView.Service.Test.EventHub
       var target = CreateTarget();
 
       // Act
-      target.Resolve();
+      target.ResolveToDatabase();
 
       // Assert
       settingRepository.Verify(x => x.Upsert(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
     }
 
     [Test]
-    public void ResolveCountryToMoreThanOneCultureInfo()
+    public void ResolveToDatabaseCountryToMoreThanOneCultureInfo()
     {
       // Arrange
       SetupHttpFactory("{\"status\":\"success\",\"country\":\"Denmark\"}");
@@ -160,7 +160,7 @@ namespace PowerView.Service.Test.EventHub
       var target = CreateTarget();
 
       // Act
-      target.Resolve();
+      target.ResolveToDatabase();
 
       // Assert
       settingRepository.Verify(x => x.Upsert(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
