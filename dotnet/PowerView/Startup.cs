@@ -44,6 +44,7 @@ namespace PowerView
             services.AddServices();
             services.AddTransient<IDbSetup, DbSetup>();
             services.AddTransient<ILocationSetup, LocationSetup>();
+            services.AddTransient<ITestDataSetup, TestDataSetup>();
 
             // Add services to the container.
 

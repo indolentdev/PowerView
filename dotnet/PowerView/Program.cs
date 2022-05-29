@@ -11,9 +11,10 @@ PowerView.UnhandledExceptionLogger.SetApplicationLogger(app.Logger);
 
 startup.Configure(app, app.Environment);
 
-// Setup before launching the app fully
+// Some setup before launching the app fully
 app.Services.GetRequiredService<PowerView.IDbSetup>().SetupDatabase();
 app.Services.GetRequiredService<PowerView.ILocationSetup>().SetupLocation();
+app.Services.GetRequiredService<PowerView.ITestDataSetup>().SetupTestData(); // Will only run conditionally..
 
 // Launch the app
 var serviceOptions = app.Services.GetRequiredService<Microsoft.Extensions.Options.IOptions<PowerView.Service.ServiceOptions>>();
