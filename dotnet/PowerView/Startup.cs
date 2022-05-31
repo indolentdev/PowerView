@@ -2,15 +2,7 @@ using PowerView.Model;
 using PowerView.Service;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
-/*
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-*/
+
 namespace PowerView
 {
     public class Startup
@@ -49,7 +41,7 @@ namespace PowerView
             // Add services to the container.
 
             services.AddControllers();
-            
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
@@ -66,26 +58,17 @@ namespace PowerView
 
             //app.UseHttpsRedirection();
 
-            //app.UseFileServer(new FileServerOptions{ });
-            /*            
-                        app.UseDefaultFiles();
-                        var cacheMaxAgeOneWeek = (60 * 60 * 24 * 7).ToString();
-                        app.UseStaticFiles(new StaticFileOptions
-                        {
-                            FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "PowerView-Web")),
-                            RequestPath = "/web",
-                            OnPrepareResponse = ctx =>
-                            {
-                                ctx.Context.Response.Headers.Append("Cache-Control", $"public, max-age={cacheMaxAgeOneWeek}");
-                            }
-                        });
-            */
             //app.UseAuthorization();
 
             //          app.MapControllers();
 
             app.UseRouting();
-            app.UseEndpoints(x => x.MapControllers());
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
+
+            app.UsePowerViewAngularStaticFiles();
         }
     }
 }
