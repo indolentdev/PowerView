@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Reflection;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using PowerView.Model.Repository;
 
 namespace PowerView.Service.EventHub
@@ -40,8 +41,8 @@ namespace PowerView.Service.EventHub
       catch (DataStoreCorruptException e)
       {
         logger.LogError(e, "Database check detected issue(s)");
-        var exitSignalProvider = serviceScope.ServiceProvider.GetRequiredService<IExitSignalProvider>();
-        exitSignalProvider.FireExitEvent();
+        var lifetime = serviceScope.ServiceProvider.GetRequiredService<IHostApplicationLifetime>();
+        lifetime.StopApplication();
       }
 
       intervalTrigger.Advance(dateTime);
