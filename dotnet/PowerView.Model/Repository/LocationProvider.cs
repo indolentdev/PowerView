@@ -42,7 +42,7 @@ namespace PowerView.Model.Repository
             }
 
             var timeZoneInfo = ToTimeZoneInfo(TimeZoneInfo.Local.Id);
-            logger.LogInformation($"Using operating system time zone: {timeZoneInfo.Id}:{timeZoneInfo.DisplayName}");
+            logger.LogInformation($"Resolved time zone from operatng system: {timeZoneInfo.Id}:{timeZoneInfo.DisplayName}");
             return timeZoneInfo;
         }
 
@@ -71,7 +71,7 @@ namespace PowerView.Model.Repository
             }
 
             var cultureInfo = CultureInfo.CurrentCulture;
-            logger.LogInformation($"Using operating system culture info: {cultureInfo.Name}:{cultureInfo.EnglishName}");
+            logger.LogInformation($"Resolved culture info from operating system: {cultureInfo.Name}:{cultureInfo.EnglishName}");
             return cultureInfo;
         }
 
