@@ -2,9 +2,10 @@ using Microsoft.Extensions.Options;
 using NLog;
 using NLog.Web;
 using PowerView;
+using PowerView.Service;
 
 LogManager.ThrowConfigExceptions = true;
-var logger = LogManager.Setup().LoadConfigurationFromFile().GetCurrentClassLogger();
+var logger = LogManager.Setup().LoadConfigurationFromFile().GetLogger("PowerView.Program");
 AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
 {
     var exception = e.ExceptionObject as Exception;
@@ -34,13 +35,14 @@ var app = builder.Build();
 startup.Configure(app, app.Environment);
 
 // Some setup before launching the app fully
-app.Services.GetRequiredService<PowerView.IDbSetup>().SetupDatabase();
-app.Services.GetRequiredService<PowerView.ILocationSetup>().SetupLocation();
-app.Services.GetRequiredService<PowerView.ITestDataSetup>().SetupTestData(); // Will only run conditionally..
+app.Services.GetRequiredService<IDbSetup>().SetupDatabase();
+app.Services.GetRequiredService<ILocationSetup>().SetupLocation();
+app.Services.GetRequiredService<ITestDataSetup>().SetupTestData(); // Will only run conditionally..
 
 // Launch the app
-var serviceOptions = app.Services.GetRequiredService<IOptions<PowerView.Service.ServiceOptions>>();
+var serviceOptions = app.Services.GetRequiredService<IOptions<ServiceOptions>>();
 app.Run(serviceOptions.Value.BaseUrl);
 
+// Cleanup
 LogManager.Flush();
 LogManager.Shutdown();
