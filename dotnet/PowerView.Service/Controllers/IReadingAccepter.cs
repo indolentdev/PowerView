@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using PowerView.Model;
 
-namespace PowerView.Service.Modules
+namespace PowerView.Service.Controllers;
+
+public interface IReadingAccepter
 {
-  public interface IReadingAccepter
-  {
     void Accept(IList<LiveReading> liveReadings);
-  }
 }

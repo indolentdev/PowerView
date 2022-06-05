@@ -4,7 +4,7 @@ using PowerView.Service.DisconnectControl;
 using PowerView.Service.EventHub;
 using PowerView.Service.Mailer;
 using PowerView.Service.Mappers;
-using PowerView.Service.Modules;
+using PowerView.Service.Controllers;
 using PowerView.Service.Mqtt;
 using PowerView.Service.Translations;
 
