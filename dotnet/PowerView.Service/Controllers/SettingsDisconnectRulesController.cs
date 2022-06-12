@@ -63,7 +63,7 @@ public class SettingsDisconnectRulesController : ControllerBase
         return Ok(new { DisconnectControlItems = disconnectControlNameDtos, EvaluationItems = evaluationItemDtos });
     }
 
-    [HttpGet("")]
+    [HttpPost("")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
