@@ -23,8 +23,8 @@ namespace PowerView.Model.Repository
             builder.DefaultTimeout = 10; //000;
             builder.Enlist = false;
             builder.FailIfMissing = false;
-            //      builder.ForeignKeys = true;
-            builder.JournalMode = SQLiteJournalModeEnum.Persist;
+            builder.ForeignKeys = true;
+            builder.JournalMode = SQLiteJournalModeEnum.Delete;
             builder.LegacyFormat = false;
             builder.SyncMode = SynchronizationModes.Normal;
             builder.UseUTF16Encoding = false;

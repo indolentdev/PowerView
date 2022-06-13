@@ -39,7 +39,7 @@ namespace PowerView.Service.EventHub
                 return;
             }
 
-            logger.LogDebug($"Fetched regional information from {uri}. Saving to the database. Time zone:{timeZoneId} and culture info:{cultureInfoName}");
+            logger.LogInformation($"Fetched regional information from {uri}. Saving to the database. Time zone:{timeZoneId} and culture info:{cultureInfoName}");
 
             if (!string.IsNullOrEmpty(timeZoneId))
             {

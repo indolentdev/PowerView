@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using PowerView.Model.Repository;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace PowerView.Model.Test.Repository
 {
@@ -94,7 +95,7 @@ namespace PowerView.Model.Test.Repository
 
     private DbCheck CreateTarget(DbContext dbContext)
     {
-      return new DbCheck(dbContext, new DatabaseCheckOptions { IntegrityCheckCommandTimeout = 30 });
+      return new DbCheck(new NullLogger<DbCheck>(), dbContext, new DatabaseCheckOptions { IntegrityCheckCommandTimeout = 30 });
     }
 
   }

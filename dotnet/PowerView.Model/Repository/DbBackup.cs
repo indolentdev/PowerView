@@ -16,7 +16,7 @@ namespace PowerView.Model.Repository
     internal class DbBackup : IDbBackup
     {
         internal const string BackupPath = "DbBackup";
-        private readonly ILogger<DbBackup> logger;
+        private readonly ILogger logger;
         private readonly IOptions<DatabaseOptions> dbOptions;
         private readonly IOptions<DatabaseBackupOptions> bckOptions;
 
