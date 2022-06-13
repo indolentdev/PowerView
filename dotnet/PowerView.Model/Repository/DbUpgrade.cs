@@ -43,6 +43,8 @@ namespace PowerView.Model.Repository
 
         private void ApplySchemaUpdates(IEnumerable<DbUpgradeResource> dbUpgradeResources)
         {
+            bool upgradesPerformed = false;
+
             var asm = Assembly.GetExecutingAssembly();
             foreach (var dbUpgradeResource in dbUpgradeResources)
             {
@@ -58,12 +60,17 @@ namespace PowerView.Model.Repository
                       new { OldNumber = newVersion.Number, newVersion.Timestamp, NewNumber = dbUpgradeResource.Version });
 
                     logger.LogInformation("Database schema update complete");
+
+                    upgradesPerformed = true;
                 }
             }
 
-            logger.LogInformation("Performing database cleanup.");
-            DbContext.ExecuteNoTransaction("VACUUM;");
-            logger.LogInformation("Database cleanup completed.");
+            if (upgradesPerformed)
+            {
+                logger.LogInformation("Performing database cleanup after schema update.");
+                DbContext.ExecuteNoTransaction("VACUUM;");
+                logger.LogInformation("Database cleanup completed.");
+            }
         }
 
         private long GetCurrentVersion()
