@@ -54,6 +54,8 @@ public class ProfileController : ControllerBase
     private ActionResult GetProfile(string page, string startString,
       Func<DateTime, DateTime, DateTime, TimeRegisterValueLabelSeriesSet> getLabelSeriesSet, string period)
     {
+        if (page == null) page = string.Empty;
+
         DateTime start;
         if (!DateTime.TryParse(startString, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out start) || start.Kind != DateTimeKind.Utc)
         {

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace PowerView.Model.Repository
@@ -24,7 +20,7 @@ namespace PowerView.Model.Repository
         {
             var commandTimeout = options.Value.IntegrityCheckCommandTimeout;
 
-            logger.LogInformation($"Performing database integrity check. Command timeout:{commandTimeout}");
+            logger.LogInformation("Performing database integrity check.");
 
             IList<dynamic> integrityCheckResult;
             try
@@ -34,6 +30,10 @@ namespace PowerView.Model.Repository
             catch (DataStoreCorruptException e)
             {
                 throw new DataStoreCorruptException("Database integrity corrupted. Restore a previous backup.", e);
+            }
+            catch (DataStoreException e)
+            {
+                throw new DataStoreException($"Database integrity check failed. Command timeout:{commandTimeout}.", e);
             }
 
             if (integrityCheckResult.Count != 1 || integrityCheckResult[0].integrity_check != "ok")

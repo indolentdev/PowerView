@@ -28,7 +28,7 @@ public class ExportController : ControllerBase
 
     [HttpGet("labels")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult GetLabels(dynamic param)
+    public ActionResult GetLabels()
     {
         var seriesNames = seriesNameRepository.GetStoredSeriesNames();
 
@@ -182,7 +182,7 @@ public class ExportController : ControllerBase
         }
     }
 
-    [HttpGet("diffs/gauges")]
+    [HttpGet("gauges/hourly")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public ActionResult GetHourlyGaugesExport([BindRequired] string from, [BindRequired] string to, [BindRequired] string labels)
     {
