@@ -181,7 +181,7 @@ namespace PowerView.Service.Test.Mailer
       var serverNameLocal = serverName ?? smtpServer.ServerName;
       var portLocal = (ushort)(port ?? smtpServer.Port);
 
-      return new SmtpConfig(serverNameLocal, portLocal, smtpUser, smtpPw);
+      return new SmtpConfig(serverNameLocal, portLocal, smtpUser, smtpPw, smtpUser);
     }
 
   }
