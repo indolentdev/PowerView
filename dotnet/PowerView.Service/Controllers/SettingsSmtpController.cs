@@ -1,15 +1,9 @@
-﻿using System.Globalization;
-using System.Text;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using PowerView.Model;
 using PowerView.Model.Repository;
 using PowerView.Service.Dtos;
-using PowerView.Service.Mappers;
-using PowerView.Service.Mqtt;
 
 namespace PowerView.Service.Controllers;
 
@@ -44,9 +38,10 @@ public class SettingsSmtpController : ControllerBase
         var r = new
         {
             Server = smtpConfig.Server,
-            Port = smtpConfig.Port.ToString(CultureInfo.InvariantCulture),
+            Port = smtpConfig.Port,
             User = smtpConfig.User,
-            Auth = smtpConfig.Auth
+            Auth = smtpConfig.Auth,
+            Email = smtpConfig.Email
         };
         return Ok(r);
     }
@@ -54,7 +49,7 @@ public class SettingsSmtpController : ControllerBase
     [HttpPut("")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
-    private dynamic PutSettings([FromBody] SmtpConfigDto smtpConfigDto)
+    public ActionResult PutSettings([FromBody] SmtpConfigDto smtpConfigDto)
     {
         var smtpConfig = GetSmtpConfig(smtpConfigDto);
         if (smtpConfig == null)
@@ -64,22 +59,18 @@ public class SettingsSmtpController : ControllerBase
         }
 
         settingRepository.UpsertSmtpConfig(smtpConfig);
-        return StatusCode(StatusCodes.Status204NoContent);
+        return NoContent();
     }
 
     private SmtpConfig GetSmtpConfig(SmtpConfigDto smtpConfigDto)
     {
-        if (string.IsNullOrEmpty(smtpConfigDto.Server) || smtpConfigDto.Port == null || string.IsNullOrEmpty(smtpConfigDto.User) || string.IsNullOrEmpty(smtpConfigDto.Auth))
+        if (string.IsNullOrEmpty(smtpConfigDto.Server) || string.IsNullOrEmpty(smtpConfigDto.User) || string.IsNullOrEmpty(smtpConfigDto.Auth) || string.IsNullOrEmpty(smtpConfigDto.Email))
         {
-            logger.LogWarning($"Set SMTP configuration failed. Properties are null or empty. Server:{smtpConfigDto.Server}, Port:{smtpConfigDto.Port}, User:{smtpConfigDto.User}, Auth:********");
+            logger.LogWarning($"Set SMTP configuration failed. Properties are null or empty. Server:{smtpConfigDto.Server}, Port:{smtpConfigDto.Port}, User:{smtpConfigDto.User}, Auth:********, Email:{smtpConfigDto.Email}");
             return null;
         }
 
-        ushort port;
-        if (!ushort.TryParse(smtpConfigDto.Port, NumberStyles.Integer, CultureInfo.InvariantCulture, out port)) return null;
-        if (port < 1) return null;
-
-        return new SmtpConfig(smtpConfigDto.Server, port, smtpConfigDto.User, smtpConfigDto.Auth);
+        return new SmtpConfig(smtpConfigDto.Server, smtpConfigDto.Port, smtpConfigDto.User, smtpConfigDto.Auth, smtpConfigDto.Email);
     }
 
 }

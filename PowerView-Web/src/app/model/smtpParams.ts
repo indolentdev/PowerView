@@ -3,4 +3,5 @@ export class SmtpParams {
     port: string;
     user: string;
     auth: string;
+    email: string;
 }

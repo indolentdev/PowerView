@@ -1,29 +1,25 @@
-﻿using System.Globalization;
-using System.Text;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using PowerView.Model;
 using PowerView.Model.Repository;
 using PowerView.Service.Dtos;
 using PowerView.Service.Mailer;
-using PowerView.Service.Mappers;
 using PowerView.Service.Translations;
 
 namespace PowerView.Service.Controllers;
 
 [ApiController]
 [Route("api/settings/emailrecipients")]
-public class SettingsEmailRecipientsModule : ControllerBase
+public class SettingsEmailRecipientsController : ControllerBase
 {
     private readonly ILogger logger;
     private readonly IEmailRecipientRepository emailRecipientRepository;
     private readonly ITranslation translation;
     private readonly IMailMediator mailMediator;
 
-    public SettingsEmailRecipientsModule(ILogger<SettingsSerieColorsController> logger, IEmailRecipientRepository emailRecipientRepository, ITranslation translation, IMailMediator mailMediator)
+    public SettingsEmailRecipientsController(ILogger<SettingsEmailRecipientsController> logger, IEmailRecipientRepository emailRecipientRepository, ITranslation translation, IMailMediator mailMediator)
     {
         this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         this.emailRecipientRepository = emailRecipientRepository ?? throw new ArgumentNullException(nameof(emailRecipientRepository));
@@ -33,7 +29,7 @@ public class SettingsEmailRecipientsModule : ControllerBase
 
     [HttpGet("")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult GetEmailRecipients(dynamic param)
+    public ActionResult GetEmailRecipients()
     {
         var emailRecipients = emailRecipientRepository.GetEmailRecipients();
 
@@ -71,16 +67,16 @@ public class SettingsEmailRecipientsModule : ControllerBase
             return Conflict(new { Description = "EmailAddress already exists" });
         }
 
-        return StatusCode(StatusCodes.Status204NoContent);
+        return NoContent();
     }
 
     [HttpDelete("{emailAddress}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    private dynamic DeleteEmailRecipient([BindRequired] string emailAddress)
+    public ActionResult DeleteEmailRecipient([BindRequired] string emailAddress)
     {
         emailRecipientRepository.DeleteEmailRecipient(emailAddress);
 
-        return StatusCode(StatusCodes.Status204NoContent);
+        return NoContent();
     }
 
     [HttpPut("{emailAddress}/test")]
@@ -104,12 +100,12 @@ public class SettingsEmailRecipientsModule : ControllerBase
         }
         catch (ConnectMailerException e)
         {
-            logger.LogWarning(e, $"Test email recipient failed. EmailAddress:{emailAddress}");
+            logger.LogWarning(e, $"Test email recipient failed. SMTP connection failed. EmailAddress:{emailAddress}");
             return StatusCode(StatusCodes.Status504GatewayTimeout);
         }
         catch (AuthenticateMailerException e)
         {
-            logger.LogWarning(e, $"Test email recipient failed. EmailAddress:{emailAddress}");
+            logger.LogWarning(e, $"Test email recipient failed. SMTP user authentication failed. EmailAddress:{emailAddress}");
             return StatusCode(567); // GatewayUnauthorized
         }
         catch (MailerException e)

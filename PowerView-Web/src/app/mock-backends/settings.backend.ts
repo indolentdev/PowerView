@@ -247,6 +247,7 @@ export function settingsBackend(url: string, method: string, request: HttpReques
                     port: settingsSmtp.port,
                     user: settingsSmtp.user,
                     auth: settingsSmtp.auth,
+                    email: settingsSmtp.email
                 }
             }));
             resp.complete();
