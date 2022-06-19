@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Http;
@@ -7,9 +8,6 @@ using Newtonsoft.Json;
 using PowerView.Model;
 using PowerView.Model.Repository;
 using PowerView.Service.Dtos;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 
 namespace PowerView.Service.Controllers;
 
@@ -120,7 +118,7 @@ public class SettingsProfileGraphsController : ControllerBase
     [HttpPut("modify/{existingProfileGraphIdBase64}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public ActionResult PutProfileGraph([BindRequired, FromQuery] string existingProfileGraphIdBase64, [FromBody] ProfileGraphDto dto)
+    public ActionResult PutProfileGraph([BindRequired, FromRoute] string existingProfileGraphIdBase64, [FromBody] ProfileGraphDto dto)
     {
         UpdateProfileGraphId updateProfileGraphId;
         try
@@ -158,7 +156,7 @@ public class SettingsProfileGraphsController : ControllerBase
             return StatusCode(StatusCodes.Status409Conflict, new { Description = "ProfileGraph [period, page, title] does not exist" });
         }
 
-        return StatusCode(StatusCodes.Status409Conflict);
+        return NoContent();
     }
 
     private class UpdateProfileGraphId

@@ -1,12 +1,6 @@
-﻿using System.Text;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using PowerView.Model;
-using PowerView.Model.Repository;
-using PowerView.Service.Dtos;
 
 namespace PowerView.Service.Controllers;
 

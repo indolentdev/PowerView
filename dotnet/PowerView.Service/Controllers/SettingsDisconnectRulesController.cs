@@ -98,7 +98,7 @@ public class SettingsDisconnectRulesController : ControllerBase
     [HttpDelete("names/{label}/{obisCode}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
-    private dynamic DeleteDisconnectRule([BindRequired, FromQuery] string label, [BindRequired, FromQuery] string obisCode)
+    public ActionResult DeleteDisconnectRule([BindRequired, FromRoute] string label, [BindRequired, FromRoute] string obisCode)
     {
         ISeriesName name;
         try

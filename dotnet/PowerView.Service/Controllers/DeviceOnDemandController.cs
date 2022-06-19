@@ -1,13 +1,8 @@
-﻿using System.Text;
+﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using PowerView.Model;
-using PowerView.Model.Repository;
-using PowerView.Service.Dtos;
-using PowerView.Service.Mappers;
 using PowerView.Service.DisconnectControl;
 
 namespace PowerView.Service.Controllers;
@@ -27,14 +22,8 @@ public class DeviceOnDemandController : ControllerBase
 
     [HttpGet("ondemand")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult GetOnDemand([BindRequired, FromQuery] string label)
+    public ActionResult GetOnDemand([BindRequired, FromQuery, StringLength(50, MinimumLength = 1)] string label)
     {
-//        if (!Request.Query.label.HasValue)
-//        {
-//            return Response.AsJson("Query parameter label is misisng.", HttpStatusCode.BadRequest);
-//        }
-//        string label = Request.Query.label;
-
         // DisconnectControl on demand
         var outputStatus = disconnectControlCache.GetOutputStatus(label);
 

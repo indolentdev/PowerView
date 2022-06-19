@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Http;
@@ -32,21 +33,27 @@ public class ProfileController : ControllerBase
 
     [HttpGet("day")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult GetDayProfile([BindRequired, FromQuery] string page, [BindRequired, FromQuery] string start)
+    public ActionResult GetDayProfile(
+        [BindRequired, FromQuery, StringLength(32, MinimumLength = 0)] string page,
+        [BindRequired, FromQuery, StringLength(60, MinimumLength = 1)] string start)
     {
         return GetProfile(page, start, profileRepository.GetDayProfileSet, "day");
     }
 
     [HttpGet("month")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult GetMonthProfile([BindRequired, FromQuery] string page, [BindRequired, FromQuery] string start)
+    public ActionResult GetMonthProfile(
+        [BindRequired, FromQuery, StringLength(32, MinimumLength = 0)] string page,
+        [BindRequired, FromQuery, StringLength(60, MinimumLength = 1)] string start)
     {
         return GetProfile(page, start, profileRepository.GetMonthProfileSet, "month");
     }
 
     [HttpGet("year")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult GetYearProfile([BindRequired, FromQuery] string page, [BindRequired, FromQuery] string start)
+    public ActionResult GetYearProfile(
+        [BindRequired, FromQuery, StringLength(32, MinimumLength = 0)] string page,
+        [BindRequired, FromQuery, StringLength(60, MinimumLength = 1)] string start)
     {
         return GetProfile(page, start, profileRepository.GetYearProfileSet, "year");
     }
@@ -54,8 +61,6 @@ public class ProfileController : ControllerBase
     private ActionResult GetProfile(string page, string startString,
       Func<DateTime, DateTime, DateTime, TimeRegisterValueLabelSeriesSet> getLabelSeriesSet, string period)
     {
-        if (page == null) page = string.Empty;
-
         DateTime start;
         if (!DateTime.TryParse(startString, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out start) || start.Kind != DateTimeKind.Utc)
         {

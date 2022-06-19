@@ -1,13 +1,10 @@
-﻿using System.Globalization;
-using System.Text;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using PowerView.Model;
 using PowerView.Model.Repository;
-using PowerView.Service.Dtos;
 using PowerView.Service.Mappers;
 
 namespace PowerView.Service.Controllers;
@@ -27,7 +24,7 @@ public class GaugeController : ControllerBase
 
     [HttpGet("latest")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult GetLatestGauges(string timestamp)
+    public ActionResult GetLatestGauges([FromQuery, StringLength(60, MinimumLength = 1)] string timestamp)
     {
         var timestampDateTime = GetTimestamp(timestamp);
 
@@ -43,7 +40,7 @@ public class GaugeController : ControllerBase
 
     [HttpGet("custom")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult GetCustomGauges(string timestamp)
+    public ActionResult GetCustomGauges([FromQuery, StringLength(60, MinimumLength = 1)] string timestamp)
     {
         var timestampDateTime = GetTimestamp(timestamp);
 

@@ -1,13 +1,11 @@
-﻿using System.Globalization;
-using System.Text;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using PowerView.Model;
 using PowerView.Model.Repository;
-using PowerView.Service.Dtos;
 using PowerView.Service.Mappers;
 
 namespace PowerView.Service.Controllers;
@@ -30,11 +28,12 @@ public class DiffController : ControllerBase
     [HttpGet("")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public ActionResult GetDiff([BindRequired, FromQuery] string from, [BindRequired, FromQuery] string to)
+    public ActionResult GetDiff(
+        [BindRequired, FromQuery, StringLength(60, MinimumLength = 1)] string from,
+        [BindRequired, FromQuery, StringLength(60, MinimumLength = 1)] string to)
     {
         var fromDate = GetDateTime("from", from);
         var toDate = GetDateTime("to", to);
-
         if (fromDate == null || toDate == null)
         {
             return BadRequest();

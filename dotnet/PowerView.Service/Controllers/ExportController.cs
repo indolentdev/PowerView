@@ -1,8 +1,10 @@
-﻿using System.Globalization;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Primitives;
 using PowerView.Model;
 using PowerView.Model.Repository;
 using PowerView.Service.Mappers;
@@ -42,18 +44,19 @@ public class ExportController : ControllerBase
 
     [HttpGet("diffs/hourly")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult GetHourlyDiffsExport([BindRequired, FromQuery] string from, [BindRequired, FromQuery] string to, [BindRequired, FromQuery] string labels)
+    public ActionResult GetHourlyDiffsExport(
+        [BindRequired, FromQuery, StringLength(60, MinimumLength = 1)] string from, 
+        [BindRequired, FromQuery, StringLength(60, MinimumLength = 1)] string to, 
+        [BindRequired, FromQuery, StringLength(5000, MinimumLength = 1)] string labels)
     {
         var fromDate = GetDateTime(from, "from");
         var toDate = GetDateTime(to, "to");
-        var labelList = GetStrings(labels);
-
-        if (fromDate == null || toDate == null || labels == null || labelList.Count == 0)
+        if (fromDate == null || toDate == null)
         {
             return BadRequest();
         }
 
-        var labelSeriesSet = exportRepository.GetLiveCumulativeSeries(fromDate.Value, toDate.Value, labelList);
+        var labelSeriesSet = exportRepository.GetLiveCumulativeSeries(fromDate.Value, toDate.Value, new StringValues(labels));
         var intervalGroup = new IntervalGroup(locationContext.TimeZoneInfo, fromDate.Value, "60-minutes", labelSeriesSet);
         intervalGroup.Prepare();
 
@@ -184,18 +187,19 @@ public class ExportController : ControllerBase
 
     [HttpGet("gauges/hourly")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult GetHourlyGaugesExport([BindRequired, FromQuery] string from, [BindRequired, FromQuery] string to, [BindRequired, FromQuery] string labels)
+    public ActionResult GetHourlyGaugesExport([BindRequired, FromQuery, StringLength(60, MinimumLength = 1)] string from,
+        [BindRequired, FromQuery, StringLength(60, MinimumLength = 1)] string to,
+        [BindRequired, FromQuery, StringLength(5000, MinimumLength = 1)] string labels)
     {
         var fromDate = GetDateTime(from, "from");
         var toDate = GetDateTime(to, "to");
-        var labelList = GetStrings(labels);
-
-        if (fromDate == null || toDate == null || labels == null || labelList.Count == 0)
+        if (fromDate == null || toDate == null)
         {
             return BadRequest();
         }
 
-        var labelSeriesSet = exportRepository.GetLiveCumulativeSeries(fromDate.Value, toDate.Value, labelList);
+
+        var labelSeriesSet = exportRepository.GetLiveCumulativeSeries(fromDate.Value, toDate.Value, new StringValues(labels));
         var intervalGroup = new IntervalGroup(locationContext.TimeZoneInfo, fromDate.Value, "60-minutes", labelSeriesSet);
         intervalGroup.Prepare();
 
@@ -277,16 +281,6 @@ public class ExportController : ControllerBase
         {
             return timestampParse;
         }
-    }
-
-    private IList<string> GetStrings(string parameterValue)
-    {
-        if (string.IsNullOrEmpty(parameterValue))
-        {
-            return null;
-        }
-        var strings = parameterValue.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-        return strings;
     }
 
 }

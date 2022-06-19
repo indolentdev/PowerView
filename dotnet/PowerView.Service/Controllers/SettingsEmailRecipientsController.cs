@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -72,7 +73,7 @@ public class SettingsEmailRecipientsController : ControllerBase
 
     [HttpDelete("{emailAddress}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public ActionResult DeleteEmailRecipient([BindRequired, FromQuery] string emailAddress)
+    public ActionResult DeleteEmailRecipient([BindRequired, FromQuery, StringLength(255, MinimumLength = 1), EmailAddress] string emailAddress)
     {
         emailRecipientRepository.DeleteEmailRecipient(emailAddress);
 
@@ -83,7 +84,7 @@ public class SettingsEmailRecipientsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status504GatewayTimeout)]
-    public ActionResult TestEmailRecipient([BindRequired, FromQuery] string emailAddress)
+    public ActionResult TestEmailRecipient([BindRequired, FromQuery, StringLength(255, MinimumLength = 1), EmailAddress] string emailAddress)
     {
         var emailRecipient = emailRecipientRepository.GetEmailRecipient(emailAddress);
         if (emailRecipient == null)
