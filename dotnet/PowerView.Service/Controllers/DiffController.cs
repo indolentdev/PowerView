@@ -30,7 +30,7 @@ public class DiffController : ControllerBase
     [HttpGet("")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public ActionResult GetDiff([BindRequired] string from, [BindRequired] string to)
+    public ActionResult GetDiff([BindRequired, FromQuery] string from, [BindRequired, FromQuery] string to)
     {
         var fromDate = GetDateTime("from", from);
         var toDate = GetDateTime("to", to);

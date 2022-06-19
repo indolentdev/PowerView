@@ -7,6 +7,9 @@ using Newtonsoft.Json;
 using PowerView.Model;
 using PowerView.Model.Repository;
 using PowerView.Service.Dtos;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 
 namespace PowerView.Service.Controllers;
 
@@ -48,7 +51,7 @@ public class SettingsProfileGraphsController : ControllerBase
     [HttpGet("pages")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public ActionResult GetProfileGraphPages([BindRequired] string period)
+    public ActionResult GetProfileGraphPages([BindRequired, FromQuery, StringLength(20, MinimumLength = 1)] string period)
     {
         var pages = profileGraphRepository.GetProfileGraphPages("day");
 
@@ -117,7 +120,7 @@ public class SettingsProfileGraphsController : ControllerBase
     [HttpPut("modify/{existingProfileGraphIdBase64}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public ActionResult PutProfileGraph([BindRequired] string existingProfileGraphIdBase64, [FromBody] ProfileGraphDto dto)
+    public ActionResult PutProfileGraph([BindRequired, FromQuery] string existingProfileGraphIdBase64, [FromBody] ProfileGraphDto dto)
     {
         UpdateProfileGraphId updateProfileGraphId;
         try
@@ -167,17 +170,24 @@ public class SettingsProfileGraphsController : ControllerBase
 
     [HttpDelete("")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public ActionResult DeleteProfileGraph([BindRequired] string period, [BindRequired] string page, [BindRequired] string title)
+    public ActionResult DeleteProfileGraph(
+        [BindRequired, FromQuery, StringLength(20, MinimumLength = 1)] string period,
+        [BindRequired, FromQuery, StringLength(32, MinimumLength = 0)] string page,
+        [BindRequired, FromQuery, StringLength(32, MinimumLength = 1)] string title)
     {
         profileGraphRepository.DeleteProfileGraph(period, page, title);
 
-        return StatusCode(StatusCodes.Status204NoContent);
+        return NoContent();
     }
 
     [HttpPut("swaprank")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public ActionResult SwapProfileGraphRank([BindRequired] string period, [BindRequired] string page, [BindRequired] string title1, [BindRequired] string title2)
+    public ActionResult SwapProfileGraphRank(
+        [BindRequired, FromQuery, StringLength(20, MinimumLength = 1)] string period, 
+        [BindRequired, FromQuery, StringLength(32, MinimumLength = 0)] string page, 
+        [BindRequired, FromQuery, StringLength(32, MinimumLength = 1)] string title1, 
+        [BindRequired, FromQuery, StringLength(32, MinimumLength = 1)] string title2)
     {
         try
         {
@@ -189,7 +199,7 @@ public class SettingsProfileGraphsController : ControllerBase
             return StatusCode(StatusCodes.Status409Conflict, new { Description = "ProfileGraph [period, page, rank] already exists" });
         }
 
-        return StatusCode(StatusCodes.Status204NoContent);
+        return NoContent();
     }
 
 }

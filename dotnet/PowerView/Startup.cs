@@ -40,7 +40,7 @@ public class Startup
 
         // Add services to the container.
 
-        services.AddControllers();
+        services.AddControllers(x => x.ModelBinderProviders.Insert(0, new PowerView.Service.Controllers.EmptyQueryStringBinderProvider()));
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         services.AddEndpointsApiExplorer();

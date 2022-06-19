@@ -72,7 +72,7 @@ public class SettingsEmailRecipientsController : ControllerBase
 
     [HttpDelete("{emailAddress}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public ActionResult DeleteEmailRecipient([BindRequired] string emailAddress)
+    public ActionResult DeleteEmailRecipient([BindRequired, FromQuery] string emailAddress)
     {
         emailRecipientRepository.DeleteEmailRecipient(emailAddress);
 
@@ -83,7 +83,7 @@ public class SettingsEmailRecipientsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status504GatewayTimeout)]
-    public ActionResult TestEmailRecipient([BindRequired] string emailAddress)
+    public ActionResult TestEmailRecipient([BindRequired, FromQuery] string emailAddress)
     {
         var emailRecipient = emailRecipientRepository.GetEmailRecipient(emailAddress);
         if (emailRecipient == null)

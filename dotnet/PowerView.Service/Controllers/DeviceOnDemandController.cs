@@ -27,7 +27,7 @@ public class DeviceOnDemandController : ControllerBase
 
     [HttpGet("ondemand")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult GetOnDemand([BindRequired] string label)
+    public ActionResult GetOnDemand([BindRequired, FromQuery] string label)
     {
 //        if (!Request.Query.label.HasValue)
 //        {

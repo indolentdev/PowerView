@@ -32,21 +32,21 @@ public class ProfileController : ControllerBase
 
     [HttpGet("day")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult GetDayProfile([BindRequired] string page, [BindRequired] string start)
+    public ActionResult GetDayProfile([BindRequired, FromQuery] string page, [BindRequired, FromQuery] string start)
     {
         return GetProfile(page, start, profileRepository.GetDayProfileSet, "day");
     }
 
     [HttpGet("month")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult GetMonthProfile([BindRequired] string page, [BindRequired] string start)
+    public ActionResult GetMonthProfile([BindRequired, FromQuery] string page, [BindRequired, FromQuery] string start)
     {
         return GetProfile(page, start, profileRepository.GetMonthProfileSet, "month");
     }
 
     [HttpGet("year")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult GetYearProfile([BindRequired] string page, [BindRequired] string start)
+    public ActionResult GetYearProfile([BindRequired, FromQuery] string page, [BindRequired, FromQuery] string start)
     {
         return GetProfile(page, start, profileRepository.GetYearProfileSet, "year");
     }

@@ -42,7 +42,7 @@ public class ExportController : ControllerBase
 
     [HttpGet("diffs/hourly")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult GetHourlyDiffsExport([BindRequired] string from, [BindRequired] string to, [BindRequired] string labels)
+    public ActionResult GetHourlyDiffsExport([BindRequired, FromQuery] string from, [BindRequired, FromQuery] string to, [BindRequired, FromQuery] string labels)
     {
         var fromDate = GetDateTime(from, "from");
         var toDate = GetDateTime(to, "to");
@@ -184,7 +184,7 @@ public class ExportController : ControllerBase
 
     [HttpGet("gauges/hourly")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult GetHourlyGaugesExport([BindRequired] string from, [BindRequired] string to, [BindRequired] string labels)
+    public ActionResult GetHourlyGaugesExport([BindRequired, FromQuery] string from, [BindRequired, FromQuery] string to, [BindRequired, FromQuery] string labels)
     {
         var fromDate = GetDateTime(from, "from");
         var toDate = GetDateTime(to, "to");
