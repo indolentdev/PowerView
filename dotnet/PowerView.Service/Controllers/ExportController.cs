@@ -47,7 +47,7 @@ public class ExportController : ControllerBase
     public ActionResult GetHourlyDiffsExport(
         [BindRequired, FromQuery, StringLength(60, MinimumLength = 1)] string from, 
         [BindRequired, FromQuery, StringLength(60, MinimumLength = 1)] string to, 
-        [BindRequired, FromQuery, StringLength(5000, MinimumLength = 1)] string labels)
+        [BindRequired, FromQuery, MinLength(1)] string[] label)
     {
         var fromDate = GetDateTime(from, "from");
         var toDate = GetDateTime(to, "to");
@@ -56,7 +56,7 @@ public class ExportController : ControllerBase
             return BadRequest();
         }
 
-        var labelSeriesSet = exportRepository.GetLiveCumulativeSeries(fromDate.Value, toDate.Value, new StringValues(labels));
+        var labelSeriesSet = exportRepository.GetLiveCumulativeSeries(fromDate.Value, toDate.Value, label);
         var intervalGroup = new IntervalGroup(locationContext.TimeZoneInfo, fromDate.Value, "60-minutes", labelSeriesSet);
         intervalGroup.Prepare();
 
@@ -189,7 +189,7 @@ public class ExportController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public ActionResult GetHourlyGaugesExport([BindRequired, FromQuery, StringLength(60, MinimumLength = 1)] string from,
         [BindRequired, FromQuery, StringLength(60, MinimumLength = 1)] string to,
-        [BindRequired, FromQuery, StringLength(5000, MinimumLength = 1)] string labels)
+        [BindRequired, FromQuery, MinLength(1)] string[] label)
     {
         var fromDate = GetDateTime(from, "from");
         var toDate = GetDateTime(to, "to");
@@ -199,7 +199,7 @@ public class ExportController : ControllerBase
         }
 
 
-        var labelSeriesSet = exportRepository.GetLiveCumulativeSeries(fromDate.Value, toDate.Value, new StringValues(labels));
+        var labelSeriesSet = exportRepository.GetLiveCumulativeSeries(fromDate.Value, toDate.Value, label);
         var intervalGroup = new IntervalGroup(locationContext.TimeZoneInfo, fromDate.Value, "60-minutes", labelSeriesSet);
         intervalGroup.Prepare();
 
