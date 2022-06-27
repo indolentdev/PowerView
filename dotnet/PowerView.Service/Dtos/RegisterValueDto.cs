@@ -1,19 +1,23 @@
-﻿using Newtonsoft.Json;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
+using PowerView.Model;
 
 namespace PowerView.Service.Dtos
 {
-  public class RegisterValueDto
-  {
-    [JsonProperty(Required = Required.Always)]
-    public string ObisCode { get; set; }
+    public class RegisterValueDto
+    {
+        [Required]
+        [RegularExpression("^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){5}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$", ErrorMessage = "Invalid ObisCode.")]
+        public string ObisCode { get; set; }
 
-    [JsonProperty(Required = Required.Always)]
-    public int Value { get; set; }
+        [Required]
+        public int? Value { get; set; }
 
-    [JsonProperty(Required = Required.Always)]
-    public short Scale { get; set; }
+        [Required]
+        public short? Scale { get; set; }
 
-    [JsonProperty(Required = Required.Always)]
-    public string Unit { get; set; }
-  }
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        [Required]
+        public Unit? Unit { get; set; }
+    }
 }

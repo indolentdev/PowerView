@@ -1,28 +1,27 @@
-﻿using System;
-using Newtonsoft.Json;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace PowerView.Service.Dtos
 {
-  public class LiveReadingDto
-  {
-    public LiveReadingDto()
+    public class LiveReadingDto : IValidatableObject
     {
-      RegisterValues = new RegisterValueDto[0];
+        [Required]
+        public string Label { get; set; }
+
+        [Required]
+        public string DeviceId { get; set; }
+
+        [Required]
+        public DateTime? Timestamp { get; set; }
+
+        [Required]
+        public RegisterValueDto[] RegisterValues { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (Timestamp.Value.Kind != DateTimeKind.Utc)
+            {
+                yield return new ValidationResult($"Timestamp must be UTC. Was:{Timestamp!.Value.Kind}", new[] { nameof(Timestamp) });
+            }
+        }
     }
-
-    [JsonProperty(Required = Required.Always)]
-    public string Label { get; set; }
-
-    [JsonProperty(Required = Required.DisallowNull)]
-    public string DeviceId { get; set; }
-
-    [JsonProperty(Required = Required.DisallowNull)]
-    public string SerialNumber { get; set; }
-
-    [JsonProperty(Required = Required.Always)]
-    public DateTime Timestamp { get; set; }
-
-    [JsonProperty(Required = Required.Always)]
-    public RegisterValueDto[] RegisterValues { get; set; }
-  }
 }

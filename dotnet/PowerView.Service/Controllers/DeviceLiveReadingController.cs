@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Linq;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using PowerView.Model.Repository;
 using PowerView.Service.Mappers;
+using PowerView.Service.Dtos;
+using PowerView.Model;
+using PowerView.Model.Repository;
 
 namespace PowerView.Service.Controllers;
 
@@ -24,10 +27,13 @@ public class DeviceLiveReadingController : ControllerBase
     [HttpPost("livereadings")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
-    public ActionResult PostLiveReadings()
+    public ActionResult PostLiveReadings([FromBody] LiveReadingSetDto liveReadingSetDto)
     {
-        // TODO: Have ASP.NET Core deserialize the dto..
-        var liveReadings = liveReadingMapper.Map(Request.Headers.ContentType, Request.Body).ToList();
+        var liveReadings = liveReadingSetDto.Items
+            .Select(x =>
+                new LiveReading(x.Label, x.DeviceId, x.Timestamp.Value,
+                    x.RegisterValues.Select(y => new RegisterValue(y.ObisCode, y.Value.Value, y.Scale.Value, y.Unit.Value))))
+            .ToList();
 
         try
         {
