@@ -51,7 +51,6 @@ namespace PowerView.Service
             serviceCollection.AddTransient<ISerieMapper, SerieMapper>();
             serviceCollection.AddTransient<IDisconnectRuleMapper, DisconnectRuleMapper>();
 
-
             return serviceCollection;
         }
         /*      

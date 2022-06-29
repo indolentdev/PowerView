@@ -10,7 +10,6 @@ public class Startup
     public Startup(IConfigurationRoot configuration)
     {
         Configuration = configuration;
-
     }
 
     public IConfigurationRoot Configuration { get; }

@@ -14,13 +14,11 @@ namespace PowerView.Service.Controllers;
 public class DeviceLiveReadingController : ControllerBase
 {
     private readonly ILogger logger;
-    private readonly ILiveReadingMapper liveReadingMapper;
     private readonly IReadingAccepter readingAccepter;
 
-    public DeviceLiveReadingController(ILogger<DeviceLiveReadingController> logger, ILiveReadingMapper liveReadingMapper, IReadingAccepter readingAccepter)
+    public DeviceLiveReadingController(ILogger<DeviceLiveReadingController> logger, IReadingAccepter readingAccepter)
     {
         this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        this.liveReadingMapper = liveReadingMapper ?? throw new ArgumentNullException(nameof(liveReadingMapper));
         this.readingAccepter = readingAccepter ?? throw new ArgumentNullException(nameof(readingAccepter));
     }
 
