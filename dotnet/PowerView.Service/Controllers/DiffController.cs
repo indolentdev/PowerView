@@ -29,23 +29,16 @@ public class DiffController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public ActionResult GetDiff(
-        [BindRequired, FromQuery, StringLength(60, MinimumLength = 1)] string from,
-        [BindRequired, FromQuery, StringLength(60, MinimumLength = 1)] string to)
+        [BindRequired, FromQuery, UtcDateTime] DateTime from,
+        [BindRequired, FromQuery, UtcDateTime] DateTime to)
     {
-        var fromDate = GetDateTime("from", from);
-        var toDate = GetDateTime("to", to);
-        if (fromDate == null || toDate == null)
-        {
-            return BadRequest();
-        }
-
         var sw = new System.Diagnostics.Stopwatch();
         sw.Start();
-        var lss = profileRepository.GetMonthProfileSet(fromDate.Value.AddHours(-12), fromDate.Value, toDate.Value);
+        var lss = profileRepository.GetMonthProfileSet(from.AddHours(-12), from, to);
         sw.Stop();
         if (logger.IsEnabled(LogLevel.Debug)) logger.LogDebug($"GetDiff timing - Get: {sw.ElapsedMilliseconds}ms");
 
-        var intervalGroup = new IntervalGroup(locationContext.TimeZoneInfo, fromDate.Value, "1-days", lss);
+        var intervalGroup = new IntervalGroup(locationContext.TimeZoneInfo, from, "1-days", lss);
         sw.Restart();
         intervalGroup.Prepare();
         sw.Stop();
@@ -54,8 +47,8 @@ public class DiffController : ControllerBase
         var registers = MapItems(intervalGroup.NormalizedDurationLabelSeriesSet).ToList();
         var r = new
         {
-            From = fromDate.Value.ToString("o"),
-            To = toDate.Value.ToString("o"),
+            From = from.ToString("o"),
+            To = to.ToString("o"),
             Registers = registers
         };
         return Ok(r);
