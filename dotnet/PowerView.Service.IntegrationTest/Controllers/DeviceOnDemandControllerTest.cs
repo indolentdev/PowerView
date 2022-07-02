@@ -76,24 +76,29 @@ public class DeviceOnDemandControllerTest
 
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-        dynamic json = await response.Content.ReadFromJsonAsync<dynamic>();
-        Assert.That(json, Is.Not.Null);
-        Assert.That(json.TryGetProperty("items", out JsonElement items), Is.True);
-        Assert.That(items.GetArrayLength(), Is.EqualTo(2));
-        AssertDisconnectControl(seriesName1, connected1, items.EnumerateArray().First());
-        AssertDisconnectControl(seriesName2, connected2, items.EnumerateArray().Last());
+        var json = await response.Content.ReadFromJsonAsync<TestOnDemandSetDto>();
+        Assert.That(json.items.Length, Is.EqualTo(2));
+        Assert.That(json.items[0].label, Is.EqualTo("lbl"));
+        Assert.That(json.items[0].obisCode, Is.EqualTo("0.1.96.3.10.255"));
+        Assert.That(json.items[0].kind, Is.EqualTo("Method"));
+        Assert.That(json.items[0].index, Is.EqualTo(2));
+        Assert.That(json.items[1].label, Is.EqualTo("lbl"));
+        Assert.That(json.items[1].obisCode, Is.EqualTo("0.2.96.3.10.255"));
+        Assert.That(json.items[1].kind, Is.EqualTo("Method"));
+        Assert.That(json.items[1].index, Is.EqualTo(1));    
     }
 
-    private static void AssertDisconnectControl(ISeriesName seriesName, bool connected, JsonElement item)
+    internal class TestOnDemandSetDto
     {
-        Assert.That(item.TryGetProperty("label", out var label), Is.True);
-        Assert.That(label.GetString(), Is.EqualTo(seriesName.Label));
-        Assert.That(item.TryGetProperty("obisCode", out var obisCode), Is.True);
-        Assert.That(obisCode.GetString(), Is.EqualTo(seriesName.ObisCode.ToString()));
-        Assert.That(item.TryGetProperty("kind", out var kind), Is.True);
-        Assert.That(kind.GetString(), Is.EqualTo("Method"));
-        Assert.That(item.TryGetProperty("index", out var index), Is.True);
-        Assert.That(index.GetInt32(), Is.EqualTo(connected ? 2 : 1));
+        public TestOnDemandDto[] items { get; set; }
+    }
+
+    internal class TestOnDemandDto
+    {
+        public string label { get; set; }
+        public string obisCode { get; set; }
+        public string kind { get; set; }
+        public int index { get; set; }
     }
 
     [Test]
