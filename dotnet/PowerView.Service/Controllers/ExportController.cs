@@ -45,19 +45,12 @@ public class ExportController : ControllerBase
     [HttpGet("diffs/hourly")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public ActionResult GetHourlyDiffsExport(
-        [BindRequired, FromQuery, StringLength(60, MinimumLength = 1)] string from, 
-        [BindRequired, FromQuery, StringLength(60, MinimumLength = 1)] string to, 
+        [BindRequired, FromQuery, UtcDateTime] DateTime from, 
+        [BindRequired, FromQuery, UtcDateTime] DateTime to, 
         [BindRequired, FromQuery, MinLength(1)] string[] label)
     {
-        var fromDate = GetDateTime(from, "from");
-        var toDate = GetDateTime(to, "to");
-        if (fromDate == null || toDate == null)
-        {
-            return BadRequest();
-        }
-
-        var labelSeriesSet = exportRepository.GetLiveCumulativeSeries(fromDate.Value, toDate.Value, label);
-        var intervalGroup = new IntervalGroup(locationContext.TimeZoneInfo, fromDate.Value, "60-minutes", labelSeriesSet);
+        var labelSeriesSet = exportRepository.GetLiveCumulativeSeries(from, to, label);
+        var intervalGroup = new IntervalGroup(locationContext.TimeZoneInfo, from, "60-minutes", labelSeriesSet);
         intervalGroup.Prepare();
 
         var falttened = intervalGroup.NormalizedDurationLabelSeriesSet
@@ -187,20 +180,13 @@ public class ExportController : ControllerBase
 
     [HttpGet("gauges/hourly")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult GetHourlyGaugesExport([BindRequired, FromQuery, StringLength(60, MinimumLength = 1)] string from,
-        [BindRequired, FromQuery, StringLength(60, MinimumLength = 1)] string to,
+    public ActionResult GetHourlyGaugesExport(
+        [BindRequired, FromQuery, UtcDateTime] DateTime from,
+        [BindRequired, FromQuery, UtcDateTime] DateTime to,
         [BindRequired, FromQuery, MinLength(1)] string[] label)
     {
-        var fromDate = GetDateTime(from, "from");
-        var toDate = GetDateTime(to, "to");
-        if (fromDate == null || toDate == null)
-        {
-            return BadRequest();
-        }
-
-
-        var labelSeriesSet = exportRepository.GetLiveCumulativeSeries(fromDate.Value, toDate.Value, label);
-        var intervalGroup = new IntervalGroup(locationContext.TimeZoneInfo, fromDate.Value, "60-minutes", labelSeriesSet);
+        var labelSeriesSet = exportRepository.GetLiveCumulativeSeries(from, to, label);
+        var intervalGroup = new IntervalGroup(locationContext.TimeZoneInfo, from, "60-minutes", labelSeriesSet);
         intervalGroup.Prepare();
 
         var falttened = intervalGroup.NormalizedLabelSeriesSet

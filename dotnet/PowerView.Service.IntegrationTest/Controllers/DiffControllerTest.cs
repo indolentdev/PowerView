@@ -54,10 +54,9 @@ public class DiffControllerTest
         var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
         var utcOneDay = today.AddDays(1);
         SetupProfileRepositoryGetMonthProfileSet();
-        const string o = "o";
 
         // Act
-        var response = await httpClient.GetAsync($"api/diff?from={today.ToString(o)}&to={utcOneDay.ToString(o)}");
+        var response = await httpClient.GetAsync($"api/diff?from={today.ToString("o")}&to={utcOneDay.ToString("o")}");
 
         // Assert
         profileRepository.Verify(x => x.GetMonthProfileSet(
@@ -84,10 +83,9 @@ public class DiffControllerTest
             {"1.0.2.8.0.255", new [] { new TimeRegisterValue("2", t1, 4, 6, Unit.WattHour) } }
         };
         SetupProfileRepositoryGetMonthProfileSet(new TimeRegisterValueLabelSeries("Label1", label1Values), new TimeRegisterValueLabelSeries("Label2", label2Values));
-        const string o = "o";
 
         // Act
-        var response = await httpClient.GetAsync($"api/diff?from={t1.ToString(o)}&to={today.ToString(o)}");
+        var response = await httpClient.GetAsync($"api/diff?from={t1.ToString("o")}&to={today.ToString("o")}");
 
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
@@ -133,10 +131,9 @@ public class DiffControllerTest
     {
         // Arrange
         var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
-        const string o = "o";
 
         // Act
-        var response = await httpClient.GetAsync($"api/diff?to={today.ToString(o)}");
+        var response = await httpClient.GetAsync($"api/diff?to={today.ToString("o")}");
 
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
@@ -148,10 +145,9 @@ public class DiffControllerTest
     {
         // Arrange
         var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
-        const string o = "o";
 
         // Act
-        var response = await httpClient.GetAsync($"api/diff?from={today.ToString(o)}");
+        var response = await httpClient.GetAsync($"api/diff?from={today.ToString("o")}");
 
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
@@ -163,10 +159,9 @@ public class DiffControllerTest
     {
         // Arrange
         var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
-        const string o = "o";
 
         // Act
-        var response = await httpClient.GetAsync($"api/diff?from=BadFormat&to={today.ToString(o)}");
+        var response = await httpClient.GetAsync($"api/diff?from=BadFormat&to={today.ToString("o")}");
 
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
@@ -178,10 +173,9 @@ public class DiffControllerTest
     {
         // Arrange
         var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
-        const string o = "o";
 
         // Act
-        var response = await httpClient.GetAsync($"api/diff?from={today.ToString(o)}&to=BadFormat");
+        var response = await httpClient.GetAsync($"api/diff?from={today.ToString("o")}&to=BadFormat");
 
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
@@ -193,10 +187,9 @@ public class DiffControllerTest
     {
         // Arrange
         var today = DateTime.SpecifyKind(TimeZoneHelper.GetDenmarkTodayAsUtc(), DateTimeKind.Local);
-        const string o = "o";
 
         // Act
-        var response = await httpClient.GetAsync($"api/diff?from=BadFormat&to={today.ToString(o)}");
+        var response = await httpClient.GetAsync($"api/diff?from=BadFormat&to={today.ToString("o")}");
 
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
@@ -208,10 +201,9 @@ public class DiffControllerTest
     {
         // Arrange
         var today = DateTime.SpecifyKind(TimeZoneHelper.GetDenmarkTodayAsUtc(), DateTimeKind.Local);
-        const string o = "o";
 
         // Act
-        var response = await httpClient.GetAsync($"api/diff?from={today.ToString(o)}&to=BadFormat");
+        var response = await httpClient.GetAsync($"api/diff?from={today.ToString("o")}&to=BadFormat");
 
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
