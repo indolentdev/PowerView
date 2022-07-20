@@ -24,7 +24,8 @@ public class GaugeController : ControllerBase
 
     [HttpGet("latest")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult GetLatestGauges([FromQuery, StringLength(60, MinimumLength = 1)] string timestamp)
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public ActionResult GetLatestGauges([FromQuery, UtcDateTime] DateTime? timestamp)
     {
         var timestampDateTime = GetTimestamp(timestamp);
 
@@ -40,7 +41,8 @@ public class GaugeController : ControllerBase
 
     [HttpGet("custom")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult GetCustomGauges([FromQuery, StringLength(60, MinimumLength = 1)] string timestamp)
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public ActionResult GetCustomGauges([FromQuery, UtcDateTime] DateTime? timestamp)
     {
         var timestampDateTime = GetTimestamp(timestamp);
 
@@ -54,22 +56,9 @@ public class GaugeController : ControllerBase
         return Ok(r);
     }
 
-    private DateTime GetTimestamp(string timestamp)
+    private DateTime GetTimestamp(DateTime? timestamp)
     {
-        DateTime timestampDateTime = DateTime.UtcNow;
-        if (timestamp != null)
-        {
-            DateTime timestampParse;
-            if (!DateTime.TryParse(timestamp, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out timestampParse) || timestampParse.Kind != DateTimeKind.Utc)
-            {
-                logger.LogInformation($"Unable to parse UTC timestamp date time string:{timestamp}");
-            }
-            else
-            {
-                timestampDateTime = timestampParse;
-            }
-        }
-        return timestampDateTime;
+        return timestamp ?? DateTime.UtcNow;
     }
 
     private static object MapGaugeValueSet(GaugeValueSet gaugeValueSet)
