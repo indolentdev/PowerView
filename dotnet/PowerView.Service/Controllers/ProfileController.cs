@@ -35,7 +35,7 @@ public class ProfileController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public ActionResult GetDayProfile(
         [BindRequired, FromQuery, StringLength(32, MinimumLength = 0)] string page,
-        [BindRequired, FromQuery, StringLength(60, MinimumLength = 1)] string start)
+        [BindRequired, FromQuery, UtcDateTime] DateTime start)
     {
         return GetProfile(page, start, profileRepository.GetDayProfileSet, "day");
     }
@@ -44,7 +44,7 @@ public class ProfileController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public ActionResult GetMonthProfile(
         [BindRequired, FromQuery, StringLength(32, MinimumLength = 0)] string page,
-        [BindRequired, FromQuery, StringLength(60, MinimumLength = 1)] string start)
+        [BindRequired, FromQuery, UtcDateTime] DateTime start)
     {
         return GetProfile(page, start, profileRepository.GetMonthProfileSet, "month");
     }
@@ -53,20 +53,14 @@ public class ProfileController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public ActionResult GetYearProfile(
         [BindRequired, FromQuery, StringLength(32, MinimumLength = 0)] string page,
-        [BindRequired, FromQuery, StringLength(60, MinimumLength = 1)] string start)
+        [BindRequired, FromQuery, UtcDateTime] DateTime start)
     {
         return GetProfile(page, start, profileRepository.GetYearProfileSet, "year");
     }
 
-    private ActionResult GetProfile(string page, string startString,
+    private ActionResult GetProfile(string page, DateTime start,
       Func<DateTime, DateTime, DateTime, TimeRegisterValueLabelSeriesSet> getLabelSeriesSet, string period)
     {
-        DateTime start;
-        if (!DateTime.TryParse(startString, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out start) || start.Kind != DateTimeKind.Utc)
-        {
-            return BadRequest($"Unable to parse UTC start date time string:{startString}");
-        }
-
         var profileGraphs = profileGraphRepository.GetProfileGraphs(period, page);
         if (profileGraphs.Count == 0 || profileGraphs.Any(x => x.SerieNames.Count == 0))
         {
