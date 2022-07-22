@@ -57,6 +57,12 @@ public class ProfileControllerTest
         httpClient = application.CreateClient();
     }
 
+    [TearDown]
+    public void Teardown()
+    {
+        application?.Dispose();
+    }
+
     [Test]
     public async Task GetDayProfilePeriodAndPagePassedToRepository()
     {
