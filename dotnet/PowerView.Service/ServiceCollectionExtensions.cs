@@ -49,7 +49,6 @@ namespace PowerView.Service
             // Mappers
             serviceCollection.AddTransient<ILiveReadingMapper, LiveReadingMapper>();
             serviceCollection.AddTransient<ISerieMapper, SerieMapper>();
-            serviceCollection.AddTransient<IDisconnectRuleMapper, DisconnectRuleMapper>();
 
             return serviceCollection;
         }

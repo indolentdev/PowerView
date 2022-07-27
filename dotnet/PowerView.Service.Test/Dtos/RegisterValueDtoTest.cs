@@ -14,7 +14,7 @@ namespace PowerView.Service.Test.Dto
         [TestCase("{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":\"BAD\",\"Scale\":1,\"Unit\":\"watt\"}", "Value property invalid")]
         [TestCase("{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":2,\"Scale\":\"BAD\",\"Unit\":\"watt\"}", "Scale property invalid")]
         [TestCase("{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":2,\"Scale\":1,\"Unit\":\"BAD\"}", "Unit property invalid")]
-        public void DeserializeLiveReadingDtoInvalidThrowsJsonException(string json, string message)
+        public void DeserializeRegisterValueDtoInvalidThrowsJsonException(string json, string message)
         {
             // Arrange
 
@@ -34,7 +34,7 @@ namespace PowerView.Service.Test.Dto
         [TestCase("{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":2,\"Scale\":null,\"Unit\":\"watt\"}", "Scale property null")]
         [TestCase("{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":2,\"Scale\":1}", "Unit property absent")]
         [TestCase("{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":2,\"Scale\":1,\"Unit\":null}", "Unit property null")]
-        public void DeserializeLiveReadingDtoInvalidThrowsValidationException(string json, string message)
+        public void DeserializeRegisterValueDtoInvalidThrowsValidationException(string json, string message)
         {
             // Arrange
             var dto = JsonSerializer.Deserialize<RegisterValueDto>(json);

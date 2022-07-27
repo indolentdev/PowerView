@@ -7,7 +7,7 @@ namespace PowerView.Service.Dtos
     public class RegisterValueDto
     {
         [Required]
-        [RegularExpression("^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){5}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$", ErrorMessage = "Invalid ObisCode.")]
+        [ObisCode]
         public string ObisCode { get; set; }
 
         [Required]

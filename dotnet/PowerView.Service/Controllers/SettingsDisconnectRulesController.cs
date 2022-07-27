@@ -1,15 +1,11 @@
-﻿using System.Globalization;
-using System.Text;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using PowerView.Model;
 using PowerView.Model.Repository;
 using PowerView.Service.Dtos;
 using PowerView.Service.Mappers;
-using PowerView.Service.Mqtt;
 
 namespace PowerView.Service.Controllers;
 
@@ -19,13 +15,11 @@ public class SettingsDisconnectRulesController : ControllerBase
 {
     private readonly ILogger logger;
     private readonly IDisconnectRuleRepository disconnectRuleRepository;
-    private readonly IDisconnectRuleMapper disconnectRuleMapper;
 
-    public SettingsDisconnectRulesController(ILogger<SettingsSerieColorsController> logger, IDisconnectRuleRepository disconnectRuleRepository, IDisconnectRuleMapper disconnectRuleMapper)
+    public SettingsDisconnectRulesController(ILogger<SettingsSerieColorsController> logger, IDisconnectRuleRepository disconnectRuleRepository)
     {
         this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         this.disconnectRuleRepository = disconnectRuleRepository ?? throw new ArgumentNullException(nameof(disconnectRuleRepository));
-        this.disconnectRuleMapper = disconnectRuleMapper ?? throw new ArgumentNullException(nameof(disconnectRuleMapper));
     }
 
     [HttpGet("")]
@@ -34,8 +28,19 @@ public class SettingsDisconnectRulesController : ControllerBase
     {
         var disconnectRules = disconnectRuleRepository.GetDisconnectRules();
 
-        var disconnectRuleDtos = disconnectRules.Select(disconnectRuleMapper.MapToDto).ToArray();
-        var disconnectRuleSetDto = new DisconnectRuleSetDto { Items = disconnectRuleDtos };
+        var disconnectRuleDtos = disconnectRules.Select(disconnectRule => new
+            {
+                NameLabel = disconnectRule.Name.Label,
+                NameObisCode = disconnectRule.Name.ObisCode.ToString(),
+                EvaluationLabel = disconnectRule.EvaluationName.Label,
+                EvaluationObisCode = disconnectRule.EvaluationName.ObisCode.ToString(),
+                DurationMinutes = (int)disconnectRule.Duration.TotalMinutes,
+                DisconnectToConnectValue = disconnectRule.DisconnectToConnectValue,
+                ConnectToDisconnectValue = disconnectRule.ConnectToDisconnectValue,
+                Unit = ValueAndUnitMapper.Map(disconnectRule.Unit, false)
+            })
+            .ToArray();
+        var disconnectRuleSetDto = new { Items = disconnectRuleDtos };
 
         return Ok(disconnectRuleSetDto);
     }
@@ -65,20 +70,11 @@ public class SettingsDisconnectRulesController : ControllerBase
 
     [HttpPost("")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
-    public ActionResult AddDisconnectRule([FromBody] DisconnectRuleDto disconnectRuleDto)
+    public ActionResult AddDisconnectRule([BindRequired, FromBody] DisconnectRuleDto disconnectRuleDto)
     {
-        DisconnectRule disconnectRule;
-        try
-        {
-            disconnectRule = disconnectRuleMapper.MapFromDto(disconnectRuleDto);
-        }
-        catch (ArgumentException e)
-        {
-            logger.LogWarning(e, $"Add disconnect rule failed. Invalid content.");
-            return StatusCode(StatusCodes.Status415UnsupportedMediaType, new { Description = "Disconnect rule content invalid" });
-        }
+        var disconnectRule = MapFromDto(disconnectRuleDto);
 
         try
         {
@@ -95,21 +91,33 @@ public class SettingsDisconnectRulesController : ControllerBase
         return NoContent();
     }
 
+    public DisconnectRule MapFromDto(DisconnectRuleDto dto)
+    {
+        var name = new SeriesName(dto.NameLabel, dto.NameObisCode);
+        var evaluation = new SeriesName(dto.EvaluationLabel, dto.EvaluationObisCode);
+        var duration = TimeSpan.FromMinutes(dto.DurationMinutes.Value);
+        return new DisconnectRule(name, evaluation, duration, dto.DisconnectToConnectValue.Value, dto.ConnectToDisconnectValue.Value,
+                                  ToUnit(dto.Unit.Value));
+    }
+
+    private Unit ToUnit(DisconnectRuleUnit disconnectRuleUnit)
+    {
+        switch (disconnectRuleUnit)
+        {
+            case DisconnectRuleUnit.W:
+                return Unit.Watt;
+            default:
+                throw new NotImplementedException($"DisconnectRuleUnit value not supported:{disconnectRuleUnit}");
+        }
+    }
+
+
     [HttpDelete("names/{label}/{obisCode}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
-    public ActionResult DeleteDisconnectRule([BindRequired, FromRoute] string label, [BindRequired, FromRoute] string obisCode)
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public ActionResult DeleteDisconnectRule([BindRequired, FromRoute] string label, [BindRequired, FromRoute, ObisCode] string obisCode)
     {
-        ISeriesName name;
-        try
-        {
-            name = new SeriesName(label, obisCode);
-        }
-        catch (ArgumentException e)
-        {
-            logger.LogWarning(e, $"Delete disconnect rule failed. Bad name. Label:{label}, ObisCode:{obisCode}");
-            return StatusCode(StatusCodes.Status415UnsupportedMediaType, new { Description = "Disconnect rule name invalid" });
-        }
+        var name = new SeriesName(label, obisCode);
 
         disconnectRuleRepository.DeleteDisconnectRule(name);
 

@@ -28,7 +28,7 @@ export function settingsBackend(url: string, method: string, request: HttpReques
     }
 
     if (url.indexOf('settings/disconnectrules/names') > -1 && method === "DELETE") {
-//        return throwError(new HttpErrorResponse({status:415}));
+//        return throwError(new HttpErrorResponse({status:400}));
         return new Observable(resp => {
             resp.next(new HttpResponse({
                 status: 204
@@ -38,7 +38,7 @@ export function settingsBackend(url: string, method: string, request: HttpReques
     }
 
     if (url.indexOf('settings/disconnectrules') > -1 && method === "POST") {
-//        return throwError(new HttpErrorResponse({status:415}));
+//        return throwError(new HttpErrorResponse({status:400}));
         return new Observable(resp => {
             resp.next(new HttpResponse({
                 status: 204

@@ -63,10 +63,10 @@ export class SettingsService {
 
     var httpErrorResponse = error as HttpErrorResponse;
     switch(httpErrorResponse.status) {
+      case 400:
+        return AddDisconnectRuleError.RequestContentIncomplete;
       case 409:
         return AddDisconnectRuleError.RequestContentDuplicate;
-      case 415:
-        return AddDisconnectRuleError.RequestContentIncomplete;
       default:
         return AddDisconnectRuleError.UnspecifiedError;
     }
@@ -86,7 +86,7 @@ export class SettingsService {
 
     var httpErrorResponse = error as HttpErrorResponse;
     switch(httpErrorResponse.status) {
-      case 415:
+      case 400:
         return DeleteDisconnectRuleError.DisconnectRulePathMissing;
       default:
         return DeleteDisconnectRuleError.UnspecifiedError;
