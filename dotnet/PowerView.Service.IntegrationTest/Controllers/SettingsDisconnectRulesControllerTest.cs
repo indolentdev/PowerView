@@ -83,7 +83,7 @@ public class SettingsDisconnectRulesModuleTest
     }
 
     [Test]
-    public async Task GetDisconnectRulesCallsRepositoryAndMapper()
+    public async Task GetDisconnectRulesCallsRepository()
     {
         // Arrange
         var disconnectRule = new DisconnectRule(new SeriesName("l", "1.2.3.4.5.6"), new SeriesName("e", "6.5.4.3.2.1"), TimeSpan.FromMinutes(30), 1500, 200, Unit.Watt);

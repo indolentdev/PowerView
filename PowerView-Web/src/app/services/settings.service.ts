@@ -115,10 +115,10 @@ export class SettingsService {
 
     var httpErrorResponse = error as HttpErrorResponse;
     switch(httpErrorResponse.status) {
+      case 400:
+        return AddEmailRecipientError.RequestContentIncomplete;
       case 409:
         return AddEmailRecipientError.RequestContentDuplicate;
-      case 415:
-        return AddEmailRecipientError.RequestContentIncomplete;
       default:
         return AddEmailRecipientError.UnspecifiedError;
     }

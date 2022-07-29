@@ -41,26 +41,14 @@ public class SettingsEmailRecipientsController : ControllerBase
 
     [HttpPost("")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
-    public ActionResult AddEmailRecipient([FromBody] EmailRecipientDto emailRecipientDto)
+    public ActionResult AddEmailRecipient([BindRequired, FromBody] EmailRecipientDto emailRecipientDto)
     {
-        if (string.IsNullOrEmpty(emailRecipientDto.Name) || string.IsNullOrEmpty(emailRecipientDto.EmailAddress))
-        {
-            logger.LogWarning($"Add email recipient failed. Properties are null or empty. Name:{emailRecipientDto.Name}. EmailAddress:{emailRecipientDto.EmailAddress}");
-            var description = new { Description = "Name or EmailAddress properties absent or empty" };
-            return StatusCode(StatusCodes.Status415UnsupportedMediaType, description);
-        }
-
         try
         {
             var emailRecipient = new EmailRecipient(emailRecipientDto.Name, emailRecipientDto.EmailAddress);
             emailRecipientRepository.AddEmailRecipient(emailRecipient);
-        }
-        catch (FormatException e)
-        {
-            logger.LogWarning(e, $"Add email recipient failed. Invalid format. Name:{emailRecipientDto.Name}. EmailAddress:{emailRecipientDto.EmailAddress}");
-            return StatusCode(StatusCodes.Status415UnsupportedMediaType, new { Description = "EmailAddress has invalid format" });
         }
         catch (DataStoreUniqueConstraintException e)
         {
@@ -73,7 +61,7 @@ public class SettingsEmailRecipientsController : ControllerBase
 
     [HttpDelete("{emailAddress}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public ActionResult DeleteEmailRecipient([BindRequired, FromQuery, StringLength(255, MinimumLength = 1), EmailAddress] string emailAddress)
+    public ActionResult DeleteEmailRecipient([BindRequired, FromRoute, StringLength(255, MinimumLength = 1), EmailAddress] string emailAddress)
     {
         emailRecipientRepository.DeleteEmailRecipient(emailAddress);
 
@@ -84,7 +72,7 @@ public class SettingsEmailRecipientsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status504GatewayTimeout)]
-    public ActionResult TestEmailRecipient([BindRequired, FromQuery, StringLength(255, MinimumLength = 1), EmailAddress] string emailAddress)
+    public ActionResult TestEmailRecipient([BindRequired, FromRoute, StringLength(255, MinimumLength = 1), EmailAddress] string emailAddress)
     {
         var emailRecipient = emailRecipientRepository.GetEmailRecipient(emailAddress);
         if (emailRecipient == null)

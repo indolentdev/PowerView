@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using PowerView.Model;
@@ -42,43 +43,22 @@ public class SettingsMqttController : ControllerBase
 
     [HttpPut("")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
-    public ActionResult PutSettings([FromBody] MqttConfigDto mqttConfigDto)
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public ActionResult PutSettings([BindRequired, FromBody] MqttConfigDto mqttConfigDto)
     {
-        var mqttConfig = GetMqttConfig(mqttConfigDto);
-        if (mqttConfig == null)
-        {
-            var description = new { Description = "PublishEnabled, Server, Port or ClientId properties absent or empty" };
-            return StatusCode(StatusCodes.Status415UnsupportedMediaType, description);
-        }
+        var mqttConfig = new MqttConfig(mqttConfigDto.Server, mqttConfigDto.Port.Value, mqttConfigDto.PublishEnabled.Value, mqttConfigDto.ClientId);
 
         settingRepository.UpsertMqttConfig(mqttConfig);
         return NoContent();
     }
 
-    private MqttConfig GetMqttConfig(MqttConfigDto mqttConfigDto)
-    {
-        if (mqttConfigDto.PublishEnabled == null || string.IsNullOrEmpty(mqttConfigDto.Server) || mqttConfigDto.ClientId == null)
-        {
-            logger.LogWarning($"MQTT configuration failed. Properties are null or empty. PublishEnabled:{mqttConfigDto.PublishEnabled}, Server:{mqttConfigDto.Server}, Port:{mqttConfigDto.Port}, ClientId:{mqttConfigDto.ClientId}");
-            return null;
-        }
-
-        return new MqttConfig(mqttConfigDto.Server, mqttConfigDto.Port, mqttConfigDto.PublishEnabled.Value, mqttConfigDto.ClientId);
-    }
-
     [HttpPut("test")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
-    public ActionResult TestSettings([FromBody] MqttConfigDto mqttConfigDto)
+    public ActionResult TestSettings([BindRequired, FromBody] MqttConfigDto mqttConfigDto)
     {
-        var mqttConfig = GetMqttConfig(mqttConfigDto);
-        if (mqttConfig == null)
-        {
-            var description = new { Description = "PublishEnabled, Server, Port or ClientId properties absent or empty" };
-            return StatusCode(StatusCodes.Status415UnsupportedMediaType, description);
-        }
+        var mqttConfig = new MqttConfig(mqttConfigDto.Server, mqttConfigDto.Port.Value, mqttConfigDto.PublishEnabled.Value, mqttConfigDto.ClientId);
 
         try
         {
