@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Globalization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using PowerView.Model;
 using PowerView.Model.Repository;
 using PowerView.Service.Dtos;
+using PowerView.Service.Mqtt;
 
 namespace PowerView.Service.Controllers;
 
@@ -48,29 +51,12 @@ public class SettingsSmtpController : ControllerBase
 
     [HttpPut("")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
-    public ActionResult PutSettings([FromBody] SmtpConfigDto smtpConfigDto)
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public ActionResult PutSettings([BindRequired, FromBody] SmtpConfigDto smtpConfigDto)
     {
-        var smtpConfig = GetSmtpConfig(smtpConfigDto);
-        if (smtpConfig == null)
-        {
-            var description = new { Description = "Server, Port, User or Auth properties absent, empty or invalid" };
-            return StatusCode(StatusCodes.Status415UnsupportedMediaType, description);
-        }
-
+        var smtpConfig = new SmtpConfig(smtpConfigDto.Server, smtpConfigDto.Port.Value, smtpConfigDto.User, smtpConfigDto.Auth, smtpConfigDto.Email);
         settingRepository.UpsertSmtpConfig(smtpConfig);
         return NoContent();
-    }
-
-    private SmtpConfig GetSmtpConfig(SmtpConfigDto smtpConfigDto)
-    {
-        if (string.IsNullOrEmpty(smtpConfigDto.Server) || string.IsNullOrEmpty(smtpConfigDto.User) || string.IsNullOrEmpty(smtpConfigDto.Auth) || string.IsNullOrEmpty(smtpConfigDto.Email))
-        {
-            logger.LogWarning($"Set SMTP configuration failed. Properties are null or empty. Server:{smtpConfigDto.Server}, Port:{smtpConfigDto.Port}, User:{smtpConfigDto.User}, Auth:********, Email:{smtpConfigDto.Email}");
-            return null;
-        }
-
-        return new SmtpConfig(smtpConfigDto.Server, smtpConfigDto.Port, smtpConfigDto.User, smtpConfigDto.Auth, smtpConfigDto.Email);
     }
 
 }

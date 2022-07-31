@@ -342,7 +342,7 @@ export class SettingsService {
 
     var httpErrorResponse = error as HttpErrorResponse;
     switch(httpErrorResponse.status) {
-      case 415:
+      case 400:
         return SaveSmtpParamsError.RequestContentIncomplete;
       default:
         return SaveSmtpParamsError.UnspecifiedError;

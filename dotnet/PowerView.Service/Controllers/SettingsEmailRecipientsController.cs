@@ -45,9 +45,9 @@ public class SettingsEmailRecipientsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public ActionResult AddEmailRecipient([BindRequired, FromBody] EmailRecipientDto emailRecipientDto)
     {
+        var emailRecipient = new EmailRecipient(emailRecipientDto.Name, emailRecipientDto.EmailAddress);
         try
         {
-            var emailRecipient = new EmailRecipient(emailRecipientDto.Name, emailRecipientDto.EmailAddress);
             emailRecipientRepository.AddEmailRecipient(emailRecipient);
         }
         catch (DataStoreUniqueConstraintException e)

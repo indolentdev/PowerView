@@ -108,6 +108,7 @@ public class SettingsMqttControllerTest
     {
         // Arrange
         var content = new StringContent(string.Empty, System.Text.Encoding.UTF8, "application/json");
+        
         // Act
         var response = await httpClient.PutAsync($"api/settings/mqtt", content);
 
