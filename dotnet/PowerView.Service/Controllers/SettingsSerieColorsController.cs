@@ -59,6 +59,7 @@ public class SettingsSerieColorsController : ControllerBase
 
     [HttpPut("")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public ActionResult PutSeriesColors([FromBody] SerieColorSetDto seriesColorSetDto)
     {
         var seriesColors = ToSeriesColors(seriesColorSetDto.Items).ToArray();
