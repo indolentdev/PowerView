@@ -170,9 +170,7 @@ export class SettingsProfileGraphsComponent implements OnInit {
     this.stripUnwantedSeriesProperties(profileGraph);
     this.log.debug("Updating profile graph", profileGraph);
 
-    let updateProfileGraphIdJson = JSON.stringify(this.updateProfileGraphId);
-    let updateProfileGraphIdBase64 = btoa(updateProfileGraphIdJson);
-    this.settingsService.updateProfileGraph(updateProfileGraphIdBase64, profileGraph).subscribe(_ => {
+    this.settingsService.updateProfileGraph(this.updateProfileGraphId.period, this.updateProfileGraphId.page, this.updateProfileGraphId.title, profileGraph).subscribe(_ => {
       this.log.debug("Update ok");
       this.translateService.get('forms.settings.profileGraphs.confirmUpdate').subscribe(message => {
         this.snackBarRef = this.snackBar.open(message, undefined, { duration: 4000 });

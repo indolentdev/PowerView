@@ -49,9 +49,9 @@ public class SettingsProfileGraphsController : ControllerBase
     [HttpGet("pages")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public ActionResult GetProfileGraphPages([BindRequired, FromQuery, StringLength(20, MinimumLength = 1)] string period)
+    public ActionResult GetProfileGraphPages([BindRequired, FromQuery, StringLength(5, MinimumLength = 3)] string period)
     {
-        var pages = profileGraphRepository.GetProfileGraphPages("day");
+        var pages = profileGraphRepository.GetProfileGraphPages(period);
 
         var r = new { Items = pages };
         return Ok(r);
@@ -65,42 +65,28 @@ public class SettingsProfileGraphsController : ControllerBase
 
         var r = new
         {
-            Items = profileGraphs.Select(ToProfileGraphDto).ToList()
+            Items = profileGraphs
+                .Select(p => new 
+                {
+                    Title = p.Title,
+                    Page = p.Page,
+                    Period = p.Period,
+                    Interval = p.Interval,
+                    Series = p.SerieNames.Select(sn => new { Label = sn.Label, ObisCode = sn.ObisCode.ToString() }).ToList()
+                })
+                .ToList()
         };
         return Ok(r);
     }
 
-    private static ProfileGraphDto ToProfileGraphDto(ProfileGraph profileGraph)
-    {
-        return new ProfileGraphDto
-        {
-            Title = profileGraph.Title,
-            Page = profileGraph.Page,
-            Period = profileGraph.Period,
-            Interval = profileGraph.Interval,
-            Rank = profileGraph.Rank,
-            Series = profileGraph.SerieNames.Select(sn =>
-              new ProfileGraphSerieDto { Label = sn.Label, ObisCode = sn.ObisCode.ToString() }).ToArray()
-        };
-    }
-
     [HttpPost("")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
-    public ActionResult PostProfileGraph([FromBody] ProfileGraphDto dto)
+    public ActionResult PostProfileGraph([BindRequired, FromBody] ProfileGraphDto dto)
     {
-        ProfileGraph profileGraph = null;
-        try
-        {
-            var serieNames = dto.Series.Select(x => new SeriesName(x.Label, x.ObisCode)).ToList();
-            profileGraph = new ProfileGraph(dto.Period, dto.Page, dto.Title, dto.Interval, 0, serieNames);
-        }
-        catch (ArgumentException e)
-        {
-            logger.LogWarning(e, "Add profile graph failed");
-            return StatusCode(StatusCodes.Status415UnsupportedMediaType);
-        }
+        var serieNames = dto.Series.Select(x => new SeriesName(x.Label, x.ObisCode)).ToList();
+        var profileGraph = new ProfileGraph(dto.Period, dto.Page, dto.Title, dto.Interval, 0, serieNames);
 
         try
         {
@@ -109,61 +95,33 @@ public class SettingsProfileGraphsController : ControllerBase
         catch (DataStoreUniqueConstraintException e)
         {
             logger.LogWarning(e, $"Add profile graph failed. Period:{dto.Period}, Page:{dto.Page}, Title:{dto.Title}");
-            return StatusCode(StatusCodes.Status409Conflict, new { Description = "ProfileGraph [period, page, title] or [period, page, rank] already exists" });
+            return StatusCode(StatusCodes.Status409Conflict, "ProfileGraph [period, page, title] or [period, page, rank] already exists");
         }
 
         return StatusCode(StatusCodes.Status204NoContent);
     }
 
-    [HttpPut("modify/{existingProfileGraphIdBase64}")]
+    [HttpPut("")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public ActionResult PutProfileGraph([BindRequired, FromRoute] string existingProfileGraphIdBase64, [FromBody] ProfileGraphDto dto)
+    public ActionResult PutProfileGraph(
+        [BindRequired, FromQuery, StringLength(20, MinimumLength = 1)] string period,
+        [BindRequired, FromQuery, StringLength(32, MinimumLength = 0)] string page,
+        [BindRequired, FromQuery, StringLength(32, MinimumLength = 1)] string title,
+        [BindRequired, FromBody] ProfileGraphDto dto)
     {
-        UpdateProfileGraphId updateProfileGraphId;
-        try
-        {
-            var existingProfileGraphIdJson = Encoding.ASCII.GetString(Convert.FromBase64String(existingProfileGraphIdBase64));
-            updateProfileGraphId = JsonConvert.DeserializeObject<UpdateProfileGraphId>(existingProfileGraphIdJson);
-        }
-        catch (FormatException e)
-        {
-            logger.LogWarning(e, $"Update profile graph failed. Unable to decode existing profile graph id:{existingProfileGraphIdBase64}");
-            return StatusCode(StatusCodes.Status415UnsupportedMediaType, new { Description = "ProfileGraph [period, page, title] unknown" });
-        }
-        catch (JsonException e)
-        {
-            logger.LogWarning(e, $"Update profile graph failed. Unable to decode existing profile graph id:{existingProfileGraphIdBase64}");
-            return StatusCode(StatusCodes.Status415UnsupportedMediaType, new { Description = "ProfileGraph [period, page, title] unknown" });
-        }
+        var serieNames = dto.Series.Select(x => new SeriesName(x.Label, x.ObisCode)).ToList();
+        var profileGraph = new ProfileGraph(dto.Period, dto.Page, dto.Title, dto.Interval, 0, serieNames);
 
-        ProfileGraph profileGraph = null;
-        try
-        {
-            var serieNames = dto.Series.Select(x => new SeriesName(x.Label, x.ObisCode)).ToList();
-            profileGraph = new ProfileGraph(dto.Period, dto.Page, dto.Title, dto.Interval, 0, serieNames);
-        }
-        catch (ArgumentException e)
-        {
-            logger.LogWarning(e, "Update profile graph failed.");
-            return StatusCode(StatusCodes.Status415UnsupportedMediaType);
-        }
-
-        var success = profileGraphRepository.UpdateProfileGraph(updateProfileGraphId.Period, updateProfileGraphId.Page, updateProfileGraphId.Title, profileGraph);
+        var success = profileGraphRepository.UpdateProfileGraph(period, page, title, profileGraph);
         if (!success)
         {
-            logger.LogWarning($"Update profile graph failed. Period:{updateProfileGraphId.Period}, Page:{updateProfileGraphId.Page}, Title:{updateProfileGraphId.Title}. Does not exist.");
+            logger.LogWarning($"Update profile graph failed. Period:{period}, Page:{page}, Title:{title}. Does not exist.");
             return StatusCode(StatusCodes.Status409Conflict, new { Description = "ProfileGraph [period, page, title] does not exist" });
         }
 
         return NoContent();
-    }
-
-    private class UpdateProfileGraphId
-    {
-        public string Period { get; set; }
-        public string Page { get; set; }
-        public string Title { get; set; }
     }
 
     [HttpDelete("")]

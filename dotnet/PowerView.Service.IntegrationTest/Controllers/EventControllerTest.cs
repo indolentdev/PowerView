@@ -66,7 +66,7 @@ public class EventControllerTest
     public async Task GetMeterEvents_Leak()
     {
         // Arrange
-        var dt = DateTime.UtcNow;
+        var dt = new DateTime(637950601049991234, DateTimeKind.Utc);
         var meterEvent = new MeterEvent("lbl", dt, true,
                               new LeakMeterEventAmplification(dt.Subtract(TimeSpan.FromHours(20)), dt.Subtract(TimeSpan.FromHours(10)), new UnitValue(44.55d, Unit.DegreeCelsius)));
         SetupProfileRepositoryGetMonthProfileSet(meterEvent);

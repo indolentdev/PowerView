@@ -32,7 +32,6 @@ const constLocal = {
   profileGraphs: "settings/profilegraphs",
   profileGraphsSwaprank: "settings/profilegraphs/swaprank",
   profileGraphsSeries: "settings/profilegraphs/series",
-  profileGraphsModify: "settings/profilegraphs/modify",
   serieColors: "settings/seriecolors",
   smtp: "settings/smtp"
 };
@@ -188,17 +187,18 @@ export class SettingsService {
 
     var httpErrorResponse = error as HttpErrorResponse;
     switch(httpErrorResponse.status) {
+      case 400:
+        return AddProfileGraphError.RequestContentIncomplete;
       case 409:
         return AddProfileGraphError.RequestContentDuplicate;
-      case 415:
-        return AddProfileGraphError.RequestContentIncomplete;
       default:
         return AddProfileGraphError.UnspecifiedError;
     }
   }
 
-  public updateProfileGraph(periodGraphIdBase64: string, profileGraph: ProfileGraph): Observable<any> {
-    return this.dataService.put(constLocal.profileGraphsModify + '/' + periodGraphIdBase64, profileGraph)
+  public updateProfileGraph(period: string, page: string, title: string, profileGraph: ProfileGraph): Observable<any> {
+    var params = new HttpParams().set("period", period).set("page", page).set("title", title);
+    return this.dataService.put(constLocal.profileGraphs, profileGraph, params)
     .pipe(catchError(error => {
       return throwError(this.convertToUpdateProfileGraphError(error));
     }));
@@ -211,10 +211,10 @@ export class SettingsService {
 
     var httpErrorResponse = error as HttpErrorResponse;
     switch(httpErrorResponse.status) {
+      case 400:
+        return UpdateProfileGraphError.RequestContentIncomplete;
       case 409:
         return UpdateProfileGraphError.ExistingProfileGraphAbsent;
-      case 415:
-        return UpdateProfileGraphError.RequestContentIncomplete;
       default:
         return UpdateProfileGraphError.UnspecifiedError;
     }
