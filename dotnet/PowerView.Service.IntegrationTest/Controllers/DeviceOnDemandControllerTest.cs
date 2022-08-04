@@ -1,20 +1,14 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
-using System.Text.Json;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NUnit.Framework;
 using PowerView.Model;
-using PowerView.Model.Repository;
-using PowerView.Service.Controllers;
 using PowerView.Service.DisconnectControl;
-using PowerView.Service.Dtos;
 
 namespace PowerView.Service.IntegrationTest;
 

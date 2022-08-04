@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Net;
@@ -12,8 +10,6 @@ using Moq;
 using NUnit.Framework;
 using PowerView.Model;
 using PowerView.Model.Repository;
-using PowerView.Service.Controllers;
-using PowerView.Service.Dtos;
 using PowerView.Service.Mappers;
 
 namespace PowerView.Service.IntegrationTest;

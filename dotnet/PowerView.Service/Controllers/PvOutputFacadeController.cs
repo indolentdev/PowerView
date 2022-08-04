@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using PowerView.Model;
@@ -36,6 +37,7 @@ public class PvOutputFacadeController : ControllerBase
     [HttpPost("addstatus.jsp")]
     public ActionResult AddStatus()
     {
+        ControllerContext.HttpContext.Features.Get<IHttpBodyControlFeature>().AllowSynchronousIO = true;
         Request.EnableBuffering();
 
         IHttpWebResponse forwardResponse;
@@ -150,6 +152,12 @@ public class PvOutputFacadeController : ControllerBase
 
     private void StoreValues(HttpRequest request)
     {
+        if (string.IsNullOrEmpty(options.PvDeviceLabel))
+        {
+            logger.LogInformation("Configuration PvDeviceLabel is empty or absent. PvDeviceLabel must be configured for PowerView to capture PV readings.");
+            return;
+        }
+
         var url = new Uri(request.GetEncodedUrl());
         var liveReading = liveReadingMapper.MapPvOutputArgs(url, request.Headers.ContentType, request.Body,
           options.PvDeviceLabel, options.PvDeviceId, options.PvDeviceIdParam,
