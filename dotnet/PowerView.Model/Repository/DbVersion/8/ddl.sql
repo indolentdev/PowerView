@@ -1,2 +1,0 @@
-CREATE TABLE MeterEvent (Id INTEGER PRIMARY KEY, Label NVARCHAR(10) NOT NULL, MeterEventType NVARCHAR(32) NOT NULL, DetectTimestamp DATETIME NOT NULL, Flag INTEGER NOT NULL, Amplification NVARCHAR(512) NOT NULL);
-CREATE INDEX MeterEventIX ON MeterEvent (Label, MeterEventType);

@@ -14,7 +14,7 @@ namespace PowerView.Model.Test.Repository
     [OneTimeSetUp]
     public void TestFixtureSetUp()
     {
-      dbContextFactory = new DbContextFactory(":memory:");
+      dbContextFactory = new DbContextFactory(new DatabaseOptions { Name = ":memory:" });
     }
 
     [SetUp]

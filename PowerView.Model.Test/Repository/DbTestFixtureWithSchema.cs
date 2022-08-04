@@ -1,4 +1,5 @@
 using PowerView.Model.Repository;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace PowerView.Model.Test.Repository
 {
@@ -8,7 +9,7 @@ namespace PowerView.Model.Test.Repository
     {
       base.SetUp();
 
-      new DbUpgrade(DbContext).ApplyUpdates();
+      new DbUpgrade(new NullLogger<DbUpgrade>(), DbContext).ApplyUpdates();
     }
   }
 }

@@ -3,128 +3,123 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using log4net;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace PowerView.Model.Repository
 {
-  /// <summary>
-  /// Performs poor mans backup of the database file by using file copying.
-  /// Applies this strategy becasue the Mono.Data.Sqlite assembly does not support
-  /// the online backup api.
-  /// </summary>
-  internal class DbBackup : IDbBackup
-  {
-    private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
-    internal const string BackupPath = "DbBackup";
-    private readonly string dbName;
-    private readonly TimeSpan minimumTimeSpan;
-    private readonly int maxBackupCount;
-
-    public DbBackup(string dbName, TimeSpan minimumTimeSpan, int maxBackupCount)
+    /// <summary>
+    /// Performs poor mans backup of the database file by using file copying.
+    /// Applies this strategy becasue the Mono.Data.Sqlite assembly does not support
+    /// the online backup api.
+    /// </summary>
+    internal class DbBackup : IDbBackup
     {
-      if ( string.IsNullOrEmpty(dbName) ) throw new ArgumentNullException("dbName");
-      if ( minimumTimeSpan.TotalDays < 14 ) throw new ArgumentOutOfRangeException("minimumTimeSpan", "Must be minimum 14 days");
-      if ( maxBackupCount < 1 || maxBackupCount > 10 ) throw new ArgumentOutOfRangeException("maxBackupCount", "Must be between 1 and 10");
+        internal const string BackupPath = "DbBackup";
+        private readonly ILogger logger;
+        private readonly IOptions<DatabaseOptions> dbOptions;
+        private readonly IOptions<DatabaseBackupOptions> bckOptions;
 
-      this.dbName = dbName;
-      this.minimumTimeSpan = minimumTimeSpan;
-      this.maxBackupCount = maxBackupCount;
-    }
-
-    public void BackupDatabaseAsNeeded(bool force)
-    {
-      var dbPath = GetDbPath();
-      var dbFile = Path.GetFileName(dbName);
-
-      var backupPath = new DirectoryInfo(Path.Combine(dbPath, BackupPath));
-      if (!backupPath.Exists)
-      {
-        try
+        public DbBackup(ILogger<DbBackup> logger, IOptions<DatabaseOptions> dbOptions, IOptions<DatabaseBackupOptions> bckOptions)
         {
-          backupPath.Create();
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.dbOptions = dbOptions ?? throw new ArgumentNullException(nameof(dbOptions));
+            this.bckOptions = bckOptions ?? throw new ArgumentNullException(nameof(bckOptions));
         }
-        catch (IOException e)
+
+        public void BackupDatabaseAsNeeded(bool force)
         {
-          log.Error("Failed to create databaes backup directory. Skipping database backup.", e);
-          return;
+            var dbPath = GetDbPath();
+            var dbFile = Path.GetFileName(dbOptions.Value.Name);
+
+            var backupPath = new DirectoryInfo(Path.Combine(dbPath, BackupPath));
+            if (!backupPath.Exists)
+            {
+                try
+                {
+                    backupPath.Create();
+                }
+                catch (IOException e)
+                {
+                    logger.LogError(e, "Failed to create databaes backup directory. Skipping database backup.");
+                    return;
+                }
+            }
+
+            BackupAsNeeded(force, dbPath, dbFile, backupPath);
+            RemoveObsoleteBackup(dbFile, backupPath);
         }
-      }
 
-      BackupAsNeeded(force, dbPath, dbFile, backupPath);
-      RemoveObsoleteBackup(dbFile, backupPath);
-    }
-
-    private string GetDbPath()
-    {
-      var dbPath = Path.GetDirectoryName(dbName);
-      if (dbPath == string.Empty)
-      {
-        dbPath = Environment.CurrentDirectory;
-      }
-      return dbPath;
-    }
-
-    private void BackupAsNeeded(bool force, string dbPath, string dbFile, DirectoryInfo backupPath)
-    {
-      var backupFilesAscending = backupPath.GetFiles("*" + dbFile, SearchOption.TopDirectoryOnly).OrderBy(f => f.Name).ToArray();
-
-      if (force || !backupFilesAscending.Any() || DateTime.Now - GetMostRecentBackup(backupFilesAscending.Last().Name) > minimumTimeSpan)
-      {
-        log.InfoFormat("Backing up database to {0}", backupPath.FullName);
-        var dt = DateTime.Now;
-        var backupTime = dt.ToString("yyyyMMdd", CultureInfo.InvariantCulture);
-        foreach (var sourceFile in new DirectoryInfo(dbPath).GetFiles(dbFile + "*", SearchOption.TopDirectoryOnly))
+        private string GetDbPath()
         {
-          try
-          {
-            sourceFile.CopyTo(Path.Combine(backupPath.FullName, backupTime + "_" + sourceFile.Name));
-          }
-          catch (IOException e)
-          {
-            log.Error("Failed to copy database files to backup directory. Skipping database backup.", e);
-            return;
-          }
-          catch (UnauthorizedAccessException e)
-          {
-            log.Error("Failed to copy database files to backup directory. Skipping database backup.", e);
-            return;
-          }
+            var dbPath = Path.GetDirectoryName(dbOptions.Value.Name);
+            if (dbPath == string.Empty)
+            {
+                dbPath = Environment.CurrentDirectory;
+            }
+            return dbPath;
         }
-        log.InfoFormat("Database backup complete");
-      }
-    }
 
-    private static DateTime GetMostRecentBackup(string backupFileName)
-    {
-      return DateTime.ParseExact(backupFileName.Substring(0, 8), "yyyyMMdd", CultureInfo.InvariantCulture);
-    }
-
-    private void RemoveObsoleteBackup(string dbFile, DirectoryInfo backupPath)
-    {
-      var backupFilesAscending = backupPath.GetFiles("*" + dbFile, SearchOption.TopDirectoryOnly).OrderBy(f => f.Name).ToArray();
-      if (backupFilesAscending.Length > maxBackupCount)
-      {
-        var obsoleteBackup = backupFilesAscending.First();
-        foreach (var backupFile in new DirectoryInfo(obsoleteBackup.DirectoryName).GetFiles(obsoleteBackup.Name + "*", SearchOption.TopDirectoryOnly))
+        private void BackupAsNeeded(bool force, string dbPath, string dbFile, DirectoryInfo backupPath)
         {
-          log.DebugFormat("Removing obsolete database backup file:{0}", backupFile.FullName);
-          try
-          {
-            backupFile.Delete();
-          }
-          catch (IOException e)
-          {
-            log.Warn("Failed to delete database files from backup directory. Database files may be accumulating.", e);
-            return;
-          }
-          catch (UnauthorizedAccessException e)
-          {
-            log.Warn("Failed to delete database files from backup directory. Database files may be accumulating.", e);
-            return;
-          }
+            var backupFilesAscending = backupPath.GetFiles("*" + dbFile, SearchOption.TopDirectoryOnly).OrderBy(f => f.Name).ToArray();
+
+            if (force || !backupFilesAscending.Any() || DateTime.Now - GetMostRecentBackup(backupFilesAscending.Last().Name) > bckOptions.Value.MinimumInterval)
+            {
+                logger.LogInformation($"Backing up database to {backupPath.FullName}");
+                var dt = DateTime.Now;
+                var backupTime = dt.ToString("yyyyMMdd", CultureInfo.InvariantCulture);
+                foreach (var sourceFile in new DirectoryInfo(dbPath).GetFiles(dbFile + "*", SearchOption.TopDirectoryOnly))
+                {
+                    try
+                    {
+                        sourceFile.CopyTo(Path.Combine(backupPath.FullName, backupTime + "_" + sourceFile.Name));
+                    }
+                    catch (IOException e)
+                    {
+                        logger.LogError(e, "Failed to copy database files to backup directory. Skipping database backup.");
+                        return;
+                    }
+                    catch (UnauthorizedAccessException e)
+                    {
+                        logger.LogError(e, "Failed to copy database files to backup directory. Skipping database backup.");
+                        return;
+                    }
+                }
+                logger.LogInformation("Database backup complete");
+            }
         }
-      }
+
+        private static DateTime GetMostRecentBackup(string backupFileName)
+        {
+            return DateTime.ParseExact(backupFileName.Substring(0, 8), "yyyyMMdd", CultureInfo.InvariantCulture);
+        }
+
+        private void RemoveObsoleteBackup(string dbFile, DirectoryInfo backupPath)
+        {
+            var backupFilesAscending = backupPath.GetFiles("*" + dbFile, SearchOption.TopDirectoryOnly).OrderBy(f => f.Name).ToArray();
+            if (backupFilesAscending.Length > bckOptions.Value.MaximumCount)
+            {
+                var obsoleteBackup = backupFilesAscending.First();
+                foreach (var backupFile in new DirectoryInfo(obsoleteBackup.DirectoryName).GetFiles(obsoleteBackup.Name + "*", SearchOption.TopDirectoryOnly))
+                {
+                    logger.LogDebug($"Removing obsolete database backup file:{backupFile.FullName}");
+                    try
+                    {
+                        backupFile.Delete();
+                    }
+                    catch (IOException e)
+                    {
+                        logger.LogWarning(e, "Failed to delete database files from backup directory. Database files may be accumulating.");
+                        return;
+                    }
+                    catch (UnauthorizedAccessException e)
+                    {
+                        logger.LogWarning(e, "Failed to delete database files from backup directory. Database files may be accumulating.");
+                        return;
+                    }
+                }
+            }
+        }
     }
-  }
 }

@@ -46,7 +46,7 @@ namespace PowerView.Model.Test.Repository
       target.AddEmailMessage(frm, to, subject, body);
 
       // Assert
-      var emailMessages = DbContext.QueryTransaction<Db.EmailMessage>("",
+      var emailMessages = DbContext.QueryTransaction<Db.EmailMessage>(
         "SELECT * FROM EmailMessage WHERE FromName=@fromName AND FromEmailAddress=@fromEmailAddress AND ToName=@toName AND ToEmailAddress=@toEmailAddress AND Subject=@subject AND Body=@body",
         new { fromName = frm.Name, fromEmailAddress = frm.EmailAddress, toName = to.Name, toEmailAddress = to.EmailAddress, subject, body });
       Assert.That(emailMessages.Count, Is.EqualTo(1));

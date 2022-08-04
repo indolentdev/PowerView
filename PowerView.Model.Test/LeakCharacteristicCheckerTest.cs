@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace PowerView.Model.Test
 {
@@ -15,7 +16,7 @@ namespace PowerView.Model.Test
       var labelSeries = new LabelSeries<NormalizedDurationRegisterValue>("Lbl", new Dictionary<ObisCode, IEnumerable<NormalizedDurationRegisterValue>>());
       var obisCode = ObisCode.ColdWaterVolume1Delta;
       var dateTime = DateTime.UtcNow;
-      var target = new LeakCharacteristicChecker();
+      var target = new LeakCharacteristicChecker(new NullLogger<LeakCharacteristicChecker>());
 
       // Act & Assert
       Assert.That(() => target.GetLeakCharacteristic(null, obisCode, dateTime, dateTime), Throws.TypeOf<ArgumentNullException>());
@@ -37,7 +38,7 @@ namespace PowerView.Model.Test
       var labelSeries = new LabelSeries<NormalizedDurationRegisterValue>("Label", normalizedDurationRegisterValues);
       var start = new DateTime(2016, 12, 29, 0, 0, 0, DateTimeKind.Utc);
       var end = new DateTime(2016, 12, 29, 6, 0, 0, DateTimeKind.Utc);
-      var target = new LeakCharacteristicChecker();
+      var target = new LeakCharacteristicChecker(new NullLogger<LeakCharacteristicChecker>());
 
       // Act
       var leakCharacteristic = target.GetLeakCharacteristic(labelSeries, oc, start, end);
@@ -59,7 +60,7 @@ namespace PowerView.Model.Test
       var labelSeries = new LabelSeries<NormalizedDurationRegisterValue>("Label", normalizedDurationRegisterValues);
       var start = new DateTime(2016, 12, 29, 0, 0, 0, DateTimeKind.Utc);
       var end = new DateTime(2016, 12, 29, 6, 0, 0, DateTimeKind.Utc);
-      var target = new LeakCharacteristicChecker();
+      var target = new LeakCharacteristicChecker(new NullLogger<LeakCharacteristicChecker>());
 
       // Act
       var leakCharacteristic = target.GetLeakCharacteristic(labelSeries, oc, start, end);
@@ -81,7 +82,7 @@ namespace PowerView.Model.Test
       var labelSeries = new LabelSeries<NormalizedDurationRegisterValue>("Label", normalizedDurationRegisterValues);
       var start = new DateTime(2016, 12, 29, 0, 0, 0, DateTimeKind.Utc);
       var end = new DateTime(2016, 12, 29, 6, 0, 0, DateTimeKind.Utc);
-      var target = new LeakCharacteristicChecker();
+      var target = new LeakCharacteristicChecker(new NullLogger<LeakCharacteristicChecker>());
 
       // Act
       var leakCharacteristic = target.GetLeakCharacteristic(labelSeries, oc, start, end);

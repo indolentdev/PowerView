@@ -3,14 +3,11 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using log4net;
 
 namespace PowerView.Model.Repository
 {
   internal class ProfileRepository : RepositoryBase, IProfileRepository
   {
-    private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
     public ProfileRepository(IDbContext dbContext)
       : base(dbContext)
     {
@@ -37,21 +34,16 @@ namespace PowerView.Model.Repository
       if (start.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("start", "Must be UTC");
       if (end.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("end", "Must be UTC");
 
-      if (log.IsDebugEnabled) log.DebugFormat("Getting LabelSeriesSet using preStart:{0}, start:{1}, end:{2}",
-        preStart.ToString(CultureInfo.InvariantCulture), start.ToString(CultureInfo.InvariantCulture), end.ToString(CultureInfo.InvariantCulture));
-
       var sqlQuery = @"
 SELECT rea.Label,rea.DeviceId,rea.Timestamp,reg.ObisCode,reg.Value,reg.Scale,reg.Unit 
 FROM {0} AS rea JOIN {1} AS reg ON rea.Id=reg.ReadingId
 WHERE rea.Timestamp >= @From AND rea.Timestamp < @To;";
       sqlQuery = string.Format(CultureInfo.InvariantCulture, sqlQuery, readingTable, registerTable);
-      log.DebugFormat("Querying {0}", readingTable);
 
-      var resultSet = DbContext.QueryTransaction("GetLabelSeriesSet", sqlQuery, new { From = preStart, To = end });
+      var resultSet = DbContext.QueryTransaction(sqlQuery, new { From = preStart, To = end });
 
       var labelSeries = GetLabelSeries(resultSet);
 
-      log.DebugFormat("Assembeled LabelSeriesSet args");
       return new TimeRegisterValueLabelSeriesSet(start, end, labelSeries);
     }
 

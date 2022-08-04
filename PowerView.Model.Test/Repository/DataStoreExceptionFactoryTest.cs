@@ -1,4 +1,4 @@
-﻿using Mono.Data.Sqlite;
+﻿using System.Data.SQLite;
 using NUnit.Framework;
 using PowerView.Model.Repository;
 
@@ -37,7 +37,7 @@ namespace PowerView.Model.Test.Repository
     public void CreateDataStoreException()
     {
       // Arrange
-      var sqliteException = new SqliteException(); // unspecified exception..
+      var sqliteException = new SQLiteException(); // unspecified exception..
 
       // Act
       var dse = DataStoreExceptionFactory.Create(sqliteException);
@@ -51,7 +51,7 @@ namespace PowerView.Model.Test.Repository
     public void CreateDataStoreBusyException()
     {
       // Arrange
-      var sqliteException = new SqliteException((int)SQLiteErrorCode.Busy, "stuff");
+      var sqliteException = new SQLiteException(SQLiteErrorCode.Busy, "stuff");
 
       // Act
       var dse = DataStoreExceptionFactory.Create(sqliteException);
@@ -65,7 +65,7 @@ namespace PowerView.Model.Test.Repository
     public void CreateDataStoreCorruptException()
     {
       // Arrange
-      var sqliteException = new SqliteException((int)SQLiteErrorCode.Corrupt, "stuff");
+      var sqliteException = new SQLiteException(SQLiteErrorCode.Corrupt, "stuff");
 
       // Act
       var dse = DataStoreExceptionFactory.Create(sqliteException);
@@ -79,7 +79,7 @@ namespace PowerView.Model.Test.Repository
     public void CreateDataStoreUniqueConstraintException()
     {
       // Arrange
-      var sqliteException = new SqliteException((int)SQLiteErrorCode.Constraint, "stuff..UNIQUE..stuff");
+      var sqliteException = new SQLiteException(SQLiteErrorCode.Constraint, "stuff..UNIQUE..stuff");
 
       // Act
       var dse = DataStoreExceptionFactory.Create(sqliteException);

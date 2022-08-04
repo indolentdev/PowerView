@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 using PowerView.Model;
 using PowerView.Service.Dtos;
@@ -13,132 +14,6 @@ namespace PowerView.Service.Test.Mappers
   {
     private const string ApplicationJson = "application/json";
     private const string ApplicationFormUrlEncoded = "application/x-www-form-urlencoded";
-
-    [Test]
-    public void MapThrows()
-    {
-      // Arrange
-      var stream = new MemoryStream();
-      var target = CreateTarget();
-
-      // Act & Assert
-      Assert.That(() => target.Map(string.Empty, stream), Throws.TypeOf<ArgumentNullException>());
-      Assert.That(() => target.Map(null, stream), Throws.TypeOf<ArgumentNullException>());
-      Assert.That(() => target.Map("whatnot", stream), Throws.TypeOf<ArgumentOutOfRangeException>());
-      Assert.That(() => target.Map(ApplicationJson, null), Throws.TypeOf<ArgumentNullException>());
-    }
-
-    [Test]
-    [TestCase("Bad JSON", "Json invalid")]
-    [TestCase("{}", "Items array absent")]
-    [TestCase("{\"Items\":[{\"DeviceId\":\"sn\",\"Timestamp\":\"2020-03-07T21:44:22Z\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":2,\"Scale\":1,\"Unit\":\"watt\"}]}]}", "Label property absent")]
-    [TestCase("{\"Items\":[{\"Label\":null,\"DeviceId\":\"sn\",\"Timestamp\":\"2020-03-07T21:44:22Z\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":2,\"Scale\":1,\"Unit\":\"watt\"}]}]}", "Label property null")]
-    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"Timestamp\":\"2020-03-07T21:44:22Z\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":2,\"Scale\":1,\"Unit\":\"watt\"}]}]}", "DeviceId property absent")]
-    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"DeviceId\":null,\"Timestamp\":\"2020-03-07T21:44:22Z\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":2,\"Scale\":1,\"Unit\":\"watt\"}]}]}", "DeviceId property null")]
-    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"DeviceId\":\"sn\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":2,\"Scale\":1,\"Unit\":\"watt\"}]}]}", "Timestamp property absent")]
-    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"DeviceId\":\"sn\",\"Timestamp\":\"2020-03-07Q21:44:22Z\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":2,\"Scale\":1,\"Unit\":\"watt\"}]}]}", "Timestamp property invalid format")]
-    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"DeviceId\":\"sn\",\"Timestamp\":\"2020-03-07T21:44:22\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":2,\"Scale\":1,\"Unit\":\"watt\"}]}]}", "Timestamp property not UTC")]
-    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"DeviceId\":\"sn\",\"Timestamp\":\"2020-03-07T21:44:22Z\"}]}", "RegisterValues property absent")]
-    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"DeviceId\":\"sn\",\"Timestamp\":\"2020-03-07T21:44:22Z\",\"RegisterValues\":[{\"Value\":2,\"Scale\":1,\"Unit\":\"watt\"}]}]}", "ObisCode property absent")]
-    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"DeviceId\":\"sn\",\"Timestamp\":\"2020-03-07T21:44:22Z\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Scale\":1,\"Unit\":\"watt\"}]}]}", "Value property absent")]
-    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"DeviceId\":\"sn\",\"Timestamp\":\"2020-03-07T21:44:22Z\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":\"BAD\",\"Scale\":1,\"Unit\":\"watt\"}]}]}", "Value property invalid")]
-    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"DeviceId\":\"sn\",\"Timestamp\":\"2020-03-07T21:44:22Z\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":2,\"Unit\":\"watt\"}]}]}", "Scale property absent")]
-    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"DeviceId\":\"sn\",\"Timestamp\":\"2020-03-07T21:44:22Z\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":2,\"Scale\":\"BAD\",\"Unit\":\"watt\"}]}]}", "Scale property invalid")]
-    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"DeviceId\":\"sn\",\"Timestamp\":\"2020-03-07T21:44:22Z\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":2,\"Scale\":1}]}]}", "Unit property absent")]
-    [TestCase("{\"Items\":[{\"Label\":\"lbl\",\"DeviceId\":\"sn\",\"Timestamp\":\"2020-03-07T21:44:22Z\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":2,\"Scale\":1,\"Unit\":\"BADUNIT\"}]}]}", "Unit property invalid")]
-    public void MapInvalidJsonThrows(string json, string message)
-    {
-      // Arrange
-      var stream = GetStream(json);
-      var target = CreateTarget();
-
-      // Act & Assert
-      Assert.That(() => target.Map(ApplicationJson, stream).ToArray(), Throws.TypeOf<ArgumentOutOfRangeException>(), message);
-    }
-
-    [Test]
-    public void Map()
-    {
-      // Arrange
-      var rv1 = new RegisterValueDto { ObisCode = "1.2.3.4.5.6", Value = 2, Scale = 1, Unit = "watt" };
-      var rv2 = new RegisterValueDto { ObisCode = "6.5.4.3.2.1", Value = 20, Scale = 10, Unit = "wattHOUR" };
-      var rvs = new [] { rv1, rv2 };
-      var lr = new { Label = "lbl", DeviceId="4", Timestamp = DateTime.UtcNow, RegisterValues = rvs };
-      var dto = new { Items = new [] { lr } };
-      var stream = GetStream(dto);
-      var target = CreateTarget();
-
-      // Act
-      var liveReadings = target.Map(ApplicationJson, stream).ToArray();
-
-      // Assert
-      Assert.That(liveReadings, Has.Length.EqualTo(1));
-      var liveReading = liveReadings.First();
-      Assert.That(liveReading.Label, Is.EqualTo(lr.Label));
-      Assert.That(liveReading.DeviceId, Is.EqualTo(lr.DeviceId));
-      Assert.That(liveReading.Timestamp, Is.EqualTo(lr.Timestamp));
-      var registerValues = liveReading.GetRegisterValues();
-      Assert.That(registerValues, Has.Count.EqualTo(rvs.Length));
-      AssertRegisterValue(rv1, registerValues.First());
-      AssertRegisterValue(rv2, registerValues.Last());
-    }
-
-    [Test]
-    public void MapDeviceIdInteger()
-    {
-      // Arrange
-      var rv1 = new RegisterValueDto { ObisCode = "1.2.3.4.5.6", Value = 2, Scale = 1, Unit = "watt" };
-      var rvs = new[] { rv1 };
-      var lr = new { Label = "lbl", DeviceId=4, Timestamp = DateTime.UtcNow, RegisterValues = rvs };
-      var dto = new  { Items = new[] { lr } };
-      var stream = GetStream(dto);
-      var target = CreateTarget();
-
-      // Act
-      var liveReadings = target.Map(ApplicationJson, stream).ToArray();
-
-      // Assert
-      Assert.That(liveReadings, Has.Length.EqualTo(1));
-      var liveReading = liveReadings.First();
-      Assert.That(liveReading.DeviceId, Is.EqualTo(lr.DeviceId.ToString()));
-    }
-
-    [Test]
-    public void MapSerialNumberCascadeToDeviceId()
-    {
-      // Arrange
-      var rv1 = new RegisterValueDto { ObisCode = "1.2.3.4.5.6", Value = 2, Scale = 1, Unit = "watt" };
-      var rvs = new[] { rv1 };
-      var lr = new { Label = "lbl", SerialNumber = "4", Timestamp = DateTime.UtcNow, RegisterValues = rvs };
-      var dto = new { Items = new[] { lr } };
-      var stream = GetStream(dto);
-      var target = CreateTarget();
-
-      // Act
-      var liveReadings = target.Map(ApplicationJson, stream).ToArray();
-
-      // Assert
-      Assert.That(liveReadings, Has.Length.EqualTo(1));
-      var liveReading = liveReadings.First();
-      Assert.That(liveReading.DeviceId, Is.EqualTo(lr.SerialNumber.ToString()));
-    }
-
-    [Test]
-    public void MapWithAdditionallyQualifiedContentType()
-    {
-      // Arrange
-      var rvs = new [] { new RegisterValueDto { ObisCode = "6.5.4.3.2.1", Unit = "wattHOUR" } };
-      var lr = new { Label = "lbl", DeviceId = "5", Timestamp = DateTime.UtcNow, RegisterValues = rvs };
-      var dto = new { Items = new [] { lr } };
-      var stream = GetStream(dto);
-      var target = CreateTarget();
-
-      // Act
-      var liveReadings = target.Map("application/json; charset=UTF-8", stream).ToArray();
-
-      // Assert
-      Assert.That(liveReadings, Has.Length.EqualTo(1));
-    }
 
     [Test]
     public void MapPvOutputArgsThrows()
@@ -187,8 +62,8 @@ namespace PowerView.Service.Test.Mappers
       Assert.That(liveReading.Timestamp.Kind, Is.EqualTo(DateTimeKind.Utc));
       var registerValues = liveReading.GetRegisterValues();
       Assert.That(registerValues, Has.Count.EqualTo(2));
-      AssertRegisterValue(new RegisterValueDto { ObisCode=ObisCode.ElectrActiveEnergyA23.ToString(), Value=123, Scale=0, Unit="watthour" }, registerValues.First());
-      AssertRegisterValue(new RegisterValueDto { ObisCode=ObisCode.ElectrActualPowerP23.ToString(), Value=456, Scale=0, Unit="watt" }, registerValues.Last());
+      AssertRegisterValue(new RegisterValueDto { ObisCode=ObisCode.ElectrActiveEnergyA23.ToString(), Value=123, Scale=0, Unit=Unit.WattHour }, registerValues.First());
+      AssertRegisterValue(new RegisterValueDto { ObisCode=ObisCode.ElectrActualPowerP23.ToString(), Value=456, Scale=0, Unit=Unit.Watt }, registerValues.Last());
     }
 
     [Test]
@@ -212,8 +87,8 @@ namespace PowerView.Service.Test.Mappers
       Assert.That(liveReading.Timestamp.Kind, Is.EqualTo(DateTimeKind.Utc));
       var registerValues = liveReading.GetRegisterValues();
       Assert.That(registerValues, Has.Count.EqualTo(2));
-      AssertRegisterValue(new RegisterValueDto{ ObisCode=ObisCode.ElectrActiveEnergyA23.ToString(),Value=123,Scale=0,Unit="watthour" }, registerValues.First());
-      AssertRegisterValue(new RegisterValueDto{ ObisCode=ObisCode.ElectrActualPowerP23.ToString(),Value=456,Scale=0,Unit="watt" }, registerValues.Last());
+      AssertRegisterValue(new RegisterValueDto{ ObisCode=ObisCode.ElectrActiveEnergyA23.ToString(),Value=123,Scale=0,Unit=Unit.WattHour }, registerValues.First());
+      AssertRegisterValue(new RegisterValueDto{ ObisCode=ObisCode.ElectrActualPowerP23.ToString(),Value=456,Scale=0,Unit=Unit.Watt }, registerValues.Last());
     }
 
     [Test]
@@ -436,9 +311,9 @@ namespace PowerView.Service.Test.Mappers
       // Assert
       var registerValues = liveReading.GetRegisterValues();
       Assert.That(registerValues, Has.Count.EqualTo(4));
-      AssertRegisterValue(new RegisterValueDto { ObisCode=ObisCode.ElectrActualPowerP23L1.ToString(), Value=22, Scale=0, Unit="watt" }, registerValues[1]);
-      AssertRegisterValue(new RegisterValueDto { ObisCode=ObisCode.ElectrActualPowerP23L2.ToString(), Value=33, Scale=0, Unit="watt" }, registerValues[2]);
-      AssertRegisterValue(new RegisterValueDto { ObisCode=ObisCode.ElectrActualPowerP23L3.ToString(), Value=44, Scale=0, Unit="watt" }, registerValues[3]);
+      AssertRegisterValue(new RegisterValueDto { ObisCode=ObisCode.ElectrActualPowerP23L1.ToString(), Value=22, Scale=0, Unit=Unit.Watt }, registerValues[1]);
+      AssertRegisterValue(new RegisterValueDto { ObisCode=ObisCode.ElectrActualPowerP23L2.ToString(), Value=33, Scale=0, Unit=Unit.Watt }, registerValues[2]);
+      AssertRegisterValue(new RegisterValueDto { ObisCode=ObisCode.ElectrActualPowerP23L3.ToString(), Value=44, Scale=0, Unit=Unit.Watt }, registerValues[3]);
     }
 
     [Test]
@@ -465,12 +340,12 @@ namespace PowerView.Service.Test.Mappers
       Assert.That(rv.ObisCode.ToString(), Is.EqualTo(dto.ObisCode));
       Assert.That(rv.Value, Is.EqualTo(dto.Value));
       Assert.That(rv.Scale, Is.EqualTo(dto.Scale));
-      Assert.That(rv.Unit.ToString().ToLower(), Is.EqualTo(dto.Unit.ToLower()));
+      Assert.That(rv.Unit.ToString().ToLower(), Is.EqualTo(dto.Unit.Value.ToString().ToLower()));
     }
 
     private static LiveReadingMapper CreateTarget()
     {
-      return new LiveReadingMapper();
+      return new LiveReadingMapper(new NullLogger<LiveReadingMapper>());
     }
 
     private static Stream GetStream(object dto)

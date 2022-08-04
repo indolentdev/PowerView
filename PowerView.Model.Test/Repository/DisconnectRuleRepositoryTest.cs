@@ -73,7 +73,7 @@ namespace PowerView.Model.Test.Repository
 
     private void AssertDisconnectRuleExists(DisconnectRule disconnectRule, bool not = false)
     {
-      var disconnectRulesDb = DbContext.QueryTransaction<Db.DisconnectRule>("", @"
+      var disconnectRulesDb = DbContext.QueryTransaction<Db.DisconnectRule>(@"
         SELECT * FROM DisconnectRule 
         WHERE Label=@Label AND ObisCode=@ObisCode AND EvaluationLabel=@EvaluationLabel AND EvaluationObisCode=@EvaluationObisCode AND
         DurationSeconds=@TotalSeconds AND DisconnectToConnectValue=@DisconnectToConnectValue AND ConnectToDisconnectValue=@ConnectToDisconnectValue AND Unit=@Unit;",
@@ -126,7 +126,7 @@ namespace PowerView.Model.Test.Repository
       target.DeleteDisconnectRule(sn);
 
       // Assert
-      var disconnectRulesDb = DbContext.QueryTransaction<Db.DisconnectRule>("", 
+      var disconnectRulesDb = DbContext.QueryTransaction<Db.DisconnectRule>(
         "SELECT * FROM DisconnectRule WHERE Label=@Label AND ObisCode=@ObisCode;", new { sn.Label, ObisCode = (long)sn.ObisCode });
       Assert.That(disconnectRulesDb.Count, Is.EqualTo(0));
     }
@@ -234,7 +234,7 @@ namespace PowerView.Model.Test.Repository
 
     private void InsertDisconnectRules(params Db.DisconnectRule[] disconnectRules)
     {
-      DbContext.ExecuteTransaction("",
+      DbContext.ExecuteTransaction(
         "INSERT INTO DisconnectRule (Label,ObisCode,EvaluationLabel,EvaluationObisCode,DurationSeconds,DisconnectToConnectValue,ConnectToDisconnectValue,Unit) VALUES (@Label,@ObisCode,@EvaluationLabel,@EvaluationObisCode,@DurationSeconds,@DisconnectToConnectValue,@ConnectToDisconnectValue,@Unit);",
         disconnectRules);
     }

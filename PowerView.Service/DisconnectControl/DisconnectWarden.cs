@@ -4,25 +4,25 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using PowerView.Model;
-using log4net;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
 
 namespace PowerView.Service.DisconnectControl
 {
   internal class DisconnectWarden : IDisconnectWarden, IDisconnectControlCache
   {
-    private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
-    private readonly IFactory factory;
-    private readonly EventQueue eventQueue;
+    private readonly ILogger logger;
+    private readonly IServiceProvider serviceProvider;
+    private readonly IEventQueue eventQueue;
     private readonly IDisconnectCache disconnectCache;
     private volatile IDictionary<ISeriesName, bool> statusReadCopy;
 
-    public DisconnectWarden(IFactory factory)
+    public DisconnectWarden(ILogger<DisconnectWarden> logger, IServiceProvider serviceProvider, IEventQueue eventQueue)
     {
-      if (factory == null) throw new ArgumentNullException("factory");
-
-      this.factory = factory;
-      eventQueue = new EventQueue();
+      this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+      this.serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+      this.eventQueue = eventQueue ?? throw new ArgumentNullException(nameof(eventQueue));
       disconnectCache = new DisconnectCache();
       statusReadCopy = new Dictionary<ISeriesName, bool>(0);
     }
@@ -44,17 +44,15 @@ namespace PowerView.Service.DisconnectControl
 
     private void ProcessInner(DateTime time, IList<LiveReading> liveReadings)
     {
-      using (var calculator = factory.Create<IDisconnectCalculator>())
-      {
-        calculator.Value.SynchronizeAndCalculate(time, disconnectCache, liveReadings);
-      }
+      var calculator = serviceProvider.GetRequiredService<IDisconnectCalculator>();
+      calculator.SynchronizeAndCalculate(time, disconnectCache, liveReadings);
 
       var newStatus = disconnectCache.GetStatus();
       var statusReadCopyLocal = statusReadCopy; // locking free multithreading
       var changes = newStatus.Except(statusReadCopyLocal).ToList();
       if (changes.Count > 0)
       {
-        log.InfoFormat("Disconnect control changes:{0}", string.Join(", ", changes.Select(x => string.Format(CultureInfo.InvariantCulture, "{0}-{1}:{2}", x.Key.Label, x.Key.ObisCode, x.Value))));
+        logger.LogInformation("Disconnect control changes:{0}", string.Join(", ", changes.Select(x => string.Format(CultureInfo.InvariantCulture, "{0}-{1}:{2}", x.Key.Label, x.Key.ObisCode, x.Value))));
       }
       statusReadCopy = newStatus; // locking free multithreading
     }

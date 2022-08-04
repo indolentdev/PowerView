@@ -2,16 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using log4net;
 using Dapper;
-using Mono.Data.Sqlite;
+using System.Data.SQLite;
 
 namespace PowerView.Model.Repository
 {
   internal class MeterEventRepository : RepositoryBase, IMeterEventRepository
   {
-    private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
     public MeterEventRepository(IDbContext dbContext)
       : base(dbContext)
     {
@@ -19,25 +16,20 @@ namespace PowerView.Model.Repository
 
     public ICollection<MeterEvent> GetLatestMeterEventsByLabel()
     {
-      if (log.IsDebugEnabled) log.DebugFormat("Getting LatestMeterEventsByLabel");
-
       var sql = @"
       SELECT [Label], Max([DetectTimestamp]) AS DetectTimestamp, [Flag], [Amplification]
       FROM [MeterEvent]
       GROUP BY [Label], [MeterEventType]
       ORDER BY [DetectTimestamp]";
 
-      var resultSet = DbContext.QueryTransaction<dynamic>("GetLatestMeterEventsByLabel", sql);
+      var resultSet = DbContext.QueryTransaction<dynamic>(sql);
       var meterEvents = ToMeterEvents(resultSet);
 
-      log.DebugFormat("Assembeled LatestMeterEventsByLabel");
       return meterEvents;
     }
 
     public WithCount<ICollection<MeterEvent>> GetMeterEvents(int skip = 0, int take = 50)
     {
-      if (log.IsDebugEnabled) log.DebugFormat("Getting MeterEvents. Skip:{0}, Take:{1}", skip, take);
-
       IEnumerable<dynamic> resultSet;
       int totalCount; 
 
@@ -46,7 +38,6 @@ namespace PowerView.Model.Repository
       FROM [MeterEvent]
       ORDER BY [Id] DESC
       LIMIT @Take OFFSET @Skip";
-      log.DebugFormat("Querying MeterEvent");
       var transaction = DbContext.BeginTransaction();
       try 
       {
@@ -54,17 +45,14 @@ namespace PowerView.Model.Repository
         totalCount = DbContext.Connection.ExecuteScalar<int>("SELECT count(*) from MeterEvent", null, transaction);
 
         transaction.Commit();
-        log.Debug("Finished query");
       } 
-      catch (SqliteException e) 
+      catch (SQLiteException e) 
       {
         transaction.Rollback();
         throw DataStoreExceptionFactory.Create(e);
       }
 
       var meterEvents = ToMeterEvents(resultSet);
-
-      log.DebugFormat("Assembeled MeterEvents");
 
       return new WithCount<ICollection<MeterEvent>>(totalCount, meterEvents);
     }
@@ -115,7 +103,7 @@ namespace PowerView.Model.Repository
       if (newMeterEvents == null) throw new ArgumentNullException("newMeterEvents");
 
       var dbEntities = newMeterEvents.OrderBy(me => me.DetectTimestamp).Select(ToDbEntity);
-      DbContext.ExecuteTransaction("AddMeterEvents",
+      DbContext.ExecuteTransaction(
         "INSERT INTO MeterEvent (Label,MeterEventType,DetectTimestamp,Flag,Amplification) VALUES (@Label,@MeterEventType,@DetectTimestamp,@Flag,@Amplification);", 
         dbEntities);
     }
@@ -133,7 +121,7 @@ namespace PowerView.Model.Repository
       SELECT Max([Id])
       FROM [MeterEvent]
       WHERE [Flag]=@flag";
-      return DbContext.QueryTransaction<long?>("GetMaxMeterEventId", sql, new { flag = true }).First();
+      return DbContext.QueryTransaction<long?>(sql, new { flag = true }).First();
     }
 
   }

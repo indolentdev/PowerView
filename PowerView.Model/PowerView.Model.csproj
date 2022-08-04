@@ -1,233 +1,32 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{95AB0C37-2CD1-43FC-AE3D-3A31378C4B34}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <RootNamespace>PowerView.Model</RootNamespace>
-    <AssemblyName>PowerView.Model</AssemblyName>
-    <SignAssembly>false</SignAssembly>
-    <AssemblyOriginatorKeyFile>..\PowerView.key</AssemblyOriginatorKeyFile>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release</OutputPath>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="Mono.Data.Sqlite" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Core" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Autofac">
-      <HintPath>..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="log4net">
-      <HintPath>..\packages\log4net.2.0.14\lib\net45\log4net.dll</HintPath>
-    </Reference>
-    <Reference Include="Dapper">
-      <HintPath>..\packages\Dapper.2.0.123\lib\net461\Dapper.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Web" />
+    <EmbeddedResource Include="Repository/DbVersion/*/ddl.sql" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="..\AssemblyInfoShared.cs">
-      <Link>Properties\AssemblyInfoShared.cs</Link>
-    </Compile>
-    <Compile Include="Repository\DbContext.cs" />
-    <Compile Include="Repository\DbContextFactory.cs" />
-    <Compile Include="Repository\IDbContext.cs" />
-    <Compile Include="Repository\IDbContextFactory.cs" />
-    <Compile Include="Repository\DbUpgrade.cs" />
-    <Compile Include="Repository\LiveReadingRepository.cs" />
-    <Compile Include="Repository\ILiveReadingRepository.cs" />
-    <Compile Include="LiveReading.cs" />
-    <Compile Include="Repository\DbBackup.cs" />
-    <Compile Include="Repository\IDbUpgrade.cs" />
-    <Compile Include="ObisCode.cs" />
-    <Compile Include="Unit.cs" />
-    <Compile Include="Repository\IDbBackup.cs" />
-    <Compile Include="RegisterValue.cs" />
-    <Compile Include="TimeRegisterValue.cs" />
-    <Compile Include="ContainerConfiguration.cs" />
-    <Compile Include="Repository\RepositoryBase.cs" />
-    <Compile Include="ProfileViewSet.cs" />
-    <Compile Include="Series.cs" />
-    <Compile Include="SeriesSet.cs" />
-    <Compile Include="Repository\IProfileRepository.cs" />
-    <Compile Include="Repository\ProfileRepository.cs" />
-    <Compile Include="Repository\ReadingPipeRepository.cs" />
-    <Compile Include="Repository\ReadingPipeRepositoryHelper.cs" />
-    <Compile Include="Repository\IReadingPipeRepository.cs" />
-    <Compile Include="Repository\Db.cs" />
-    <Compile Include="Repository\SettingRepository.cs" />
-    <Compile Include="Repository\ISettingRepository.cs" />
-    <Compile Include="Repository\DataStoreException.cs" />
-    <Compile Include="Repository\DataStoreExceptionFactory.cs" />
-    <Compile Include="Repository\DataStoreBusyException.cs" />
-    <Compile Include="Repository\DbMigrate.cs" />
-    <Compile Include="Repository\IDbMigrate.cs" />
-    <Compile Include="Repository\IObisColorProvider.cs" />
-    <Compile Include="Repository\ObisColorProvider.cs" />
-    <Compile Include="Repository\ISeriesColorRepository.cs" />
-    <Compile Include="Repository\SeriesColorRepository.cs" />
-    <Compile Include="SeriesColor.cs" />
-    <Compile Include="Repository\ILocationProvider.cs" />
-    <Compile Include="Repository\LocationProvider.cs" />
-    <Compile Include="Repository\Settings.cs" />
-    <Compile Include="MeterEvent.cs" />
-    <Compile Include="Repository\IMeterEventRepository.cs" />
-    <Compile Include="Repository\MeterEventRepository.cs" />
-    <Compile Include="IMeterEventAmplification.cs" />
-    <Compile Include="LeakMeterEventAmplification.cs" />
-    <Compile Include="UnitValue.cs" />
-    <Compile Include="Extensions.cs" />
-    <Compile Include="Repository\MeterEventAmplificationSerializer.cs" />
-    <Compile Include="Repository\EntitySerializationException.cs" />
-    <Compile Include="Repository\IEntityDeserializer.cs" />
-    <Compile Include="Repository\EntityDeserializer.cs" />
-    <Compile Include="Repository\WithCount.cs" />
-    <Compile Include="GaugeValue.cs" />
-    <Compile Include="GaugeValueSet.cs" />
-    <Compile Include="Repository\GaugeRepository.cs" />
-    <Compile Include="GaugeSetName.cs" />
-    <Compile Include="Repository\IGaugeRepository.cs" />
-    <Compile Include="Repository\EmailMessageRepository.cs" />
-    <Compile Include="Repository\IEmailMessageRepository.cs" />
-    <Compile Include="Repository\IEmailRecipientRepository.cs" />
-    <Compile Include="EmailRecipient.cs" />
-    <Compile Include="Repository\EmailRecipientRepository.cs" />
-    <Compile Include="Repository\DataStoreUniqueConstraintException.cs" />
-    <Compile Include="Repository\ProfileGraphRepository.cs" />
-    <Compile Include="Repository\IProfileGraphRepository.cs" />
-    <Compile Include="Repository\SeriesNameRepository.cs" />
-    <Compile Include="Repository\ISeriesNameRepository.cs" />
-    <Compile Include="SeriesName.cs" />
-    <Compile Include="ProfileGraph.cs" />
-    <Compile Include="NamedValue.cs" />
-    <Compile Include="MqttConfig.cs" />
-    <Compile Include="DataException.cs" />
-    <Compile Include="MissingDataException.cs" />
-    <Compile Include="DisconnectRule.cs" />
-    <Compile Include="IDisconnectRule.cs" />
-    <Compile Include="ISeriesName.cs" />
-    <Compile Include="DisconnectCache.cs" />
-    <Compile Include="DisconnectCacheItem.cs" />
-    <Compile Include="IDisconnectCacheItem.cs" />
-    <Compile Include="IDisconnectCache.cs" />
-    <Compile Include="Repository\DisconnectRuleRepository.cs" />
-    <Compile Include="Repository\IDisconnectRuleRepository.cs" />
-    <Compile Include="SmtpConfig.cs" />
-    <Compile Include="BoxCryptor.cs" />
-    <Compile Include="BoxCryptorException.cs" />
-    <Compile Include="DomainConstraintException.cs" />
-    <Compile Include="Repository\DbCheck.cs" />
-    <Compile Include="Repository\DataStoreCorruptException.cs" />
-    <Compile Include="Repository\IDbCheck.cs" />
-    <Compile Include="LabelSeries.cs" />
-    <Compile Include="LabelSeriesSet.cs" />
-    <Compile Include="SeriesGenerators\PeriodSeriesGenerator.cs" />
-    <Compile Include="SeriesGenerators\ISingleInputSeriesGenerator.cs" />
-    <Compile Include="SeriesGenerators\DeltaSeriesGenerator.cs" />
-    <Compile Include="SeriesGenerators\AverageActualSeriesGenerator.cs" />
-    <Compile Include="ProfileGraphIntervalGroup.cs" />
-    <Compile Include="ProfileViewSetSource.cs" />
-    <Compile Include="NormalizedTimeRegisterValue.cs" />
-    <Compile Include="SeriesFromCumulativeGenerator.cs" />
-    <Compile Include="IRegisterValue.cs" />
-    <Compile Include="LeakCharacteristicChecker.cs" />
-    <Compile Include="Repository\EnvironmentRepository.cs" />
-    <Compile Include="Repository\IEnvironmentRepository.cs" />
-    <Compile Include="DateTimeHelper.cs" />
-    <Compile Include="ILocationContext.cs" />
-    <Compile Include="LocationContext.cs" />
-    <Compile Include="Repository\ExportRepository.cs" />
-    <Compile Include="Repository\IExportRepository.cs" />
-    <Compile Include="DeviceId.cs" />
-    <Compile Include="SeriesGenerators\IMultiInputSeriesGenerator.cs" />
-    <Compile Include="NormalizedDurationRegisterValue.cs" />
-    <Compile Include="IntervalGroup.cs" />
-    <Compile Include="TimeRegisterValueLabelSeries.cs" />
-    <Compile Include="TimeRegisterValueLabelSeriesSet.cs" />
-    <Compile Include="SeriesGenerators\DiffByTimeSeriesGenerator.cs" />
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+    <_Parameter1>PowerView.Model.Test</_Parameter1>
+    </AssemblyAttribute>
+
+    <!-- For Moq to mock internal class objects -->
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+      <_Parameter1>DynamicProxyGenAssembly2</_Parameter1>
+    </AssemblyAttribute>
   </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+
   <ItemGroup>
-    <None Include="packages.config" />
+    <PackageReference Include="Dapper" Version="2.0.123" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="System.Data.Sqlite" Version="1.0.115.5" />
   </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Repository\DbVersion\1\ddl.sql" />
-    <EmbeddedResource Include="Repository\DbVersion\2\ddl.sql" />
-    <EmbeddedResource Include="Repository\DbVersion\3\ddl.sql" />
-    <EmbeddedResource Include="Repository\DbVersion\4\ddl.sql" />
-    <EmbeddedResource Include="Repository\DbVersion\5\ddl.sql" />
-    <EmbeddedResource Include="Repository\DbVersion\6\ddl.sql" />
-    <EmbeddedResource Include="Repository\DbVersion\7\ddl.sql" />
-    <EmbeddedResource Include="Repository\DbVersion\8\ddl.sql" />
-    <EmbeddedResource Include="Repository\DbVersion\9\ddl.sql" />
-    <EmbeddedResource Include="Repository\DbVersion\10\ddl.sql" />
-    <EmbeddedResource Include="Repository\DbVersion\11\ddl.sql" />
-    <EmbeddedResource Include="Repository\DbVersion\12\ddl.sql" />
-    <EmbeddedResource Include="Repository\DbVersion\13\ddl.sql" />
-    <EmbeddedResource Include="Repository\DbVersion\14\ddl.sql" />
-    <EmbeddedResource Include="Repository\DbVersion\15\ddl.sql" />
-    <EmbeddedResource Include="Repository\DbVersion\16\ddl.sql" />
-    <EmbeddedResource Include="Repository\DbVersion\17\ddl.sql" />
-    <EmbeddedResource Include="Repository\DbVersion\18\ddl.sql" />
-    <EmbeddedResource Include="Repository\DbVersion\19\ddl.sql" />
-    <EmbeddedResource Include="Repository\DbVersion\20\ddl.sql" />
-    <EmbeddedResource Include="Repository\DbVersion\21\ddl.sql" />
-    <EmbeddedResource Include="Repository\DbVersion\22\ddl.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Repository\" />
-    <Folder Include="Repository\DbVersion\2\" />
-    <Folder Include="Repository\DbVersion\3\" />
-    <Folder Include="Repository\DbVersion\4\" />
-    <Folder Include="Repository\DbVersion\5\" />
-    <Folder Include="Repository\DbVersion\6\" />
-    <Folder Include="Repository\DbVersion\7\" />
-    <Folder Include="Repository\DbVersion\8\" />
-    <Folder Include="Repository\DbVersion\9\" />
-    <Folder Include="Repository\DbVersion\10\" />
-    <Folder Include="Repository\DbVersion\11\" />
-    <Folder Include="Repository\DbVersion\12\" />
-    <Folder Include="Repository\DbVersion\13\" />
-    <Folder Include="Repository\DbVersion\14\" />
-    <Folder Include="Repository\DbVersion\15\" />
-    <Folder Include="Repository\DbVersion\16\" />
-    <Folder Include="Repository\DbVersion\17\" />
-    <Folder Include="SeriesGenerators\" />
-    <Folder Include="Repository\DbVersion\18\" />
-    <Folder Include="Repository\DbVersion\19\" />
-    <Folder Include="Repository\DbVersion\20\" />
-    <Folder Include="Repository\DbVersion\21\" />
-    <Folder Include="Repository\DbVersion\22\" />
-  </ItemGroup>
+
 </Project>

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
-using log4net;
+using Microsoft.Extensions.Logging;
 using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Client.Options;
@@ -14,15 +14,13 @@ namespace PowerView.Service.Mqtt
 {
   public class MqttPublisher : IMqttPublisher
   {
-    private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
+    private readonly ILogger logger;
     private readonly IMqttMapper mqttMapper;
 
-    public MqttPublisher(IMqttMapper mqttMapper)
+    public MqttPublisher(ILogger<MqttPublisher> logger, IMqttMapper mqttMapper)
     {
-      if (mqttMapper == null) throw new ArgumentNullException("mqttMapper");
-
-      this.mqttMapper = mqttMapper;
+      this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+      this.mqttMapper = mqttMapper ?? throw new ArgumentNullException(nameof(mqttMapper));
     }
 
     public void Publish(MqttConfig config, ICollection<LiveReading> liveReadings)
@@ -48,11 +46,11 @@ namespace PowerView.Service.Mqtt
     {
       if (logMessage.Level == MqttNetLogLevel.Error)
       {
-        log.Warn(logMessage); 
+        logger.LogWarning(logMessage.ToString()); 
       }
       else 
       {
-        log.Debug(logMessage);
+        logger.LogDebug(logMessage.ToString());
       }
     }
 
@@ -71,8 +69,8 @@ namespace PowerView.Service.Mqtt
       mqttNetLogger.LogMessagePublished += (sender, e) => LogMqtt(e.LogMessage);
       using (var mqttClient = new MqttFactory().CreateMqttClient(mqttNetLogger))
       {
-        mqttClient.UseConnectedHandler(e => { log.DebugFormat("Connected to MQTT server {0}:{1}. ResultCode:{2}", config.Server, config.Port, e.ConnectResult.ResultCode ); });
-        mqttClient.UseDisconnectedHandler(e => { log.Debug("Disconnected MQTT server" + (e.Exception == null ? string.Empty : " with error"), e.Exception); });
+        mqttClient.UseConnectedHandler(e => { logger.LogDebug("Connected to MQTT server {0}:{1}. ResultCode:{2}", config.Server, config.Port, e.ConnectResult.ResultCode ); });
+        mqttClient.UseDisconnectedHandler(e => { logger.LogDebug(e.Exception, "Disconnected MQTT server" + (e.Exception == null ? string.Empty : " with error")); });
 
         try
         {
@@ -89,7 +87,7 @@ namespace PowerView.Service.Mqtt
           foreach (var mqttMessage in mqttMessages)
           {
             var publishResult = await mqttClient.PublishAsync(mqttMessage);
-            log.DebugFormat("Published MQTT message. PacketIdentifier:{0}, ReasonCode:{1}", publishResult.PacketIdentifier, publishResult.ReasonCode);
+            logger.LogDebug("Published MQTT message. PacketIdentifier:{0}, ReasonCode:{1}", publishResult.PacketIdentifier, publishResult.ReasonCode);
           }
           await mqttClient.DisconnectAsync();
         }

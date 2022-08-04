@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Buffers;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using MimeKit;
 using NUnit.Framework;
 using SmtpServer;     // https://github.com/cosullivan/SmtpServer
@@ -15,10 +18,12 @@ using SmtpServer.Storage;
 
 namespace PowerView.Service.Test.Mailer
 {
-  internal class TestSmtpServer : IDisposable
+  internal class TestSmtpServer
   {
-    private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+    private SmtpServer.SmtpServer smtpServer;
     private Task smtpServerTask;
+    private IUserAuthenticator userAuthenticator;
+    private X509Certificate2 certificate;
     private SmtpLogger smtpLogger = new SmtpLogger();
     private MemoryMessageStore messageStore;
     private SmtpResponse nextSmtpResponse;
@@ -53,100 +58,71 @@ namespace PowerView.Service.Test.Mailer
       nextSmtpResponse = smtpResponse;
     }
 
-    public Action<SmtpServerOptionsBuilder> EnableTls(string siteName)
+    public void RequireTls(string siteName)
     {
-      Action<SmtpServerOptionsBuilder> action = ob => {
-        ob.SupportedSslProtocols(System.Security.Authentication.SslProtocols.Tls11 | System.Security.Authentication.SslProtocols.Tls12);
-
-        var password = "123456789";
-        using (var certificateGenerator = new CertificateGenerator())
-        {
-          var pfxCertificateBytes = certificateGenerator.GenerateCertificateForPersonalFileExchange(siteName, password);
-
-          var certificate = new X509Certificate2(pfxCertificateBytes, password);
-          ob.Certificate(certificate);
-        }
-      };
-
-      return action;
-    }
-
-    public Action<SmtpServerOptionsBuilder> EnableUser(string user, string password)
-    {
-      Action<SmtpServerOptionsBuilder> action = ob =>
+      var password = "123456789";
+      using (var certificateGenerator = new CertificateGenerator())
       {
-        var userAuthenticator = new UserAuthenticator(user, password);
-        ob.UserAuthenticator(userAuthenticator);
-      };
+        var pfxCertificateBytes = certificateGenerator.GenerateCertificateForPersonalFileExchange(siteName, password);
 
-      return action;
-    }
-
-    public Action<SmtpServerOptionsBuilder> VoidUserAuthenticator()
-    {
-      Action<SmtpServerOptionsBuilder> action = ob =>
-      {
-        var userAuthenticator = new VoidUserAuthenticator();
-        ob.UserAuthenticator(userAuthenticator);
-      };
-
-      return action;
-    }
-
-    public void Start(params Action<SmtpServerOptionsBuilder>[] optionsActions)
-    {
-      var optionsBuilder = new SmtpServerOptionsBuilder().ServerName(ServerName).Port(Port);
-      optionsBuilder.MessageStore(messageStore).MaxRetryCount(1);
-      optionsBuilder.Logger(smtpLogger);
-      foreach (var optionsAction in optionsActions)
-      {
-        optionsAction(optionsBuilder);
+        certificate = new X509Certificate2(pfxCertificateBytes, password);
       }
+    }
+
+    public void RequireUser(string user, string password)
+    {
+      userAuthenticator = new SingleUserAuthenticator(user, password);
+    }
+
+    public void Start()
+    {
+      var optionsBuilder = new SmtpServerOptionsBuilder()
+        .ServerName(ServerName)
+        .MaxRetryCount(1);
+
+      if (certificate != null)
+      {
+        optionsBuilder.Endpoint(builder => builder
+                        .Port(Port)
+                        .SupportedSslProtocols(System.Security.Authentication.SslProtocols.None)
+                        .Certificate(certificate));
+      }
+      else
+      {
+        optionsBuilder.Endpoint(builder => builder
+                        .Port(Port));
+      }
+
       var options = optionsBuilder.Build();
 
-      var smtpServer = new SmtpServer.SmtpServer(options);
-      smtpServerTask = smtpServer.StartAsync(cancellationTokenSource.Token);
-    }
+      var serviceCollection = new ServiceCollection();
+      serviceCollection.AddSingleton<ILogger>(smtpLogger);
+      serviceCollection.AddSingleton<IMessageStore>(messageStore);
 
-    #region IDisposable Support
-    private bool disposedValue = false; // To detect redundant calls
-
-    protected virtual void Dispose(bool disposing)
-    {
-      if (!disposedValue)
-      {
-        if (disposing)
-        {
-          cancellationTokenSource.Cancel(true);
-
-          if (smtpServerTask != null)
-          {
-            try
-            {
-              Assert.IsTrue(smtpServerTask.Wait(1000), "SmtpServer to did not stop timely");
-            }
-            catch (AggregateException e)
-            {
-              var ee = e.GetBaseException();
-              Assert.That(ee, Is.TypeOf<System.IO.IOException>(), "Seems the smtp server failed...");
-            }
-            smtpServerTask = null;
-          }
-
-          cancellationTokenSource.Dispose();
-        }
-
-        disposedValue = true;
+      if (userAuthenticator != null) 
+      { 
+        serviceCollection.AddSingleton(userAuthenticator);
       }
+
+      var serviceProvider = serviceCollection.BuildServiceProvider();
+
+      smtpServer = new SmtpServer.SmtpServer(options, serviceProvider);
+      smtpServerTask = smtpServer.StartAsync(CancellationToken.None);
     }
 
-    // This code added to correctly implement the disposable pattern.
-    public void Dispose()
+    public async Task Shutdown()
     {
-      // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-      Dispose(true);
+      if (smtpServer != null)
+      {
+        smtpServer.Shutdown();
+        await smtpServer.ShutdownTask;
+      }
+
+      if (smtpServerTask != null)
+      {
+        await smtpServerTask;
+      }      
     }
-    #endregion
   }
 
   internal class MemoryMessageStore : MessageStore
@@ -161,22 +137,30 @@ namespace PowerView.Service.Test.Mailer
 
     public IList<MimeMessage> Messages { get; private set; }
 
-    public override Task<SmtpResponse> SaveAsync(ISessionContext context, IMessageTransaction transaction, CancellationToken cancellationToken)
+    public async override Task<SmtpResponse> SaveAsync(ISessionContext context, IMessageTransaction transaction, ReadOnlySequence<byte> buffer, CancellationToken cancellationToken)
     {
-      var textMessage = (ITextMessage)transaction.Message;
-      var message = MimeMessage.Load(textMessage.Content);
+      await using var stream = new MemoryStream();
+
+      var position = buffer.GetPosition(0);
+      while (buffer.TryGet(ref position, out var memory))
+      {
+        await stream.WriteAsync(memory, cancellationToken);
+      }
+      stream.Position = 0;
+
+      var message = await MimeMessage.LoadAsync(stream, cancellationToken);      
       Messages.Add(message);
 
-      return Task.FromResult(getSmtpResponse());
+      return getSmtpResponse();
     }
   }
 
-  internal class UserAuthenticator : IUserAuthenticator, IUserAuthenticatorFactory
+  internal class SingleUserAuthenticator : IUserAuthenticator
   {
     private readonly string user;
     private readonly string password;
     
-    public UserAuthenticator(string user, string password)
+    public SingleUserAuthenticator(string user, string password)
     {
       this.user = user;
       this.password = password;
@@ -187,19 +171,6 @@ namespace PowerView.Service.Test.Mailer
       var userOk = this.user == user;
       var passwordOk = this.password == password;
       return Task.FromResult(userOk && passwordOk);
-    }
-
-    public IUserAuthenticator CreateInstance(ISessionContext context)
-    {
-      return this;
-    }
-  }
-
-  internal class VoidUserAuthenticator : IUserAuthenticatorFactory
-  {
-    public IUserAuthenticator CreateInstance(ISessionContext context)
-    {
-      return null;
     }
   }
 

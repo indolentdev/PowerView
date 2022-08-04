@@ -1,12 +1,17 @@
 ﻿using System.Reflection;
 using PowerView.Model;
-using log4net;
+using Microsoft.Extensions.Logging;
 
 namespace PowerView.Service.Mappers
 {
   internal class SerieMapper : ISerieMapper
   {
-    private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+    private readonly ILogger logger;
+
+    public SerieMapper(ILogger<SerieMapper> logger)
+    {
+      this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    }
 
     public string MapToSerieType(ObisCode obisCode)
     {
@@ -99,7 +104,7 @@ namespace PowerView.Service.Mappers
         return "dcOutputStatusHiddenYAxis";
       }
 
-      log.InfoFormat("Unable to map obis code {0} to graph y-axis", obisCode);
+      logger.LogInformation("Unable to map obis code {0} to graph y-axis", obisCode);
 
       return string.Empty;
     }

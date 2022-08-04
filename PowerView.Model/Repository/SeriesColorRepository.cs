@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Mono.Data.Sqlite;
+using System.Data.SQLite;
 using Dapper;
 
 namespace PowerView.Model.Repository
 {
   internal class SeriesColorRepository : RepositoryBase, ISeriesColorRepository
   {
-    //    private static ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
     private readonly IObisColorProvider obisColorProvider;
     private IDictionary<SeriesName, string> seriesColorCache;
 
@@ -34,7 +32,7 @@ namespace PowerView.Model.Repository
     public ICollection<SeriesColor> GetSeriesColors()
     {
       return DbContext
-        .QueryTransaction<Db.SerieColor>("GetSeriesColors", @"SELECT Id, Label, ObisCode, Color FROM SerieColor;")
+        .QueryTransaction<Db.SerieColor>(@"SELECT Id, Label, ObisCode, Color FROM SerieColor;")
         .Select(s => new SeriesColor(new SeriesName(s.Label, s.ObisCode), s.Color))
         .ToList();
     }
@@ -67,7 +65,7 @@ namespace PowerView.Model.Repository
       if (seriesColorCache == null)
       {
         seriesColorCache = DbContext
-          .QueryTransaction<Db.SerieColor>("GetSeriesColors", @"SELECT Id, Label, ObisCode, Color FROM SerieColor;")
+          .QueryTransaction<Db.SerieColor>(@"SELECT Id, Label, ObisCode, Color FROM SerieColor;")
           .ToDictionary(s => new SeriesName(s.Label, s.ObisCode), s => s.Color);
       }
     }
@@ -105,7 +103,7 @@ namespace PowerView.Model.Repository
 
         transaction.Commit();
       }
-      catch (SqliteException e)
+      catch (SQLiteException e)
       {
         transaction.Rollback();
         throw DataStoreExceptionFactory.Create(e);

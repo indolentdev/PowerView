@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace PowerView.Service.Dtos
 {
@@ -9,6 +9,7 @@ namespace PowerView.Service.Dtos
       Items = new DisconnectRuleDto[0];
     }
 
+    [Required]
     public DisconnectRuleDto[] Items { get; set; }
   }
 }

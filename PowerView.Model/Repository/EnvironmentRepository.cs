@@ -13,7 +13,7 @@ namespace PowerView.Model.Repository
 
     public string GetSqliteVersion()
     {
-      var sqliteVersion = DbContext.QueryNoTransaction<string>("GetSqliteVersion", "SELECT sqlite_version();").FirstOrDefault();
+      var sqliteVersion = DbContext.QueryNoTransaction<string>("SELECT sqlite_version();").FirstOrDefault();
       return sqliteVersion;
     }
 

@@ -11,7 +11,7 @@ namespace PowerView.Model.Test.Repository
       var table = typeof(TEntity).Name;
       var sql = "SELECT count(*) FROM {0};";
       sql = string.Format(CultureInfo.InvariantCulture, sql, table);
-      return dbContext.QueryTransaction<int>("", sql).First();
+      return dbContext.QueryTransaction<int>(sql).First();
     }
 
     internal static void InsertReadings(this DbContext dbContext, params IDbReading[] dbReadings)
@@ -23,7 +23,7 @@ namespace PowerView.Model.Test.Repository
       {
         var tableName = dbReading.GetType().Name;
         var readingSql = string.Format(CultureInfo.InvariantCulture, sql, tableName);
-        var id = dbContext.QueryTransaction<long>("", readingSql, dbReading).First();
+        var id = dbContext.QueryTransaction<long>(readingSql, dbReading).First();
         dbReading.Id = id;
       }
     }
@@ -39,7 +39,7 @@ namespace PowerView.Model.Test.Repository
       {
         var tableName = group.Key;
         var groupSql = string.Format(CultureInfo.InvariantCulture, sql, tableName);
-        dbContext.ExecuteTransaction("", groupSql, group);
+        dbContext.ExecuteTransaction(groupSql, group);
       }
     }
 

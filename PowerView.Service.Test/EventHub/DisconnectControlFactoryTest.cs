@@ -1,5 +1,5 @@
 ﻿using System;
-using Autofac.Features.OwnedInstances;
+using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NUnit.Framework;
 using PowerView.Service.EventHub;
@@ -10,53 +10,37 @@ namespace PowerView.Service.Test.EventHub
 {
   [TestFixture]
   public class DisconnectControlFactoryTest
-  {
-    private Mock<IFactory> factory;
-
-    [SetUp]
-    public void SetUp()
-    {
-      factory = new Mock<IFactory>();
-    }
-    
-    [Test]
-    public void ConstructorThrows()
-    {
-      // Arrange
-
-      // Act & Assert
-      Assert.That(() => new DisconnectControlFactory(null), Throws.ArgumentNullException);
-    }
-
+  {   
     [Test]
     public void ProcessThrows()
     {
       // Arrange
       var target = CreateTarget();
+      var (serviceScope, _) = GetServiceScope();
+      var liveReadings = Array.Empty<LiveReading>();
 
       // Act & Assert
-      Assert.That(() => target.Process(null), Throws.ArgumentNullException);
+      Assert.That(() => target.Process(null, liveReadings), Throws.ArgumentNullException);
+      Assert.That(() => target.Process(serviceScope.Object, null), Throws.ArgumentNullException);
     }
 
     [Test]
     public void Process()
     {
       // Arrange
-      var disconnectCalculator = new Mock<IDisconnectWarden>();
-      var mDisposable = new Mock<IDisposable>();
-      factory.Setup(f => f.Create<IDisconnectWarden>()).Returns(new Owned<IDisconnectWarden>(disconnectCalculator.Object, mDisposable.Object));
-
+      var disconnectWarden = new Mock<IDisconnectWarden>();
+      var (serviceScope, serviceProvider) = GetServiceScope();
+      serviceProvider.Setup(sp => sp.GetService(It.IsAny<Type>())).Returns(disconnectWarden.Object);
       var liveReadings = new LiveReading[1];
 
       var target = CreateTarget();
 
       // Act
-      target.Process(liveReadings);
+      target.Process(serviceScope.Object, liveReadings);
 
       // Assert
-      factory.Verify(f => f.Create<IDisconnectWarden>());
-      disconnectCalculator.Verify(p => p.Process(liveReadings));
-      mDisposable.Verify(x => x.Dispose());
+      serviceProvider.Verify(sp => sp.GetService(typeof(IDisconnectWarden)));
+      disconnectWarden.Verify(p => p.Process(liveReadings));
     }
 
     [Test]
@@ -64,19 +48,30 @@ namespace PowerView.Service.Test.EventHub
     {
       // Arrange
       var liveReadings = new LiveReading[0];
+      var (serviceScope, serviceProvider) = GetServiceScope();
 
       var target = CreateTarget();
 
       // Act
-      target.Process(liveReadings);
+      target.Process(serviceScope.Object, liveReadings);
 
       // Assert
-      factory.Verify(f => f.Create<IDisconnectWarden>(), Times.Never());
+      serviceProvider.Verify(sp => sp.GetService(typeof(IDisconnectWarden)), Times.Never);
     }
 
     private DisconnectControlFactory CreateTarget()
     {
-      return new DisconnectControlFactory(factory.Object);
+      return new DisconnectControlFactory();
+    }
+
+    private (Mock<IServiceScope> ServiceScope, Mock<IServiceProvider> ServiceProvider) GetServiceScope()
+    {
+      var serviceScope = new Mock<IServiceScope>();
+      var serviceProvider = new Mock<IServiceProvider>();
+
+      serviceScope.Setup(ss => ss.ServiceProvider).Returns(serviceProvider.Object);
+
+      return (serviceScope, serviceProvider);
     }
 
   }

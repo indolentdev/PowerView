@@ -1,2 +1,0 @@
-DELETE FROM EmailRecipientMeterEventPosition;
-DELETE FROM EmailRecipient;

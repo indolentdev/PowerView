@@ -104,9 +104,9 @@ namespace PowerView.Model.Test.Repository
 
       // Assert
       AssertEmailRecipientExists(emailRecipient);
-      var erId = DbContext.QueryTransaction<long>(null, "SELECT [Id] FROM [EmailRecipient] WHERE [EmailAddress]=@emailAddress;", 
+      var erId = DbContext.QueryTransaction<long>("SELECT [Id] FROM [EmailRecipient] WHERE [EmailAddress]=@emailAddress;", 
                                                     new { emailAddress = emailRecipient.EmailAddress }).First();
-      var emailRecipeintMeterEventPositions = DbContext.QueryTransaction<Db.EmailRecipientMeterEventPosition>("",
+      var emailRecipeintMeterEventPositions = DbContext.QueryTransaction<Db.EmailRecipientMeterEventPosition>(
         "SELECT * FROM EmailRecipientMeterEventPosition WHERE EmailRecipientId=@erId AND MeterEventId=@Id;", new { erId, dbMeterEvent.Id });
       Assert.That(emailRecipeintMeterEventPositions.Count, Is.EqualTo(1));
     }
@@ -126,7 +126,7 @@ namespace PowerView.Model.Test.Repository
 
     private void AssertEmailRecipientExists(EmailRecipient emailRecipient, bool not = false)
     {
-      var emailRecipients = DbContext.QueryTransaction<Db.EmailRecipient>("",
+      var emailRecipients = DbContext.QueryTransaction<Db.EmailRecipient>(
         "SELECT * FROM EmailRecipient WHERE Name=@Name AND EmailAddress=@EmailAddress;", emailRecipient);
       Assert.That(emailRecipients.Count, Is.EqualTo(not ? 0 : 1));
     }
@@ -159,9 +159,9 @@ namespace PowerView.Model.Test.Repository
       target.DeleteEmailRecipient(dbEmailRecipient.EmailAddress);
 
       // Assert
-      var emailRecipients = DbContext.QueryTransaction<Db.EmailRecipient>("", "SELECT * FROM EmailRecipient WHERE EmailAddress=@EmailAddress", dbEmailRecipient);
+      var emailRecipients = DbContext.QueryTransaction<Db.EmailRecipient>("SELECT * FROM EmailRecipient WHERE EmailAddress=@EmailAddress", dbEmailRecipient);
       Assert.That(emailRecipients.Count, Is.Zero);
-      var positions = DbContext.QueryTransaction<Db.EmailRecipientMeterEventPosition>("", "SELECT * FROM EmailRecipientMeterEventPosition;");
+      var positions = DbContext.QueryTransaction<Db.EmailRecipientMeterEventPosition>("SELECT * FROM EmailRecipientMeterEventPosition;");
       Assert.That(positions.Count, Is.Zero);
     }
 
@@ -217,7 +217,7 @@ namespace PowerView.Model.Test.Repository
       target.SetEmailRecipientMeterEventPosition(er.EmailAddress, me.Id);
 
       // Assert
-      var positions = DbContext.QueryTransaction<Db.EmailRecipientMeterEventPosition>("",
+      var positions = DbContext.QueryTransaction<Db.EmailRecipientMeterEventPosition>(
         "SELECT * FROM EmailRecipientMeterEventPosition WHERE EmailRecipientId=@EmailRecipientId AND MeterEventId=@MeterEventId;", 
         new { EmailRecipientId = er.Id, MeterEventId = me.Id });
       Assert.That(positions.Count, Is.EqualTo(1));
@@ -241,12 +241,12 @@ namespace PowerView.Model.Test.Repository
       target.SetEmailRecipientMeterEventPosition(er.EmailAddress, me2.Id);
 
       // Assert
-      var positions = DbContext.QueryTransaction<Db.EmailRecipientMeterEventPosition>("",
+      var positions = DbContext.QueryTransaction<Db.EmailRecipientMeterEventPosition>(
         "SELECT * FROM EmailRecipientMeterEventPosition WHERE EmailRecipientId=@EmailRecipientId AND MeterEventId=@MeterEventId;",
         new { EmailRecipientId = er.Id, MeterEventId = me1.Id });
       Assert.That(positions.Count, Is.EqualTo(0));
 
-      positions = DbContext.QueryTransaction<Db.EmailRecipientMeterEventPosition>("",
+      positions = DbContext.QueryTransaction<Db.EmailRecipientMeterEventPosition>(
         "SELECT * FROM EmailRecipientMeterEventPosition WHERE EmailRecipientId=@EmailRecipientId AND MeterEventId=@MeterEventId;",
         new { EmailRecipientId = er.Id, MeterEventId = me2.Id });
       Assert.That(positions.Count, Is.EqualTo(1));
@@ -261,7 +261,7 @@ namespace PowerView.Model.Test.Repository
     {
       foreach (var emailRecipient in emailRecipients)
       {
-        var id = DbContext.QueryTransaction<long>("",
+        var id = DbContext.QueryTransaction<long>(
           "INSERT INTO EmailRecipient (Name,EmailAddress) VALUES (@Name,@EmailAddress); SELECT last_insert_rowid();",
           emailRecipient).First();
         emailRecipient.Id = id;
@@ -272,7 +272,7 @@ namespace PowerView.Model.Test.Repository
     {
       foreach (var meterEvent in meterEvents)
       {
-        var id = DbContext.QueryTransaction<long>("",
+        var id = DbContext.QueryTransaction<long>(
           "INSERT INTO MeterEvent (Label,MeterEventType,DetectTimestamp,Flag,Amplification) VALUES (@Label,@MeterEventType,@DetectTimestamp,@Flag,@Amplification); SELECT last_insert_rowid();",
           meterEvent).First();
         meterEvent.Id = id;
@@ -281,7 +281,7 @@ namespace PowerView.Model.Test.Repository
 
     private void InsertEmailRecipientMeterEventPosition(params Db.EmailRecipientMeterEventPosition[] positions)
     {
-      DbContext.ExecuteTransaction("", "INSERT INTO EmailRecipientMeterEventPosition (EmailRecipientId,MeterEventId) VALUES (@EmailRecipientId,@MeterEventId);", positions);
+      DbContext.ExecuteTransaction("INSERT INTO EmailRecipientMeterEventPosition (EmailRecipientId,MeterEventId) VALUES (@EmailRecipientId,@MeterEventId);", positions);
     }
 
   }

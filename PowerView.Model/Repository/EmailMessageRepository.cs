@@ -21,7 +21,7 @@ namespace PowerView.Model.Repository
         FromName = frm.Name, FromEmailAddress = frm.EmailAddress,
         ToName = to.Name, ToEmailAddress = to.EmailAddress, Subject = subject, Body = body
       };
-      DbContext.ExecuteTransaction("AddEmailMessage",
+      DbContext.ExecuteTransaction(
         "INSERT INTO EmailMessage (FromName,FromEmailAddress,ToName,ToEmailAddress,Subject,Body) VALUES (@FromName,@FromEmailAddress,@ToName,@ToEmailAddress,@Subject,@Body);",
         dbEmailMessage);
     }

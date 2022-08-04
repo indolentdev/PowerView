@@ -4,16 +4,13 @@ using System.Data;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using Mono.Data.Sqlite;
+using System.Data.SQLite;
 using Dapper;
-using log4net;
 
 namespace PowerView.Model.Repository
 {
   internal class ProfileGraphRepository : RepositoryBase, IProfileGraphRepository
   {
-    private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
     public ProfileGraphRepository(IDbContext dbContext)
       : base(dbContext)
     {
@@ -25,7 +22,7 @@ namespace PowerView.Model.Repository
 SELECT DISTINCT pg.Page
 FROM ProfileGraph pg
 WHERE pg.Period=@period;";
-      return DbContext.QueryTransaction<string>("GetProfileGraphPages", sql, new { period });
+      return DbContext.QueryTransaction<string>(sql, new { period });
     }
 
     public ICollection<ProfileGraph> GetProfileGraphs()
@@ -34,7 +31,7 @@ WHERE pg.Period=@period;";
 SELECT pg.Id, pg.Period, pg.Page, pg.Title, pg.Interval, pg.Rank, pgs.Id, pgs.Label, pgs.ObisCode, pgs.ProfileGraphId
 FROM ProfileGraph pg JOIN ProfileGraphSerie pgs on pg.Id=pgs.ProfileGraphId
 ORDER BY pg.Rank, pgs.Id;";
-      var queryResult = DbContext.QueryOneToManyTransaction<Db.ProfileGraph, Db.ProfileGraphSerie>("GetProfileGraphs", sql);
+      var queryResult = DbContext.QueryOneToManyTransaction<Db.ProfileGraph, Db.ProfileGraphSerie>(sql);
 
       return queryResult.Select(x => ToProfileGraph(x.Parent, x.Children)).ToList();
     }
@@ -46,7 +43,7 @@ SELECT pg.Id, pg.Period, pg.Page, pg.Title, pg.Interval, pg.Rank, pgs.Id, pgs.La
 FROM ProfileGraph pg JOIN ProfileGraphSerie pgs on pg.Id=pgs.ProfileGraphId
 WHERE pg.Period=@period AND pg.Page=@page
 ORDER BY pg.Rank, pgs.Id;";
-      var queryResult = DbContext.QueryOneToManyTransaction<Db.ProfileGraph, Db.ProfileGraphSerie>("GetProfileGraphs", sql, new { period, page});
+      var queryResult = DbContext.QueryOneToManyTransaction<Db.ProfileGraph, Db.ProfileGraphSerie>(sql, new { period, page});
 
       return queryResult.Select(x => ToProfileGraph(x.Parent, x.Children)).ToList();
     }
@@ -75,8 +72,7 @@ ORDER BY pg.Rank, pgs.Id;";
         {
           dbProfileGraph.Rank = newRank;
         }
-        log.DebugFormat("Creating ProfileGraph; Period:{0},Page:{1},Rank:{2}", dbProfileGraph.Period, dbProfileGraph.Page, dbProfileGraph.Rank);
-
+   
         var profileGraphId = DbContext.Connection.QueryFirstOrDefault<long>(@"
 INSERT INTO ProfileGraph (Period, Page, Title, Interval, Rank) VALUES (@Period, @Page, @Title, @Interval, @Rank);
 SELECT LAST_INSERT_ROWID() AS [Id];", dbProfileGraph, transaction);
@@ -86,10 +82,8 @@ SELECT LAST_INSERT_ROWID() AS [Id];", dbProfileGraph, transaction);
             new Db.ProfileGraphSerie { Label = x.Label, ObisCode = x.ObisCode, ProfileGraphId = profileGraphId }), transaction);
 
         transaction.Commit();
-        log.InfoFormat("Created ProfileGraph; Period:{0},Page:{1},Title:{2}. Rows affected:{3}",
-                        profileGraph.Period, profileGraph.Page, profileGraph.Title, 1+profileGraph.SerieNames.Count);
       }
-      catch (SqliteException e)
+      catch (SQLiteException e)
       {
         transaction.Rollback();
         throw DataStoreExceptionFactory.Create(e);
@@ -129,7 +123,6 @@ SELECT Id, Rank FROM ProfileGraph WHERE Period=@period AND Page=@Page AND Title=
           Interval = profileGraph.Interval,
           Rank = rank
         };
-        log.DebugFormat("Updating ProfileGraph; Period:{0},Page:{1},Title:{2}", period, page, title);
 
         var pgRowsAffected = DbContext.Connection.Execute(@"
 UPDATE ProfileGraph SET Period=@Period, Page=@Page, Title=@Title, Interval=@Interval, Rank=@Rank WHERE Id=@Id;", dbProfileGraph, transaction);
@@ -143,9 +136,8 @@ INSERT INTO ProfileGraphSerie (Label, ObisCode, ProfileGraphId) VALUES (@Label, 
             new Db.ProfileGraphSerie { Label = x.Label, ObisCode = x.ObisCode, ProfileGraphId = dbProfileGraph.Id }), transaction);
 
         transaction.Commit();
-        log.InfoFormat("Updated ProfileGraph; Period:{0},Page:{1},Title:{2}. Rows affected:{3}", period, page, title, pgRowsAffected + pgsDeletedRowsAffected + pgsAddedRowsAffected);
       }
-      catch (SqliteException e)
+      catch (SQLiteException e)
       {
         transaction.Rollback();
         throw DataStoreExceptionFactory.Create(e);
@@ -178,9 +170,7 @@ WHERE ProfileGraphId IN (
 );
 DELETE FROM ProfileGraph {0};";
       sql = string.Format(CultureInfo.InvariantCulture, sql, where);
-      var rowsAffected = DbContext.ExecuteTransaction("DeleteProfileGraph", sql, new { period, page, title });
-      log.InfoFormat("Deleted ProfileGraph; Period:{0},Section:{1},Title:{2}. Rows affected:{3}", 
-                      period, page, title, rowsAffected);
+      DbContext.ExecuteTransaction(sql, new { period, page, title });
     }
 
     public void SwapProfileGraphRank(string period, string page, string title1, string title2)
@@ -201,9 +191,7 @@ UPDATE ProfileGraph
 SET Rank = (SELECT Rank FROM RankPlaceholder WHERE Period=@period AND Page=@page AND Title=@title1)
 WHERE Period=@period AND Page=@page AND Title=@title2;
 ";
-      var rowsAffected = DbContext.ExecuteTransaction("SwapProfileGraphRank", sql, new { period, page, title1, title2, tmpRank = long.MaxValue });
-      log.InfoFormat("Swapped ProfileGraph ranks; Period:{0},Page:{1},Title1:{2},Title2:{3}. Rows affected:{4}",
-                      period, page, title1, title2, rowsAffected-2);
+      var rowsAffected = DbContext.ExecuteTransaction(sql, new { period, page, title1, title2, tmpRank = long.MaxValue });
     }
   }
 }

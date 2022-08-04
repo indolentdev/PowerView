@@ -1,55 +1,58 @@
 ﻿using System;
 using System.Collections.Generic;
 using PowerView.Model;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace PowerView.Service.EventHub
 {
   internal class Hub : IHub
   {
+    private readonly IServiceProvider serviceProvider;
     private readonly IReadingPiper piper;
     private readonly IMeterEventCoordinator meterEventCoordinator;
-    private readonly ITracker tracker;
     private readonly IMqttPublisherFactory mqttPublisherFactory;
     private readonly IDisconnectControlFactory disconnectControlFactory;
     private readonly IHealthCheck healthCheck;
-    private readonly EventQueue eventQueue;
+    private readonly IEventQueue eventQueue;
 
-    public Hub(IReadingPiper piper, IMeterEventCoordinator meterEventCoordinator, ITracker tracker, 
-      IMqttPublisherFactory mqttPublisherFactory, IDisconnectControlFactory disconnectControlFactory, IHealthCheck healthCheck)
+    public Hub(IServiceProvider serviceProvider, IEventQueue eventQueue, IReadingPiper piper, IMeterEventCoordinator meterEventCoordinator, 
+      IMqttPublisherFactory mqttPublisherFactory, IDisconnectControlFactory disconnectControlFactory, 
+      IHealthCheck healthCheck)
     {
-      if (piper == null) throw new ArgumentNullException("piper");
-      if (meterEventCoordinator == null) throw new ArgumentNullException("meterEventCoordinator");
-      if (tracker == null) throw new ArgumentNullException("tracker");
-      if (mqttPublisherFactory == null) throw new ArgumentNullException("mqttPublisherFactory");
-      if (disconnectControlFactory == null) throw new ArgumentNullException("disconnectControlFactory");
-      if (healthCheck == null) throw new ArgumentNullException("healthCheck");
-
-      this.piper = piper;
-      this.meterEventCoordinator = meterEventCoordinator;
-      this.tracker = tracker;
-      this.mqttPublisherFactory = mqttPublisherFactory;
-      this.disconnectControlFactory = disconnectControlFactory;
-      this.healthCheck = healthCheck;
-      eventQueue = new EventQueue();
+      this.serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+      this.eventQueue = eventQueue ?? throw new ArgumentNullException(nameof(eventQueue));
+      this.piper = piper ?? throw new ArgumentNullException(nameof(piper));
+      this.meterEventCoordinator = meterEventCoordinator ?? throw new ArgumentNullException(nameof(meterEventCoordinator));
+      this.mqttPublisherFactory = mqttPublisherFactory ?? throw new ArgumentNullException(nameof(mqttPublisherFactory));
+      this.disconnectControlFactory = disconnectControlFactory ?? throw new ArgumentNullException(nameof(disconnectControlFactory));
+      this.healthCheck = healthCheck ?? throw new ArgumentNullException(nameof(healthCheck));
     }
 
     #region IHub implementation
 
     public void Signal(IList<LiveReading> liveReadings)
     {
-      eventQueue.Enqueue(() => mqttPublisherFactory.Publish(liveReadings));
-      eventQueue.Enqueue(() => disconnectControlFactory.Process(liveReadings));
+      eventQueue.Enqueue(InScope((ss) => mqttPublisherFactory.Publish(ss, liveReadings)));
+      eventQueue.Enqueue(InScope((ss) => disconnectControlFactory.Process(ss, liveReadings)));
 
       var utcNow = DateTime.UtcNow;
-      eventQueue.Enqueue(() => healthCheck.DailyCheck(utcNow));
-      eventQueue.Enqueue(() => piper.PipeLiveReadings(utcNow));
-      eventQueue.Enqueue(() => piper.PipeDayReadings(utcNow));
-      eventQueue.Enqueue(() => piper.PipeMonthReadings(utcNow));
-      eventQueue.Enqueue(() => meterEventCoordinator.DetectAndNotify(utcNow));
-      eventQueue.Enqueue(() => tracker.Track(utcNow));
+      eventQueue.Enqueue(InScope((ss) => healthCheck.DailyCheck(ss, utcNow)));
+      eventQueue.Enqueue(InScope((ss) => piper.PipeLiveReadings(ss, utcNow)));
+      eventQueue.Enqueue(InScope((ss) => piper.PipeDayReadings(ss, utcNow)));
+      eventQueue.Enqueue(InScope((ss) => piper.PipeMonthReadings(ss, utcNow)));
+      eventQueue.Enqueue(InScope((ss) => meterEventCoordinator.DetectAndNotify(ss, utcNow)));
     }
 
     #endregion
+
+    private Action InScope(Action<IServiceScope> action)
+    {
+      return () => 
+      {
+        using var scope = serviceProvider.CreateScope();
+        action(scope);
+      };
+    }
 
     #region IDisposable implementation
     public void Dispose()

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using PowerView.Model.Repository;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace PowerView.Model.Test.Repository
 {
@@ -45,13 +46,13 @@ namespace PowerView.Model.Test.Repository
 
     private void AssertLiveReadings(int expectedCount, string label, string serialNumber)
     {
-      var result = DbContext.QueryTransaction<Db.LiveReading>("", "SELECT * FROM LiveReading WHERE Label=@label AND SerialNumber=@serialNumber", new { label, serialNumber });
+      var result = DbContext.QueryTransaction<Db.LiveReading>("SELECT * FROM LiveReading WHERE Label=@label AND SerialNumber=@serialNumber", new { label, serialNumber });
       Assert.That(result.Count(), Is.EqualTo(expectedCount));
     }
 
     private DbMigrate CreateTarget()
     {
-      return new DbMigrate(DbContext);
+      return new DbMigrate(new NullLogger<DbMigrate>(), DbContext);
     }
 
   }

@@ -1,7 +1,8 @@
-﻿using System;
+﻿/*
+using System;
 using System.Reflection;
 using Autofac;  
-using log4net;
+using Microsoft.Extensions.Logging;
 using Nancy.Hosting.Self;
 
 namespace PowerView.Service
@@ -60,3 +61,4 @@ namespace PowerView.Service
   }
 }
 
+*/

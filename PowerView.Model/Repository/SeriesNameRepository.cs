@@ -4,16 +4,13 @@ using System.Data;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using log4net;
-using Mono.Data.Sqlite;
+using System.Data.SQLite;
 using Dapper;
 
 namespace PowerView.Model.Repository
 {
   internal class SeriesNameRepository : RepositoryBase, ISeriesNameRepository
   {
-    private static ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
     public SeriesNameRepository(IDbContext dbContext)
       : base(dbContext)
     {
@@ -65,20 +62,17 @@ namespace PowerView.Model.Repository
       var transaction = DbContext.BeginTransaction();
       try
       {
-        log.DebugFormat("Starting database operation GetSerieNames");
         var liveData = GetRecent<Db.LiveReading, Db.LiveRegister>(transaction, 1);
         var dayData = GetRecent<Db.DayReading, Db.DayRegister>(transaction, 60);
         var monthData = GetRecent<Db.MonthReading, Db.MonthRegister>(transaction, 700);
 
         transaction.Commit();
-        log.DebugFormat("Finished database operation");
 
         return liveData.Concat(dayData).Concat(monthData);
       }
-      catch (SqliteException e)
+      catch (SQLiteException e)
       {
         transaction.Rollback();
-        log.DebugFormat("Finished database operation");
         throw DataStoreExceptionFactory.Create(e);
       }
     }

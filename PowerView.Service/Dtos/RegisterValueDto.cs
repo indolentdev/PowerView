@@ -1,19 +1,23 @@
-﻿using Newtonsoft.Json;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
+using PowerView.Model;
 
 namespace PowerView.Service.Dtos
 {
-  public class RegisterValueDto
-  {
-    [JsonProperty(Required = Required.Always)]
-    public string ObisCode { get; set; }
+    public class RegisterValueDto
+    {
+        [Required]
+        [ObisCode]
+        public string ObisCode { get; set; }
 
-    [JsonProperty(Required = Required.Always)]
-    public int Value { get; set; }
+        [Required]
+        public int? Value { get; set; }
 
-    [JsonProperty(Required = Required.Always)]
-    public short Scale { get; set; }
+        [Required]
+        public short? Scale { get; set; }
 
-    [JsonProperty(Required = Required.Always)]
-    public string Unit { get; set; }
-  }
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        [Required]
+        public Unit? Unit { get; set; }
+    }
 }

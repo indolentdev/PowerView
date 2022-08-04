@@ -1,28 +1,20 @@
-﻿using System;
-using Newtonsoft.Json;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace PowerView.Service.Dtos
 {
-  public class LiveReadingDto
-  {
-    public LiveReadingDto()
+    public class LiveReadingDto
     {
-      RegisterValues = new RegisterValueDto[0];
+        [Required]
+        public string Label { get; set; }
+
+        [Required]
+        public string DeviceId { get; set; }
+
+        [Required]
+        [UtcDateTime]
+        public DateTime? Timestamp { get; set; }
+
+        [Required]
+        public RegisterValueDto[] RegisterValues { get; set; }
     }
-
-    [JsonProperty(Required = Required.Always)]
-    public string Label { get; set; }
-
-    [JsonProperty(Required = Required.DisallowNull)]
-    public string DeviceId { get; set; }
-
-    [JsonProperty(Required = Required.DisallowNull)]
-    public string SerialNumber { get; set; }
-
-    [JsonProperty(Required = Required.Always)]
-    public DateTime Timestamp { get; set; }
-
-    [JsonProperty(Required = Required.Always)]
-    public RegisterValueDto[] RegisterValues { get; set; }
-  }
 }

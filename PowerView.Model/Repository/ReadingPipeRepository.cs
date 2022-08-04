@@ -3,16 +3,13 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using Mono.Data.Sqlite;
+using System.Data.SQLite;
 using Dapper;
-using log4net;
 
 namespace PowerView.Model.Repository
 {
   internal class ReadingPipeRepository : RepositoryBase, IReadingPipeRepository
   {
-    private static ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
     private readonly ILocationContext locationContext;
     private readonly int readingsPerLabel;
 
@@ -55,8 +52,6 @@ namespace PowerView.Model.Repository
       where TSrcReading : class, IDbReading, new()
       where TDstReading : class, IDbReading, new()
     {
-      log.DebugFormat("Starting piping {0} to {1}", typeof(TSrcReading).Name, typeof(TDstReading).Name);
-
       var existingLabelToTimeStamp = GetLabelMaxTimestamps<TDstReading>();
 
       var streamPositions = GetStreamPositions<TDstReading>();
@@ -65,8 +60,6 @@ namespace PowerView.Model.Repository
 
       var pipedSomething = PipeReadings<TSrcReading, TDstReading>(readingsToPipeByLabel);
 
-      log.DebugFormat("Finished piping");
-
       return pipedSomething;
     }
 
@@ -74,7 +67,7 @@ namespace PowerView.Model.Repository
       where TDstReading : class, IDbReading
     {
       var streamName = GetTableName<TDstReading>();
-      var resultSet = DbContext.QueryTransaction<Db.StreamPosition>("GetStreamPositions",
+      var resultSet = DbContext.QueryTransaction<Db.StreamPosition>(
         "SELECT Id,StreamName,Label,Position FROM StreamPosition WHERE StreamName = @streamName;",
         new { streamName });
       return resultSet.ToDictionary(sp => sp.Label, sp => sp.Position);
@@ -86,11 +79,9 @@ namespace PowerView.Model.Repository
       var tableName = GetTableName<TDstReading>();
       var labelToTimeStamp = new Dictionary<string, DateTime>(4);
 
-      log.DebugFormat("Querying for labels from {0}", tableName);
-
       var sqlQuery = "SELECT Label, MAX(Timestamp) AS MaxTimeStampUnix FROM {0} GROUP BY Label;";
       sqlQuery = string.Format(CultureInfo.InvariantCulture, sqlQuery, tableName);
-      var resultSet = DbContext.QueryTransaction<dynamic>("GetLabelMaxTimestamps", sqlQuery);
+      var resultSet = DbContext.QueryTransaction<dynamic>(sqlQuery);
       foreach (dynamic row in resultSet)
       {
         string label = row.Label;
@@ -98,7 +89,6 @@ namespace PowerView.Model.Repository
         labelToTimeStamp.Add(label, DbContext.GetDateTime(maxTimeStampUnix));
       }
 
-      log.DebugFormat("Finished query for lables. Got {0}", labelToTimeStamp.Count);
       return labelToTimeStamp;
     }
 
@@ -133,17 +123,14 @@ namespace PowerView.Model.Repository
 
       var timestamp = DateTime.UtcNow.Subtract(TimeSpan.FromDays(600)); // cap.. max almost two years..
 
-      log.DebugFormat("Querying for labels from {0}", tableName);
-
       var sqlQuery = "SELECT DISTINCT Label FROM {0} WHERE Timestamp > @Timestamp;";
       sqlQuery = string.Format(CultureInfo.InvariantCulture, sqlQuery, tableName);
-      var resultSet = DbContext.QueryTransaction<dynamic>("GetLabels", sqlQuery, new { Timestamp = timestamp });
+      var resultSet = DbContext.QueryTransaction<dynamic>(sqlQuery, new { Timestamp = timestamp });
       foreach (dynamic row in resultSet)
       {
         string label = row.Label;
         labels.Add(label);
       }
-      log.DebugFormat("Finished query for labels. Got {0}", labels.Count);
 
       return labels;
     }
@@ -153,13 +140,11 @@ namespace PowerView.Model.Repository
     {
       var tableName = GetTableName<TSrcReading>();
 
-      log.DebugFormat("Querying for {0} readings from position {1}", label, position);
-
       var sqlQuery = "SELECT * FROM {0} WHERE Id > @Position AND Label = @Label ORDER BY Id ASC LIMIT @Limit;";
       sqlQuery = string.Format(CultureInfo.InvariantCulture, sqlQuery, tableName);
       var args = new { Label = label, Position = position, Limit = limit };
-      var resultSet = DbContext.QueryTransaction<TSrcReading>("GetReadings", sqlQuery, args);
-      log.Debug("Finished query for readings");
+      var resultSet = DbContext.QueryTransaction<TSrcReading>(sqlQuery, args);
+
       return resultSet;
     }
 
@@ -177,11 +162,6 @@ namespace PowerView.Model.Repository
           minimumDateTime = existingLabelToTimeStamp[label];
         }
         var reducedLabelReadings = Reduce<TSrcReading, TDstReading>(labelGrouping.Value, minimumDateTime, maximumDateTime);
-        if (log.IsDebugEnabled)
-        {
-          var reducedLabelReadingCount = reducedLabelReadings.Count();
-          log.DebugFormat("Reduced {0} {1} reading(s) to {2}", labelGrouping.Value.Count, label, reducedLabelReadingCount);
-        }
         readingsToPipe.Add(label, reducedLabelReadings);
       }
 
@@ -323,13 +303,11 @@ namespace PowerView.Model.Repository
     {
       var tableName = GetTableName<TSrcRegister>();
 
-      log.DebugFormat("Querying for registers for {0}", label);
-
       var sqlQuery = "SELECT * FROM {0} WHERE ReadingId IN ({1});";
       var ids = string.Join(", ", readingsToPipe.Select(r => r.Id.ToString(CultureInfo.InvariantCulture)));
       sqlQuery = string.Format(CultureInfo.InvariantCulture, sqlQuery, tableName, ids);
-      var resultSet = DbContext.QueryTransaction<TSrcRegister>("GetRegisters", sqlQuery);
-      log.Debug("Finished query for registers");
+      var resultSet = DbContext.QueryTransaction<TSrcRegister>(sqlQuery);
+
       return resultSet.Cast<IDbRegister>().ToList();
     }
 
@@ -367,11 +345,8 @@ namespace PowerView.Model.Repository
         }
 
         transaction.Commit();
-
-        log.DebugFormat("Piped {0}s for {1} time {2} with {3} registers. Set stream position to {4}", 
-          dstReadingTable, reading.Label, reading.Timestamp.ToString("o"), registers.Count, reading.Id);
       }
-      catch (SqliteException e)
+      catch (SQLiteException e)
       {
         transaction.Rollback();
         throw DataStoreExceptionFactory.Create(e);

@@ -3,16 +3,13 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using Mono.Data.Sqlite;
+using System.Data.SQLite;
 using Dapper;
-using log4net;
 
 namespace PowerView.Model.Repository
 {
   internal class DisconnectRuleRepository : RepositoryBase, IDisconnectRuleRepository
   {
-    private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
     public DisconnectRuleRepository(IDbContext dbContext)
       : base(dbContext)
     {
@@ -45,7 +42,7 @@ namespace PowerView.Model.Repository
         }
         transaction.Commit();
       }
-      catch (SqliteException e)
+      catch (SQLiteException e)
       {
         transaction.Rollback();
         throw DataStoreExceptionFactory.Create(e);
@@ -57,7 +54,7 @@ namespace PowerView.Model.Repository
       if (name == null) throw new ArgumentNullException("name");
 
       const string sql = "DELETE FROM DisconnectRule WHERE Label=@Label AND ObisCode=@ObisCode;";
-      DbContext.ExecuteTransaction("DeleteDisconnectRule", sql, new { name.Label, ObisCode = (long)name.ObisCode });
+      DbContext.ExecuteTransaction(sql, new { name.Label, ObisCode = (long)name.ObisCode });
     }
 
     private static void MapNonKeyValues(DisconnectRule disconnectRule, Db.DisconnectRule dbDisconnectRule)
@@ -74,7 +71,7 @@ namespace PowerView.Model.Repository
     {
       var sql = @"SELECT Id,Label,ObisCode,EvaluationLabel,EvaluationObisCode,DurationSeconds,DisconnectToConnectValue,ConnectToDisconnectValue,Unit FROM DisconnectRule ORDER BY Id;";
       
-      var queryResult = DbContext.QueryTransaction<Db.DisconnectRule>("GetDisconnectRules", sql);
+      var queryResult = DbContext.QueryTransaction<Db.DisconnectRule>(sql);
 
       return queryResult.Select(ToDisconnectRule).ToList();
     }
@@ -114,7 +111,7 @@ ORDER BY rea.Timestamp DESC;";
       var registerTable = typeof(TRegister).Name;
       sqlQuery = string.Format(CultureInfo.InvariantCulture, sqlQuery, readingTable, registerTable);
 
-      return DbContext.QueryTransaction<dynamic>("GetLatestRegisterValues-" + readingTable, sqlQuery, new { Cutoff = cutoffDateTime });
+      return DbContext.QueryTransaction<dynamic>(sqlQuery, new { Cutoff = cutoffDateTime });
     }
 
   }

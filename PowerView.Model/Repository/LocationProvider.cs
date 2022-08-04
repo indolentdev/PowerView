@@ -1,117 +1,111 @@
-﻿using System;
-using System.Globalization;
-using System.Reflection;
-using log4net;
+﻿using System.Globalization;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace PowerView.Model.Repository
 {
-  internal class LocationProvider : ILocationProvider
-  {
-    private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
-    private readonly ISettingRepository settingRepository;
-    private readonly string configuredTimeZone;
-    private readonly string configuredCultureInfo;
-
-    public LocationProvider(ISettingRepository settingRepository, string configuredTimeZone, string configuredCultureInfo)
+    internal class LocationProvider : ILocationProvider
     {
-      if (settingRepository == null) throw new ArgumentNullException("settingRepository");
+        private readonly ILogger<LocationProvider> logger;
+        private readonly IOptions<Database2Options> options;
+        private readonly ISettingRepository settingRepository;
 
-      this.settingRepository = settingRepository;
-      this.configuredTimeZone = configuredTimeZone;
-      this.configuredCultureInfo = configuredCultureInfo;
-    }
-
-    public TimeZoneInfo GetTimeZone()
-    {
-      if (!string.IsNullOrEmpty(configuredTimeZone))
-      {
-        var configTimeZoneInfo = ToTimeZoneInfo(configuredTimeZone);
-        if (configTimeZoneInfo != null)
+        public LocationProvider(ILogger<LocationProvider> logger, IOptions<Database2Options> options, ISettingRepository settingRepository)
         {
-          log.DebugFormat("Resolved time zone from configuration: {0}:{1}", configTimeZoneInfo.Id, configTimeZoneInfo.DisplayName);
-          return configTimeZoneInfo;
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.options = options ?? throw new ArgumentNullException(nameof(options));
+            this.settingRepository = settingRepository ?? throw new ArgumentNullException(nameof(settingRepository));
         }
-      }
 
-      var timeZoneId = settingRepository.Get(Settings.TimeZoneId);
-      if (timeZoneId != null)
-      {
-        var dbTimeZoneInfo = ToTimeZoneInfo(timeZoneId);
-        if (dbTimeZoneInfo != null)
+        public TimeZoneInfo GetTimeZone()
         {
-          log.DebugFormat("Resolved time zone from database: {0}:{1}", dbTimeZoneInfo.Id, dbTimeZoneInfo.DisplayName);
-          return dbTimeZoneInfo;
-        }
-      }
-        
-      var timeZoneInfo = ToTimeZoneInfo(TimeZoneInfo.Local.Id);
-      log.DebugFormat("Using operating system time zone: {0}:{1}", timeZoneInfo.Id, timeZoneInfo.DisplayName);
-      return timeZoneInfo;
-    }
+            var configuredTimeZone = options.Value.TimeZone;
+            if (!string.IsNullOrEmpty(configuredTimeZone))
+            {
+                var configTimeZoneInfo = ToTimeZoneInfo(configuredTimeZone);
+                if (configTimeZoneInfo != null)
+                {
+                    logger.LogInformation($"Resolved time zone from configuration: {configTimeZoneInfo.Id}:{configTimeZoneInfo.DisplayName}");
+                    return configTimeZoneInfo;
+                }
+            }
 
-    public CultureInfo GetCultureInfo()
-    {
-      if (!string.IsNullOrEmpty(configuredCultureInfo))
-      {
-        var configCultureInfo = ToCultureInfo(configuredCultureInfo);
-        if (configCultureInfo != null)
+            var timeZoneId = settingRepository.Get(Settings.TimeZoneId);
+            if (timeZoneId != null)
+            {
+                var dbTimeZoneInfo = ToTimeZoneInfo(timeZoneId);
+                if (dbTimeZoneInfo != null)
+                {
+                    logger.LogInformation($"Resolved time zone from database: {dbTimeZoneInfo.Id}:{dbTimeZoneInfo.DisplayName}");
+                    return dbTimeZoneInfo;
+                }
+            }
+
+            var timeZoneInfo = ToTimeZoneInfo(TimeZoneInfo.Local.Id);
+            logger.LogInformation($"Resolved time zone from operatng system: {timeZoneInfo.Id}:{timeZoneInfo.DisplayName}");
+            return timeZoneInfo;
+        }
+
+        public CultureInfo GetCultureInfo()
         {
-          log.DebugFormat("Resolved culture info from configuration: {0}:{1}", configCultureInfo.Name, configCultureInfo.EnglishName);
-          return configCultureInfo;
-        }
-      }
+            var configuredCultureInfo = options.Value.CultureInfo;
+            if (!string.IsNullOrEmpty(configuredCultureInfo))
+            {
+                var configCultureInfo = ToCultureInfo(configuredCultureInfo);
+                if (configCultureInfo != null)
+                {
+                    logger.LogInformation($"Resolved culture info from configuration: {configCultureInfo.Name}:{configCultureInfo.EnglishName}");
+                    return configCultureInfo;
+                }
+            }
 
-      var cultureInfoName = settingRepository.Get(Settings.CultureInfoName);
-      if (cultureInfoName != null)
-      {
-        var dbCultureInfo = ToCultureInfo(cultureInfoName);
-        if (dbCultureInfo != null)
+            var cultureInfoName = settingRepository.Get(Settings.CultureInfoName);
+            if (cultureInfoName != null)
+            {
+                var dbCultureInfo = ToCultureInfo(cultureInfoName);
+                if (dbCultureInfo != null)
+                {
+                    logger.LogInformation($"Resolved culture info from database: {dbCultureInfo.Name}:{dbCultureInfo.EnglishName}");
+                    return dbCultureInfo;
+                }
+            }
+
+            var cultureInfo = CultureInfo.CurrentCulture;
+            logger.LogInformation($"Resolved culture info from operating system: {cultureInfo.Name}:{cultureInfo.EnglishName}");
+            return cultureInfo;
+        }
+
+        private TimeZoneInfo ToTimeZoneInfo(string timeZoneId)
         {
-          log.DebugFormat("Resolved culture info from database: {0}:{1}", dbCultureInfo.Name, dbCultureInfo.EnglishName);
-          return dbCultureInfo;
+            try
+            {
+                return TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
+            }
+            catch (TimeZoneNotFoundException e)
+            {
+                logger.LogInformation(e, $"Could not resolve the TimeZone:{timeZoneId}");
+            }
+            catch (InvalidTimeZoneException e)
+            {
+                logger.LogInformation(e, $"Invalid TimeZone:{timeZoneId}");
+            }
+
+            return null;
         }
-      }
 
-      var cultureInfo = CultureInfo.CurrentCulture;
-      log.DebugFormat("Using operating system culture info: {0}:{1}", cultureInfo.Name, cultureInfo.EnglishName);
-      return cultureInfo;
+        private CultureInfo ToCultureInfo(string cultureInfoName)
+        {
+            try
+            {
+                return new CultureInfo(cultureInfoName);
+            }
+            catch (CultureNotFoundException e)
+            {
+                logger.LogInformation(e, $"Could not resolve the CultureInfo:{cultureInfoName}");
+            }
+
+            return null;
+        }
+
     }
-
-    private static TimeZoneInfo ToTimeZoneInfo(string timeZoneId)
-    {
-      try
-      {
-        return TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
-      }
-      catch (TimeZoneNotFoundException e)
-      {
-        var msg = string.Format(CultureInfo.InvariantCulture, "Could not resolve the TimeZone:{0}", timeZoneId);
-        log.Debug(msg, e);
-      }
-      catch (InvalidTimeZoneException e)
-      {
-        var msg = string.Format(CultureInfo.InvariantCulture, "Invalid TimeZone:{0}", timeZoneId);
-        log.Debug(msg, e);
-      }
-
-      return null;
-    }
-
-    private static CultureInfo ToCultureInfo(string cultureInfoName)
-    {
-      try
-      {
-        return new CultureInfo(cultureInfoName);
-      }
-      catch (CultureNotFoundException e)
-      {
-        var msg = string.Format(CultureInfo.InvariantCulture, "Could not resolve the CultureInfo:{0}", cultureInfoName);
-        log.Debug(msg, e);
-      }
-
-      return null;
-    }
-
-  }
 }

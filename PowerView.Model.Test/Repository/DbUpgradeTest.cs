@@ -3,6 +3,7 @@ using System.Linq;
 using NUnit.Framework;
 using Dapper;
 using PowerView.Model.Repository;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace PowerView.Model.Test.Repository
 {
@@ -21,7 +22,7 @@ namespace PowerView.Model.Test.Repository
 
       // Assert
       Assert.That(updateNeeded, Is.True);
-      Assert.That(DbContext.QueryTransaction<int>("Assert", "SELECT Count(*) FROM Version;").FirstOrDefault(), Is.GreaterThan(1));
+      Assert.That(DbContext.QueryTransaction<int>("SELECT Count(*) FROM Version;").FirstOrDefault(), Is.GreaterThan(1));
       Assert.That(GetTableCount(), Is.GreaterThan(1));
     }
 
@@ -37,7 +38,7 @@ namespace PowerView.Model.Test.Repository
 
       // Assert
       Assert.That(updateNeeded, Is.False);
-      Assert.That(DbContext.QueryTransaction<int>("Assert", "SELECT Count(*) FROM Version;").FirstOrDefault(), Is.EqualTo(1));
+      Assert.That(DbContext.QueryTransaction<int>("SELECT Count(*) FROM Version;").FirstOrDefault(), Is.EqualTo(1));
       Assert.That(GetTableCount(), Is.EqualTo(1));
     }
 
@@ -54,13 +55,13 @@ namespace PowerView.Model.Test.Repository
 
     private DbUpgrade CreateTarget()
     {
-      return new DbUpgrade(DbContext);
+      return new DbUpgrade(new NullLogger<DbUpgrade>(), DbContext);
     }
 
     private void CreateVersionTableAndInsertVersion(long version)
     {
       Connection.Execute("CREATE TABLE Version (Id INTEGER PRIMARY KEY, Number INTEGER NOT NULL, Timestamp DATETIME NOT NULL);");
-      DbContext.ExecuteTransaction("CreateVersionTableAndInsertVersion", "INSERT INTO Version (Number, Timestamp) VALUES (@Number, @Timestamp);", 
+      DbContext.ExecuteTransaction("INSERT INTO Version (Number, Timestamp) VALUES (@Number, @Timestamp);", 
         new { Number = version, Timestamp = DateTime.UtcNow });
     }
 

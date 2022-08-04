@@ -1,33 +1,27 @@
 ﻿using System;
 using System.Reflection;
 using PowerView.Model.Repository;
-using log4net;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace PowerView.Service.EventHub
 {
   internal class ReadingPiper : IReadingPiper
   {
-    private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
+    private readonly ILogger logger;
     private readonly IIntervalTrigger dayTrigger;
     private readonly IIntervalTrigger monthTrigger;
     private readonly IIntervalTrigger yearTrigger;
-    private readonly IFactory factory;
 
     private bool monthRunAllowed;
     private bool yearRunAllowed;
 
-    public ReadingPiper(IIntervalTrigger dayTrigger, IIntervalTrigger monthTrigger, IIntervalTrigger yearTrigger, IFactory factory)
+    public ReadingPiper(ILogger<ReadingPiper> logger, IIntervalTrigger dayTrigger, IIntervalTrigger monthTrigger, IIntervalTrigger yearTrigger)
     {
-      if (dayTrigger == null) throw new ArgumentNullException("dayTrigger");
-      if (monthTrigger == null) throw new ArgumentNullException("monthTrigger");
-      if (yearTrigger == null) throw new ArgumentNullException("yearTrigger");
-      if (factory == null) throw new ArgumentNullException("factory");
-
-      this.dayTrigger = dayTrigger;
-      this.monthTrigger = monthTrigger;
-      this.yearTrigger = yearTrigger;
-      this.factory = factory;
+      this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+      this.dayTrigger = dayTrigger ?? throw new ArgumentNullException(nameof(dayTrigger));
+      this.monthTrigger = monthTrigger ?? throw new ArgumentNullException(nameof(monthTrigger));
+      this.yearTrigger = yearTrigger ?? throw new ArgumentNullException(nameof(yearTrigger));
 
       var triggerTimeOfDay = new TimeSpan(0, 45, 0);
       var dayInterval = TimeSpan.FromDays(1);
@@ -38,7 +32,7 @@ namespace PowerView.Service.EventHub
 
     #region IReadingPiper implementation
 
-    public void PipeLiveReadings(DateTime dateTime)
+    public void PipeLiveReadings(IServiceScope serviceScope, DateTime dateTime)
     {
       monthRunAllowed = false; // ensure day to month piping only takes place when live to day is "at HEAD"
 
@@ -47,25 +41,23 @@ namespace PowerView.Service.EventHub
         return;
       }
 
-      log.Info("Piping live readings to day readings");
+      logger.LogInformation("Piping live readings to day readings");
 
-      using (var ownedRepo = factory.Create<IReadingPipeRepository>())
+      var readingPipeRepository = serviceScope.ServiceProvider.GetRequiredService<IReadingPipeRepository>();
+      for (var i = 0; i < 50; i++)
       {
-        for (var i = 0; i < 50; i++)
+        var pipedSomething = readingPipeRepository.PipeLiveReadingsToDayReadings(dateTime);
+        if (!pipedSomething)
         {
-          var pipedSomething = ownedRepo.Value.PipeLiveReadingsToDayReadings(dateTime);
-          if (!pipedSomething)
-          {
-            monthRunAllowed = true; // live to day piping is complete for now. Allow day to month piping.
-            break;
-          }
+          monthRunAllowed = true; // live to day piping is "complete" for now (more will be piped later). Allow day to month piping.
+          break;
         }
       }
 
       dayTrigger.Advance(dateTime);
     }
 
-    public void PipeDayReadings(DateTime dateTime)
+    public void PipeDayReadings(IServiceScope serviceScope, DateTime dateTime)
     {
       yearRunAllowed = false; // ensure month to year piping only takes place when day to month is "at HEAD"
 
@@ -79,25 +71,23 @@ namespace PowerView.Service.EventHub
         return;
       }
 
-      log.Info("Piping day readings to month readings - if any");
+      logger.LogInformation("Piping day readings to month readings - if any");
 
-      using (var ownedRepo = factory.Create<IReadingPipeRepository>())
+      var readingPipeRepository = serviceScope.ServiceProvider.GetRequiredService<IReadingPipeRepository>();
+      for (var i = 0; i < 13; i++)
       {
-        for (var i = 0; i < 13; i++)
+        var pipedSomething = readingPipeRepository.PipeDayReadingsToMonthReadings(dateTime);
+        if (!pipedSomething)
         {
-          var pipedSomething = ownedRepo.Value.PipeDayReadingsToMonthReadings(dateTime);
-          if (!pipedSomething)
-          {
-            yearRunAllowed = true; // day to month piping is complete for now. Allow month to year piping.
-            break;
-          }
+          yearRunAllowed = true; // day to month piping is complete for now. Allow month to year piping.
+          break;
         }
       }
 
       monthTrigger.Advance(dateTime);
     }
 
-    public void PipeMonthReadings(DateTime dateTime)
+    public void PipeMonthReadings(IServiceScope serviceScope, DateTime dateTime)
     {
       if (!yearRunAllowed)
       {
@@ -109,12 +99,10 @@ namespace PowerView.Service.EventHub
         return;
       }
 
-      log.Info("Piping month readings to year readings - if any");
+      logger.LogInformation("Piping month readings to year readings - if any");
 
-      using (var ownedRepo = factory.Create<IReadingPipeRepository>())
-      {
-        ownedRepo.Value.PipeMonthReadingsToYearReadings(dateTime);
-      }
+      var readingPipeRepository = serviceScope.ServiceProvider.GetRequiredService<IReadingPipeRepository>();
+      readingPipeRepository.PipeMonthReadingsToYearReadings(dateTime);
 
       yearTrigger.Advance(dateTime);
     }

@@ -15,7 +15,7 @@ namespace PowerView.Model.Repository
 
     public EmailRecipient GetEmailRecipient(string emailAddress)
     {
-      return DbContext.QueryTransaction<Db.EmailRecipient>("GetEmailRecipient",
+      return DbContext.QueryTransaction<Db.EmailRecipient>(
           "SELECT Id, Name, EmailAddress FROM EmailRecipient WHERE EmailAddress = @emailAddress;", new { emailAddress })
         .Select(ToEmailRecipient)
         .FirstOrDefault();
@@ -24,7 +24,7 @@ namespace PowerView.Model.Repository
     public IList<EmailRecipient> GetEmailRecipients()
     {
       return DbContext
-        .QueryTransaction<Db.EmailRecipient>("GetEmailRecipients", "SELECT Id, Name, EmailAddress FROM EmailRecipient ORDER BY Id LIMIT 50;")
+        .QueryTransaction<Db.EmailRecipient>("SELECT Id, Name, EmailAddress FROM EmailRecipient ORDER BY Id LIMIT 50;")
         .Select(ToEmailRecipient)
         .ToList();
     }
@@ -49,8 +49,7 @@ namespace PowerView.Model.Repository
       INSERT INTO [EmailRecipientMeterEventPosition] ([EmailRecipientId],[MeterEventId]) 
       SELECT last_insert_rowid() AS [EmailRecipientId], [Id] AS [MeterEventId] FROM [MeterEvent] ORDER By [Id] DESC LIMIT 1;";
 
-      DbContext.ExecuteTransaction("AddEmailRecipient", sql, 
-                                   new { name = emailRecipient.Name, emailAddress = emailRecipient.EmailAddress });
+      DbContext.ExecuteTransaction(sql, new { name = emailRecipient.Name, emailAddress = emailRecipient.EmailAddress });
     }
 
     public void DeleteEmailRecipient(string emailAddress)
@@ -58,7 +57,7 @@ namespace PowerView.Model.Repository
       const string sql = @"
       DELETE FROM [EmailRecipientMeterEventPosition] WHERE [EmailRecipientId] IN (SELECT [Id] FROM [EmailRecipient] WHERE [EmailAddress]=@emailAddress);
       DELETE FROM [EmailRecipient] WHERE [EmailAddress]=@emailAddress;";
-      DbContext.ExecuteTransaction("DeleteEmailRecipient", sql, new { emailAddress });
+      DbContext.ExecuteTransaction(sql, new { emailAddress });
     }
 
     public IDictionary<EmailRecipient, long?> GetEmailRecipientsMeterEventPosition()
@@ -68,7 +67,7 @@ namespace PowerView.Model.Repository
       FROM [EmailRecipient] 
       LEFT JOIN [EmailRecipientMeterEventPosition] ON [EmailRecipientId]=[EmailRecipient].[Id];";
 
-      var rows = DbContext.QueryTransaction<dynamic>("GetEmailRecipientsMeterEventPosition", sql);
+      var rows = DbContext.QueryTransaction<dynamic>(sql);
       var result = new Dictionary<EmailRecipient, long?>(rows.Count);
       foreach (dynamic row in rows)
       {
@@ -89,7 +88,7 @@ namespace PowerView.Model.Repository
       INSERT INTO [EmailRecipientMeterEventPosition] ([EmailRecipientId],[MeterEventId]) 
       SELECT [Id] AS [EmailRecipientId], @meterEventId AS [MeterEventId] FROM [EmailRecipient] WHERE [EmailAddress]=@emailAddress AND changes() = 0;";
 
-      DbContext.ExecuteTransaction("SetEmailRecipientMeterEventPosition", sql, new { emailAddress, meterEventId });
+      DbContext.ExecuteTransaction(sql, new { emailAddress, meterEventId });
     }
 
   }

@@ -1,56 +1,58 @@
 ﻿using System;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using Microsoft.Extensions.Options;
 
 namespace PowerView.Service
 {
-  public class UrlProvider : IUrlProvider
-  {
-    private readonly Uri baseUri;
-    
-    public UrlProvider(Uri baseUri)
+    public class UrlProvider : IUrlProvider
     {
-      this.baseUri = baseUri;
-    }
+        private readonly IOptions<ServiceOptions> options;
 
-    public Uri GetEventsUrl()
-    {
-//      return new Uri(GetBaseUri(), "Content/index.html#!/events");
-      return GetBaseUri();
-    }
-
-    private Uri GetBaseUri()
-    {
-      if (baseUri.IsLoopback)
-      {
-        var ipAddress = GetIPv4Address();
-        if (!string.IsNullOrEmpty(ipAddress))
+        public UrlProvider(IOptions<ServiceOptions> options)
         {
-          var builder = new UriBuilder(baseUri) { Host = ipAddress };
-          return builder.Uri;
+            this.options = options ?? throw new ArgumentNullException(nameof(options));
         }
-      }
 
-      return baseUri;
-    }
-
-    private string GetIPv4Address()
-    {
-      string output = null;
-      foreach (NetworkInterface item in NetworkInterface.GetAllNetworkInterfaces())
-      {
-        if (item.OperationalStatus == OperationalStatus.Up)
+        public Uri GetEventsUrl()
         {
-          foreach (UnicastIPAddressInformation ip in item.GetIPProperties().UnicastAddresses)
-          {
-            if (ip.Address.AddressFamily == AddressFamily.InterNetwork)
+            //      return new Uri(GetBaseUri(), "Content/index.html#!/events");
+            return GetBaseUri();
+        }
+
+        private Uri GetBaseUri()
+        {
+            var baseUri = new Uri(options.Value.BaseUrl);
+            if (baseUri.IsLoopback)
             {
-              output = ip.Address.ToString();
+                var ipAddress = GetIPv4Address();
+                if (!string.IsNullOrEmpty(ipAddress))
+                {
+                    var builder = new UriBuilder(baseUri) { Host = ipAddress };
+                    return builder.Uri;
+                }
             }
-          }
+
+            return baseUri;
         }
-      }
-      return output;
+
+        private string GetIPv4Address()
+        {
+            string output = null;
+            foreach (NetworkInterface item in NetworkInterface.GetAllNetworkInterfaces())
+            {
+                if (item.OperationalStatus == OperationalStatus.Up)
+                {
+                    foreach (UnicastIPAddressInformation ip in item.GetIPProperties().UnicastAddresses)
+                    {
+                        if (ip.Address.AddressFamily == AddressFamily.InterNetwork)
+                        {
+                            output = ip.Address.ToString();
+                        }
+                    }
+                }
+            }
+            return output;
+        }
     }
-  }
 }

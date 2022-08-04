@@ -4,7 +4,6 @@ using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Threading.Tasks;
-using log4net;
 using MQTTnet;
 using MQTTnet.Diagnostics.Logger;
 using MQTTnet.Protocol;
@@ -16,8 +15,6 @@ namespace PowerView.Service.Test.Mqtt
 {
   internal class TestMqttServer : IDisposable
   {
-    private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
     private IMqttServer mqttServer;
     private List<MqttApplicationMessageReceivedEventArgs> published;
     private List<MqttConnectionValidatorContext> connections;
@@ -73,7 +70,7 @@ namespace PowerView.Service.Test.Mqtt
         .Build();
 
       var mqttNetLogger = new MqttNetEventLogger();
-      mqttNetLogger.LogMessagePublished += (sender, e) => log.Debug(e.LogMessage);
+      mqttNetLogger.LogMessagePublished += (sender, e) => Console.WriteLine(e.LogMessage);
       mqttServer = new MqttFactory().CreateMqttServer(mqttNetLogger);
       mqttServer.UseApplicationMessageReceivedHandler(e => published.Add(e));
       Assert.That(mqttServer.StartAsync(options).Wait(3000), Is.True, "MQTT Server failed to start");

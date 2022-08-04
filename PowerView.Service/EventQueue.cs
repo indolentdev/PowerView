@@ -2,21 +2,21 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
-using log4net;
+using Microsoft.Extensions.Logging;
 
 namespace PowerView.Service
 {
-  internal class EventQueue : IDisposable
+  internal class EventQueue : IEventQueue
   {
-    private ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
+    private readonly ILogger logger;
     private readonly object eventsSyncRoot;
     private readonly List<Action> events;
     private Task itemTask;
     private volatile bool stop;
 
-    public EventQueue()
+    public EventQueue(ILogger<EventQueue> logger)
     {
+      this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
       eventsSyncRoot = new object();
       events = new List<Action>();
 
@@ -68,7 +68,7 @@ namespace PowerView.Service
       }
       catch (AggregateException e)
       {
-        log.Error("Exception occurred while processing event queue", e);
+        logger.LogError(e, "Exception occurred while processing event queue");
       }
 
       lock (eventsSyncRoot)

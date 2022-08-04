@@ -1,15 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Mono.Data.Sqlite;
+using System.Data.SQLite;
 using Dapper;
 
 namespace PowerView.Model.Repository
 {
   internal class LiveReadingRepository : RepositoryBase, ILiveReadingRepository
   {
-    //    private static ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
     public LiveReadingRepository(IDbContext dbContext)
       : base(dbContext)
     {
@@ -42,7 +40,7 @@ namespace PowerView.Model.Repository
           dbLiveRegisters, transaction);
         transaction.Commit();
       }
-      catch (SqliteException e)
+      catch (SQLiteException e)
       {
         transaction.Rollback();
         throw DataStoreExceptionFactory.Create(e);

@@ -20,7 +20,7 @@ namespace PowerView.Model.Test.Repository
     [OneTimeSetUp]
     public void TestFixtureSetUp()
     {
-      dbContextFactory = new DbContextFactory(DbName);
+      dbContextFactory = new DbContextFactory(new DatabaseOptions { Name = DbName });
       DbContext = (DbContext)dbContextFactory.CreateContext();
     }
 

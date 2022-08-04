@@ -5,15 +5,12 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using Dapper;
-using Mono.Data.Sqlite;
-using log4net;
+using System.Data.SQLite;
 
 namespace PowerView.Model.Repository
 {
   internal class GaugeRepository : RepositoryBase, IGaugeRepository
   {
-    private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
     public GaugeRepository(IDbContext dbContext)
       : base(dbContext)
     {
@@ -22,8 +19,6 @@ namespace PowerView.Model.Repository
     public ICollection<GaugeValueSet> GetLatest(DateTime dateTime)
     {
       if (dateTime.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("dateTime");
-
-      if (log.IsDebugEnabled) log.DebugFormat("Getting latest gauge values using dateTime:{0}", dateTime.ToString(CultureInfo.InvariantCulture));
 
       var result = new List<GaugeValueSet>(4);
 
@@ -37,13 +32,11 @@ namespace PowerView.Model.Repository
 
         transaction.Commit();
       }
-      catch (SqliteException e)
+      catch (SQLiteException e)
       {
         transaction.Rollback();
         throw DataStoreExceptionFactory.Create(e);
       }
-
-      log.Debug("Finished query");
 
       return result;
     }
@@ -65,13 +58,11 @@ ORDER BY rea.Timestamp DESC;";
       var registerTable = typeof(TRegister).Name;
       sqlQuery = string.Format(CultureInfo.InvariantCulture, sqlQuery, readingTable, registerTable);
 
-      if (log.IsDebugEnabled) log.DebugFormat("Subquery {0} and {1}", readingTable, registerTable);
       var resultSet = DbContext.Connection.Query(sqlQuery, new { Cutoff = cutoffDateTime }, transaction, buffered: true);
 
       var values = resultSet.Select(GetObisCode).Where(x => x.Item1.IsCumulative)
                             .Select(ToGaugeValue).GroupBy(gv => new { gv.Label, gv.ObisCode, gv.DeviceId })
                             .Select(x => x.First()).ToArray();
-      log.Debug("Finished subquery");
 
       if (values.Length > 0)
       {
@@ -83,8 +74,6 @@ ORDER BY rea.Timestamp DESC;";
     {
       if (dateTime.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("dateTime");
 
-      if (log.IsDebugEnabled) log.DebugFormat("Getting custom gauge values using dateTime:{0}", dateTime.ToString(CultureInfo.InvariantCulture));
-
       var result = new List<GaugeValueSet>(4);
 
       var transaction = DbContext.BeginTransaction();
@@ -93,13 +82,11 @@ ORDER BY rea.Timestamp DESC;";
         GetCustomGaugeValueSet<Db.DayReading, Db.DayRegister>(transaction, GaugeSetName.Custom, dateTime, 2, result);
         transaction.Commit();
       }
-      catch (SqliteException e)
+      catch (SQLiteException e)
       {
         transaction.Rollback();
         throw DataStoreExceptionFactory.Create(e);
       }
-
-      log.Debug("Finished query");
 
       return result;
     }
@@ -121,13 +108,11 @@ ORDER BY rea.Timestamp DESC;";
       var registerTable = typeof(TRegister).Name;
       sqlQuery = string.Format(CultureInfo.InvariantCulture, sqlQuery, readingTable, registerTable);
 
-      if (log.IsDebugEnabled) log.DebugFormat("Subquery {0} and {1}", readingTable, registerTable);
       var resultSet = DbContext.Connection.Query(sqlQuery, new { Cutoff = cutoffDateTime, dateTime }, transaction, buffered: true);
 
       var values = resultSet.Select(GetObisCode).Where(x => x.Item1.IsCumulative)
                             .Select(ToGaugeValue).GroupBy(gv => new { gv.Label, gv.ObisCode, gv.DeviceId })
                             .Select(x => x.First()).ToArray();
-      log.Debug("Finished subquery");
 
       if (values.Length > 0)
       {

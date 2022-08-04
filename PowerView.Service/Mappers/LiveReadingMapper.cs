@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Web;
-using log4net;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using PowerView.Model;
 using PowerView.Service.Dtos;
@@ -14,82 +14,11 @@ namespace PowerView.Service.Mappers
 {
   internal class LiveReadingMapper : ILiveReadingMapper
   {
-    protected static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+    private readonly ILogger logger;
 
-    public IEnumerable<LiveReading> Map(string contentType, Stream body)
+    public LiveReadingMapper(ILogger<LiveReadingMapper> logger)
     {
-      if (string.IsNullOrEmpty(contentType)) throw new ArgumentNullException("contentType");
-      if (!contentType.ToLowerInvariant().Contains("application/json"))
-      {
-        throw new ArgumentOutOfRangeException("contentType", "Only supports application/json ContentType");
-      }
-      if (body == null) throw new ArgumentNullException("body");
-
-      var json = ReadStream(body);    
-      var liveReadingSetDto = Deserialize(json);
-      var liveReading = Map(liveReadingSetDto);
-      return liveReading;
-    }
-
-    private static string ReadStream(Stream body)
-    {
-      string json;
-      try
-      {
-        using (var sr = new StreamReader(body))
-        {
-          json = sr.ReadToEnd();
-        }
-      }
-      catch (IOException e)
-      {
-        throw new ArgumentOutOfRangeException("Unable to read body stream", e);
-      }
-      return json;
-    }
-
-    private static LiveReadingSetDto Deserialize(string json)
-    {
-      try
-      {
-        return JsonConvert.DeserializeObject<LiveReadingSetDto>(json);
-      }
-      catch (JsonException e)
-      {
-        throw new ArgumentOutOfRangeException("Unable to deserialize to LiveReading JSON representation", e);
-      }
-    }
-
-    private static IEnumerable<LiveReading> Map(LiveReadingSetDto liveReadingSetDto)
-    {
-      foreach (var liveReadingDto in liveReadingSetDto.Items)
-      {
-        var deviceId = liveReadingDto.DeviceId;
-        if (string.IsNullOrEmpty(deviceId))
-        {
-          deviceId = liveReadingDto.SerialNumber;
-        }
-        if (string.IsNullOrEmpty(deviceId))
-        {
-          throw new ArgumentOutOfRangeException("DeviceId absent in LiveReading JSON representation"); // temporary until SerialNumber property is removed.
-        }
-
-        yield return new LiveReading(liveReadingDto.Label, deviceId, liveReadingDto.Timestamp, MapLiveReadings(liveReadingDto.RegisterValues));
-      }
-    }
-
-    private static IEnumerable<RegisterValue> MapLiveReadings(IEnumerable<RegisterValueDto> registerValueDtos)
-    {
-      foreach (var registerValueDto in registerValueDtos)
-      {
-        ObisCode obisCode = registerValueDto.ObisCode;
-        Unit unit;
-        if (!Enum.TryParse<Unit>(registerValueDto.Unit, true, out unit))
-        {
-          throw new ArgumentOutOfRangeException("registerValueDtos", registerValueDto.Unit + " is not a valid Unit value");
-        }
-        yield return new RegisterValue(obisCode, registerValueDto.Value, registerValueDto.Scale, unit);
-      }
+      this.logger = logger ?? throw new ArgumentNullException(nameof(logger));      
     }
 
     public LiveReading MapPvOutputArgs(Uri requestUrl, string contentType, Stream body, string deviceLabel, string deviceId, string deviceIdParam,
@@ -108,16 +37,14 @@ namespace PowerView.Service.Mappers
       if (!pvArgs.ContainsKey("d") || !pvArgs.ContainsKey("t") ||
           ((!pvArgs.ContainsKey("v1") || !pvArgs.ContainsKey("c1") || pvArgs["c1"][0] != "1") && !pvArgs.ContainsKey("v2")))
       {
-        log.InfoFormat("Unable to extract PV data from PVOutput.org parameters. Needed parameters not present. " +
-          "Expected parameters d and t with v2 and/or v1 and c1=1. Params:{0}", pvArgString);
+        logger.LogInformation($"Unable to extract PV data from PVOutput.org parameters. Needed parameters not present. Expected parameters d and t with v2 and/or v1 and c1=1. Params:{pvArgString}");
         return null;
       }
 
       var resolvedDeviceId = GetDeviceId(deviceId, pvArgs, deviceIdParam);
       if (resolvedDeviceId == null)
       {
-        log.InfoFormat("Failed to extract PV device id from configuration or PV data. DeviceIdParam:{0}, Params:{1}",
-          deviceIdParam, pvArgString);
+        logger.LogInformation($"Failed to extract PV device id from configuration or PV data. DeviceIdParam:{deviceIdParam}, Params:{pvArgString}");
         return null;
       }
 
@@ -161,7 +88,7 @@ namespace PowerView.Service.Mappers
         var pvArgValue = pvArg.Split(new[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
         if (pvArgValue.Length != 2)
         {
-          log.DebugFormat("Failed to map pv arg:{0}", pvArg);
+          logger.LogDebug($"Failed to map pv arg:{pvArg}");
           continue;
         }
 
@@ -192,7 +119,7 @@ namespace PowerView.Service.Mappers
       return pvArgs[deviceIdParam][0];
     }
 
-    private static RegisterValue GetRegisterValue(IDictionary<string, IList<string>> pvArgs, string param, ObisCode obisCode, Unit unit)
+    private RegisterValue GetRegisterValue(IDictionary<string, IList<string>> pvArgs, string param, ObisCode obisCode, Unit unit)
     {
       if (string.IsNullOrEmpty(param))
       {
@@ -213,7 +140,7 @@ namespace PowerView.Service.Mappers
       int value;
       if (!int.TryParse(valueString, NumberStyles.Integer, CultureInfo.InvariantCulture, out value))
       {
-        log.WarnFormat("Failed to parse PvOutput numeric value {0}.", valueString);
+        logger.LogWarning($"Failed to parse PvOutput numeric value {valueString}.");
         return null;
       }
       return new RegisterValue(obisCode, value, 0, unit);

@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 using PowerView.Service.EventHub;
 
@@ -11,13 +12,15 @@ namespace PowerView.Service.Test
     public void ConstructorThrows()
     {
       // Arrange
+      var logger = new NullLogger<IntervalTrigger>();
       var locationContext = TimeZoneHelper.GetDenmarkLocationContext();
       var dateTimeUnspecified = new DateTime(2019, 10, 11, 1, 2, 3, DateTimeKind.Unspecified);
 
       // Act & Assert
-      Assert.That(() => new IntervalTrigger(null, DateTime.UtcNow), Throws.ArgumentNullException);
-      Assert.That(() => new IntervalTrigger(locationContext, DateTime.Now), Throws.TypeOf<ArgumentOutOfRangeException>());
-      Assert.That(() => new IntervalTrigger(locationContext, dateTimeUnspecified), Throws.TypeOf<ArgumentOutOfRangeException>());
+      Assert.That(() => new IntervalTrigger(null, locationContext, DateTime.UtcNow), Throws.ArgumentNullException);
+      Assert.That(() => new IntervalTrigger(logger, null, DateTime.UtcNow), Throws.ArgumentNullException);
+      Assert.That(() => new IntervalTrigger(logger, locationContext, DateTime.Now), Throws.TypeOf<ArgumentOutOfRangeException>());
+      Assert.That(() => new IntervalTrigger(logger, locationContext, dateTimeUnspecified), Throws.TypeOf<ArgumentOutOfRangeException>());
     }
 
     [Test]
@@ -25,7 +28,7 @@ namespace PowerView.Service.Test
     {
       // Arrange
       var locationContext = TimeZoneHelper.GetDenmarkLocationContext();
-      var target = new IntervalTrigger(locationContext, DateTime.UtcNow);
+      var target = new IntervalTrigger(new NullLogger<IntervalTrigger>(), locationContext, DateTime.UtcNow);
 
       // Act & Assert
       Assert.That(() => target.Setup(TimeSpan.FromDays(1), TimeSpan.FromDays(1)), Throws.TypeOf<ArgumentOutOfRangeException>());
@@ -41,7 +44,7 @@ namespace PowerView.Service.Test
       // Arrange
       var locationContext = TimeZoneHelper.GetDenmarkLocationContext();
       var baseDateTime = TimeZoneHelper.GetDenmarkFixedMidnightAsUtc();
-      var target = new IntervalTrigger(locationContext, baseDateTime);
+      var target = new IntervalTrigger(new NullLogger<IntervalTrigger>(), locationContext, baseDateTime);
       target.Setup(TimeSpan.FromMinutes(15), TimeSpan.FromDays(1));
 
       // Act
@@ -57,7 +60,7 @@ namespace PowerView.Service.Test
       // Arrange
       var locationContext = TimeZoneHelper.GetDenmarkLocationContext();
       var baseDateTime = TimeZoneHelper.GetDenmarkFixedMidnightAsUtc();
-      var target = new IntervalTrigger(locationContext, baseDateTime);
+      var target = new IntervalTrigger(new NullLogger<IntervalTrigger>(), locationContext, baseDateTime);
       target.Setup(TimeSpan.FromMinutes(15), TimeSpan.FromDays(1));
       var dateTimeUnspecified = new DateTime(2019, 10, 11, 1, 2, 3, DateTimeKind.Unspecified);
 
@@ -72,7 +75,7 @@ namespace PowerView.Service.Test
       // Arrange
       var locationContext = TimeZoneHelper.GetDenmarkLocationContext();
       var baseDateTime = TimeZoneHelper.GetDenmarkFixedMidnightAsUtc();
-      var target = new IntervalTrigger(locationContext, baseDateTime);
+      var target = new IntervalTrigger(new NullLogger<IntervalTrigger>(), locationContext, baseDateTime);
       target.Setup(TimeSpan.FromMinutes(15), TimeSpan.FromDays(1));
 
       // Act & Assert
@@ -94,7 +97,7 @@ namespace PowerView.Service.Test
       // Arrange
       var locationContext = TimeZoneHelper.GetDenmarkLocationContext();
       var baseDateTime = TimeZoneHelper.GetDenmarkFixedMidnightAsUtc();
-      var target = new IntervalTrigger(locationContext, baseDateTime);
+      var target = new IntervalTrigger(new NullLogger<IntervalTrigger>(), locationContext, baseDateTime);
       target.Setup(TimeSpan.FromMinutes(15), TimeSpan.FromDays(1));
 
       // Act & Assert

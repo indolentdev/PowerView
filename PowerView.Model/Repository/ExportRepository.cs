@@ -3,14 +3,11 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using log4net;
 
 namespace PowerView.Model.Repository
 {
   internal class ExportRepository : RepositoryBase, IExportRepository
   {
-    private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
     public ExportRepository(IDbContext dbContext)
       : base(dbContext)
     {
@@ -31,21 +28,15 @@ namespace PowerView.Model.Repository
       if (labels == null) throw new ArgumentNullException("labels");
       if (labels.Count == 0) throw new ArgumentOutOfRangeException("labels", "Must not be emtpy");
 
-      if (log.IsDebugEnabled) log.DebugFormat("Getting LabelSeriesSet using from:{0}, to:{1}",
-        from.ToString(CultureInfo.InvariantCulture), to.ToString(CultureInfo.InvariantCulture));
-
       var sqlQuery = @"
 SELECT rea.Label,rea.DeviceId,rea.Timestamp,reg.ObisCode,reg.Value,reg.Scale,reg.Unit 
 FROM {0} AS rea JOIN {1} AS reg ON rea.Id=reg.ReadingId
 WHERE rea.Timestamp >= @from AND rea.Timestamp <= @to AND rea.Label IN @labels;";
       sqlQuery = string.Format(CultureInfo.InvariantCulture, sqlQuery, readingTable, registerTable);
-      log.DebugFormat("Querying {0}", readingTable);
-
-      var resultSet = DbContext.QueryTransaction("GetLabelSeriesSet", sqlQuery, new { from, to, labels });
+      var resultSet = DbContext.QueryTransaction(sqlQuery, new { from, to, labels });
 
       var labelSeries = GetLabelSeries(resultSet, includeObisCode);
 
-      log.DebugFormat("Assembeled LabelSeriesSet args");
       return new TimeRegisterValueLabelSeriesSet(from, to, labelSeries);
     }
 
