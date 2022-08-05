@@ -15,13 +15,13 @@ then
   exit 1
 fi
 
-if [ -d "PowerView/bin/Release/PowerView-Web" ]
+if [ -d "PowerView/bin/Release/net6.0/publish/PowerView-Web" ]
 then
-  rm -r "PowerView/bin/Release/PowerView-Web"
+  rm -r "PowerView/bin/Release/net6.0/publish/PowerView-Web"
 fi
 
 echo Copying web application
-cp -r "PowerView-Web/dist/PowerView-Web" "PowerView/bin/Release/PowerView-Web"
+cp -r "PowerView-Web/dist/PowerView-Web" "PowerView/bin/Release/net6.0/publish/PowerView-Web"
 if [ $? -ne 0 ]
 then
   exit 1

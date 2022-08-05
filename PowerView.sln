@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerView.Service.Test", "P
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerView.Service.IntegrationTest", "PowerView.Service.IntegrationTest\PowerView.Service.IntegrationTest.csproj", "{9D6E9E41-F8A1-453C-960E-F97A2BAAB2B6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerView", "PowerView\PowerView.csproj", "{F0AC6DD8-F6FC-4118-9364-D021C3E88BC9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,5 +44,9 @@ Global
 		{9D6E9E41-F8A1-453C-960E-F97A2BAAB2B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9D6E9E41-F8A1-453C-960E-F97A2BAAB2B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9D6E9E41-F8A1-453C-960E-F97A2BAAB2B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F0AC6DD8-F6FC-4118-9364-D021C3E88BC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F0AC6DD8-F6FC-4118-9364-D021C3E88BC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F0AC6DD8-F6FC-4118-9364-D021C3E88BC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F0AC6DD8-F6FC-4118-9364-D021C3E88BC9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

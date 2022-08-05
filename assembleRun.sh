@@ -9,4 +9,4 @@ then
 fi
 
 echo Running
-mono PowerView/bin/Release/PowerView.exe
+dotnet PowerView/bin/Release/net6.0/publish/PowerView.dll

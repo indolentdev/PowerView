@@ -1,8 +1,12 @@
+using System.Reflection;
 using Microsoft.Extensions.Options;
 using NLog;
 using NLog.Web;
 using PowerView;
 using PowerView.Service;
+
+string exeDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
+Directory.SetCurrentDirectory(exeDir);
 
 LogManager.ThrowConfigExceptions = true;
 var logger = LogManager.Setup().LoadConfigurationFromFile().GetLogger("PowerView.Program");
