@@ -6,7 +6,7 @@ namespace PowerView
     public static class ApplicationBuilderExtensions
     {
 
-        public static void UsePowerViewAngularStaticFiles(this IApplicationBuilder app)
+        internal static void UsePowerViewAngularStaticFiles(this IApplicationBuilder app)
         {
             var logger = app.ApplicationServices.GetRequiredService<ILoggerFactory>().CreateLogger(typeof(ApplicationBuilderExtensions));
 
@@ -35,6 +35,10 @@ namespace PowerView
             }
             else
             {
+                if ( string.Equals(env.EnvironmentName, "Production", StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new ApplicationException($"WebRootPath does not exist. {env.WebRootPath}");
+                }
                 logger.LogWarning($"WebRootPath does not exist. Skipping spa main static files. {env.WebRootPath}");
             }
 
@@ -53,7 +57,11 @@ namespace PowerView
             }
             else
             {
-                logger.LogWarning($"Assets path does not exist. Skipping spa assets static files. {assets}");
+                if (string.Equals(env.EnvironmentName, "Production", StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new ApplicationException($"Web assets path does not exist. {assets}");
+                }
+                logger.LogWarning($"Web assets path does not exist. Skipping spa assets static files. {assets}");
             }
 
 

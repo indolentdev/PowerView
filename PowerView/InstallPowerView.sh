@@ -174,6 +174,11 @@ $(chmod 664 $BINDIR/*.dll)
 $(chmod 775 $BINDIR/*.sh)
 
 
+# /etc/systemd/system
+# sudo systemctl start alarm
+# sudo systemctl status tempMonitor.service
+# sudo systemctl enable tempMonitor.service
+# systemctl daemon-reload
 
 : '
 
