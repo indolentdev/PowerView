@@ -6,7 +6,7 @@ AssertPathExists=/opt/PowerView
 
 [Service]
 Type=simple
-ExecStart=/opt/dotnet/dotnet /opt/PowerView/PowerView.dll
+ExecStart=dotnet /opt/PowerView/PowerView.dll
 WorkingDirectory=/opt/PowerView
 User=powervw
 TimeoutSec=1200
@@ -19,3 +19,4 @@ StandardError=null
 
 [Install]
 WantedBy=multi-user.target
+

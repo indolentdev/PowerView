@@ -30,9 +30,9 @@ then
   fi
   
   echo PowerView v0.0.x is installed. 
-  echo This upgrade will first uninstall then delete the echo /opt/PowerView
-  echo directory and a new directory will be created from scratch.
-  echo The /var/lib/PowerView directory will be retained.
+  echo This upgrade will first uninstall PowerView then delete the 
+  echo /opt/PowerView directory. A new directory will be created from scratch.
+  echo The /var/lib/PowerView database directory will be retained.
   read -p "Do you want to proceed? (yes/no) " yn
 
   case $yn in 
@@ -108,24 +108,24 @@ if [ "$?" == "0" ]
 then
   if id --name --groups --zero "$pi" | grep --quiet --null-data --line-regexp --fixed-strings "$user"
   then
-    echo User $pi belongs to group $user
+    echo User $pi has membership in group $user
   else
-    echo Adding $pi to $user group. Effective next login.
+    echo Adding $pi to $user group. Effective next pi user login.
     usermod -a -G $user $pi
   fi
 fi
 
 # Setup DB dir
 DBDIR=/var/lib/PowerView
-echo Setting up db directory $DBDIR
 if [ ! -d $DBDIR ]
 then
+  echo Setting up db directory $DBDIR
   $(mkdir $DBDIR)
 else
-  echo Reusing existing db directory
+  echo Reusing existing db directory $DBDIR
 fi
 
-echo Setting db directory owner and permissions
+# Setting db directory owner and permissions
 chown -R $user:$user $DBDIR
 chmod -R 660 $DBDIR
 
@@ -134,104 +134,62 @@ chmod -R 660 $DBDIR
 echo Setting up application directory $BINDIR
 if [ ! -d $BINDIR ]
 then
-  $(mkdir $BINDIR)
-  
+  mkdir $BINDIR
 else
   echo Upgrading existing PowerView install
-  $(rm $BINDIR/*.dll)
-  $(rm $BINDIR/*.sh)
-  $(rm $BINDIR/PowerView*.json)
-  $(rm $BINDIR/web.config)
-#  $(rm -rf $BINDIR/Doc)
-  $(rm -rf $BINDIR/da)
-  $(rm -rf $BINDIR/PowerView-Web)  
-  $(rm -rf $BINDIR/runtimes)
+  rm $BINDIR/*.dll
+  rm $BINDIR/*.sh
+  rm $BINDIR/PowerView*.json
+  rm $BINDIR/web.config
+#  rm -rf $BINDIR/Doc
+  rm -rf $BINDIR/da
+  rm -rf $BINDIR/PowerView-Web
+  rm -rf $BINDIR/runtimes
 fi
 
-$(cp *.dll $BINDIR)
-$(cp *.exe $BINDIR)
-$(cp St*PowerView.sh $BINDIR)
-$(cp Un*.sh $BINDIR)
-$(cp PowerView*.json $BINDIR)
-$(cp web.config $BINDIR)
-#$(cp -r Doc $BINDIR/Doc)
-$(cp -r da $BINDIR/da)
-$(cp -r PowerView-Web $BINDIR/PowerView-Web)
-$(cp -r runtimes $BINDIR/runtimes)
+cp *.dll $BINDIR
+cp St*PowerView.sh $BINDIR
+cp Un*.sh $BINDIR
+cp PowerView*.json $BINDIR
+cp web.config $BINDIR
+#cp -r Doc $BINDIR/Doc
+cp -r da $BINDIR/da
+cp -r PowerView-Web $BINDIR/PowerView-Web
+cp -r runtimes $BINDIR/runtimes
 
 if [ ! -f $BINDIR/appsettings.json ]
 then
-  $(cp appsettings.json $BINDIR)
+  cp appsettings.json $BINDIR
 fi
 
 if [ ! -f $BINDIR/NLog.config ]
 then
-  $(cp NLog.config $BINDIR)
+  cp NLog.config $BINDIR
 fi
 
 chown -R $user:$user $BINDIR
-$(chmod 664 $BINDIR/*.dll)
-$(chmod 775 $BINDIR/*.sh)
+chmod 664 $BINDIR/*.dll
+chmod 775 $BINDIR/*.sh
 
+echo Registering service
 
-# /etc/systemd/system
-# sudo systemctl start alarm
-# sudo systemctl status tempMonitor.service
-# sudo systemctl enable tempMonitor.service
-# systemctl daemon-reload
-
-: '
-
-# Check for running the process
-PID=$(pgrep -d " " -f .*mono.*PowerView.exe.*)
-if [ -n "$PID" ]
+cp powerview.service /etc/systemd/system
+systemctl daemon-reload
+systemctl enable powerview.service
+if [ $? -ne 0 ]
 then
-  echo PowerView is running. Stop it first using "sudo /opt/PowerView/StopPowerView.sh"
-  exit 1
+  echo Serivce registration failed. Aborting install. 
 fi
 
-# Remove from /etc/init.d
-INITDDIR=/etc/init.d
-POWERVIEWINITD=$INITDDIR/PowerView
-INSSERV=/sbin/insserv
-if [ -f $POWERVIEWINITD ]
+echo Starting PowerView service
+
+./StartPowerView.sh
+if [ $? -ne 0 ]
 then
-  echo Cleaning up init.d
-  if [ ! -f $INSSERV ]
-  then
-    $(rm /etc/rc0.d/K20PowerView)
-    $(rm /etc/rc1.d/K20PowerView)
-    $(rm /etc/rc6.d/K20PowerView)
-    $(rm /etc/rc2.d/S20PowerView)
-    $(rm /etc/rc3.d/S20PowerView)
-    $(rm /etc/rc4.d/S20PowerView)
-    $(rm /etc/rc5.d/S20PowerView)
-  else
-    $($INSSERV -r PowerView)
-  fi
-  $(rm $POWERVIEWINITD)
+  echo Service failed to start 
 fi
 
-
-
-# Copy to init.d
-echo Setting up init.d
-$(cp PowerView $INITDDIR)
-$(chmod 755 $POWERVIEWINITD)
-if [ -f $INSSERV ]
-then
-  $($INSSERV PowerView)
-else
-  $(ln -s $POWERVIEWINITD /etc/rc0.d/K20PowerView)
-  $(ln -s $POWERVIEWINITD /etc/rc1.d/K20PowerView)
-  $(ln -s $POWERVIEWINITD /etc/rc6.d/K20PowerView)
-  $(ln -s $POWERVIEWINITD /etc/rc2.d/S20PowerView)
-  $(ln -s $POWERVIEWINITD /etc/rc3.d/S20PowerView)
-  $(ln -s $POWERVIEWINITD /etc/rc4.d/S20PowerView)
-  $(ln -s $POWERVIEWINITD /etc/rc5.d/S20PowerView)
-fi
-
-'
 
 echo Install complete
-echo Reboot to launch PowerView as part of startup
+echo Check http://localhost:47362
+

@@ -178,18 +178,18 @@ echo -e "\e[0m"
 
 ln -s /opt/dotnet/dotnet /usr/local/bin
 
-echo -e "\e[0m"
-echo -e "\e[1m----------------------------------------"
-echo -e "\e[1m    Make Link Permanent"
-echo -e "\e[1m----------------------------------------"
-echo -e "\e[0m"
+#echo -e "\e[0m"
+#echo -e "\e[1m----------------------------------------"
+#echo -e "\e[1m    Make Link Permanent"
+#echo -e "\e[1m----------------------------------------"
+#echo -e "\e[0m"
 
-if grep -q 'export DOTNET_ROOT=' /home/pi/.bashrc;  then
-  echo 'Already added link to .bashrc'
-else
-  echo 'Adding Link to .bashrc'
-  echo 'export DOTNET_ROOT=/opt/dotnet' >> /home/pi/.bashrc
-fi
+#if grep -q 'export DOTNET_ROOT=' /home/pi/.bashrc;  then
+#  echo 'Already added link to .bashrc'
+#else
+#  echo 'Adding Link to .bashrc'
+#  echo 'export DOTNET_ROOT=/opt/dotnet' >> /home/pi/.bashrc
+#fi
 
 #echo -e "\e[0m"
 #echo -e "\e[1m----------------------------------------"
@@ -213,9 +213,9 @@ dotnet --info
 echo -e "\e[0m"
 echo -e "\e[1m----------------------------------------"
 echo -e "\e[1m              ALL DONE!"
-echo ""
-echo -e "\e[1mNote: It's highly recommended that you perform a reboot at this point!"
-echo ""
+#echo ""
+#echo -e "\e[1mNote: It's highly recommended that you perform a reboot at this point!"
+#echo ""
 #echo -e "\e[0mGo ahead and run \e[1mdotnet new console \e[0min a new directory!"
 #echo ""
 #echo ""
