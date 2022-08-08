@@ -33,18 +33,34 @@ then
   exit 1
 fi
 
-#perl -p -e 's/\n/\r\n/' < PowerView/bin/Release/PowerView.exe.config > PowerView/bin/Release/PowerView.exe.config_win
-#if [ $? -ne 0 ]
-#then
-#  exit 1
-#fi
-#rm PowerView/bin/Release/PowerView.exe.config
-#if [ $? -ne 0 ]
-#then
-#  exit 1
-#fi
-#mv PowerView/bin/Release/PowerView.exe.config_win PowerView/bin/Release/PowerView.exe.config
-#if [ $? -ne 0 ]
-#then
-#  exit 1
-#fi
+perl -p -e 's/\n/\r\n/' < PowerView/bin/Release/net6.0/publish/appsettings.json > PowerView/bin/Release/net6.0/publish/appsettings.json_win
+if [ $? -ne 0 ]
+then
+  exit 1
+fi
+rm PowerView/bin/Release/net6.0/publish/appsettings.json
+if [ $? -ne 0 ]
+then
+  exit 1
+fi
+mv PowerView/bin/Release/net6.0/publish/appsettings.json_win PowerView/bin/Release/net6.0/publish/appsettings.json
+if [ $? -ne 0 ]
+then
+  exit 1
+fi
+
+perl -p -e 's/\n/\r\n/' < PowerView/bin/Release/net6.0/publish/NLog.config > PowerView/bin/Release/net6.0/publish/NLog.config_win
+if [ $? -ne 0 ]
+then
+  exit 1
+fi
+rm PowerView/bin/Release/net6.0/publish/NLog.config
+if [ $? -ne 0 ]
+then
+  exit 1
+fi
+mv PowerView/bin/Release/net6.0/publish/NLog.config_win PowerView/bin/Release/net6.0/publish/NLog.config
+if [ $? -ne 0 ]
+then
+  exit 1
+fi

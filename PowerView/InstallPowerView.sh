@@ -9,10 +9,11 @@ then
    exit 1
 fi
 
-dotnet=$(dotnet --version)
+dotnet=$(dotnet --info)
 if [ $? -ne 0 ]
 then
   echo dotnet is not installed or not accessible. Aborting install. 
+  exit 1
 fi
 
 BINDIR=/opt/PowerView
@@ -115,6 +116,18 @@ then
   fi
 fi
 
+LOGDIR=/var/log/PowerView
+if [ ! -d $LOGDIR ]
+then
+  echo Setting up log directory $DBDIR
+  $(mkdir $LOGDIR)
+else
+  echo Reusing existing log directory $LOGDIR
+fi
+# Setting db directory owner and permissions
+chown -R $user:$user $LOGDIR
+chmod -R 660 $LOGDIR
+
 # Setup DB dir
 DBDIR=/var/lib/PowerView
 if [ ! -d $DBDIR ]
@@ -124,7 +137,6 @@ then
 else
   echo Reusing existing db directory $DBDIR
 fi
-
 # Setting db directory owner and permissions
 chown -R $user:$user $DBDIR
 chmod -R 660 $DBDIR
