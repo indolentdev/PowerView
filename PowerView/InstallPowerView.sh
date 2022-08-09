@@ -102,20 +102,6 @@ else
     exit 1
 fi
 
-# Add pi user to powervw group
-pi=pi
-id -u $pi >/dev/null 2>&1
-if [ "$?" == "0" ] 
-then
-  if id --name --groups --zero "$pi" | grep --quiet --null-data --line-regexp --fixed-strings "$user"
-  then
-    echo User $pi has membership in group $user
-  else
-    echo Adding $pi to $user group. Effective next pi user login.
-    usermod -a -G $user $pi
-  fi
-fi
-
 LOGDIR=/var/log/PowerView
 if [ ! -d $LOGDIR ]
 then
@@ -126,7 +112,7 @@ else
 fi
 # Setting db directory owner and permissions
 chown -R $user:$user $LOGDIR
-chmod -R 660 $LOGDIR
+chmod -R 664 $LOGDIR
 
 # Setup DB dir
 DBDIR=/var/lib/PowerView
@@ -139,7 +125,7 @@ else
 fi
 # Setting db directory owner and permissions
 chown -R $user:$user $DBDIR
-chmod -R 660 $DBDIR
+chmod -R 664 $DBDIR
 
 
 # Copy files to bin dir and set permissions
