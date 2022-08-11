@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.IO;
 using System.Reflection;
-using System.Data.SQLite;
+using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Logging;
 using Dapper;
 
@@ -113,7 +113,7 @@ namespace PowerView.Model.Repository
                 {
                     DbContext.Connection.Execute(line.Trim());
                 }
-                catch (SQLiteException e)
+                catch (SqliteException e)
                 {
                     var msg = string.Format(CultureInfo.InvariantCulture, "Failed executing database upgrade script {0} at line {1}: {2}", upgradeResourceName, lineNumber, line);
                     throw DataStoreExceptionFactory.Create(e, msg);

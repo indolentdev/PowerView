@@ -1,6 +1,4 @@
-using System;
-using System.Data;
-using System.Data.SQLite;
+using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Options;
 using Dapper;
 
@@ -8,27 +6,19 @@ namespace PowerView.Model.Repository
 {
     internal class DbContextFactory : IDbContextFactory
     {
-        private readonly SQLiteConnectionStringBuilder connectionStringBuilder;
+        private readonly SqliteConnectionStringBuilder connectionStringBuilder;
 
         public DbContextFactory(IOptions<DatabaseOptions> options)
         {
             if (options == null) throw new ArgumentNullException(nameof(options));
 
-            var builder = new SQLiteConnectionStringBuilder();
-            builder.BinaryGUID = true;
+            var builder = new SqliteConnectionStringBuilder();
             builder.DataSource = options.Value.Name;
-            builder.DateTimeFormat = SQLiteDateFormats.UnixEpoch;
-            builder.DateTimeKind = DateTimeKind.Utc;
-            builder.DefaultIsolationLevel = IsolationLevel.ReadCommitted;
             builder.DefaultTimeout = 10; //000;
-            builder.Enlist = false;
-            builder.FailIfMissing = false;
             builder.ForeignKeys = true;
-            builder.JournalMode = SQLiteJournalModeEnum.Delete;
-            builder.LegacyFormat = false;
-            builder.SyncMode = SynchronizationModes.Normal;
-            builder.UseUTF16Encoding = false;
-            builder.Version = 3;
+            builder.Mode = SqliteOpenMode.ReadWriteCreate;
+            builder.ForeignKeys = true;
+            builder.Cache = SqliteCacheMode.Default;
             builder.Pooling = false;
 
             connectionStringBuilder = builder;
@@ -36,14 +26,16 @@ namespace PowerView.Model.Repository
 
         public IDbContext CreateContext()
         {
-            var conn = new SQLiteConnection(connectionStringBuilder.ToString());
+            var conn = new SqliteConnection(connectionStringBuilder.ToString());
             try
             {
                 conn.Open();
-                conn.Execute("PRAGMA foreign_keys = ON");
+                conn.Execute("PRAGMA journal_mode = DELETE;");
+                conn.Execute("PRAGMA encoding = 'UTF-8';");
+                conn.Execute("PRAGMA synchronous = NORMAL;");
                 return new DbContext(conn);
             }
-            catch (SQLiteException e)
+            catch (SqliteException e)
             {
                 conn.Close();
                 conn.Dispose();

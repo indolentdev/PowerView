@@ -4,7 +4,7 @@ using System.Data;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using System.Data.SQLite;
+using Microsoft.Data.Sqlite;
 using Dapper;
 
 namespace PowerView.Model.Repository
@@ -59,7 +59,7 @@ namespace PowerView.Model.Repository
 
     private IEnumerable<dynamic> GetLabelsAndObisCodes()
     {
-      var transaction = DbContext.BeginTransaction();
+      using var transaction = DbContext.BeginTransaction();
       try
       {
         var liveData = GetRecent<Db.LiveReading, Db.LiveRegister>(transaction, 1);
@@ -70,7 +70,7 @@ namespace PowerView.Model.Repository
 
         return liveData.Concat(dayData).Concat(monthData);
       }
-      catch (SQLiteException e)
+      catch (SqliteException e)
       {
         transaction.Rollback();
         throw DataStoreExceptionFactory.Create(e);

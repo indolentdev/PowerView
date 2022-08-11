@@ -298,7 +298,7 @@ namespace PowerView.Model.Test.Repository
         foreach (var serieName in profileGraph.SerieNames)
         {
           var dbProfileGraphserie = DbContext.QueryTransaction<Db.ProfileGraphSerie>(
-            "SELECT * FROM ProfileGraphSerie WHERE Label=@Label AND ObisCode=@ObisCode;", new { serieName.Label, Obiscode = (long)serieName.ObisCode });
+            "SELECT * FROM ProfileGraphSerie WHERE Label=@Label AND ObisCode=@ObisCode;", new { serieName.Label, ObisCode = (long)serieName.ObisCode });
           Assert.That(dbProfileGraphserie.Count, Is.EqualTo(1));
         }
       }

@@ -331,8 +331,9 @@ namespace PowerView.Model.Test.Repository
 
         private void InsertSettings(params Db.Setting[] settings)
         {
-            DbContext.ExecuteTransaction("INSERT INTO Setting (Name, Value) VALUES (@name, @Value);", settings);
+            DbContext.ExecuteTransaction("INSERT INTO Setting (Name, Value) VALUES (@Name, @Value);", settings);
         }
+
         private void AssertExists(string name, string value)
         {
             var settings = DbContext.QueryTransaction<Db.Setting>("SELECT * FROM Setting WHERE Name=@name and Value=@value;", new { name, value });

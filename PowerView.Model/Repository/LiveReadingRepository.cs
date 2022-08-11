@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Data.SQLite;
+using Microsoft.Data.Sqlite;
 using Dapper;
 
 namespace PowerView.Model.Repository
@@ -23,7 +23,7 @@ namespace PowerView.Model.Repository
       }
 
       var dbLiveReadingsMap = liveReadings.ToDictionary(lr => new Db.LiveReading { Label = lr.Label, DeviceId = lr.DeviceId, Timestamp = lr.Timestamp });
-      var transaction = DbContext.BeginTransaction();
+      using var transaction = DbContext.BeginTransaction();
       try
       {
         // First insert the readings
@@ -40,7 +40,7 @@ namespace PowerView.Model.Repository
           dbLiveRegisters, transaction);
         transaction.Commit();
       }
-      catch (SQLiteException e)
+      catch (SqliteException e)
       {
         transaction.Rollback();
         throw DataStoreExceptionFactory.Create(e);

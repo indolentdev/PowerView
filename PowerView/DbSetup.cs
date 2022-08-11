@@ -15,6 +15,8 @@ namespace PowerView
 
         public void SetupDatabase()
         {
+            DapperConfig.Configure();
+
             var dbUpgradeNeeded = false;
             using (var scope = serviceProvider.CreateScope())
             {

@@ -4,7 +4,7 @@ using System.Data;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using System.Data.SQLite;
+using Microsoft.Data.Sqlite;
 using Dapper;
 
 namespace PowerView.Model.Repository
@@ -61,7 +61,7 @@ ORDER BY pg.Rank, pgs.Id;";
 
     public void AddProfileGraph(ProfileGraph profileGraph)
     {
-      var transaction = DbContext.BeginTransaction();
+      using var transaction = DbContext.BeginTransaction();
       try
       {
         var newRank = GetNewRank(transaction, profileGraph.Period, profileGraph.Page);
@@ -83,7 +83,7 @@ SELECT LAST_INSERT_ROWID() AS [Id];", dbProfileGraph, transaction);
 
         transaction.Commit();
       }
-      catch (SQLiteException e)
+      catch (SqliteException e)
       {
         transaction.Rollback();
         throw DataStoreExceptionFactory.Create(e);
@@ -98,11 +98,11 @@ SELECT LAST_INSERT_ROWID() AS [Id];", dbProfileGraph, transaction);
         setNewRank = false;
       }
 
-      var transaction = DbContext.BeginTransaction();
+      using var transaction = DbContext.BeginTransaction();
       try
       {
         var existing = DbContext.Connection.QueryFirstOrDefault(@"
-SELECT Id, Rank FROM ProfileGraph WHERE Period=@period AND Page=@Page AND Title=@title;", new { period, page, title }, transaction);
+SELECT Id, Rank FROM ProfileGraph WHERE Period=@period AND Page=@page AND Title=@title;", new { period, page, title }, transaction);
         if (existing == null)
         {
           return false;
@@ -137,7 +137,7 @@ INSERT INTO ProfileGraphSerie (Label, ObisCode, ProfileGraphId) VALUES (@Label, 
 
         transaction.Commit();
       }
-      catch (SQLiteException e)
+      catch (SqliteException e)
       {
         transaction.Rollback();
         throw DataStoreExceptionFactory.Create(e);

@@ -53,7 +53,7 @@ namespace PowerView.Model.Test.Repository
     [OneTimeTearDown]
     public void TestFixtureTearDown()
     {
-      DbContext.Dispose();
+      DbContext?.Dispose();
 
       if (File.Exists(DbName))
       {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Data.SQLite;
+using Microsoft.Data.Sqlite;
 using Dapper;
 
 namespace PowerView.Model.Repository
@@ -72,7 +72,7 @@ namespace PowerView.Model.Repository
 
     private void DeleteAndUpsertSerieColors(IEnumerable<SeriesColor> deleteSeriesColors, IEnumerable<SeriesColor> upsertSeriesColors)
     {
-      var transaction = DbContext.BeginTransaction();
+      using var transaction = DbContext.BeginTransaction();
       try
       {
         foreach (var seriesColor in deleteSeriesColors)
@@ -103,7 +103,7 @@ namespace PowerView.Model.Repository
 
         transaction.Commit();
       }
-      catch (SQLiteException e)
+      catch (SqliteException e)
       {
         transaction.Rollback();
         throw DataStoreExceptionFactory.Create(e);

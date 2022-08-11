@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Reflection;
-using System.Data.SQLite;
+using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Logging;
 using Dapper;
 
@@ -80,7 +80,7 @@ namespace PowerView.Model.Repository
           DbContext.Connection.Execute(sql, item, tran); 
           tran.Commit();
         }
-        catch (SQLiteException)
+        catch (SqliteException)
         {
           tran.Rollback();
           logger.LogWarning("Failed migrating data. Retrying next time");

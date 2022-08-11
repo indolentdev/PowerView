@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Data;
-using System.Data.SQLite;
+using Microsoft.Data.Sqlite;
 using Dapper;
 using System.Reflection;
 
@@ -94,19 +94,17 @@ namespace PowerView.Model.Repository
 
     private TReturn InTransaction<TReturn>(Func<IDbTransaction, TReturn> dbFunc)
     {
-      using (var transaction = BeginTransaction())
-      { 
-        try
-        {
-          TReturn ret = dbFunc(transaction);
-          transaction.Commit();
-          return ret;
-        }
-        catch (SQLiteException e)
-        {
-          transaction.Rollback();
-          throw DataStoreExceptionFactory.Create(e);
-        }
+      using var transaction = BeginTransaction();
+      try
+      {
+        TReturn ret = dbFunc(transaction);
+        transaction.Commit();
+        return ret;
+      }
+      catch (SqliteException e)
+      {
+        transaction.Rollback();
+        throw DataStoreExceptionFactory.Create(e);
       }
     }
 
@@ -117,7 +115,7 @@ namespace PowerView.Model.Repository
         TReturn ret = dbFunc();
         return ret;
       }
-      catch (SQLiteException e)
+      catch (SqliteException e)
       {
         throw DataStoreExceptionFactory.Create(e);
       }

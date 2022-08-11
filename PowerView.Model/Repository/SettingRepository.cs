@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Data.SQLite;
+using Microsoft.Data.Sqlite;
 using Dapper;
 
 namespace PowerView.Model.Repository
@@ -26,7 +26,7 @@ namespace PowerView.Model.Repository
       if (items == null) throw new ArgumentNullException("items");
       if (items.Any(x => string.IsNullOrEmpty(x.Key) || string.IsNullOrEmpty(x.Value))) throw new ArgumentNullException("items");
 
-      var transaction = DbContext.BeginTransaction();
+      using var transaction = DbContext.BeginTransaction();
       try
       {
         foreach (var item in items)
@@ -47,7 +47,7 @@ namespace PowerView.Model.Repository
         }
         transaction.Commit();
       }
-      catch (SQLiteException e)
+      catch (SqliteException e)
       {
         transaction.Rollback();
         throw DataStoreExceptionFactory.Create(e);

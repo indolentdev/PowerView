@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using System.Data.SQLite;
+using Microsoft.Data.Sqlite;
 using Dapper;
 
 namespace PowerView.Model.Repository
@@ -79,17 +79,21 @@ namespace PowerView.Model.Repository
       var tableName = GetTableName<TDstReading>();
       var labelToTimeStamp = new Dictionary<string, DateTime>(4);
 
-      var sqlQuery = "SELECT Label, MAX(Timestamp) AS MaxTimeStampUnix FROM {0} GROUP BY Label;";
+      var sqlQuery = "SELECT Label, MAX(Timestamp) AS MaxTimeStamp FROM {0} GROUP BY Label;";
       sqlQuery = string.Format(CultureInfo.InvariantCulture, sqlQuery, tableName);
-      var resultSet = DbContext.QueryTransaction<dynamic>(sqlQuery);
-      foreach (dynamic row in resultSet)
+      var resultSet = DbContext.QueryTransaction<RowLocal>(sqlQuery);
+      foreach (var row in resultSet)
       {
-        string label = row.Label;
-        long maxTimeStampUnix = row.MaxTimeStampUnix;
-        labelToTimeStamp.Add(label, DbContext.GetDateTime(maxTimeStampUnix));
+        labelToTimeStamp.Add(row.Label, row.MaxTimestamp);
       }
 
       return labelToTimeStamp;
+    }
+
+    private class RowLocal
+    {
+      public string Label { get; set; }
+      public DateTime MaxTimestamp { get; set; }
     }
 
     private IDictionary<string, IList<TSrcReading>> GetReadingsByLabel<TSrcReading>(IDictionary<string, long> streamPositions)
@@ -318,7 +322,7 @@ namespace PowerView.Model.Repository
       var dstReadingTable = GetTableName<TDstReading>();
       var dstRegisterTable = dstReadingTable.Replace("Reading", "Register");
 
-      var transaction = DbContext.BeginTransaction();
+      using var transaction = DbContext.BeginTransaction();
       try
       {
         var sql = "INSERT INTO {0} (Label, DeviceId, Timestamp) VALUES (@Label, @DeviceId, @Timestamp); SELECT last_insert_rowid();";
@@ -346,7 +350,7 @@ namespace PowerView.Model.Repository
 
         transaction.Commit();
       }
-      catch (SQLiteException e)
+      catch (SqliteException e)
       {
         transaction.Rollback();
         throw DataStoreExceptionFactory.Create(e);
