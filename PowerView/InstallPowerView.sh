@@ -112,7 +112,7 @@ else
 fi
 # Setting db directory owner and permissions
 chown -R $user:$user $LOGDIR
-chmod -R 664 $LOGDIR
+chmod -R 755 $LOGDIR
 
 # Setup DB dir
 DBDIR=/var/lib/PowerView
@@ -125,7 +125,7 @@ else
 fi
 # Setting db directory owner and permissions
 chown -R $user:$user $DBDIR
-chmod -R 664 $DBDIR
+chmod -R 755 $DBDIR
 
 
 # Copy files to bin dir and set permissions
@@ -159,14 +159,13 @@ if [ ! -f $BINDIR/appsettings.json ]
 then
   cp appsettings.json $BINDIR
 fi
-
 if [ ! -f $BINDIR/NLog.config ]
 then
   cp NLog.config $BINDIR
 fi
 
 chown -R $user:$user $BINDIR
-chmod 664 $BINDIR/*.dll
+chmod -R 755 $BINDIR
 chmod 775 $BINDIR/*.sh
 
 echo Registering service
