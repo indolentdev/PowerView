@@ -31,9 +31,11 @@ then
   fi
   
   echo PowerView v0.0.x is installed. 
-  echo This upgrade will first uninstall PowerView then delete the 
+  echo This upgrade will uninstall PowerView and delete the 
   echo /opt/PowerView directory. A new directory will be created from scratch.
   echo The /var/lib/PowerView database directory will be retained.
+  echo A new powervw user will become the owner of /opt/PowerView and
+  echo /var/lib/PowerView. 
   read -p "Do you want to proceed? (yes/no) " yn
 
   case $yn in 
