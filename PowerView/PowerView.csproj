@@ -7,6 +7,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <Import Project="../Solution.props"/>
+
   <ItemGroup>
     <None Update="NLog.config" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>

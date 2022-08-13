@@ -1,7 +1,5 @@
 #!/bin/bash
 
-version=1.0.0.0
-
 dotnet clean PowerView.sln -c Release
 if [ $? -ne 0 ]
 then
@@ -27,7 +25,7 @@ then
   exit 1
 fi
 
-dotnet publish PowerView.sln -c Release -p:Version=$version -p:UseAppHost=false
+dotnet publish PowerView.sln -c Release -p:UseAppHost=false
 if [ $? -ne 0 ]
 then
   exit 1

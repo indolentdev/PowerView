@@ -6,6 +6,8 @@
     <Nullable>disable</Nullable>
   </PropertyGroup>
 
+  <Import Project="../Solution.props"/>
+
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
