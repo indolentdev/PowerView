@@ -20,11 +20,14 @@ echo -e "\e[1m----------------------------------------"
 echo -e "\e[1m       Unlink dotnet binary"
 echo -e "\e[1m----------------------------------------"
 echo -e "\e[0m"
-rm /usr/local/bin/dotnet
-if [ $? -ne 0 ]
-then
-  echo Remove dotnet link failed. Aborting. 
-  exit 1
+dotnetpath = $(readlink -p /usr/local/bin/dotnet)
+if [[ -h /usr/local/bin/dotnet && $dotnetpath -ef /opt/dotnet/dotnet  ]] then
+  rm /usr/local/bin/dotnet
+  if [ $? -ne 0 ]
+  then
+    echo Remove dotnet link failed. Aborting. 
+    exit 1
+  fi
 fi
 
 echo -e "\e[0m"
