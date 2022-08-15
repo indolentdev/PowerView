@@ -1,3 +1,7 @@
+PowerView version 1.0.0 - Xxx 2022
+- Ability to set username for email smtp server configuration
+- Upgraded to .NET 6
+
 PowerView version 0.0.33 - February 2022
 - Automaticly calculate series for electricity net produced energy
 - File exports allow user to decide decimal separator
