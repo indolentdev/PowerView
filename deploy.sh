@@ -86,8 +86,8 @@ then
 fi
 md5sum $zipname > $md5name
 
-# Enable to exit script after zipping the release
-exit 1
+# Uncomment next line to exit script after zipping the release
+# exit 1
 
 # Prepare the folder on remote system
 echo Deleting temporary folder $name on remote system
@@ -117,7 +117,5 @@ then
   echo Failed installing $name on remote system
   exit 1
 fi
-echo Rebooting remote system
-sshpass -p $remotepassword ssh $remoteusername@$remoteaddress "sudo reboot"
 
 echo Done. Script ran to completion.
