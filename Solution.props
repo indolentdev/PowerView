@@ -1,0 +1,19 @@
+<Project>
+
+  <PropertyGroup>
+    <Authors>Finn Nielsen</Authors>
+    <Company>Finn Nielsen</Company>
+    <Copyright>Finn Nielsen</Copyright>
+
+    <Product>PowerView</Product>
+    <ProductName>PowerView</ProductName>
+    <Description>Application for storing and presenting consumption and production meter and inverter data</Description>
+    <NeutralLanguage>en</NeutralLanguage>
+    
+    <BuildNumber>$([System.DateTime]::UtcNow.Ticks.ToString().Substring(9, 4))</BuildNumber>
+    <Version>1.0.0.$(BuildNumber)</Version>
+
+    <RepositoryUrl>https://github.com/indolentdev/PowerView</RepositoryUrl>
+  </PropertyGroup> 
+
+</Project>

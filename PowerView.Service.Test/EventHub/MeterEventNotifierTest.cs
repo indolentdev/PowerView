@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.Extensions.Logging.Abstractions;
 using PowerView.Service.EventHub;
 using PowerView.Model;
 using PowerView.Model.Repository;
@@ -144,7 +145,7 @@ namespace PowerView.Service.Test.EventHub
       translation = new Mock<ITranslation>();
       urlProvider = new Mock<IUrlProvider>();
       mailMediator = new Mock<IMailMediator>();
-      return new MeterEventNotifier(emailRecipientRepository.Object, meterEventRepository.Object, translation.Object,
+      return new MeterEventNotifier(new NullLogger<MeterEventNotifier>(), emailRecipientRepository.Object, meterEventRepository.Object, translation.Object,
                                     urlProvider.Object, mailMediator.Object);
 
     }

@@ -1,154 +1,142 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using System.Data;
 using System.Globalization;
-using System.Linq;
-using System.Reflection;
 using Dapper;
-using Mono.Data.Sqlite;
-using log4net;
+using Microsoft.Data.Sqlite;
 
 namespace PowerView.Model.Repository
 {
-  internal class GaugeRepository : RepositoryBase, IGaugeRepository
-  {
-    private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
-    public GaugeRepository(IDbContext dbContext)
-      : base(dbContext)
+    internal class GaugeRepository : RepositoryBase, IGaugeRepository
     {
-    }
+        public GaugeRepository(IDbContext dbContext)
+          : base(dbContext)
+        {
+        }
 
-    public ICollection<GaugeValueSet> GetLatest(DateTime dateTime)
-    {
-      if (dateTime.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("dateTime");
+        public ICollection<GaugeValueSet> GetLatest(DateTime dateTime)
+        {
+            if (dateTime.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("dateTime");
 
-      if (log.IsDebugEnabled) log.DebugFormat("Getting latest gauge values using dateTime:{0}", dateTime.ToString(CultureInfo.InvariantCulture));
+            var result = new List<GaugeValueSet>(4);
 
-      var result = new List<GaugeValueSet>(4);
+            using var transaction = DbContext.BeginTransaction();
+            try
+            {
+                GetLatestGaugeValueSet<Db.LiveReading, Db.LiveRegister>(transaction, GaugeSetName.Latest, dateTime, 2, result);
+                GetLatestGaugeValueSet<Db.DayReading, Db.DayRegister>(transaction, GaugeSetName.LatestDay, dateTime, 14, result);
+                GetLatestGaugeValueSet<Db.MonthReading, Db.MonthRegister>(transaction, GaugeSetName.LatestMonth, dateTime, 180, result);
+                GetLatestGaugeValueSet<Db.YearReading, Db.YearRegister>(transaction, GaugeSetName.LatestYear, dateTime, 2 * 365, result);
 
-      var transaction = DbContext.BeginTransaction();
-      try
-      {
-        GetLatestGaugeValueSet<Db.LiveReading, Db.LiveRegister>(transaction, GaugeSetName.Latest, dateTime, 2, result);
-        GetLatestGaugeValueSet<Db.DayReading, Db.DayRegister>(transaction, GaugeSetName.LatestDay, dateTime, 14, result);
-        GetLatestGaugeValueSet<Db.MonthReading, Db.MonthRegister>(transaction, GaugeSetName.LatestMonth, dateTime, 180, result);
-        GetLatestGaugeValueSet<Db.YearReading, Db.YearRegister>(transaction, GaugeSetName.LatestYear, dateTime, 2*365, result);
+                transaction.Commit();
+            }
+            catch (SqliteException e)
+            {
+                transaction.Rollback();
+                throw DataStoreExceptionFactory.Create(e);
+            }
 
-        transaction.Commit();
-      }
-      catch (SqliteException e)
-      {
-        transaction.Rollback();
-        throw DataStoreExceptionFactory.Create(e);
-      }
+            return result;
+        }
 
-      log.Debug("Finished query");
+        /// <summary>
+        /// Initial tests revealed that GROUP BY on these tables and indexes was way too slow in the database.
+        /// Therefore the query uses the db index, and the group by is performed in memory...  :o
+        /// </summary>
+        private void GetLatestGaugeValueSet<TReading, TRegister>(IDbTransaction transaction, GaugeSetName name, DateTime dateTime, int cutoffDays, List<GaugeValueSet> result) where TReading : IDbReading where TRegister : IDbRegister
+        {
+            var cutoffDateTime = dateTime - TimeSpan.FromDays(cutoffDays);
 
-      return result;
-    }
-
-    /// <summary>
-    /// Initial tests revealed that GROUP BY on these tables and indexes was way too slow in the database.
-    /// Therefore the query uses the db index, and the group by is performed in memory...  :o
-    /// </summary>
-    private void GetLatestGaugeValueSet<TReading, TRegister>(IDbTransaction transaction, GaugeSetName name, DateTime dateTime, int cutoffDays, List<GaugeValueSet> result) where TReading : IDbReading where TRegister : IDbRegister
-    {
-      var cutoffDateTime = dateTime - TimeSpan.FromDays(cutoffDays);
-
-      var sqlQuery = @"
+            var sqlQuery = @"
 SELECT rea.Label,rea.DeviceId,rea.Timestamp,reg.ObisCode,reg.Value,reg.Scale,reg.Unit 
 FROM {0} AS rea JOIN {1} AS reg ON rea.Id=reg.ReadingId
 WHERE rea.Timestamp > @Cutoff
 ORDER BY rea.Timestamp DESC;";
-      var readingTable = typeof(TReading).Name;
-      var registerTable = typeof(TRegister).Name;
-      sqlQuery = string.Format(CultureInfo.InvariantCulture, sqlQuery, readingTable, registerTable);
+            var readingTable = typeof(TReading).Name;
+            var registerTable = typeof(TRegister).Name;
+            sqlQuery = string.Format(CultureInfo.InvariantCulture, sqlQuery, readingTable, registerTable);
 
-      if (log.IsDebugEnabled) log.DebugFormat("Subquery {0} and {1}", readingTable, registerTable);
-      var resultSet = DbContext.Connection.Query(sqlQuery, new { Cutoff = cutoffDateTime }, transaction, buffered: true);
+            var resultSet = DbContext.Connection.Query<RowLocal>(sqlQuery, new { Cutoff = cutoffDateTime }, transaction, buffered: true);
 
-      var values = resultSet.Select(GetObisCode).Where(x => x.Item1.IsCumulative)
-                            .Select(ToGaugeValue).GroupBy(gv => new { gv.Label, gv.ObisCode, gv.DeviceId })
-                            .Select(x => x.First()).ToArray();
-      log.Debug("Finished subquery");
+            var values = resultSet.Select(GetObisCode).Where(x => x.Item1.IsCumulative)
+                                  .Select(ToGaugeValue).GroupBy(gv => new { gv.Label, gv.ObisCode, gv.DeviceId })
+                                  .Select(x => x.First()).ToArray();
 
-      if (values.Length > 0)
-      {
-        result.Add(new GaugeValueSet(name, values));
-      }
-    }
+            if (values.Length > 0)
+            {
+                result.Add(new GaugeValueSet(name, values));
+            }
+        }
 
-    public ICollection<GaugeValueSet> GetCustom(DateTime dateTime)
-    {
-      if (dateTime.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("dateTime");
+        public ICollection<GaugeValueSet> GetCustom(DateTime dateTime)
+        {
+            if (dateTime.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("dateTime");
 
-      if (log.IsDebugEnabled) log.DebugFormat("Getting custom gauge values using dateTime:{0}", dateTime.ToString(CultureInfo.InvariantCulture));
+            var result = new List<GaugeValueSet>(4);
 
-      var result = new List<GaugeValueSet>(4);
+            using var transaction = DbContext.BeginTransaction();
+            try
+            {
+                GetCustomGaugeValueSet<Db.DayReading, Db.DayRegister>(transaction, GaugeSetName.Custom, dateTime, 2, result);
+                transaction.Commit();
+            }
+            catch (SqliteException e)
+            {
+                transaction.Rollback();
+                throw DataStoreExceptionFactory.Create(e);
+            }
 
-      var transaction = DbContext.BeginTransaction();
-      try
-      {
-        GetCustomGaugeValueSet<Db.DayReading, Db.DayRegister>(transaction, GaugeSetName.Custom, dateTime, 2, result);
-        transaction.Commit();
-      }
-      catch (SqliteException e)
-      {
-        transaction.Rollback();
-        throw DataStoreExceptionFactory.Create(e);
-      }
+            return result;
+        }
 
-      log.Debug("Finished query");
+        /// <summary>
+        /// Initial tests revealed that GROUP BY on these tables and indexes was way too slow in the database.
+        /// Therefore the query uses the db index, and the group by is performed in memory...  :o
+        /// </summary>
+        private void GetCustomGaugeValueSet<TReading, TRegister>(IDbTransaction transaction, GaugeSetName name, DateTime dateTime, int cutoffDays, List<GaugeValueSet> result) where TReading : IDbReading where TRegister : IDbRegister
+        {
+            var cutoffDateTime = dateTime - TimeSpan.FromDays(cutoffDays);
 
-      return result;
-    }
-
-    /// <summary>
-    /// Initial tests revealed that GROUP BY on these tables and indexes was way too slow in the database.
-    /// Therefore the query uses the db index, and the group by is performed in memory...  :o
-    /// </summary>
-    private void GetCustomGaugeValueSet<TReading, TRegister>(IDbTransaction transaction, GaugeSetName name, DateTime dateTime, int cutoffDays, List<GaugeValueSet> result) where TReading: IDbReading where TRegister: IDbRegister
-    {
-      var cutoffDateTime = dateTime - TimeSpan.FromDays(cutoffDays);
-
-      var sqlQuery = @"
+            var sqlQuery = @"
 SELECT rea.Label,rea.DeviceId,rea.Timestamp,reg.ObisCode,reg.Value,reg.Scale,reg.Unit 
 FROM {0} AS rea JOIN {1} AS reg ON rea.Id=reg.ReadingId
 WHERE rea.Timestamp > @Cutoff AND rea.Timestamp < @dateTime
 ORDER BY rea.Timestamp DESC;";
-      var readingTable = typeof(TReading).Name;
-      var registerTable = typeof(TRegister).Name;
-      sqlQuery = string.Format(CultureInfo.InvariantCulture, sqlQuery, readingTable, registerTable);
+            var readingTable = typeof(TReading).Name;
+            var registerTable = typeof(TRegister).Name;
+            sqlQuery = string.Format(CultureInfo.InvariantCulture, sqlQuery, readingTable, registerTable);
 
-      if (log.IsDebugEnabled) log.DebugFormat("Subquery {0} and {1}", readingTable, registerTable);
-      var resultSet = DbContext.Connection.Query(sqlQuery, new { Cutoff = cutoffDateTime, dateTime }, transaction, buffered: true);
+            var resultSet = DbContext.Connection.Query<RowLocal>(sqlQuery, new { Cutoff = cutoffDateTime, dateTime }, transaction, buffered: true);
 
-      var values = resultSet.Select(GetObisCode).Where(x => x.Item1.IsCumulative)
-                            .Select(ToGaugeValue).GroupBy(gv => new { gv.Label, gv.ObisCode, gv.DeviceId })
-                            .Select(x => x.First()).ToArray();
-      log.Debug("Finished subquery");
+            var values = resultSet.Select(GetObisCode).Where(x => x.ObisCode.IsCumulative)
+                                  .Select(ToGaugeValue).GroupBy(gv => new { gv.Label, gv.ObisCode, gv.DeviceId })
+                                  .Select(x => x.First()).ToArray();
 
-      if (values.Length > 0)
-      {
-        result.Add(new GaugeValueSet(name, values));
-      }
+            if (values.Length > 0)
+            {
+                result.Add(new GaugeValueSet(name, values));
+            }
+        }
+
+        private (ObisCode ObisCode, RowLocal Row) GetObisCode(RowLocal row)
+        {
+            var obisCode = (ObisCode)row.ObisCode;
+            return  (obisCode, row);
+        }
+
+        private GaugeValue ToGaugeValue((ObisCode ObisCode, RowLocal Row) r)
+        {
+            var unitValue = new UnitValue(r.Row.Value, r.Row.Scale, (Unit)r.Row.Unit);
+            return new GaugeValue(r.Row.Label, r.Row.DeviceId, r.Row.Timestamp, r.ObisCode, unitValue);
+        }
+
+        private class RowLocal
+        {
+            public string Label { get; set; }
+            public string DeviceId { get; set; }
+            public DateTime Timestamp { get; set; }
+            public long ObisCode { get; set; }
+            public int Value { get; set; }
+            public short Scale { get; set; }
+            public byte Unit { get; set; }
+        }
     }
-
-    private Tuple<ObisCode, dynamic> GetObisCode(dynamic row)
-    { 
-      var obisCode = (ObisCode)row.ObisCode;
-      return new Tuple<ObisCode, dynamic>(obisCode, row);
-    }
-
-    private GaugeValue ToGaugeValue(Tuple<ObisCode,dynamic> r)
-    {
-      dynamic row = r.Item2;  
-      var label = (string)row.Label;
-      var deviceId = (string)row.DeviceId;
-      var dateTime = (DateTime)row.Timestamp;
-      var unitValue = new UnitValue((int)row.Value, (short)row.Scale, (Unit)row.Unit);
-      return new GaugeValue(label, deviceId, dateTime, r.Item1, unitValue);
-    }
-  }
 }

@@ -5,6 +5,7 @@ using System.Linq;
 using NUnit.Framework;
 using Dapper;
 using PowerView.Model.Repository;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace PowerView.Model.Test.Repository
 {
@@ -24,10 +25,10 @@ namespace PowerView.Model.Test.Repository
     [OneTimeSetUp]
     public void TestFixtureSetUp()
     {
-      dbContextFactory = new DbContextFactory(DbName);
+      dbContextFactory = new DbContextFactory(new DatabaseOptions { Name = DbName });
       DbContext = (DbContext)dbContextFactory.CreateContext();
 
-      new DbUpgrade(DbContext).ApplyUpdates();
+      new DbUpgrade(new NullLogger<DbUpgrade>(), DbContext).ApplyUpdates();
     }
 
     [SetUp]
@@ -52,7 +53,7 @@ namespace PowerView.Model.Test.Repository
     [OneTimeTearDown]
     public void TestFixtureTearDown()
     {
-      DbContext.Dispose();
+      DbContext?.Dispose();
 
       if (File.Exists(DbName))
       {

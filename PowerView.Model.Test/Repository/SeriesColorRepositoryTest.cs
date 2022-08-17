@@ -161,7 +161,7 @@ namespace PowerView.Model.Test.Repository
 
     private void AssertSeriesColorExists(SeriesColor serieColor, bool not = false)
     {
-      var serieColors = DbContext.QueryTransaction<Db.SerieColor>("", "SELECT * FROM SerieColor WHERE Label=@Label AND ObisCode=@ObisCode AND Color=@Color;",
+      var serieColors = DbContext.QueryTransaction<Db.SerieColor>("SELECT * FROM SerieColor WHERE Label=@Label AND ObisCode=@ObisCode AND Color=@Color;",
         new { serieColor.SeriesName.Label, ObisCode = (long)serieColor.SeriesName.ObisCode, serieColor.Color });
       Assert.That(serieColors.Count, Is.EqualTo(not ? 0 : 1));
     }
@@ -173,7 +173,7 @@ namespace PowerView.Model.Test.Repository
 
     private void InsertSerieColors(params Db.SerieColor[] serieColors)
     {
-      DbContext.ExecuteTransaction("", "INSERT INTO SerieColor (Label,ObisCode,Color) VALUES (@Label,@ObisCode,@Color);", serieColors);
+      DbContext.ExecuteTransaction("INSERT INTO SerieColor (Label,ObisCode,Color) VALUES (@Label,@ObisCode,@Color);", serieColors);
     }
 
   }

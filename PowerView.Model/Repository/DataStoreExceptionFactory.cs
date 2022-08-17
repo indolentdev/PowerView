@@ -1,4 +1,4 @@
-﻿using Mono.Data.Sqlite;
+﻿using Microsoft.Data.Sqlite;
 
 namespace PowerView.Model.Repository
 {
@@ -12,13 +12,13 @@ namespace PowerView.Model.Repository
 
       if (e != null)
       {
-        if (e.ErrorCode == SQLiteErrorCode.Busy) return new DataStoreBusyException(msg, e);
-        if (e.ErrorCode == SQLiteErrorCode.Corrupt) return new DataStoreCorruptException(msg, e);
-        if (e.ErrorCode == SQLiteErrorCode.Constraint && e.Message.Contains("UNIQUE")) return new DataStoreUniqueConstraintException(msg, e);
+        // https://www3.sqlite.org/rescode.html
+        if (e.SqliteErrorCode == 5 /*Busy*/) return new DataStoreBusyException(msg, e);
+        if (e.SqliteErrorCode == 11 /*Corrupt*/) return new DataStoreCorruptException(msg, e);
+        if (e.SqliteErrorCode == 19 /*Constraint*/ && e.SqliteExtendedErrorCode == 2067 /*UNIQUE*/) return new DataStoreUniqueConstraintException(msg, e);
       }
       
       return new DataStoreException(msg, e);
     }
   }
 }
-

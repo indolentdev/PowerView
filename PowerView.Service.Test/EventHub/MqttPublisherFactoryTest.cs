@@ -1,5 +1,5 @@
 ﻿using System;
-using Autofac.Features.OwnedInstances;
+using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NUnit.Framework;
 using PowerView.Service.EventHub;
@@ -12,23 +12,17 @@ namespace PowerView.Service.Test.EventHub
   [TestFixture]
   public class MqttPublisherFactoryTest
   {
-    private Mock<IFactory> factory;
+    private Mock<IServiceScope> serviceScope;
+    private Mock<IServiceProvider> serviceProvider;
 
     [SetUp]
     public void SetUp()
     {
-      factory = new Mock<IFactory>();
+      serviceScope = new Mock<IServiceScope>();
+      serviceProvider = new Mock<IServiceProvider>();
+      serviceScope.Setup(ss => ss.ServiceProvider).Returns(serviceProvider.Object);
     }
     
-    [Test]
-    public void ConstructorThrows()
-    {
-      // Arrange
-
-      // Act & Assert
-      Assert.That(() => new MqttPublisherFactory(null), Throws.ArgumentNullException);
-    }
-
     [Test]
     public void PublishThrows()
     {
@@ -36,7 +30,8 @@ namespace PowerView.Service.Test.EventHub
       var target = CreateTarget();
 
       // Act & Assert
-      Assert.That(() => target.Publish(null), Throws.ArgumentNullException);
+      Assert.That(() => target.Publish(serviceScope.Object, null), Throws.ArgumentNullException);
+      Assert.That(() => target.Publish(null, Array.Empty<LiveReading>()), Throws.ArgumentNullException);
     }
 
     [Test]
@@ -44,30 +39,26 @@ namespace PowerView.Service.Test.EventHub
     {
       // Arrange
       var settingsRepository = new Mock<ISettingRepository>();
-      var repoDisposable = new Mock<IDisposable>();
-      factory.Setup(f => f.Create<ISettingRepository>()).Returns(new Owned<ISettingRepository>(settingsRepository.Object, repoDisposable.Object));
+      serviceProvider.Setup(sp => sp.GetService(typeof(ISettingRepository))).Returns(settingsRepository.Object);
 
       var mqttConfig = new MqttConfig("theServer", 1234, true, "theClientId");
       settingsRepository.Setup(sr => sr.GetMqttConfig()).Returns(mqttConfig);
 
       var mqttPublisher = new Mock<IMqttPublisher>();
-      var mDisposable = new Mock<IDisposable>();
-      factory.Setup(f => f.Create<IMqttPublisher>()).Returns(new Owned<IMqttPublisher>(mqttPublisher.Object, mDisposable.Object));
+      serviceProvider.Setup(sp => sp.GetService(typeof(IMqttPublisher))).Returns(mqttPublisher.Object);
 
       var liveReadings = new LiveReading[1];
 
       var target = CreateTarget();
 
       // Act
-      target.Publish(liveReadings);
+      target.Publish(serviceScope.Object, liveReadings);
 
       // Assert
-      factory.Verify(f => f.Create<ISettingRepository>());
+      serviceProvider.Verify(sp => sp.GetService(typeof(ISettingRepository)));
       settingsRepository.Verify(r => r.GetMqttConfig());
-      repoDisposable.Verify(x => x.Dispose());
-      factory.Verify(f => f.Create<IMqttPublisher>());
+      serviceProvider.Verify(sp => sp.GetService(typeof(IMqttPublisher)));
       mqttPublisher.Verify(p => p.Publish(mqttConfig, liveReadings));
-      mDisposable.Verify(x => x.Dispose());
     }
 
     [Test]
@@ -79,11 +70,11 @@ namespace PowerView.Service.Test.EventHub
       var target = CreateTarget();
 
       // Act
-      target.Publish(liveReadings);
+      target.Publish(serviceScope.Object, liveReadings);
 
       // Assert
-      factory.Verify(f => f.Create<ISettingRepository>(), Times.Never());
-      factory.Verify(f => f.Create<IMqttPublisher>(), Times.Never());
+      serviceProvider.Verify(sp => sp.GetService(typeof(ISettingRepository)), Times.Never);
+      serviceProvider.Verify(sp => sp.GetService(typeof(IMqttPublisher)), Times.Never);
     }
 
     [Test]
@@ -91,8 +82,7 @@ namespace PowerView.Service.Test.EventHub
     {
       // Arrange
       var settingsRepository = new Mock<ISettingRepository>();
-      var repoDisposable = new Mock<IDisposable>();
-      factory.Setup(f => f.Create<ISettingRepository>()).Returns(new Owned<ISettingRepository>(settingsRepository.Object, repoDisposable.Object));
+      serviceProvider.Setup(sp => sp.GetService(typeof(ISettingRepository))).Returns(settingsRepository.Object);
 
       var mqttConfig = new MqttConfig("theServer", 1234, false, "theClientId");
       settingsRepository.Setup(sr => sr.GetMqttConfig()).Returns(mqttConfig);
@@ -102,18 +92,17 @@ namespace PowerView.Service.Test.EventHub
       var target = CreateTarget();
 
       // Act
-      target.Publish(liveReadings);
+      target.Publish(serviceScope.Object, liveReadings);
 
       // Assert
-      factory.Verify(f => f.Create<ISettingRepository>());
+      serviceProvider.Verify(sp => sp.GetService(typeof(ISettingRepository)));
       settingsRepository.Verify(r => r.GetMqttConfig());
-      repoDisposable.Verify(x => x.Dispose());
-      factory.Verify(f => f.Create<IMqttPublisher>(), Times.Never());
+      serviceProvider.Verify(sp => sp.GetService(typeof(IMqttPublisher)), Times.Never);
     }
 
     private MqttPublisherFactory CreateTarget()
     {
-      return new MqttPublisherFactory(factory.Object);
+      return new MqttPublisherFactory();
     }
 
   }

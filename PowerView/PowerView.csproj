@@ -1,159 +1,40 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{A4B3790C-3591-4624-8B39-717364E97033}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>PowerView</RootNamespace>
-    <AssemblyName>PowerView</AssemblyName>
-    <SignAssembly>false</SignAssembly>
-    <AssemblyOriginatorKeyFile>..\PowerView.key</AssemblyOriginatorKeyFile>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Externalconsole>true</Externalconsole>
-    <PlatformTarget>x86</PlatformTarget>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release</OutputPath>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Externalconsole>true</Externalconsole>
-    <PlatformTarget>x86</PlatformTarget>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-  </PropertyGroup>
+
+  <Import Project="../Solution.props"/>
+
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="Mono.Posix" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="Autofac">
-      <HintPath>..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml" />
-    <Reference Include="log4net">
-      <HintPath>..\packages\log4net.2.0.14\lib\net45\log4net.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web" />
+    <None Update="NLog.config" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="..\AssemblyInfoShared.cs">
-      <Link>Properties\AssemblyInfoShared.cs</Link>
-    </Compile>
-    <Compile Include="ProcessStopper\IProcessStopper.cs" />
-    <Compile Include="ProcessStopper\ProcessStopperFactory.cs" />
-    <Compile Include="ProcessStopper\UnixProcessStopper.cs" />
-    <Compile Include="ProcessStopper\WindowsProcessStopper.cs" />
-    <Compile Include="Program.cs">
+    <Content Include="*.sh">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Compile>
-    <Compile Include="Configuration\ByteArrayElement.cs" />
-    <Compile Include="Configuration\EnumArrayElement.cs" />
-    <Compile Include="Configuration\EnumElement.cs" />
-    <Compile Include="Configuration\StringElement.cs" />
-    <Compile Include="Configuration\IntElement.cs" />
-    <Compile Include="Configuration\DatabaseSection.cs" />
-    <Compile Include="Configuration\BackupElement.cs" />
-    <Compile Include="Configuration\IPowerViewConfiguration.cs" />
-    <Compile Include="Configuration\PowerViewConfiguration.cs" />
-    <Compile Include="Configuration\PvOutputFacadeElement.cs" />
-    <Compile Include="Configuration\ServiceSection.cs" />
-    <Compile Include="Configuration\IConfigurationValidatable.cs" />
-    <Compile Include="Configuration\UriElement.cs" />
-    <Compile Include="TestDataGenerator.cs" />
-    <Compile Include="Configuration\UIntElement.cs" />
-    <Compile Include="Configuration\Migration\ConfigMigrater.cs" />
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
   </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+
   <ItemGroup>
-    <None Include="packages.config" />
-    <None Include="app.config" />
-    <None Include="InstallPowerView.sh">
+    <Content Include="powerview.service">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="PowerView">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="StartPowerView.sh">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="StopPowerView.sh">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Doc\StartHere.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Doc\VersionHistory.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Doc\media\Overview.jpg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Doc\media\RaspberryPiConfiguration.jpg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Doc\pages\ConfiguringPowerView.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Doc\pages\InstallingPowerView.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Doc\pages\SettingUpThePowerViewBox.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Doc\pages\SoftwareLicenseAgreement.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Doc\3rdPartyLicenses.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Doc\pages\ConfiguringPowerViewAdvanced.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="UninstallPowerView.sh">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\Deps\sqlite-dll-win32-x86-3210000\sqlite3.def">
-      <Link>sqlite3.def</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\Deps\sqlite-dll-win32-x86-3210000\sqlite3.dll">
-      <Link>sqlite3.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\Deps\Mono.Data.Sqlite\4.0.0.0\Mono.Data.Sqlite.dll">
-      <Link>Mono.Data.Sqlite.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Doc\pages\HttpInterface.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
   </ItemGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\PowerView.Model\PowerView.Model.csproj">
-      <Project>{95AB0C37-2CD1-43FC-AE3D-3A31378C4B34}</Project>
-      <Name>PowerView.Model</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\PowerView.Service\PowerView.Service.csproj">
-      <Project>{C8A89CD4-5DB2-44AB-B28C-30654E8D773F}</Project>
-      <Name>PowerView.Service</Name>
-    </ProjectReference>
+    <PackageReference Include="NLog.Web.AspNetCore" Version="5.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
+
   <ItemGroup>
-    <Folder Include="Configuration\" />
-    <Folder Include="Configuration\Migration\" />
+    <ProjectReference Include="..\PowerView.Model\PowerView.Model.csproj" />
+    <ProjectReference Include="..\PowerView.Service\PowerView.Service.csproj" />
   </ItemGroup>
+
 </Project>

@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using PowerView.Model.Repository;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace PowerView.Model.Test.Repository
 {
@@ -10,6 +11,7 @@ namespace PowerView.Model.Test.Repository
   public class DbCheckTest : DbTestFixtureWithDbFile
   {
     [Test]
+    [Order(1)]
     public void CheckDatabaseOk()
     {
       // Arrange
@@ -23,6 +25,7 @@ namespace PowerView.Model.Test.Repository
     }
 
     [Test]
+    [Order(2)]
     public void CheckDatabaseCorrupted()
     {
       // Arrange
@@ -44,7 +47,7 @@ namespace PowerView.Model.Test.Repository
         DbContext dbContext = null;
         try
         {
-          dbContext = (DbContext)new DbContextFactory(corruptDbName).CreateContext();
+          dbContext = (DbContext)new DbContextFactory(new DatabaseOptions { Name = corruptDbName }).CreateContext();
           var target = CreateTarget(dbContext);
 
           // Act && Assert
@@ -80,19 +83,19 @@ namespace PowerView.Model.Test.Repository
 
     private void CreateTableAndInsertRows()
     {
-      DbContext.ExecuteTransaction("Create Schema", "CREATE TABLE TheTable (Id INTEGER PRIMARY KEY, StringVal NVARCHAR(512) NOT NULL, IntVal INTEGER NOT NULL);" +
-      	                                            "CREATE UNIQUE INDEX IX ON TheTable (IntVal, StringVal, Id);" +
-      	                                            "CREATE UNIQUE INDEX IX2 ON TheTable (StringVal, IntVal, Id);" );
+      DbContext.ExecuteTransaction("CREATE TABLE TheTable (Id INTEGER PRIMARY KEY, StringVal NVARCHAR(512) NOT NULL, IntVal INTEGER NOT NULL);" +
+      	                           "CREATE UNIQUE INDEX IX ON TheTable (IntVal, StringVal, Id);" +
+      	                           "CREATE UNIQUE INDEX IX2 ON TheTable (StringVal, IntVal, Id);");
       for (var i=0; i < 75; i++)
       {
-        DbContext.ExecuteTransaction("Insert " + i, "INSERT INTO TheTable (StringVal, IntVal) VALUES (@StringVal, @IntVal);",
+        DbContext.ExecuteTransaction("INSERT INTO TheTable (StringVal, IntVal) VALUES (@StringVal, @IntVal);",
           new { StringVal = "This is the string value... " + string.Join("", Enumerable.Repeat(i + "-", 10)), IntVal = i + 1000000 });
       }
     }
 
     private DbCheck CreateTarget(DbContext dbContext)
     {
-      return new DbCheck(dbContext, 30);
+      return new DbCheck(new NullLogger<DbCheck>(), dbContext, new DatabaseCheckOptions { IntegrityCheckCommandTimeout = 30 });
     }
 
   }

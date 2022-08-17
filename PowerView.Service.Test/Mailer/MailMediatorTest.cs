@@ -37,7 +37,7 @@ namespace PowerView.Service.Test.Mailer
     {
       // Arrange
       var target = CreateTarget();
-      var smtpConfig = new SmtpConfig("TheServer", 587, "tx@b.com", "txAuth");
+      var smtpConfig = new SmtpConfig("TheServer", 587, "tx@b.com", "txAuth", "tx@b.com");
       settingRepository.Setup(x => x.GetSmtpConfig()).Returns(smtpConfig);
       var emailRecipient = new EmailRecipient("Rx Name", "rx@b.com");
       const string subject = "The Subject";

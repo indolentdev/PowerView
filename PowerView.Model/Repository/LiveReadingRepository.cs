@@ -1,15 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Mono.Data.Sqlite;
+using Microsoft.Data.Sqlite;
 using Dapper;
 
 namespace PowerView.Model.Repository
 {
   internal class LiveReadingRepository : RepositoryBase, ILiveReadingRepository
   {
-    //    private static ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
     public LiveReadingRepository(IDbContext dbContext)
       : base(dbContext)
     {
@@ -25,7 +23,7 @@ namespace PowerView.Model.Repository
       }
 
       var dbLiveReadingsMap = liveReadings.ToDictionary(lr => new Db.LiveReading { Label = lr.Label, DeviceId = lr.DeviceId, Timestamp = lr.Timestamp });
-      var transaction = DbContext.BeginTransaction();
+      using var transaction = DbContext.BeginTransaction();
       try
       {
         // First insert the readings

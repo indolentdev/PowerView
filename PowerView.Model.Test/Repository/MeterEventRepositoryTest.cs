@@ -137,7 +137,7 @@ namespace PowerView.Model.Test.Repository
 
     private void AssertMeterEventExists(MeterEvent meterEvent, bool not = false)
     {
-      var meterEvents = DbContext.QueryTransaction<Db.MeterEvent>("", 
+      var meterEvents = DbContext.QueryTransaction<Db.MeterEvent>(
         "SELECT * FROM MeterEvent WHERE Label=@Label AND MeterEventType=@MeterEventType AND DetectTimestamp=@DetectTimestamp AND Flag=@Flag AND Amplification=@Amplification;", 
         new { meterEvent.Label, MeterEventType = meterEvent.Amplification.GetMeterEventType(), meterEvent.DetectTimestamp, meterEvent.Flag, Amplification = MeterEventAmplificationSerializer.Serialize(meterEvent.Amplification) });
       Assert.That(meterEvents.Count, Is.EqualTo(not ? 0 : 1));
@@ -152,7 +152,7 @@ namespace PowerView.Model.Test.Repository
         DetectTimestamp = detectTimestamp, Flag = flag, Amplification = ampString
       };
 
-      var id = DbContext.QueryTransaction<long>("",
+      var id = DbContext.QueryTransaction<long>(
         "INSERT INTO MeterEvent (Label,MeterEventType,DetectTimestamp,Flag,Amplification) VALUES (@Label,@MeterEventType,@DetectTimestamp,@Flag,@Amplification); SELECT last_insert_rowid();", dbMeterEvent)
         .First();
       dbMeterEvent.Id = id;

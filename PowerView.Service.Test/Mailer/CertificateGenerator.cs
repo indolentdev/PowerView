@@ -6,9 +6,11 @@ using System.IO;
 namespace PowerView.Service.Test.Mailer
 {
   /// <summary>
-  /// With inspiration from:  (and then some)
-  /// to create an X509Certificate for testing you need to run MAKECERT.EXE and then PVK2PFX.EXE
+  /// With inspiration from: 
+  /// https://letsencrypt.org/docs/certificates-for-localhost/
   /// http://www.digitallycreated.net/Blog/38/using-makecert-to-create-certificates-for-development
+  /// .. and for reference:
+  /// https://docs.microsoft.com/en-us/dotnet/core/additional-tools/self-signed-certificates-guide
   /// </summary>
   internal class CertificateGenerator : IDisposable
   {
@@ -18,19 +20,14 @@ namespace PowerView.Service.Test.Mailer
     // {1}: pfx password
     private readonly string[] templateCommands =
     {
-      "makecert -n \"CN={0}CertificateAuthority\" -cy authority -a sha1 -sv \"{0}CertificateAuthorityPrivateKey.pvk\" -r \"{0}CertificateAuthority.cer\"",
-      "makecert -n \"CN={0}\" -ic \"{0}CertificateAuthority.cer\" -iv \"{0}CertificateAuthorityPrivateKey.pvk\" -a sha1 -sv \"{0}PrivateKey.pvk\" \"{0}.cer\"",
-      "openssl rsa -inform pvk -in \"{0}PrivateKey.pvk\" -outform pem -out \"{0}PrivateKey.pem\"",
-      "openssl x509 -inform DER -in \"{0}CertificateAuthority.cer\" -out \"{0}CertificateAuthority.crt\"",
-      "openssl x509 -inform DER -in \"{0}.cer\" -out \"{0}.crt\"",
-      "openssl pkcs12 -export -passout pass:\"{1}\" -out \"{0}.pfx\" -inkey \"{0}PrivateKey.pem\" -in \"{0}.crt\" -certfile \"{0}CertificateAuthority.crt\""
+      "openssl req -x509 -out \"{0}.crt\" -keyout \"{0}.key\" -newkey rsa:2048 -nodes -sha256 -subj /CN={0}",
+      "openssl pkcs12 -export -passout pass:\"{1}\" -out \"{0}.pfx\" -inkey \"{0}.key\" -in \"{0}.crt\""
     };
-
 
     public CertificateGenerator()
     {
-      var codeBase = new Uri(this.GetType().Assembly.CodeBase);
-      var asmDirectory = Path.GetDirectoryName(codeBase.AbsolutePath);
+      var assemblyLocation = new Uri(this.GetType().Assembly.Location);
+      var asmDirectory = Path.GetDirectoryName(assemblyLocation.AbsolutePath);
       folder = Path.Combine(asmDirectory, "CertificateGenerator" + DateTime.Now.Millisecond);
 
       Directory.CreateDirectory(folder);
@@ -75,9 +72,11 @@ namespace PowerView.Service.Test.Mailer
       };
       var process = Process.Start(processStartInfo);
       process.WaitForExit();
+      var stdout = process.StandardOutput.ReadToEnd();
+      var stderr = process.StandardError.ReadToEnd();
       if (process.ExitCode != 0)
       {
-        throw new ApplicationException("Failed running process. Exitcode:" + process.ExitCode + ", Process:" + command);
+        throw new ApplicationException("Failed running process. Exitcode:" + process.ExitCode + ", Process:" + command + ", stdout:" + stdout + ", stderr:" + stderr);
       }
     }
 

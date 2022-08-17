@@ -1,4 +1,6 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 using SmtpServer.Protocol;
 using PowerView.Model;
@@ -21,13 +23,13 @@ namespace PowerView.Service.Test.Mailer
     }
 
     [TearDown]
-    public void TearDown()
+    public Task TearDown()
     {
-      smtpServer.Dispose();
+      return smtpServer.Shutdown();
     }
 
     [Test]
-    public void ArgumentBadThrows()
+    public void SendThrows()
     {
       // Arrange
       var target = CreateTarget();
@@ -39,10 +41,9 @@ namespace PowerView.Service.Test.Mailer
       Assert.That(() => target.Send(smtpConfig, null, "subject", "message"), Throws.ArgumentNullException);
     }
 
-
     [Test]
     [TestCase("BadServerName", 10)]
-    public void EndpointThrows(string server, int port)
+    public void SendBadServerEndpointThrows(string server, int port)
     {
       // Arrange
       smtpServer.Start();
@@ -53,7 +54,7 @@ namespace PowerView.Service.Test.Mailer
     }
 
     [Test]
-    public void TlsUnsupportedThrows()
+    public void SendServerTlsUnsupportedThrows()
     {
       // Arrange
       smtpServer.Start();
@@ -64,10 +65,11 @@ namespace PowerView.Service.Test.Mailer
     }
 
     [Test]
-    public void CertificateUnsupportedThrows()
+    public void SendServerCertificateUnsupportedOnClientSideThrows()
     {
       // Arrange
-      smtpServer.Start(smtpServer.EnableTls("unknownSiteName"));
+      smtpServer.RequireTls("unknownSiteName"); // The certificate site name doesn't match the DNS name
+      smtpServer.Start();
       var target = CreateTarget();
 
       // Act & Assert
@@ -75,10 +77,11 @@ namespace PowerView.Service.Test.Mailer
     }
 
     [Test]
-    public void UserAuthenticationUnsupportedThrows()
+    public void SendServerUserAuthenticationUnsupportedThrows()
     {
       // Arrange
-      smtpServer.Start(smtpServer.EnableTls(smtpServer.ServerName), smtpServer.VoidUserAuthenticator());
+      smtpServer.RequireTls(smtpServer.ServerName);
+      smtpServer.Start();
       var target = CreateTarget();
 
       // Act & Assert
@@ -89,7 +92,9 @@ namespace PowerView.Service.Test.Mailer
     public void SmtpUserNotAuthenticatedThrows()
     {
       // Arrange
-      smtpServer.Start(smtpServer.EnableTls(smtpServer.ServerName), smtpServer.EnableUser("baduser", smtpPw));
+      smtpServer.RequireTls(smtpServer.ServerName);
+      smtpServer.RequireUser("baduser", smtpPw);
+      smtpServer.Start();
       var target = CreateTarget();
 
       // Act & Assert
@@ -100,7 +105,9 @@ namespace PowerView.Service.Test.Mailer
     public void SmtpPasswordNotAuthenticatedThrows()
     {
       // Arrange
-      smtpServer.Start(smtpServer.EnableTls(smtpServer.ServerName), smtpServer.EnableUser(smtpUser, "badPw"));
+      smtpServer.RequireTls(smtpServer.ServerName);
+      smtpServer.RequireUser(smtpUser, "badPw");
+      smtpServer.Start();
       var target = CreateTarget();
 
       // Act & Assert
@@ -111,7 +118,9 @@ namespace PowerView.Service.Test.Mailer
     public void ToAddressMailboxUnavailableThrows()
     {
       // Arrange
-      smtpServer.Start(smtpServer.EnableTls(smtpServer.ServerName), smtpServer.EnableUser(smtpUser, smtpPw));
+      smtpServer.RequireTls(smtpServer.ServerName); 
+      smtpServer.RequireUser(smtpUser, smtpPw);
+      smtpServer.Start();
       var target = CreateTarget();
       smtpServer.SetNextSendSmtpResponse(SmtpResponse.MailboxUnavailable);
 
@@ -123,7 +132,9 @@ namespace PowerView.Service.Test.Mailer
     public void Send()
     {
       // Arrange
-      smtpServer.Start(smtpServer.EnableTls(smtpServer.ServerName), smtpServer.EnableUser(smtpUser, smtpPw));
+      smtpServer.RequireTls(smtpServer.ServerName);
+      smtpServer.RequireUser(smtpUser, smtpPw);
+      smtpServer.Start();
       var target = CreateTarget();
       const string toName = "toname";
       const string toAddr = "a@b.com";
@@ -162,7 +173,7 @@ namespace PowerView.Service.Test.Mailer
 
     private SmtpMailer CreateTarget()
     {
-      return new SmtpMailer();
+      return new SmtpMailer(new NullLogger<SmtpMailer>());
     }
 
     private SmtpConfig GetSmtpConfig(string serverName = null, int? port = null)
@@ -170,7 +181,7 @@ namespace PowerView.Service.Test.Mailer
       var serverNameLocal = serverName ?? smtpServer.ServerName;
       var portLocal = (ushort)(port ?? smtpServer.Port);
 
-      return new SmtpConfig(serverNameLocal, portLocal, smtpUser, smtpPw);
+      return new SmtpConfig(serverNameLocal, portLocal, smtpUser, smtpPw, smtpUser);
     }
 
   }

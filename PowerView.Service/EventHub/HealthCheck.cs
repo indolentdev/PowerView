@@ -1,53 +1,48 @@
 ﻿using System;
 using System.Reflection;
-using log4net;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using PowerView.Model.Repository;
 
 namespace PowerView.Service.EventHub
 {
   internal class HealthCheck : IHealthCheck
   {
-    private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+    private readonly ILogger logger;
     private readonly TimeSpan minimumDayInterval = TimeSpan.FromDays(1);
 
     private readonly IIntervalTrigger intervalTrigger;
-    private readonly IFactory factory;
 
-    public HealthCheck(IIntervalTrigger intervalTrigger, IFactory factory)
+    public HealthCheck(ILogger<HealthCheck> logger, IIntervalTrigger intervalTrigger)
     {
-      if (intervalTrigger == null) throw new ArgumentNullException("intervalTrigger");
-      if (factory == null) throw new ArgumentNullException("factory");
-
-      this.intervalTrigger = intervalTrigger;
-      this.factory = factory;
+      this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+      this.intervalTrigger = intervalTrigger ?? throw new ArgumentNullException(nameof(intervalTrigger));
 
       this.intervalTrigger.Setup(new TimeSpan(0, 15, 0), TimeSpan.FromDays(1));
     }
 
-    public void DailyCheck(DateTime dateTime)
+    public void DailyCheck(IServiceScope serviceScope, DateTime dateTime)
     {
+      if (serviceScope == null) throw new ArgumentNullException(nameof(serviceScope));
+
       if (!intervalTrigger.IsTriggerTime(dateTime))
       {
         return;
       }
-        
-      using (var ownedDbCheck = factory.Create<IDbCheck>())
-      {
-        log.Info("Performing database check");
-        try
-        {
-          ownedDbCheck.Value.CheckDatabase();
-          log.Info("Database check completed");
-        }
-        catch (DataStoreCorruptException e)
-        {
-          log.Error("Database check detected issue(s)", e);
-          using (var ownedExitSignalProvider = factory.Create<IExitSignalProvider>())
-          {
-             ownedExitSignalProvider.Value.FireExitEvent();
-          }
-        }
 
+      var dbCheck = serviceScope.ServiceProvider.GetRequiredService<IDbCheck>();
+      logger.LogInformation("Performing database check");
+      try
+      {
+        dbCheck.CheckDatabase();
+        logger.LogInformation("Database check completed");
+      }
+      catch (DataStoreCorruptException e)
+      {
+        logger.LogError(e, "Database check detected issue(s)");
+        var lifetime = serviceScope.ServiceProvider.GetRequiredService<IHostApplicationLifetime>();
+        lifetime.StopApplication();
       }
 
       intervalTrigger.Advance(dateTime);

@@ -23,7 +23,8 @@ export class SettingsSmtpComponent implements OnInit {
       server: new FormControl('', [Validators.required, Validators.minLength(7), Validators.maxLength(39)]),
       port: new FormControl('', [Validators.required, Validators.min(1), Validators.max(65535)]),
       user: new FormControl('', [Validators.required, Validators.minLength(7), Validators.maxLength(39)]),
-      auth: new FormControl('', [Validators.required, Validators.minLength(7), Validators.maxLength(39)])
+      auth: new FormControl('', [Validators.required, Validators.minLength(7), Validators.maxLength(39)]),
+      email: new FormControl('', [Validators.required, Validators.minLength(7), Validators.maxLength(39)])
     });
     this.getSmtpParams();
   }
@@ -34,6 +35,7 @@ export class SettingsSmtpComponent implements OnInit {
       this.formGroup.controls["port"].setValue(smtpParams.port);
       this.formGroup.controls["user"].setValue(smtpParams.user);
       this.formGroup.controls["auth"].setValue(smtpParams.auth);
+      this.formGroup.controls["email"].setValue(smtpParams.email);
     });
   }
 
@@ -49,7 +51,7 @@ export class SettingsSmtpComponent implements OnInit {
     this.dismissSnackBar();
 
     var smtpParams:SmtpParams = formGroupValue;
-    this.log.debug("Saving SMTP params", smtpParams.server, smtpParams.port, smtpParams.user);
+    this.log.debug("Saving SMTP params", smtpParams.server, smtpParams.port, smtpParams.user, smtpParams.email);
 
     this.settingsService.saveSmtpParams(smtpParams).subscribe(_ => {
       this.log.debug("Save ok");

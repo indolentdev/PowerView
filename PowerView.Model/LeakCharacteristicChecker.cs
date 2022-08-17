@@ -2,13 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using log4net;
+using Microsoft.Extensions.Logging;
 
 namespace PowerView.Model
 {
-  public class LeakCharacteristicChecker
+  public class LeakCharacteristicChecker : ILeakCharacteristicChecker
   {
-    private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+    private readonly ILogger<LeakCharacteristicChecker> logger;
+
+    public LeakCharacteristicChecker(ILogger<LeakCharacteristicChecker> logger)
+    {
+      this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    }
 
     public UnitValue? GetLeakCharacteristic(LabelSeries<NormalizedDurationRegisterValue> labelSeries, ObisCode obisCode, DateTime start, DateTime end)
     {
@@ -35,7 +40,7 @@ namespace PowerView.Model
       }
       catch (DataMisalignedException e)
       {
-        log.Info("Unable to check of leak characteristic. Data error", e);
+        logger.LogInformation(e, "Unable to check for leak characteristic. Data error");
         return null;
       }
 

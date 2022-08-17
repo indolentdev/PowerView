@@ -667,7 +667,7 @@ namespace PowerView.Model.Test.Repository
       var tableName = typeof(TReading).Name;
       var sql = "SELECT * FROM {0} WHERE Label=@label AND DeviceId=@deviceId AND Timestamp=@timestamp;";
       sql = string.Format(CultureInfo.InvariantCulture, sql, tableName);
-      var result = DbContext.QueryTransaction<TReading>("", sql, new { label, deviceId, timestamp });
+      var result = DbContext.QueryTransaction<TReading>(sql, new { label, deviceId, timestamp });
       Assert.That(result.Count, Is.EqualTo(1));
     }
 
@@ -677,14 +677,14 @@ namespace PowerView.Model.Test.Repository
       var tableName = typeof(TRegister).Name;
       var sql = "SELECT * FROM {0} WHERE ObisCode=@obisCode AND ReadingId=@readingId;";
       sql = string.Format(CultureInfo.InvariantCulture, sql, tableName);
-      var result = DbContext.QueryTransaction<TRegister>("", sql, new { obisCode, readingId });
+      var result = DbContext.QueryTransaction<TRegister>(sql, new { obisCode, readingId });
       Assert.That(result.Count, Is.EqualTo(1));
     }
 
     private void AssertStreamPosition(string streamName, string label, long position)
     {
       var sql = "SELECT * FROM StreamPosition WHERE StreamName=@streamName AND Label=@label AND Position=@position;";
-      var result = DbContext.QueryTransaction<Db.StreamPosition>("", sql, new { streamName, label, position });
+      var result = DbContext.QueryTransaction<Db.StreamPosition>(sql, new { streamName, label, position });
       Assert.That(result.Count, Is.EqualTo(1));
     }
 
@@ -705,7 +705,7 @@ namespace PowerView.Model.Test.Repository
 
     private void InsertStreamPositions(params Db.StreamPosition[] streamPositions)
     {
-      DbContext.ExecuteTransaction("", "INSERT INTO StreamPosition (StreamName,Label,Position) VALUES (@StreamName,@Label,@Position);", streamPositions);
+      DbContext.ExecuteTransaction("INSERT INTO StreamPosition (StreamName,Label,Position) VALUES (@StreamName,@Label,@Position);", streamPositions);
     }
 
   }

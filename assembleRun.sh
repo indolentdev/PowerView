@@ -8,5 +8,7 @@ then
   exit 1
 fi
 
+dotnet list package --outdated
+
 echo Running
-mono PowerView/bin/Release/PowerView.exe
+dotnet PowerView/bin/Release/net6.0/publish/PowerView.dll

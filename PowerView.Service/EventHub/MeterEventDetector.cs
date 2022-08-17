@@ -11,16 +11,14 @@ namespace PowerView.Service.EventHub
     private readonly IProfileRepository profileRepository;
     private readonly IMeterEventRepository meterEventRepository;
     private readonly ILocationContext locationContext;
+    private readonly ILeakCharacteristicChecker leakCharacteristicChecker;
 
-    public MeterEventDetector(IProfileRepository profileRepository, IMeterEventRepository meterEventRepository, ILocationContext locationContext)
+    public MeterEventDetector(IProfileRepository profileRepository, IMeterEventRepository meterEventRepository, ILocationContext locationContext, ILeakCharacteristicChecker leakCharacteristicChecker)
     {
-      if (profileRepository == null) throw new ArgumentNullException("profileRepository");
-      if (meterEventRepository == null) throw new ArgumentNullException("meterEventRepository");
-      if (locationContext == null) throw new ArgumentNullException("locationContext");
-
-      this.profileRepository = profileRepository;
-      this.meterEventRepository = meterEventRepository;
-      this.locationContext = locationContext;
+      this.profileRepository = profileRepository ?? throw new ArgumentNullException(nameof(profileRepository));
+      this.meterEventRepository = meterEventRepository ?? throw new ArgumentNullException(nameof(meterEventRepository));
+      this.locationContext = locationContext ?? throw new ArgumentNullException(nameof(locationContext));
+      this.leakCharacteristicChecker = leakCharacteristicChecker ?? throw new ArgumentNullException(nameof(leakCharacteristicChecker));
     }
 
     public void DetectMeterEvents(DateTime timestamp)
@@ -68,8 +66,7 @@ namespace PowerView.Service.EventHub
         var start = locationContext.ConvertTimeToUtc(new DateTime(timestampNonUtc.Year, timestampNonUtc.Month, timestampNonUtc.Day, 0, 0, 0, timestampNonUtc.Kind));
         var end = locationContext.ConvertTimeToUtc(new DateTime(timestampNonUtc.Year, timestampNonUtc.Month, timestampNonUtc.Day, 6, 0, 0, timestampNonUtc.Kind));
 
-        var leakChecker = new LeakCharacteristicChecker();
-        var leakCharacteristic = leakChecker.GetLeakCharacteristic(labelSeries, coldWaterVolume1Delta, start, end);
+        var leakCharacteristic = leakCharacteristicChecker.GetLeakCharacteristic(labelSeries, coldWaterVolume1Delta, start, end);
         if (leakCharacteristic == null)
         {
           continue;

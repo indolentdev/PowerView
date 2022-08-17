@@ -1,9 +1,7 @@
 #!/bin/bash
-PID=$(pgrep -d " " -f .*mono.*PowerView.exe.*)
-if [ -z "$PID" ]
-then
-  echo PowerView already stopped
-else
-  kill -SIGTERM $PID
-  echo Stop signal sent to PowerView
+if [[ $EUID -ne 0 ]]; then
+   echo "This script must be run as root (sudo $0)"
+   exit 1
 fi
+
+sudo systemctl stop powerview.service

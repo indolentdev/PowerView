@@ -1,0 +1,22 @@
+[Unit]
+Description=PowerView web application and backend
+After=network.target
+Requires=network.target
+AssertPathExists=/opt/PowerView
+
+[Service]
+Type=simple
+ExecStart=dotnet /opt/PowerView/PowerView.dll
+WorkingDirectory=/opt/PowerView
+User=powervw
+TimeoutSec=1200
+Restart=always
+KillMode=mixed
+NoNewPrivileges=true
+StandardInput=null
+StandardOutput=null
+StandardError=null
+
+[Install]
+WantedBy=multi-user.target
+

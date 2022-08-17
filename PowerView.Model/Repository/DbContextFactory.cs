@@ -1,60 +1,54 @@
-using System;
-using System.Data;
-using System.Data.Common;
-using Mono.Data.Sqlite;
+using Microsoft.Data.Sqlite;
+using Microsoft.Extensions.Options;
 using Dapper;
 
 namespace PowerView.Model.Repository
 {
-  internal class DbContextFactory : IDbContextFactory
-  {
-    private readonly SqliteConnectionStringBuilder connectionStringBuilder;
-
-    public DbContextFactory(string dbName)
+    internal class DbContextFactory : IDbContextFactory
     {
-      if ( string.IsNullOrEmpty(dbName) ) throw new ArgumentNullException("dbName");
+        private readonly SqliteConnectionStringBuilder connectionStringBuilder;
 
-      var builder = new SqliteConnectionStringBuilder();
-      builder.BinaryGUID = true;
-      builder.DataSource = dbName;
-      builder.DateTimeFormat = SQLiteDateFormats.UnixEpoch;
-      builder.DefaultIsolationLevel = IsolationLevel.ReadCommitted;
-      builder.DefaultTimeout = 10; //000;
-      builder.Enlist = false;
-      builder.FailIfMissing = false;
-      builder.JournalMode = SQLiteJournalModeEnum.Persist;
-      builder.LegacyFormat = false;
-      builder.SyncMode = SynchronizationModes.Normal;
-      builder.UseUTF16Encoding = false;
-      builder.Version = 3;
-      builder.Pooling = false; // pooling does not work on ubuntu dev laptop...
+        public DbContextFactory(IOptions<DatabaseOptions> options)
+        {
+            if (options == null) throw new ArgumentNullException(nameof(options));
 
-      connectionStringBuilder = builder;
+            var builder = new SqliteConnectionStringBuilder();
+            builder.DataSource = options.Value.Name;
+            builder.DefaultTimeout = 10; //000;
+            builder.ForeignKeys = true;
+            builder.Mode = SqliteOpenMode.ReadWriteCreate;
+            builder.ForeignKeys = true;
+            builder.Cache = SqliteCacheMode.Default;
+            builder.Pooling = false;
+
+            connectionStringBuilder = builder;
+        }
+
+        public IDbContext CreateContext()
+        {
+            var conn = new SqliteConnection(connectionStringBuilder.ToString());
+            try
+            {
+                conn.Open();
+                conn.Execute("PRAGMA journal_mode = DELETE;");
+                conn.Execute("PRAGMA encoding = 'UTF-8';");
+                conn.Execute("PRAGMA synchronous = NORMAL;");
+                return new DbContext(conn);
+            }
+            catch (SqliteException e)
+            {
+                conn.Close();
+                conn.Dispose();
+                throw DataStoreExceptionFactory.Create(e, "Database open failed");
+            }
+            catch (Exception)
+            {
+                conn.Close();
+                conn.Dispose();
+                throw;
+            }
+        }
+
     }
-
-    public IDbContext CreateContext()
-    {
-      var conn = new SqliteConnection(connectionStringBuilder.ToString());
-      try
-      {
-        conn.Open();
-        conn.Execute("PRAGMA foreign_keys = ON");
-        return new DbContext(conn);
-      }
-      catch (SqliteException e)
-      {
-        conn.Close();
-        conn.Dispose();
-        throw DataStoreExceptionFactory.Create(e, "Database open failed");
-      }
-      catch (Exception)
-      {
-        conn.Close();
-        conn.Dispose();
-        throw;
-      }
-    }
-
-  }
 }
 

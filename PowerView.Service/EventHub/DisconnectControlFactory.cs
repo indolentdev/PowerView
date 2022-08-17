@@ -1,33 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.Extensions.DependencyInjection;
 using PowerView.Model;
 using PowerView.Service.DisconnectControl;
 
 namespace PowerView.Service.EventHub
 {
-  internal class DisconnectControlFactory :IDisconnectControlFactory
+  internal class DisconnectControlFactory : IDisconnectControlFactory
   {
-    private readonly IFactory factory;
 
-    public DisconnectControlFactory(IFactory factory)
+    public void Process(IServiceScope serviceScope, IList<LiveReading> liveReadings)
     {
-      if (factory == null) throw new ArgumentNullException("factory");
-
-      this.factory = factory;
-    }
-
-    public void Process(IList<LiveReading> liveReadings)
-    {
+      if (serviceScope == null) throw new ArgumentNullException(nameof(serviceScope));
       if (liveReadings == null) throw new ArgumentNullException("liveReadings");
       if (liveReadings.Count == 0)
       {
         return;
       }
 
-      using (var disconnectWarden = factory.Create<IDisconnectWarden>())
-      {
-        disconnectWarden.Value.Process(liveReadings);
-      }
+      var disconnectWarden = serviceScope.ServiceProvider.GetRequiredService<IDisconnectWarden>();
+      disconnectWarden.Process(liveReadings);
     }
   }
 }

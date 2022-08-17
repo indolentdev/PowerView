@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
-using log4net;
+using Microsoft.Extensions.Logging;
 using PowerView.Model;
 using PowerView.Model.Repository;
 using PowerView.Service.Mailer;
@@ -11,21 +11,21 @@ namespace PowerView.Service.EventHub
 {
   public class MeterEventNotifier : IMeterEventNotifier
   {
-    private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
+    private readonly ILogger logger;
     private readonly IEmailRecipientRepository emailRecipientRepository;
     private readonly IMeterEventRepository meterEventRepository;
     private readonly ITranslation translation;
     private readonly IUrlProvider urlProvider;
     private readonly IMailMediator mailMediator;
 
-    public MeterEventNotifier(IEmailRecipientRepository emailRecipientRepository, IMeterEventRepository meterEventRepository, ITranslation translation, IUrlProvider urlProvider, IMailMediator mailMediator)
+    public MeterEventNotifier(ILogger<MeterEventNotifier> logger, IEmailRecipientRepository emailRecipientRepository, IMeterEventRepository meterEventRepository, ITranslation translation, IUrlProvider urlProvider, IMailMediator mailMediator)
     {
-      this.emailRecipientRepository = emailRecipientRepository;
-      this.meterEventRepository = meterEventRepository;
-      this.translation = translation;
-      this.urlProvider = urlProvider;
-      this.mailMediator = mailMediator;
+      this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+      this.emailRecipientRepository = emailRecipientRepository ?? throw new ArgumentNullException(nameof(emailRecipientRepository));
+      this.meterEventRepository = meterEventRepository ?? throw new ArgumentNullException(nameof(meterEventRepository));
+      this.translation = translation ?? throw new ArgumentNullException(nameof(translation));
+      this.urlProvider = urlProvider ?? throw new ArgumentNullException(nameof(urlProvider));
+      this.mailMediator = mailMediator ?? throw new ArgumentNullException(nameof(mailMediator));
     }
 
     public void NotifyEmailRecipients()
@@ -44,16 +44,12 @@ namespace PowerView.Service.EventHub
         try
         {
           mailMediator.SendEmail(emailRecipient, subject, message);
-          log.InfoFormat("Sent new events to email recipient. Name:{0}, EmailAddress:{1}. Subject:{2}", 
-                         emailRecipient.Name, emailRecipient.EmailAddress, subject);
+          logger.LogInformation($"Sent new events to email recipient. Name:{emailRecipient.Name}, EmailAddress:{emailRecipient.EmailAddress}. Subject:{subject}");
           emailRecipientRepository.SetEmailRecipientMeterEventPosition(emailRecipient.EmailAddress, maxMeterEventId.Value);
         }
         catch (MailerException e)
         {
-          var msg = string.Format(CultureInfo.InvariantCulture, 
-                                  "Failed sending email for new events to email recipient. Name:{0}, EmailAddress:{1}",
-                                  emailRecipient.Name, emailRecipient.EmailAddress);
-          log.Warn(msg, e);
+          logger.LogWarning(e, $"Failed sending email for new events to email recipient. Name:{emailRecipient.Name}, EmailAddress:{emailRecipient.EmailAddress}");
         }
       }
     }

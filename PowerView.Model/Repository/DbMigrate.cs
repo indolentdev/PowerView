@@ -3,19 +3,20 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Reflection;
-using Mono.Data.Sqlite;
-using log4net;
+using Microsoft.Data.Sqlite;
+using Microsoft.Extensions.Logging;
 using Dapper;
 
 namespace PowerView.Model.Repository
 {
   internal class DbMigrate : RepositoryBase, IDbMigrate
   {
-    private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+    private readonly ILogger<DbMigrate> logger;
 
-    public DbMigrate(IDbContext dbContext)
+    public DbMigrate(ILogger<DbMigrate> logger, IDbContext dbContext)
       : base(dbContext)
     {
+      this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     public void Migrate()
@@ -56,7 +57,7 @@ namespace PowerView.Model.Repository
         .Select(row => (string)row.Label).ToArray();
       if (labelsToMigrate.Length == 0)
       {
-        log.InfoFormat("Migration of data for database schema version 6 already complete");
+        logger.LogInformation("Migration of data for database schema version 6 already complete");
         return;
       }
 
@@ -68,7 +69,7 @@ namespace PowerView.Model.Repository
         return;
       }
 
-      log.InfoFormat("Migrating data for database schema version 6");
+      logger.LogInformation("Migrating data for database schema version 6");
 
       const string sql = "UPDATE LiveReading SET SerialNumber=@SerialNumber WHERE Label=@Label AND SerialNumber IS NULL";
       foreach (var item in labelsAndSerialNumbers)
@@ -82,7 +83,7 @@ namespace PowerView.Model.Repository
         catch (SqliteException)
         {
           tran.Rollback();
-          log.WarnFormat("Failed migrating data. Retrying next time");
+          logger.LogWarning("Failed migrating data. Retrying next time");
           return;
         }
       }
@@ -91,4 +92,3 @@ namespace PowerView.Model.Repository
 
   }
 }
-

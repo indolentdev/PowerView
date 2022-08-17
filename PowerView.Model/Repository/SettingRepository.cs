@@ -1,15 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Mono.Data.Sqlite;
+using Microsoft.Data.Sqlite;
 using Dapper;
 
 namespace PowerView.Model.Repository
 {
   internal class SettingRepository : RepositoryBase, ISettingRepository
   {
-    //    private static ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
     public SettingRepository(IDbContext dbContext)
       : base(dbContext)
     {
@@ -28,7 +26,7 @@ namespace PowerView.Model.Repository
       if (items == null) throw new ArgumentNullException("items");
       if (items.Any(x => string.IsNullOrEmpty(x.Key) || string.IsNullOrEmpty(x.Value))) throw new ArgumentNullException("items");
 
-      var transaction = DbContext.BeginTransaction();
+      using var transaction = DbContext.BeginTransaction();
       try
       {
         foreach (var item in items)
@@ -60,7 +58,7 @@ namespace PowerView.Model.Repository
     {
       if (string.IsNullOrEmpty(name)) throw new ArgumentNullException("name");
 
-      return DbContext.QueryTransaction<string>("Get", "SELECT Value FROM Setting WHERE Name = @name;", new { name }).FirstOrDefault();
+      return DbContext.QueryTransaction<string>("SELECT Value FROM Setting WHERE Name = @name;", new { name }).FirstOrDefault();
     }
 
     public IList<KeyValuePair<string, string>> Find(string startsWith)
@@ -68,7 +66,7 @@ namespace PowerView.Model.Repository
       if (string.IsNullOrEmpty(startsWith)) throw new ArgumentNullException("startsWith");
 
       return DbContext
-        .QueryTransaction<Db.Setting>("Find", "SELECT Id, Name, Value FROM Setting WHERE Name LIKE @StartsWith;", new { StartsWith = startsWith + "%" })
+        .QueryTransaction<Db.Setting>("SELECT Id, Name, Value FROM Setting WHERE Name LIKE @StartsWith;", new { StartsWith = startsWith + "%" })
         .Select(x => new KeyValuePair<string, string>(x.Name, x.Value))
         .ToList();
     }

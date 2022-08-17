@@ -1,5 +1,6 @@
 using System;
 using System.Threading;
+using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 
 namespace PowerView.Service.Test
@@ -13,7 +14,7 @@ namespace PowerView.Service.Test
     [SetUp]
     public void SetUp()
     {
-      target = new EventQueue();
+      target = new EventQueue(new NullLogger<EventQueue>());
       waitHandle = new ManualResetEventSlim();
     }
 
@@ -22,6 +23,15 @@ namespace PowerView.Service.Test
     {
       target.Dispose();
       waitHandle.Dispose();
+    }
+
+    [Test]
+    public void ConstructorThrows()
+    {
+      // Arrange
+
+      // Act & Assert
+      Assert.That(() => new EventQueue(null), Throws.ArgumentNullException);
     }
 
     [Test]

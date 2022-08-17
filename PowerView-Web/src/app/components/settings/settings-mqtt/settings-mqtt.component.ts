@@ -84,7 +84,7 @@ export class SettingsMqttComponent implements OnInit {
         this.snackBarRef = this.snackBar.open(message, undefined, { duration: 4000 });
       });
     }, err => {
-      this.log.debug("Save failed", err);
+      this.log.debug("Test failed", err);
       var translateIds = ['forms.settings.mqtt.errorTest'];
       var testMqttParamsError = err as TestMqttParamsError;
       if (testMqttParamsError === TestMqttParamsError.RequestContentIncomplete)

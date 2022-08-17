@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Reflection;
-using log4net;
+using Microsoft.Extensions.Logging;
 using PowerView.Model;
 
 namespace PowerView.Service.EventHub
 {
   public class IntervalTrigger : IIntervalTrigger
   {
-    private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
+    private readonly ILogger logger;
     private readonly ILocationContext locationContext;
     private readonly DateTime baseDateTime;
 
@@ -17,20 +16,20 @@ namespace PowerView.Service.EventHub
 
     private DateTime? lastRunAtTimezone;
 
-    public IntervalTrigger(ILocationContext locationContext)
-      : this(locationContext, DateTime.UtcNow)
+    public IntervalTrigger(ILogger<IntervalTrigger> logger, ILocationContext locationContext)
+      : this(logger, locationContext, DateTime.UtcNow)
     {
     }
 
-    internal IntervalTrigger(ILocationContext locationContext, DateTime baseDateTime)
+    internal IntervalTrigger(ILogger<IntervalTrigger> logger, ILocationContext locationContext, DateTime baseDateTime)
     {
-      if (locationContext == null) throw new ArgumentNullException("locationContext");
       if (baseDateTime.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("dateTime");
 
-      this.locationContext = locationContext;
+      this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+      this.locationContext = locationContext ?? throw new ArgumentNullException(nameof(locationContext));
       this.baseDateTime = baseDateTime;
 
-      log.DebugFormat("Interval trigger initialized. Base date time:{0}", baseDateTime.ToString("O"));
+      logger.LogDebug("Interval trigger initialized. Base date time:{0}", baseDateTime.ToString("O"));
     }
 
     public void Setup(TimeSpan timeOfDayAtTimezone, TimeSpan interval)

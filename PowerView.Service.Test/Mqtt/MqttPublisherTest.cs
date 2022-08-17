@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 using PowerView.Model;
 using PowerView.Service.Mqtt;
@@ -38,7 +39,8 @@ namespace PowerView.Service.Test.Mqtt
       // Arrange
 
       // Act & Assert
-      Assert.That(() => new MqttPublisher(null), Throws.ArgumentNullException);
+      Assert.That(() => new MqttPublisher(null, mqttMapper.Object), Throws.ArgumentNullException);
+      Assert.That(() => new MqttPublisher(new NullLogger<MqttPublisher>(), null), Throws.ArgumentNullException);
     }
 
     [Test]
@@ -109,7 +111,7 @@ namespace PowerView.Service.Test.Mqtt
 
     private MqttPublisher CreateTarget()
     {
-      return new MqttPublisher(mqttMapper.Object);
+      return new MqttPublisher(new NullLogger<MqttPublisher>(), mqttMapper.Object);
     }
 
   }

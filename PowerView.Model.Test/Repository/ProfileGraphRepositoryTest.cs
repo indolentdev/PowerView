@@ -251,7 +251,7 @@ namespace PowerView.Model.Test.Repository
       // Assert
       AssertProfileGraphExists(profileGraph1.Period, profileGraph1.Page, profileGraph1.Title, profileGraph2.Rank);
       AssertProfileGraphExists(profileGraph2.Period, profileGraph2.Page, profileGraph2.Title, profileGraph1.Rank);
-      var profileGraphsDb = DbContext.QueryTransaction<Db.ProfileGraph>("", "SELECT * FROM ProfileGraph WHERE Rank=@Rank;", new { Rank = 3 });
+      var profileGraphsDb = DbContext.QueryTransaction<Db.ProfileGraph>("SELECT * FROM ProfileGraph WHERE Rank=@Rank;", new { Rank = 3 });
       Assert.That(profileGraphsDb.Count, Is.EqualTo(2));
     }
 
@@ -271,7 +271,7 @@ namespace PowerView.Model.Test.Repository
 
     private void AssertProfileGraphExists(string period, string page, string title, long rank, bool not = false)
     {
-      var profileGraphsDb = DbContext.QueryTransaction<Db.ProfileGraph>("",
+      var profileGraphsDb = DbContext.QueryTransaction<Db.ProfileGraph>(
         "SELECT * FROM ProfileGraph WHERE Period=@period AND Page=@page AND Title=@title AND Rank=@rank;",
         new { period, page, title, rank });
       Assert.That(profileGraphsDb.Count, Is.EqualTo(not ? 0 : 1));
@@ -286,19 +286,19 @@ namespace PowerView.Model.Test.Repository
         rankOp = ">";
       }
       sql = string.Format(CultureInfo.InvariantCulture, sql, rankOp);
-      var profileGraphsDb = DbContext.QueryTransaction<Db.ProfileGraph>("", sql, profileGraph);
+      var profileGraphsDb = DbContext.QueryTransaction<Db.ProfileGraph>(sql, profileGraph);
       Assert.That(profileGraphsDb.Count, Is.EqualTo(not ? 0 : 1));
 
       if (!not)
       {
         var profileGraphDb = profileGraphsDb.First();
-        var profileGraphSeriesDb = DbContext.QueryTransaction<Db.ProfileGraphSerie>("", 
+        var profileGraphSeriesDb = DbContext.QueryTransaction<Db.ProfileGraphSerie>(
           "SELECT * FROM ProfileGraphSerie WHERE ProfileGraphId=@Id;", new { profileGraphDb.Id });
         Assert.That(profileGraph.SerieNames.Count, Is.EqualTo(profileGraphSeriesDb.Count));
         foreach (var serieName in profileGraph.SerieNames)
         {
-          var dbProfileGraphserie = DbContext.QueryTransaction<Db.ProfileGraphSerie>("",
-            "SELECT * FROM ProfileGraphSerie WHERE Label=@Label AND ObisCode=@ObisCode;", new { serieName.Label, Obiscode = (long)serieName.ObisCode });
+          var dbProfileGraphserie = DbContext.QueryTransaction<Db.ProfileGraphSerie>(
+            "SELECT * FROM ProfileGraphSerie WHERE Label=@Label AND ObisCode=@ObisCode;", new { serieName.Label, ObisCode = (long)serieName.ObisCode });
           Assert.That(dbProfileGraphserie.Count, Is.EqualTo(1));
         }
       }
@@ -318,7 +318,7 @@ namespace PowerView.Model.Test.Repository
     {
       foreach (var profileGraph in profileGraphs)
       {
-        var id = DbContext.QueryTransaction<long>("",
+        var id = DbContext.QueryTransaction<long>(
           "INSERT INTO ProfileGraph (Period,Page,Title,Interval,Rank) VALUES (@Period,@Page,@Title,@Interval,@Rank); SELECT last_insert_rowid();",
           profileGraph).First();
         profileGraph.Id = id;
@@ -332,7 +332,7 @@ namespace PowerView.Model.Test.Repository
 
     private void InsertProfileGraphSeries(params Db.ProfileGraphSerie[] profileGraphSeries)
     {
-      DbContext.ExecuteTransaction("",
+      DbContext.ExecuteTransaction(
         "INSERT INTO ProfileGraphSerie (Label,ObisCode,ProfileGraphId) VALUES (@Label,@ObisCode,@ProfileGraphId);",
         profileGraphSeries);
     }

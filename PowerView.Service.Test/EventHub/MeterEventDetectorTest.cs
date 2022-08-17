@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Extensions.Logging.Abstractions;
 using PowerView.Model;
 using PowerView.Model.Repository;
 using PowerView.Service.EventHub;
@@ -28,11 +29,13 @@ namespace PowerView.Service.Test.EventHub
     public void ConstructorThrows()
     {
       // Arrange
+      var leakCharacteristicChecker = new LeakCharacteristicChecker(new NullLogger<LeakCharacteristicChecker>());
 
       // Act & Assert
-      Assert.That(() => new MeterEventDetector(null, meterEventRepository.Object, locationContext), Throws.TypeOf<ArgumentNullException>());
-      Assert.That(() => new MeterEventDetector(profileRepository.Object, null, locationContext), Throws.TypeOf<ArgumentNullException>());
-      Assert.That(() => new MeterEventDetector(profileRepository.Object, meterEventRepository.Object, null), Throws.TypeOf<ArgumentNullException>());
+      Assert.That(() => new MeterEventDetector(null, meterEventRepository.Object, locationContext, leakCharacteristicChecker), Throws.TypeOf<ArgumentNullException>());
+      Assert.That(() => new MeterEventDetector(profileRepository.Object, null, locationContext, leakCharacteristicChecker), Throws.TypeOf<ArgumentNullException>());
+      Assert.That(() => new MeterEventDetector(profileRepository.Object, meterEventRepository.Object, null, leakCharacteristicChecker), Throws.TypeOf<ArgumentNullException>());
+      Assert.That(() => new MeterEventDetector(profileRepository.Object, meterEventRepository.Object, locationContext, null), Throws.TypeOf<ArgumentNullException>());
     }
 
     [Test]
@@ -126,7 +129,7 @@ namespace PowerView.Service.Test.EventHub
 
     private MeterEventDetector CreateTarget()
     {
-      return new MeterEventDetector(profileRepository.Object, meterEventRepository.Object, locationContext);
+      return new MeterEventDetector(profileRepository.Object, meterEventRepository.Object, locationContext, new LeakCharacteristicChecker(new NullLogger<LeakCharacteristicChecker>()));
     }
   }
 }

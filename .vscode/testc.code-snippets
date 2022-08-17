@@ -1,0 +1,17 @@
+{
+"AsyncTestCase": {
+	"prefix": "testca",
+	"body": [
+		"[Test]",
+		"public async Task T()",
+		"{",
+		"    // Arrange",
+		"",
+		"    // Act",
+		"",
+		"    // Assert",
+		"}",
+		""
+	],
+	"description": "AsyncTestCase"
+}}

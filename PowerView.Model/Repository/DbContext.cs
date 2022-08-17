@@ -2,16 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Data;
-using Mono.Data.Sqlite;
+using Microsoft.Data.Sqlite;
 using Dapper;
-using log4net;
 using System.Reflection;
 
 namespace PowerView.Model.Repository
 {
   internal class DbContext : IDbContext
   {
-    private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
     private static readonly DateTime dateTimeEpoch = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
     private const int CommandTimeout = 10;
 
@@ -36,30 +34,30 @@ namespace PowerView.Model.Repository
       return dateTimeEpoch.AddSeconds(fieldValue);
     }
 
-    internal int ExecuteTransaction(string dbOp, string sql, object param = null)
+    internal int ExecuteTransaction(string sql, object param = null)
     {
-      return InTransaction(transaction => connection.Execute(sql, param, transaction, CommandTimeout), dbOp);
+      return InTransaction(transaction => connection.Execute(sql, param, transaction, CommandTimeout));
     }
 
-    internal int ExecuteNoTransaction(string dbOp, string sql, object param = null)
+    internal int ExecuteNoTransaction(string sql, object param = null)
     {
-      return NoTransaction(() => connection.Execute(sql, param, null, CommandTimeout), dbOp);
+      return NoTransaction(() => connection.Execute(sql, param, null, CommandTimeout));
     }
 
-    internal IList<TReturn> QueryTransaction<TReturn>(string dbOp, string sql, object param = null)
+    internal IList<TReturn> QueryTransaction<TReturn>(string sql, object param = null)
     {
-      return InTransaction(transaction => connection.Query<TReturn>(sql, param, transaction, false, CommandTimeout).ToList(), dbOp);
+      return InTransaction(transaction => connection.Query<TReturn>(sql, param, transaction, false, CommandTimeout).ToList());
     }
 
-    internal IList<dynamic> QueryTransaction(string dbOp, string sql, object param = null)
+    internal IList<dynamic> QueryTransaction(string sql, object param = null)
     {
-      return InTransaction(transaction => connection.Query(sql, param, transaction, false, CommandTimeout).ToList(), dbOp);
+      return InTransaction(transaction => connection.Query(sql, param, transaction, false, CommandTimeout).ToList());
     }
 
-    internal IList<TReturn> QueryNoTransaction<TReturn>(string dbOp, string sql, object param = null, int? commandTimeout = null)
+    internal IList<TReturn> QueryNoTransaction<TReturn>(string sql, object param = null, int? commandTimeout = null)
     {
       var cmdTimeout = commandTimeout != null ? commandTimeout.Value : CommandTimeout;
-      return NoTransaction(() => connection.Query<TReturn>(sql, param, null, false, cmdTimeout).ToList(), dbOp);
+      return NoTransaction(() => connection.Query<TReturn>(sql, param, null, false, cmdTimeout).ToList());
     }
 
     internal class OneToMany<TOne, TMany> where TOne : class, IDbEntity where TMany : class, IDbEntity
@@ -74,7 +72,7 @@ namespace PowerView.Model.Repository
       public IList<TMany> Children { get; }
     }
 
-    internal ICollection<OneToMany<TOne, TMany>> QueryOneToManyTransaction<TOne, TMany>(string dbOp, string sql, object param = null) where TOne : class, IDbEntity where TMany : class, IDbEntity
+    internal ICollection<OneToMany<TOne, TMany>> QueryOneToManyTransaction<TOne, TMany>(string sql, object param = null) where TOne : class, IDbEntity where TMany : class, IDbEntity
     {
       Dictionary<long, OneToMany<TOne, TMany>> cache = new Dictionary<long, OneToMany<TOne, TMany>>();
       Func<TOne, TMany, OneToMany<TOne, TMany>> map = (parent, child) =>
@@ -89,44 +87,36 @@ namespace PowerView.Model.Repository
         return oneToMany;
       };
 
-      InTransaction(transaction => connection.Query(sql, map, param, transaction, true, "Id", CommandTimeout), dbOp);
+      InTransaction(transaction => connection.Query(sql, map, param, transaction, true, "Id", CommandTimeout));
 
       return cache.Values;
     }
 
-    private TReturn InTransaction<TReturn>(Func<IDbTransaction, TReturn> dbFunc, string dbOp = null)
+    private TReturn InTransaction<TReturn>(Func<IDbTransaction, TReturn> dbFunc)
     {
-      log.DebugFormat("Starting database operation " + dbOp);
-      using (var transaction = BeginTransaction())
-      { 
-        try
-        {
-          TReturn ret = dbFunc(transaction);
-          transaction.Commit();
-          log.DebugFormat("Finished database operation. Ok");
-          return ret;
-        }
-        catch (SqliteException e)
-        {
-          log.DebugFormat("Finished database operation. Error");
-          transaction.Rollback();
-          throw DataStoreExceptionFactory.Create(e);
-        }
-      }
-    }
-
-    private TReturn NoTransaction<TReturn>(Func<TReturn> dbFunc, string dbOp = null)
-    {
-      log.DebugFormat("Starting database operation " + dbOp);
+      using var transaction = BeginTransaction();
       try
       {
-        TReturn ret = dbFunc();
-        log.DebugFormat("Finished database operation. Ok");
+        TReturn ret = dbFunc(transaction);
+        transaction.Commit();
         return ret;
       }
       catch (SqliteException e)
       {
-        log.DebugFormat("Finished database operation. Error");
+        transaction.Rollback();
+        throw DataStoreExceptionFactory.Create(e);
+      }
+    }
+
+    private TReturn NoTransaction<TReturn>(Func<TReturn> dbFunc)
+    {
+      try
+      {
+        TReturn ret = dbFunc();
+        return ret;
+      }
+      catch (SqliteException e)
+      {
         throw DataStoreExceptionFactory.Create(e);
       }
     }

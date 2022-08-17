@@ -1,41 +1,49 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using log4net;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace PowerView.Model.Repository
 {
-  internal class DbCheck : RepositoryBase, IDbCheck
-  {
-    private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
-    private readonly int integrityCheckCommandTimeout;
-
-    public DbCheck(IDbContext dbContext, int integrityCheckCommandTimeout)
-      : base(dbContext)
+    internal class DbCheck : RepositoryBase, IDbCheck
     {
-      this.integrityCheckCommandTimeout = integrityCheckCommandTimeout;
+        private readonly ILogger logger;
+
+        private readonly IOptions<DatabaseCheckOptions> options;
+
+        public DbCheck(ILogger<DbCheck> logger, IDbContext dbContext, IOptions<DatabaseCheckOptions> options)
+          : base(dbContext)
+        {
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.options = options ?? throw new ArgumentNullException(nameof(options));
+        }
+
+        public void CheckDatabase()
+        {
+            var commandTimeout = options.Value.IntegrityCheckCommandTimeout;
+
+            logger.LogInformation("Performing database integrity check.");
+
+            IList<dynamic> integrityCheckResult;
+            try
+            {
+                integrityCheckResult = DbContext.QueryNoTransaction<dynamic>("PRAGMA integrity_check;", commandTimeout: commandTimeout).ToList();
+            }
+            catch (DataStoreCorruptException e)
+            {
+                throw new DataStoreCorruptException("Database integrity corrupted. Restore a previous backup.", e);
+            }
+            catch (DataStoreException e)
+            {
+                throw new DataStoreException($"Database integrity check failed. Command timeout:{commandTimeout}.", e);
+            }
+
+            if (integrityCheckResult.Count != 1 || integrityCheckResult[0].integrity_check != "ok")
+            {
+                throw new DataStoreCorruptException("Database integrity corrupted. Restore a previous backup. Details:" +
+                  string.Join("  -  ", integrityCheckResult));
+            }
+
+            logger.LogInformation($"Database integrity check completed.");
+        }
+
     }
-
-    public void CheckDatabase()
-    {
-      IList<dynamic> integrityCheckResult;
-      try
-      {
-        integrityCheckResult = DbContext.QueryNoTransaction<dynamic>("integrity check", "PRAGMA integrity_check;", commandTimeout: integrityCheckCommandTimeout).ToList();
-      }
-      catch (DataStoreCorruptException e)
-      {
-        throw new DataStoreCorruptException("Database integrity corrupted. Restore a previous backup.", e);
-      }
-
-      if (integrityCheckResult.Count != 1 || integrityCheckResult[0].integrity_check != "ok")
-      {
-        log.Warn("Database integrity corrupted. Issues:" + Environment.NewLine + string.Join(Environment.NewLine, integrityCheckResult));
-        throw new DataStoreCorruptException("Database integrity corrupted. Restore a previous backup.");
-      }
-    }
-
-  }
 }

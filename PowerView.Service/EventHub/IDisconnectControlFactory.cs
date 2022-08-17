@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.Extensions.DependencyInjection;
 using PowerView.Model;
 
 namespace PowerView.Service.EventHub
 {
   internal interface IDisconnectControlFactory
   {
-    void Process(IList<LiveReading> liveReadings);
+    void Process(IServiceScope serviceScope, IList<LiveReading> liveReadings);
   }
 }

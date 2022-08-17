@@ -1,7 +1,8 @@
 ﻿using System;
-using Autofac.Features.OwnedInstances;
-using NUnit.Framework;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
+using NUnit.Framework;
 using PowerView.Model.Repository;
 using PowerView.Service.EventHub;
 
@@ -13,7 +14,8 @@ namespace PowerView.Service.Test.EventHub
     private Mock<IIntervalTrigger> dayTrigger;
     private Mock<IIntervalTrigger> monthTrigger;
     private Mock<IIntervalTrigger> yearTrigger;
-    private Mock<IFactory> factory;
+    private Mock<IServiceScope> serviceScope;
+    private Mock<IServiceProvider> serviceProvider;
     private Mock<IReadingPipeRepository> readingPipeRepository;
 
     [SetUp]
@@ -22,10 +24,11 @@ namespace PowerView.Service.Test.EventHub
       dayTrigger = new Mock<IIntervalTrigger>();
       monthTrigger = new Mock<IIntervalTrigger>();
       yearTrigger = new Mock<IIntervalTrigger>();
-      factory = new Mock<IFactory>();
+      serviceScope = new Mock<IServiceScope>();
+      serviceProvider = new Mock<IServiceProvider>();
+      serviceScope.Setup(ss => ss.ServiceProvider).Returns(serviceProvider.Object);
       readingPipeRepository = new Mock<IReadingPipeRepository>();
-
-      factory.Setup(f => f.Create<IReadingPipeRepository>()).Returns(() => new Owned<IReadingPipeRepository>(readingPipeRepository.Object, new System.IO.MemoryStream()));
+      serviceProvider.Setup(sp => sp.GetService(typeof(IReadingPipeRepository))).Returns(readingPipeRepository.Object);
     }
 
     [Test]
@@ -51,11 +54,11 @@ namespace PowerView.Service.Test.EventHub
       dayTrigger.Setup(dt => dt.IsTriggerTime(It.IsAny<DateTime>())).Returns(true);
 
       // Act
-      target.PipeLiveReadings(dateTime);
+      target.PipeLiveReadings(serviceScope.Object, dateTime);
 
       // Assert
       dayTrigger.Verify(dt => dt.IsTriggerTime(dateTime));
-      factory.Verify(f => f.Create<IReadingPipeRepository>());
+      serviceProvider.Verify(sp => sp.GetService(typeof(IReadingPipeRepository)));
       readingPipeRepository.Verify(rpr => rpr.PipeLiveReadingsToDayReadings(dateTime));
       dayTrigger.Verify(dt => dt.Advance(dateTime));
     }
@@ -69,11 +72,11 @@ namespace PowerView.Service.Test.EventHub
       dayTrigger.Setup(dt => dt.IsTriggerTime(It.IsAny<DateTime>())).Returns(false);
 
       // Act
-      target.PipeLiveReadings(dateTime);
+      target.PipeLiveReadings(serviceScope.Object, dateTime);
 
       // Assert
       dayTrigger.Verify(dt => dt.IsTriggerTime(dateTime));
-      factory.Verify(f => f.Create<IReadingPipeRepository>(), Times.Never);
+      serviceProvider.Verify(sp => sp.GetService(typeof(IReadingPipeRepository)), Times.Never);
       dayTrigger.Verify(dt => dt.Advance(It.IsAny<DateTime>()), Times.Never);
     }
 
@@ -87,7 +90,7 @@ namespace PowerView.Service.Test.EventHub
       readingPipeRepository.Setup(rpr => rpr.PipeLiveReadingsToDayReadings(It.IsAny<DateTime>())).Returns(true);
 
       // Act
-      target.PipeLiveReadings(dateTime);
+      target.PipeLiveReadings(serviceScope.Object, dateTime);
 
       // Assert
       readingPipeRepository.Verify(rpr => rpr.PipeLiveReadingsToDayReadings(dateTime), Times.Exactly(50)) ;
@@ -101,11 +104,11 @@ namespace PowerView.Service.Test.EventHub
       var target = CreateTarget();
 
       // Act
-      target.PipeDayReadings(dateTime);
+      target.PipeDayReadings(serviceScope.Object, dateTime);
 
       // Assert
-      monthTrigger.Verify(mt => mt.IsTriggerTime(It.IsAny<DateTime>()), Times.Never );
-      factory.Verify(f => f.Create<IReadingPipeRepository>(), Times.Never);
+      monthTrigger.Verify(mt => mt.IsTriggerTime(It.IsAny<DateTime>()), Times.Never);
+      serviceProvider.Verify(sp => sp.GetService(typeof(IReadingPipeRepository)), Times.Never);
     }
 
     [Test]
@@ -115,11 +118,11 @@ namespace PowerView.Service.Test.EventHub
       var dateTime = DateTime.Now;
       var target = CreateTarget();
       dayTrigger.Setup(dt => dt.IsTriggerTime(It.IsAny<DateTime>())).Returns(true);
-      target.PipeLiveReadings(dateTime);
+      target.PipeLiveReadings(serviceScope.Object, dateTime);
       monthTrigger.Setup(mt => mt.IsTriggerTime(It.IsAny<DateTime>())).Returns(true);
 
       // Act
-      target.PipeDayReadings(dateTime);
+      target.PipeDayReadings(serviceScope.Object, dateTime);
 
       // Assert
       monthTrigger.Verify(mt => mt.IsTriggerTime(dateTime));
@@ -134,11 +137,11 @@ namespace PowerView.Service.Test.EventHub
       var dateTime = DateTime.Now;
       var target = CreateTarget();
       dayTrigger.Setup(dt => dt.IsTriggerTime(It.IsAny<DateTime>())).Returns(true);
-      target.PipeLiveReadings(dateTime);
+      target.PipeLiveReadings(serviceScope.Object, dateTime);
       monthTrigger.Setup(mt => mt.IsTriggerTime(It.IsAny<DateTime>())).Returns(false);
 
       // Act
-      target.PipeDayReadings(dateTime);
+      target.PipeDayReadings(serviceScope.Object, dateTime);
 
       // Assert
       monthTrigger.Verify(mt => mt.IsTriggerTime(dateTime));
@@ -153,12 +156,12 @@ namespace PowerView.Service.Test.EventHub
       var dateTime = DateTime.Now;
       var target = CreateTarget();
       dayTrigger.Setup(dt => dt.IsTriggerTime(It.IsAny<DateTime>())).Returns(true);
-      target.PipeLiveReadings(dateTime);
+      target.PipeLiveReadings(serviceScope.Object, dateTime);
       monthTrigger.Setup(mt => mt.IsTriggerTime(It.IsAny<DateTime>())).Returns(true);
       readingPipeRepository.Setup(rpr => rpr.PipeDayReadingsToMonthReadings(It.IsAny<DateTime>())).Returns(true);
 
       // Act
-      target.PipeDayReadings(dateTime);
+      target.PipeDayReadings(serviceScope.Object, dateTime);
 
       // Assert
       readingPipeRepository.Verify(rpr => rpr.PipeDayReadingsToMonthReadings(dateTime), Times.Exactly(13));
@@ -172,11 +175,11 @@ namespace PowerView.Service.Test.EventHub
       var target = CreateTarget();
 
       // Act
-      target.PipeMonthReadings(dateTime.AddMonths(1));
+      target.PipeMonthReadings(serviceScope.Object, dateTime.AddMonths(1));
 
       // Assert
       yearTrigger.Verify(yt => yt.IsTriggerTime(It.IsAny<DateTime>()), Times.Never);
-      factory.Verify(f => f.Create<IReadingPipeRepository>(), Times.Never);
+      serviceProvider.Verify(sp => sp.GetService(typeof(IReadingPipeRepository)), Times.Never);
     }
 
     [Test]
@@ -186,13 +189,13 @@ namespace PowerView.Service.Test.EventHub
       var dateTime = DateTime.Now;
       var target = CreateTarget();
       dayTrigger.Setup(dt => dt.IsTriggerTime(It.IsAny<DateTime>())).Returns(true);
-      target.PipeLiveReadings(dateTime);
+      target.PipeLiveReadings(serviceScope.Object, dateTime);
       monthTrigger.Setup(mt => mt.IsTriggerTime(It.IsAny<DateTime>())).Returns(true);
-      target.PipeDayReadings(dateTime);
+      target.PipeDayReadings(serviceScope.Object, dateTime);
       yearTrigger.Setup(yt => yt.IsTriggerTime(It.IsAny<DateTime>())).Returns(true);
 
       // Act
-      target.PipeMonthReadings(dateTime);
+      target.PipeMonthReadings(serviceScope.Object, dateTime);
 
       // Assert
       yearTrigger.Verify(yt => yt.IsTriggerTime(dateTime));
@@ -207,13 +210,13 @@ namespace PowerView.Service.Test.EventHub
       var dateTime = DateTime.Now;
       var target = CreateTarget();
       dayTrigger.Setup(dt => dt.IsTriggerTime(It.IsAny<DateTime>())).Returns(true);
-      target.PipeLiveReadings(dateTime);
+      target.PipeLiveReadings(serviceScope.Object, dateTime);
       monthTrigger.Setup(mt => mt.IsTriggerTime(It.IsAny<DateTime>())).Returns(true);
-      target.PipeDayReadings(dateTime);
+      target.PipeDayReadings(serviceScope.Object, dateTime);
       yearTrigger.Setup(yt => yt.IsTriggerTime(It.IsAny<DateTime>())).Returns(false);
 
       // Act
-      target.PipeMonthReadings(dateTime);
+      target.PipeMonthReadings(serviceScope.Object, dateTime);
 
       // Assert
       yearTrigger.Verify(yt => yt.IsTriggerTime(dateTime));
@@ -223,7 +226,7 @@ namespace PowerView.Service.Test.EventHub
 
     private ReadingPiper CreateTarget()
     {
-      return new ReadingPiper(dayTrigger.Object, monthTrigger.Object, yearTrigger.Object, factory.Object);
+      return new ReadingPiper(new NullLogger<ReadingPiper>(), dayTrigger.Object, monthTrigger.Object, yearTrigger.Object);
     }
   }
 }

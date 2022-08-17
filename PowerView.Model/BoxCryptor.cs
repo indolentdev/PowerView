@@ -8,14 +8,12 @@ namespace PowerView.Model
 {
   public class BoxCryptor
   {
-    private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-
     public string Encrypt(string plainText, DateTime ivDateTime)
     {
       if (string.IsNullOrEmpty(plainText)) throw new ArgumentNullException("plaintText");
       if (ivDateTime.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("ivDateTime", "Must be UTC. Was:" + ivDateTime.Kind);
 
-      using (var aes = new AesManaged())
+      using (var aes = Aes.Create())
       {
         ConfigureAes(aes, ivDateTime);
 
@@ -52,7 +50,7 @@ namespace PowerView.Model
 
       try
       {
-        using (var aes = new AesManaged())
+        using (var aes = Aes.Create())
         {
           ConfigureAes(aes, ivDateTime);
 
@@ -76,7 +74,7 @@ namespace PowerView.Model
       }
     }
 
-    private static void ConfigureAes(AesManaged aes, DateTime ivDateTime)
+    private static void ConfigureAes(Aes aes, DateTime ivDateTime)
     {
       aes.Mode = CipherMode.CBC;
       aes.Padding = PaddingMode.PKCS7;

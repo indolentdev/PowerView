@@ -29,18 +29,26 @@ export class ExportService {
   }
 
   public getDiffsExportHourly(exportSpec: ExportSpec): Observable<ExportSeriesDiffSet> {
-    var params = new HttpParams()
-      .set("labels", exportSpec.labels.join())
+    let params = new HttpParams()
       .set("from", exportSpec.from.toISOString())
       .set("to", exportSpec.to.add(1, 'days').toISOString());
+    
+    exportSpec.labels.forEach(label => {
+      params = params.append("label", label);
+    });
+
     return this.dataService.get<ExportSeriesDiffSet>(constLocal.diffsHourly, params, new ExportSeriesDiffSet);
   }
 
   public getGaugesExportHourly(exportSpec: ExportSpec): Observable<ExportSeriesGaugeSet> {
-    var params = new HttpParams()
-      .set("labels", exportSpec.labels.join())
+    let params = new HttpParams()
       .set("from", exportSpec.from.toISOString())
       .set("to", exportSpec.to.add(1, 'days').toISOString());
+    
+    exportSpec.labels.forEach(label => {
+      params = params.append("label", label);
+    });
+    
     return this.dataService.get<ExportSeriesGaugeSet>(constLocal.gaugesHourly, params, new ExportSeriesGaugeSet);
   }
 

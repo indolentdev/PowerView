@@ -1,8 +1,16 @@
-﻿namespace PowerView.Service.Dtos
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
+using PowerView.Model;
+
+namespace PowerView.Service.Dtos
 {
-  public class ProfileGraphSerieDto
-  {
-    public string Label { get; set; }
-    public string ObisCode { get; set; }
-  }
+    public class ProfileGraphSerieDto
+    {
+        [Required]
+        public string Label { get; set; }
+
+        [Required]
+        [ObisCode]
+        public string ObisCode { get; set; }
+    }
 }

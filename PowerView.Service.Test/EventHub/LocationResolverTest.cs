@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 using Moq;
 using PowerView.Service.EventHub;
@@ -24,14 +25,16 @@ namespace PowerView.Service.Test.EventHub
     public void ConstructorThrows()
     {
       // Arrange
+      var logger = new NullLogger<LocationResolver>();
 
       // Act & Assert
-      Assert.That(() => new LocationResolver(null, settingRepository.Object), Throws.TypeOf<ArgumentNullException>());
-      Assert.That(() => new LocationResolver(httpWebRequestFactory.Object, null), Throws.TypeOf<ArgumentNullException>());
+      Assert.That(() => new LocationResolver(null, httpWebRequestFactory.Object, settingRepository.Object), Throws.ArgumentNullException);
+      Assert.That(() => new LocationResolver(logger, null, settingRepository.Object), Throws.TypeOf<ArgumentNullException>());
+      Assert.That(() => new LocationResolver(logger, httpWebRequestFactory.Object, null), Throws.TypeOf<ArgumentNullException>());
     }
 
     [Test]
-    public void ResolveHttpError()
+    public void ResolveToDatabaseHttpError()
     {
       // Arrange
       var request = new HttpWebRequestMock();
@@ -40,70 +43,70 @@ namespace PowerView.Service.Test.EventHub
       var target = CreateTarget();
 
       // Act
-      target.Resolve();
+      target.ResolveToDatabase();
 
       // Assert
       settingRepository.Verify(x => x.Upsert(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
     }
 
     [Test]
-    public void ResolveJsonError()
+    public void ResolveToDatabaseJsonError()
     {
       // Arrange
       SetupHttpFactory("Bad json object");
       var target = CreateTarget();
 
       // Act
-      target.Resolve();
+      target.ResolveToDatabase();
 
       // Assert
       settingRepository.Verify(x => x.Upsert(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
     }
 
     [Test]
-    public void ResolveEmptyContentError()
+    public void ResolveToDatabaseEmptyContentError()
     {
       // Arrange
       SetupHttpFactory(string.Empty);
       var target = CreateTarget();
 
       // Act
-      target.Resolve();
+      target.ResolveToDatabase();
 
       // Assert
       settingRepository.Verify(x => x.Upsert(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
     }
 
     [Test]
-    public void ResolveContentError()
+    public void ResolveToDatabaseContentError()
     {
       // Arrange
       SetupHttpFactory("{\"status\":\"failed\"}");
       var target = CreateTarget();
 
       // Act
-      target.Resolve();
+      target.ResolveToDatabase();
 
       // Assert
       settingRepository.Verify(x => x.Upsert(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
     }
 
     [Test]
-    public void ResolveSuccessNoProperties()
+    public void ResolveToDatabaseSuccessNoProperties()
     {
       // Arrange
       SetupHttpFactory("{\"status\":\"success\"}");
       var target = CreateTarget();
 
       // Act
-      target.Resolve();
+      target.ResolveToDatabase();
 
       // Assert
       settingRepository.Verify(x => x.Upsert(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
     }
 
     [Test]
-    public void ResolveTimeZone()
+    public void ResolveToDatabaseTimeZone()
     {
       // Arrange
       var timeZoneId = "TheTimeZone";
@@ -112,29 +115,29 @@ namespace PowerView.Service.Test.EventHub
       var target = CreateTarget();
 
       // Act
-      target.Resolve();
+      target.ResolveToDatabase();
 
       // Assert
       settingRepository.Verify(r => r.Upsert(Settings.TimeZoneId, timeZoneId));
     }
 
     [Test]
-    public void ResolveCountryToOneCultureInfo()
+    public void ResolveToDatabaseCountryToOneCultureInfo()
     {
       // Arrange
-      SetupHttpFactory("{\"status\":\"success\",\"country\":\"Denmark\"}");
+      SetupHttpFactory("{\"status\":\"success\",\"country\":\"Czechia\"}");
 
       var target = CreateTarget();
 
       // Act
-      target.Resolve();
+      target.ResolveToDatabase();
 
       // Assert
-      settingRepository.Verify(r => r.Upsert(Settings.CultureInfoName, "da-DK"));
+      settingRepository.Verify(r => r.Upsert(Settings.CultureInfoName, "cs-CZ"));
     }
 
     [Test]
-    public void ResolveCountryToNoCultureInfo()
+    public void ResolveToDatabaseCountryToNoCultureInfo()
     {
       // Arrange
       SetupHttpFactory("{\"status\":\"success\",\"country\":\"CountryThatDoesNotExist\"}");
@@ -142,22 +145,22 @@ namespace PowerView.Service.Test.EventHub
       var target = CreateTarget();
 
       // Act
-      target.Resolve();
+      target.ResolveToDatabase();
 
       // Assert
       settingRepository.Verify(x => x.Upsert(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
     }
 
     [Test]
-    public void ResolveCountryToMoreThanOneCultureInfo()
+    public void ResolveToDatabaseCountryToMoreThanOneCultureInfo()
     {
       // Arrange
-      SetupHttpFactory("{\"status\":\"success\",\"country\":\"United States\"}");
+      SetupHttpFactory("{\"status\":\"success\",\"country\":\"Denmark\"}");
 
       var target = CreateTarget();
 
       // Act
-      target.Resolve();
+      target.ResolveToDatabase();
 
       // Assert
       settingRepository.Verify(x => x.Upsert(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
@@ -174,7 +177,7 @@ namespace PowerView.Service.Test.EventHub
 
     private LocationResolver CreateTarget()
     {
-      return new LocationResolver(httpWebRequestFactory.Object, settingRepository.Object);
+      return new LocationResolver(new NullLogger<LocationResolver>(), httpWebRequestFactory.Object, settingRepository.Object);
     }
 
   }

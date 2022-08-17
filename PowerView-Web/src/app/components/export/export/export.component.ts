@@ -9,7 +9,7 @@ import { ExportSpec } from '../../../model/exportSpec';
 import { Moment } from 'moment'
 import * as moment from 'moment';
 
-const labelsParam = "labels";
+const labelParam = "label";
 const fromParam = "from";
 const toParam = "to";
 const decimalSeparatorParam = "decimalSeparator";
@@ -55,18 +55,9 @@ export class ExportComponent implements OnInit {
     this.setDecimalSeparator("locale");
 
     this.route.queryParamMap.subscribe(queryParams => {
-      let labelsArray = [];
       let labelsSelectControl = this.getControl("labels");
-      const labelsString = queryParams.get(labelsParam);
-      if (labelsString != null)
-      {
-        labelsArray = labelsString.split(",");
-      }
-      if (labelsArray.length === 1 && labelsArray[0] === "") // we don't want &labels= to mean anything
-      {
-        labelsArray = [];
-      }
-      labelsSelectControl.setValue(labelsArray);
+      let labels = queryParams.getAll(labelParam);
+      labelsSelectControl.setValue(labels);
 
       let fromDateCtl = this.getControl("fromDate");
       const fromDateString = queryParams.get(fromParam);
@@ -148,9 +139,7 @@ export class ExportComponent implements OnInit {
     if (event == null) return;
     if (event.value == null) return;
 
-    let labels = event.value.join();
-
-    this.navigate({ labels: labels });
+    this.navigate({ label: event.value });
   }
 
   decimalSeparatorChangeEvent(event) {

@@ -1,6 +1,6 @@
 # PowerView
-Application for storing and presenting consumption and production meter and inverter data.
-Primary deployment on a Raspberry Pi running Raspbian.
+Application for storing and presenting consumption and production metering and inverter data.
+Primary deployment on a Raspberry Pi running Raspberry PI OS.
 
 
 ## Getting Started
@@ -12,12 +12,10 @@ Primary deployment on a Raspberry Pi running Raspbian.
 
 ## Built With
 * [angular](https://angular.io/) - Web framework for running the frontend
-* [mono](https://www.mono-project.com/) - .NET framework for running the backend
-* [nancy](http://nancyfx.org/) - Backend web framework for serving the frontend
+* [.net](https://dotnet.microsoft.com/en-us/download/) - .NET for running the backend
 * [sqlite](https://www.sqlite.org/index.html/) - Databae for storing readings
 * [ubuntu](https://www.ubuntu.com/) - Development box
-* [vscode](https://code.visualstudio.com/) - Development environment for the frontend
-* [monodevelop](https://www.monodevelop.com/) - Development environment for the backend
+* [vscode](https://code.visualstudio.com/) - Development environment
 
 
 ## License

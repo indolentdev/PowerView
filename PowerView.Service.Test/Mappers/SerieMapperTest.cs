@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using Microsoft.Extensions.Logging.Abstractions;
+using NUnit.Framework;
 using PowerView.Service.Mappers;
 
 namespace PowerView.Service.Test.Mappers
@@ -257,7 +258,7 @@ namespace PowerView.Service.Test.Mappers
 
     private static SerieMapper CreateTarget()
     {
-      return new SerieMapper();
+      return new SerieMapper(new NullLogger<SerieMapper>());
     }
   }
 }

@@ -68,10 +68,10 @@ namespace PowerView.Model.Test.Repository
 
     private void AssertLiveReading(LiveReading liveReading)
     {
-      var rd = DbContext.QueryTransaction<long>("test", "SELECT Id FROM LiveReading WHERE Label = @Label AND DeviceId = @DeviceId AND Timestamp = @Timestamp;", liveReading);
+      var rd = DbContext.QueryTransaction<long>("SELECT Id FROM LiveReading WHERE Label = @Label AND DeviceId = @DeviceId AND Timestamp = @Timestamp;", liveReading);
       Assert.That(rd.Count, Is.EqualTo(1));
 
-      var reg = DbContext.QueryTransaction<dynamic>("test", "SELECT * FROM LiveRegister WHERE ReadingId = @ReadingId;", new { ReadingId = rd.First() });
+      var reg = DbContext.QueryTransaction<dynamic>("SELECT * FROM LiveRegister WHERE ReadingId = @ReadingId;", new { ReadingId = rd.First() });
       var registerValues = liveReading.GetRegisterValues();
       Assert.That(reg.Count, Is.EqualTo(registerValues.Count));
       var expectedRegisters = registerValues.Select(x => new { ObisCode = (long)x.ObisCode, x.Scale, Unit = (byte)x.Unit, x.Value }).ToArray();

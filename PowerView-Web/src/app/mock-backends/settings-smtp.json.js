@@ -1,1 +1,1 @@
-export let settingsSmtp = {"server":"smtp.gmail.com","port":"587","user":"theThing@gmail.com","auth":"theSecret"};
+export let settingsSmtp = { "server": "smtp.theDomain.org", "port": "587", "user": "theUser", "auth": "theSecret", "email":"theEmail@theDomain.com"};

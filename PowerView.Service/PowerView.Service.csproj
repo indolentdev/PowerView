@@ -1,253 +1,38 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{C8A89CD4-5DB2-44AB-B28C-30654E8D773F}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <RootNamespace>PowerView.Service</RootNamespace>
-    <AssemblyName>PowerView.Service</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <DebugSymbols>true</DebugSymbols>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release</OutputPath>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
-  </PropertyGroup>
+
+  <Import Project="../Solution.props"/>
+
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Autofac">
-      <HintPath>..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web" />
-    <Reference Include="Nancy.Bootstrappers.Autofac">
-      <HintPath>..\packages\Nancy.Bootstrappers.Autofac.1.4.1\lib\net40\Nancy.Bootstrappers.Autofac.dll</HintPath>
-    </Reference>
-    <Reference Include="Nancy.Hosting.Self">
-      <HintPath>..\packages\Nancy.Hosting.Self.1.4.1\lib\net40\Nancy.Hosting.Self.dll</HintPath>
-    </Reference>
-    <Reference Include="Mixpanel.NET">
-      <HintPath>..\packages\Mixpanel.NET.0.2.0\lib\Mixpanel.NET.dll</HintPath>
-    </Reference>
-    <Reference Include="log4net">
-      <HintPath>..\packages\log4net.2.0.14\lib\net45\log4net.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Security" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="MimeKit">
-      <HintPath>..\packages\MimeKit.2.15.1\lib\net47\MimeKit.dll</HintPath>
-    </Reference>
-    <Reference Include="MailKit">
-      <HintPath>..\packages\MailKit.2.15.0\lib\net47\MailKit.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="Nancy">
-      <HintPath>..\packages\Nancy.1.4.5\lib\net40\Nancy.dll</HintPath>
-    </Reference>
-    <Reference Include="System.IO">
-      <HintPath>..\packages\System.IO.4.3.0\lib\net462\System.IO.dll</HintPath>
-    </Reference>
-    <Reference Include="mscorlib" />
-    <Reference Include="System.Net.WebSockets">
-      <HintPath>..\packages\System.Net.WebSockets.4.3.0\lib\net46\System.Net.WebSockets.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Runtime">
-      <HintPath>..\packages\System.Runtime.4.3.1\lib\net462\System.Runtime.dll</HintPath>
-    </Reference>
-    <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.Security.Cryptography.Encoding">
-      <HintPath>..\packages\System.Security.Cryptography.Encoding.4.3.0\lib\net46\System.Security.Cryptography.Encoding.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Security.Cryptography.Primitives">
-      <HintPath>..\packages\System.Security.Cryptography.Primitives.4.3.0\lib\net46\System.Security.Cryptography.Primitives.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Security.Cryptography.Algorithms">
-      <HintPath>..\packages\System.Security.Cryptography.Algorithms.4.3.1\lib\net463\System.Security.Cryptography.Algorithms.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Security.Cryptography.X509Certificates">
-      <HintPath>..\packages\System.Security.Cryptography.X509Certificates.4.3.2\lib\net461\System.Security.Cryptography.X509Certificates.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Net.Security">
-      <HintPath>..\packages\System.Net.Security.4.3.2\lib\net46\System.Net.Security.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Net.WebSockets.Client">
-      <HintPath>..\packages\System.Net.WebSockets.Client.4.3.2\lib\net46\System.Net.WebSockets.Client.dll</HintPath>
-    </Reference>
-    <Reference Include="MQTTnet">
-      <HintPath>..\packages\MQTTnet.3.1.2\lib\net461\MQTTnet.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Configuration" />
-    <Reference Include="BouncyCastle.Crypto">
-      <HintPath>..\packages\Portable.BouncyCastle.1.9.0\lib\net40\BouncyCastle.Crypto.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Buffers">
-      <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Data.DataSetExtensions" />
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
+  
   <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="..\AssemblyInfoShared.cs">
-      <Link>Properties\AssemblyInfoShared.cs</Link>
-    </Compile>
-    <Compile Include="Dtos\RegisterValueDto.cs" />
-    <Compile Include="Dtos\LiveReadingDto.cs" />
-    <Compile Include="Mappers\LiveReadingMapper.cs" />
-    <Compile Include="Mappers\ILiveReadingMapper.cs" />
-    <Compile Include="Dtos\LiveReadingSetDto.cs" />
-    <Compile Include="Modules\CommonNancyModule.cs" />
-    <Compile Include="Modules\DeviceLiveReadingModule.cs" />
-    <Compile Include="Modules\PvOutputFacadeModule.cs" />
-    <Compile Include="PowerViewNancyBootstrapper.cs" />
-    <Compile Include="ContainerConfiguration.cs" />
-    <Compile Include="ServiceHost.cs" />
-    <Compile Include="IServiceHost.cs" />
-    <Compile Include="Modules\CaseInsensitiveStringEqualityComparer.cs" />
-    <Compile Include="IHttpWebRequest.cs" />
-    <Compile Include="IHttpWebResponse.cs" />
-    <Compile Include="IHttpWebRequestFactory.cs" />
-    <Compile Include="WrapHttpWebRequest.cs" />
-    <Compile Include="WrapHttpWebResponse.cs" />
-    <Compile Include="HttpWebRequestFactory.cs" />
-    <Compile Include="HttpWebException.cs" />
-    <Compile Include="Modules\RootModule.cs" />
-    <Compile Include="Mappers\ValueAndUnitMapper.cs" />
-    <Compile Include="Mappers\DateTimeMapper.cs" />
-    <Compile Include="Modules\ProfileModule.cs" />
-    <Compile Include="Modules\IPvOutputFacadeModuleConfigProvider.cs" />
-    <Compile Include="Modules\PvOutputFacadeModuleConfigProvider.cs" />
-    <Compile Include="IUsageMonitor.cs" />
-    <Compile Include="UsageMonitor.cs" />
-    <Compile Include="Mappers\ISerieMapper.cs" />
-    <Compile Include="Mappers\SerieMapper.cs" />
-    <Compile Include="Modules\SettingsSerieColorsModule.cs" />
-    <Compile Include="Dtos\SerieColorDto.cs" />
-    <Compile Include="Dtos\SerieColorSetDto.cs" />
-    <Compile Include="EventHub\IReadingPiper.cs" />
-    <Compile Include="EventHub\ReadingPiper.cs" />
-    <Compile Include="EventHub\IHub.cs" />
-    <Compile Include="EventHub\Hub.cs" />
-    <Compile Include="EventHub\ILocationResolver.cs" />
-    <Compile Include="EventHub\LocationResolver.cs" />
-    <Compile Include="EventHub\IMeterEventCoordinator.cs" />
-    <Compile Include="EventHub\MeterEventCoordinator.cs" />
-    <Compile Include="EventHub\IMeterEventDetector.cs" />
-    <Compile Include="EventHub\MeterEventDetector.cs" />
-    <Compile Include="Modules\EventModule.cs" />
-    <Compile Include="Modules\GaugeModule.cs" />
-    <Compile Include="Mailer\MailerException.cs" />
-    <Compile Include="Mailer\ConnectMailerException.cs" />
-    <Compile Include="Mailer\AuthenticateMailerException.cs" />
-    <Compile Include="Mailer\SmtpMailer.cs" />
-    <Compile Include="Mailer\IMailer.cs" />
-    <Compile Include="EventHub\MeterEventNotifier.cs" />
-    <Compile Include="EventHub\IMeterEventNotifier.cs" />
-    <Compile Include="Modules\SettingsEmailRecipientsModule.cs" />
-    <Compile Include="Dtos\EmailRecipientDto.cs" />
-    <Compile Include="Modules\SettingsApplicationModule.cs" />
-    <Compile Include="Translations\Translation.cs" />
-    <Compile Include="Translations\ResId.cs" />
-    <Compile Include="Translations\ITranslation.cs" />
-    <Compile Include="Mailer\MailMediator.cs" />
-    <Compile Include="Mailer\IMailMediator.cs" />
-    <Compile Include="UrlProvider.cs" />
-    <Compile Include="IUrlProvider.cs" />
-    <Compile Include="Modules\ExportModule.cs" />
-    <Compile Include="Modules\SettingsProfileGraphsModule.cs" />
-    <Compile Include="Dtos\ProfileGraphDto.cs" />
-    <Compile Include="Dtos\ProfileGraphSerieDto.cs" />
-    <Compile Include="EventHub\Tracker.cs" />
-    <Compile Include="EventHub\ITracker.cs" />
-    <Compile Include="Mqtt\Code.cs" />
-    <Compile Include="Modules\ReadingAccepter.cs" />
-    <Compile Include="Modules\IReadingAccepter.cs" />
-    <Compile Include="EventHub\MqttPublisherFactory.cs" />
-    <Compile Include="EventHub\IMqttPublisherFactory.cs" />
-    <Compile Include="Mqtt\IMqttPublisher.cs" />
-    <Compile Include="Mqtt\MqttPublisher.cs" />
-    <Compile Include="Mqtt\ConnectMqttException.cs" />
-    <Compile Include="Mqtt\MqttException.cs" />
-    <Compile Include="Mqtt\MqttMapper.cs" />
-    <Compile Include="Mqtt\IMqttMapper.cs" />
-    <Compile Include="Modules\SettingsMqttModule.cs" />
-    <Compile Include="Dtos\MqttConfigDto.cs" />
-    <Compile Include="EventHub\IDisconnectControlFactory.cs" />
-    <Compile Include="EventHub\DisconnectControlFactory.cs" />
-    <Compile Include="DisconnectControl\IDisconnectCalculator.cs" />
-    <Compile Include="DisconnectControl\DisconnectCalculator.cs" />
-    <Compile Include="DisconnectControl\IDisconnectWarden.cs" />
-    <Compile Include="DisconnectControl\DisconnectWarden.cs" />
-    <Compile Include="EventQueue.cs" />
-    <Compile Include="Factory.cs" />
-    <Compile Include="IFactory.cs" />
-    <Compile Include="Modules\DeviceOnDemandModule.cs" />
-    <Compile Include="DisconnectControl\IDisconnectControlCache.cs" />
-    <Compile Include="Modules\SettingsDisconnectRulesModule.cs" />
-    <Compile Include="Dtos\DisconnectRuleDto.cs" />
-    <Compile Include="Dtos\DisconnectRuleSetDto.cs" />
-    <Compile Include="Mappers\DisconnectRuleMapper.cs" />
-    <Compile Include="Mappers\IDisconnectRuleMapper.cs" />
-    <Compile Include="Modules\WebModule.cs" />
-    <Compile Include="Modules\SettingsSmtpModule.cs" />
-    <Compile Include="Dtos\SmtpConfigDto.cs" />
-    <Compile Include="IExitSignal.cs" />
-    <Compile Include="IExitSignalProvider.cs" />
-    <Compile Include="ExitSignal.cs" />
-    <Compile Include="EventHub\HealthCheck.cs" />
-    <Compile Include="EventHub\IHealthCheck.cs" />
-    <Compile Include="EventHub\IntervalTrigger.cs" />
-    <Compile Include="EventHub\IIntervalTrigger.cs" />
-    <Compile Include="EnvironmentHelper.cs" />
-    <Compile Include="Modules\DiffModule.cs" />
-    <Compile Include="BouncyCastleReference.cs" />
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+    <_Parameter1>PowerView.Service.Test</_Parameter1>
+    </AssemblyAttribute>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+    <_Parameter1>PowerView.Service.IntegrationTest</_Parameter1>
+    </AssemblyAttribute>
+
+    <!-- For Moq to mock internal class objects -->
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+      <_Parameter1>DynamicProxyGenAssembly2</_Parameter1>
+    </AssemblyAttribute>
   </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+
   <ItemGroup>
-    <None Include="packages.config" />
-    <None Include="Mqtt\EmptyTextFile.txt" />
+    <ProjectReference Include="..\PowerView.Model\PowerView.Model.csproj" />
   </ItemGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\PowerView.Model\PowerView.Model.csproj">
-      <Project>{95AB0C37-2CD1-43FC-AE3D-3A31378C4B34}</Project>
-      <Name>PowerView.Model</Name>
-    </ProjectReference>
+    <PackageReference Include="MailKit" Version="3.2.0" />
+    <PackageReference Include="MQTTnet" Version="3.1.2" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Dtos\" />
-    <Folder Include="Mappers\" />
-    <Folder Include="Modules\" />
-    <Folder Include="EventHub\" />
-    <Folder Include="Mailer\" />
-    <Folder Include="Translations\" />
-    <Folder Include="Mqtt\" />
-    <Folder Include="DisconnectControl\" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Translations\Mail.resx">
-      <LastGenOutput>Mail.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Translations\Mail.da.resx">
-      <LastGenOutput>Mail.da.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-  <Import Project="..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets" Condition="Exists('..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" />
+
 </Project>
