@@ -141,7 +141,7 @@ else
   rm $BINDIR/*.sh
   rm $BINDIR/PowerView*.json
   rm $BINDIR/web.config
-#  rm -rf $BINDIR/Doc
+  rm -rf $BINDIR/Doc
   rm -rf $BINDIR/da
   rm -rf $BINDIR/PowerView-Web
   rm -rf $BINDIR/runtimes
@@ -152,7 +152,7 @@ cp St*PowerView.sh $BINDIR
 cp Un*.sh $BINDIR
 cp PowerView*.json $BINDIR
 cp web.config $BINDIR
-#cp -r Doc $BINDIR/Doc
+cp -r Doc $BINDIR/Doc
 cp -r da $BINDIR/da
 cp -r PowerView-Web $BINDIR/PowerView-Web
 cp -r runtimes $BINDIR/runtimes

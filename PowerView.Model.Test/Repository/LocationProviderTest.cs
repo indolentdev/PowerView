@@ -22,7 +22,7 @@ namespace PowerView.Model.Test.Repository
         {
             // Arrange
             var logger = new NullLogger<LocationProvider>();
-            var options = new Database2Options();
+            var options = new DatabaseRegionOptions();
 
             // Act & Assert
             Assert.That(() => new LocationProvider(null, options, settingRepository.Object), Throws.ArgumentNullException);
@@ -198,7 +198,7 @@ namespace PowerView.Model.Test.Repository
 
         private LocationProvider CreateTarget(string configuredTimeZoneId = null, string configuredCultureInfo = null)
         {
-            return new LocationProvider(new NullLogger<LocationProvider>(), new Database2Options { TimeZone = configuredTimeZoneId, CultureInfo = configuredCultureInfo }, settingRepository.Object);
+            return new LocationProvider(new NullLogger<LocationProvider>(), new DatabaseRegionOptions { TimeZone = configuredTimeZoneId, CultureInfo = configuredCultureInfo }, settingRepository.Object);
         }
 
     }

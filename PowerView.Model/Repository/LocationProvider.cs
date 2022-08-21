@@ -7,10 +7,10 @@ namespace PowerView.Model.Repository
     internal class LocationProvider : ILocationProvider
     {
         private readonly ILogger<LocationProvider> logger;
-        private readonly IOptions<Database2Options> options;
+        private readonly IOptions<DatabaseRegionOptions> options;
         private readonly ISettingRepository settingRepository;
 
-        public LocationProvider(ILogger<LocationProvider> logger, IOptions<Database2Options> options, ISettingRepository settingRepository)
+        public LocationProvider(ILogger<LocationProvider> logger, IOptions<DatabaseRegionOptions> options, ISettingRepository settingRepository)
         {
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.options = options ?? throw new ArgumentNullException(nameof(options));

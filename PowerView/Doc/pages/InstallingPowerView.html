@@ -5,7 +5,7 @@
 <head>
   <meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
   <title>Installing PowerView</title>
-  <meta name="generator" content="Bluefish 2.2.10" />
+  <meta name="generator" content="Bluefish 2.2.11" />
 </head>
 
 <body>
@@ -17,8 +17,8 @@
 
 <h3>Install</h3>
 
-<p>Follow this procedure to install PowerView on a Raspberry Pi running Raspbian
-Buster. It is assumed that the PowerView.exe.config file in the
+<p>Follow this procedure to install PowerView on a Raspberry Pi running Raspberry 
+Pi OS. It is assumed that the appsettings.json file in the
 unzipped folder already has the correct configuration settings.</p>
 <ol>
   <li>Copy the unzipped folder containing PowerView to the Raspberry pi, e.g.
@@ -27,18 +27,18 @@ unzipped folder already has the correct configuration settings.</p>
   <li>Start a terminal and change directory into /home/pi/PowerView</li>
   <li>Execute the command: <code>chmod +x InstallPowerView.sh && sudo ./InstallPowerView.sh</code></li>
   <li>Assuming all went well remove the /home/pi/PowerView folder</li>
-  <li>Reboot the box to launch PowerView as part of startup.</li>
 </ol>
 
-<p>After install PowerView is placed in: /opt/PowerView/. PowerView process log file
-is: /var/log/PowerView.log.</p>
+<p>After install PowerView is placed in: /opt/PowerView/. PowerView log file
+is: /var/log/PowerView/PowerView.log. And the default database location is:
+/var/lib/PowerView</p>
 
 <p></p>
 
 <h3>Monitor log file</h3>
 
 <p>To view the PowerView log file one option is to use tail. In a terminal write:
-<code>tail -n 100 -f /var/log/PowerView.log</code> to follow the log file (do
+<code>tail -n 100 -f /var/log/PowerView/PowerView.log</code> to follow the log file (do
 Ctrl+X Ctrl+C to exit the tail).</p>
 
 <p></p>
@@ -54,9 +54,9 @@ directory into /opt/PowerView and run: <code>sudo ./StopPowerView.sh</code>.</p>
 
 <p>Depending on Linux distribution the Raspberry Pi procedure may work (should
 work on ubuntu). If not, then manually copy the PowerView folder to where you want
-it. The file named "PowerView" should be compatible with init.d requirements,
-though you may need to tailor some paths/files. If all else fails run PowerView
-using the command: <code>sudo mono PowerView.exe</code>.</p>
+it. The file named powerview.service is a systemd service and can be registered with
+systemd, though you likely need to tailor some paths/files in the powerview.service file. 
+If all else fails run PowerView using the command: <code>dotnet /opt/PowerView/PowerView.dll</code>.</p>
 
 <p></p>
 
@@ -64,7 +64,7 @@ using the command: <code>sudo mono PowerView.exe</code>.</p>
 
 <p>The PowerView distribution package does not come with an installer for Windows,
 you are on your own. A rough guide; copy the PowerView folder to where you want
-it. To run PowerView simply run: <code>PowerView.exe</code>.</p>
+it. To run PowerView simply run: <code>dotnet PowerView.dll</code>.</p>
 
 <p></p>
 

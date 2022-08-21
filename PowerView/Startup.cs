@@ -26,10 +26,8 @@ public class Startup
         services.Configure<DatabaseBackupOptions>(Configuration.GetSection("Database:Backup"));
         services.AddOptions<DatabaseCheckOptions>().ValidateDataAnnotations().ValidateOnStart();
         services.Configure<DatabaseCheckOptions>(Configuration.GetSection("Database:Check"));
-
-        // TODO
-        services.AddOptions<Database2Options>().ValidateDataAnnotations().ValidateOnStart();
-        services.Configure<Database2Options>(Configuration.GetSection("Database"));
+        services.AddOptions<DatabaseRegionOptions>().ValidateDataAnnotations().ValidateOnStart();
+        services.Configure<DatabaseRegionOptions>(Configuration.GetSection("Database:Region"));
 
         services.AddDatabase();
         services.AddServices();

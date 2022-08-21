@@ -3,7 +3,7 @@ using Microsoft.Extensions.Options;
 
 namespace PowerView.Model
 {
-    public class Database2Options : IOptions<Database2Options>
+    public class DatabaseRegionOptions : IOptions<DatabaseRegionOptions>
     {
         [MinLength(1)]
         public string TimeZone { get; set;}
@@ -11,7 +11,7 @@ namespace PowerView.Model
         [MinLength(1)]
         public string CultureInfo { get; set; }
 
-        Database2Options IOptions<Database2Options>.Value => this;
+        DatabaseRegionOptions IOptions<DatabaseRegionOptions>.Value => this;
     }
 
 }

@@ -5,7 +5,7 @@
 <head>
   <meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
   <title>Setting Up The PowerView Box</title>
-  <meta name="generator" content="Bluefish 2.2.10" />
+  <meta name="generator" content="Bluefish 2.2.11" />
 </head>
 
 <body>
@@ -17,8 +17,7 @@
 
 <h2>Linux</h2>
 
-<p>Generally the PowerView application requires mono 5.18.0 or greater if not
-otherwise specified.</p>
+<p>The PowerView application requires .NET 6 or greater.</p>
 
 <p></p>
 
@@ -27,20 +26,13 @@ otherwise specified.</p>
 <h4>Before first boot</h4>
 
 <p>The recommended operating system is Raspberry PI OS. It can be installed easily 
-with the Raspberry Pi Imager tool. Alternatively it can be installed with the 
-NOOBS installer. Download the
-NOOBS zip available <a
-href="http://www.raspberrypi.org/downloads">here</a>. Once downloaded deploy it
-to the Raspberry Pi SD-card according to procedures, e.g. <a
-href="http://elinux.org/RPi_Easy_SD_Card_Setup#Using_NOOBS">here</a>.</p>
+with <a href="https://www.raspberrypi.com/documentation/computers/getting-started.html#using-raspberry-pi-imager">the Raspberry Pi Imager tool</a>. Alternatively it can be installed with the 
+NOOBS installer. Raspberry PI OS downloads are available <a
+href="http://www.raspberrypi.org/downloads">here</a>.</p>
 
-<p>Internet access is required on the RPi to download and install prerequisite
-software. Therefore be sure to connect an RJ45 patch cable to the gateway/router
-before first boot.</p>
-
-<p>When booting the RPi the first time and NOOBS presents the available OS
-choices make sure to select the Raspberry PI OS option. Once installed and
-Raspbian boots configure Raspbian basics using the Raspberry Pi Configuration:</p>
+<p>Once Raspberry PI OS is installed and running it is a good idea to configure 
+Raspberry Pi OS. One option is the <a href="https://www.raspberrypi.com/documentation/computers/configuration.html">raspi-config</a> 
+tool. Alternatively if the Raspberry Pi OS version installed has a graphical user interface thre is also this configuration tool:</p>
 
 <p><img alt="Raspberry Pi Configuraion" src="../media/RaspberryPiConfiguration.jpg" 
 width="50%" height="50%" /></p>
@@ -53,67 +45,30 @@ Also enable SSH (if a remote command line to the Raspberry Pi is required).</p>
 <p>When the RPi has been booted install prerequisite software using these
 command lines (note: They can take rather long to complete):</p>
 <pre>sudo apt-get update
-sudo apt-get upgrade
-sudo apt-get install mono-complete</pre>
+sudo apt-get upgrade</pre>
 
-<p>To verify the mono version execute this command line:</p>
+<p>PowerView needs the ASP.NET Runtime version 6 or better installed. Unfortunately there is no official installer for the Raspberry Pi.
+To install ASP.NET Runtime on the Raspberry Pi follow guides on the Internet or run the install script that came with the PowerView
+application.</p>
 
-<pre>mono --version</pre>
+<p>To run the ASP.NET Runtime installer script from the PowerView package run this:
+<pre>chmod +x InstallDotNet.sh && sudo ./InstallDotNet.sh</pre>
 
-<h4>Configuring network</h4>
+</p>
 
-<p>It is strongly recommended to use ethernet cabling with the RPi, it is by
-far the most stable and easiest to maintain. "All" that is needed is an RJ45
-patch cable connecting the RPi with the available gateway/router.</p>
+<p>To verify the ASP.NET Runtime installation execute this command line:</p>
 
-<p>Setting up a wifi network is doable, however it takes one on a journey of
-well/ill supported USB wifi dongles, quality/crap RPi power supplys and
-configuring network files on the RPi, to name a few. Two hints:</p>
-<ol>
-  <li>Get a quality RPi power supply, at least 1 A and proper voltages.</li>
-  <li>WPA wifi security can be configured via /etc/network/interfaces file.</li>
-</ol>
-
-<p>Either add the following to the /etc/network/interfaces file:</p>
-
-<pre>auto wlan0
-allow-hotplug wlan0
-iface wlan0 inet dhcp
-  wpa-ssid "YourSsidInClearText"
-  wpa-psk "YourWiFiWpaPasswordInClearText"</pre>
-
-<p>Alternatively if /etc/network/interfaces already has a wlan0 section looking like:</p>
-
-<pre>allow-hotplug wlan0
-iface wlan0 inet manual
-    wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf</pre>
-
-<p>Then add the following to the /etc/wpa_supplicant/wpa_supplicant.conf file:</p>
-
-<pre>network={
-  ssid="YourSsidInClearText"
-  scan_ssid=1
-  key_mgmt=WPA-PSK
-  psk="YourWiFiWpaPasswordInClearText"
-}</pre>
-
-<p>Ask google for more assistance on how to setup wifi on the RPi.</p>
-
-<p></p>
+<pre>dotnet --info</pre>
 
 <h3>Ubuntu</h3>
 
-<p>As for the Raspberry Pi install the mono using:</p>
-
-<p>sudo apt-get install mono-complete</p>
+<p>Download and install ASP.NET Runtime version 6 or greater from <a href="https://dotnet.microsoft.com/download" >here</a>.</p>
 
 <p></p>
 
 <h2>Windows</h2>
 
-<p>The PowerView application requires .NET Framework 4.7.2 or greater. If using a USB
-to RS232/RS422 adapter be sure to install the latest drivers available for the
-device.</p>
+<p>Download and install ASP.NET Runtime version 6 or greater from <a href="https://dotnet.microsoft.com/download" >here</a>.</p>
 
 <p></p>
 </body>
