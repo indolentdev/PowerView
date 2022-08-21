@@ -59,9 +59,8 @@ namespace PowerView.Service.Test.Mqtt
     public void Start()
     {
       var options = new MqttServerOptionsBuilder()
+        .WithDefaultEndpoint()
         .WithDefaultEndpointPort(Port)
-        .WithDefaultEndpointBoundIPAddress(IPAddress.Loopback)
-        .WithDefaultEndpointBoundIPV6Address(IPAddress.None)
         .Build();
 
       mqttServer = new MqttFactory().CreateMqttServer(options);
