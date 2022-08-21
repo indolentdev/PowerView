@@ -8,7 +8,7 @@ fi
 
 echo Unregistering service
 
-systemctl disable --now powerview.service
+systemctl disable --now powerview2.service
 if [ $? -ne 0 ]
 then
   echo Serivce unregistration failed. Aborting. 
@@ -20,5 +20,5 @@ systemctl daemon-reload
 
 echo PowerView service unregistered
 echo User powervw remain. Folders remain:
-echo /opt/PowerView, /var/lib/PowerView and /var/log/PowerView
+echo /opt/PowerView2, /var/lib/PowerView2 and /var/log/PowerView2
 echo Uninstall complete

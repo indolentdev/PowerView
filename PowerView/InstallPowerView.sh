@@ -16,72 +16,18 @@ then
   exit 1
 fi
 
-BINDIR=/opt/PowerView
-
-# Uninstall v0.0.x PowerView
-LEGACYBIN=$BINDIR/PowerView.exe
-if [ -f $LEGACYBIN ]
-then
-  # Check for running the process
-  PID=$(pgrep -d " " -f .*mono.*PowerView.exe.*)
-  if [ -n "$PID" ]
-  then
-    echo PowerView v0.0.x is running. Stop it first using "sudo /opt/PowerView/StopPowerView.sh"
-    exit 1
-  fi
-  
-  echo PowerView v0.0.x is installed. 
-  echo This upgrade will uninstall PowerView and delete the 
-  echo /opt/PowerView directory. A new directory will be created from scratch.
-  echo The /var/lib/PowerView database directory will be retained.
-  echo A new powervw user will become the owner of /opt/PowerView and
-  echo /var/lib/PowerView. 
-  read -p "Do you want to proceed? (yes/no) " yn
-
-  case $yn in 
-	yes ) echo ok, proceeding;;
-	no ) echo exiting;
-		exit;;
- 	* ) echo invalid response;
-		exit 1;;
-  esac
-
-  # Remove from /etc/init.d
-  INITDDIR=/etc/init.d
-  POWERVIEWINITD=$INITDDIR/PowerView
-  INSSERV=/sbin/insserv
-  if [ -f $POWERVIEWINITD ]
-  then
-    echo Cleaning up init.d
-    if [ ! -f $INSSERV ]
-    then
-      $(rm /etc/rc0.d/K20PowerView)
-      $(rm /etc/rc1.d/K20PowerView)
-      $(rm /etc/rc6.d/K20PowerView)
-      $(rm /etc/rc2.d/S20PowerView)
-      $(rm /etc/rc3.d/S20PowerView)
-      $(rm /etc/rc4.d/S20PowerView)
-      $(rm /etc/rc5.d/S20PowerView)
-    else
-      $($INSSERV -r PowerView)
-    fi
-    $(rm $POWERVIEWINITD)
-  fi
-
-  echo Deleting $BINDIR  
-  rm -rf $BINDIR  
-fi
+BINDIR=/opt/PowerView2
 
 # Check PowerView isn't running
 PID=$(pgrep -d " " -f .*dotnet.*PowerView.dll.*)
 if [ -n "$PID" ]
 then
-  echo PowerView is running. Stop it first using "sudo /opt/PowerView/StopPowerView.sh"
+  echo PowerView is running. Stop it first using "sudo /opt/PowerView2/StopPowerView.sh"
   exit 1
 fi
 
 # Crate powervw user and group
-user=powervw
+user=powervw2
 id -u $user >/dev/null 2>&1
 if [ "$?" == "0" ] 
 then
@@ -104,7 +50,7 @@ else
     exit 1
 fi
 
-LOGDIR=/var/log/PowerView
+LOGDIR=/var/log/PowerView2
 if [ ! -d $LOGDIR ]
 then
   echo Setting up log directory $DBDIR
@@ -117,7 +63,7 @@ chown -R $user:$user $LOGDIR
 chmod -R 755 $LOGDIR
 
 # Setup DB dir
-DBDIR=/var/lib/PowerView
+DBDIR=/var/lib/PowerView2
 if [ ! -d $DBDIR ]
 then
   echo Setting up db directory $DBDIR
@@ -172,9 +118,9 @@ chmod 775 $BINDIR/*.sh
 
 echo Registering service
 
-cp powerview.service /etc/systemd/system
+cp powerview2.service /etc/systemd/system
 systemctl daemon-reload
-systemctl enable powerview.service
+systemctl enable powerview2.service
 if [ $? -ne 0 ]
 then
   echo Serivce registration failed. Aborting install. 

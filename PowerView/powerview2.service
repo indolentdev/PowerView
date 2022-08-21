@@ -1,14 +1,14 @@
 [Unit]
-Description=PowerView web application and backend
+Description=PowerView web application and backend side by side
 After=network.target
 Requires=network.target
-AssertPathExists=/opt/PowerView
+AssertPathExists=/opt/PowerView2
 
 [Service]
 Type=simple
-ExecStart=dotnet /opt/PowerView/PowerView.dll
-WorkingDirectory=/opt/PowerView
-User=powervw
+ExecStart=dotnet /opt/PowerView2/PowerView.dll
+WorkingDirectory=/opt/PowerView2
+User=powervw2
 TimeoutSec=1200
 Restart=always
 KillMode=mixed

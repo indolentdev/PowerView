@@ -87,7 +87,7 @@ fi
 md5sum $zipname > $md5name
 
 # Uncomment next line to exit script after zipping the release
-# exit 1
+exit 1
 
 # Prepare the folder on remote system
 echo Deleting temporary folder $name on remote system

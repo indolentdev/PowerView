@@ -4,4 +4,4 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
-sudo systemctl stop powerview.service
+sudo systemctl stop powerview2.service
