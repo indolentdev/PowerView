@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, Validators, FormGroupDirective, NgForm } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup, Validators, FormGroupDirective, NgForm } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MatSnackBar, MatSnackBarRef, SimpleSnackBar } from '@angular/material/snack-bar';
 import { NGXLogger } from 'ngx-logger';
@@ -11,7 +11,7 @@ import { DisconnectRuleSet } from '../../../model/disconnectRuleSet';
 
 /** Error when the parent is invalid */
 class CrossFieldErrorMatcher implements ErrorStateMatcher {
-  isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
+  isErrorState(control: UntypedFormControl | null, form: FormGroupDirective | NgForm | null): boolean {
     return control.dirty && form.invalid;
   }
 }
@@ -37,7 +37,7 @@ export class SettingsRelayControlsComponent implements OnInit {
   private helpUnit: string;
   helpText: string;
 
-  formGroup: FormGroup;
+  formGroup: UntypedFormGroup;
   errorMatcher = new CrossFieldErrorMatcher();
   @ViewChild('form', { static: true }) form;
 
@@ -52,12 +52,12 @@ export class SettingsRelayControlsComponent implements OnInit {
     this.helpRelayName = this.helpSerieName = this.helpDuration = this.helpDisconnectToConnect = this.helpConnectToDisconnect = this.helpUnit = "-";
     this.updateHelpText();
 
-    this.formGroup = new FormGroup({
-      relayName: new FormControl('', [Validators.required]),
-      serieName: new FormControl('', [Validators.required]),
-      durationMinutes: new FormControl('', [Validators.required]),
-      disconnectToConnectValue: new FormControl('', [Validators.required, Validators.min(1), Validators.max(65535)]),
-      connectToDisconnectValue: new FormControl('', [Validators.required, Validators.min(1), Validators.max(65535)])
+    this.formGroup = new UntypedFormGroup({
+      relayName: new UntypedFormControl('', [Validators.required]),
+      serieName: new UntypedFormControl('', [Validators.required]),
+      durationMinutes: new UntypedFormControl('', [Validators.required]),
+      disconnectToConnectValue: new UntypedFormControl('', [Validators.required, Validators.min(1), Validators.max(65535)]),
+      connectToDisconnectValue: new UntypedFormControl('', [Validators.required, Validators.min(1), Validators.max(65535)])
     }, 
       this.connectToDisconnectValueLessThan
     );
@@ -66,7 +66,7 @@ export class SettingsRelayControlsComponent implements OnInit {
     this.getDisconnectRules();
   }
 
-  connectToDisconnectValueLessThan(form: FormGroup) {
+  connectToDisconnectValueLessThan(form: UntypedFormGroup) {
     var disconnectToConnect = form.get('disconnectToConnectValue');
     var connectToDisconnect = form.get('connectToDisconnectValue');
 

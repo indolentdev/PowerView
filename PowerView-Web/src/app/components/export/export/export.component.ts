@@ -1,5 +1,5 @@
 import { Component, OnInit,ViewChild, Input, Output, OnChanges, SimpleChanges, EventEmitter } from '@angular/core';
-import { FormControl, AbstractControl, FormGroup, Validators, FormGroupDirective, NgForm } from '@angular/forms';
+import { UntypedFormControl, AbstractControl, UntypedFormGroup, Validators, FormGroupDirective, NgForm } from '@angular/forms';
 import { Router, ActivatedRoute } from "@angular/router";
 import { NGXLogger } from 'ngx-logger';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
@@ -33,7 +33,7 @@ export class ExportComponent implements OnInit {
 
   decimalSeparators: any[];
 
-  formGroup: FormGroup;
+  formGroup: UntypedFormGroup;
   @ViewChild('form', { static: true }) form;
 
   @Output('export') exportAction: EventEmitter<ExportSpec> = new EventEmitter();
@@ -42,11 +42,11 @@ export class ExportComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.formGroup = new FormGroup({
-      labels: new FormControl('', [Validators.required]),
-      fromDate: new FormControl('', [Validators.required]),
-      toDate: new FormControl('', [Validators.required]),
-      decimalSeparator: new FormControl('', [Validators.required])
+    this.formGroup = new UntypedFormGroup({
+      labels: new UntypedFormControl('', [Validators.required]),
+      fromDate: new UntypedFormControl('', [Validators.required]),
+      toDate: new UntypedFormControl('', [Validators.required]),
+      decimalSeparator: new UntypedFormControl('', [Validators.required])
     });
 
     this.getLabels();

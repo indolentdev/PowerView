@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatSnackBar, MatSnackBarRef, SimpleSnackBar } from '@angular/material/snack-bar';
 import { NGXLogger } from 'ngx-logger';
 import { TranslateService } from '@ngx-translate/core';
@@ -13,17 +13,17 @@ import { MqttParams } from '../../../model/mqttParams';
 })
 export class SettingsMqttComponent implements OnInit {
   private snackBarRef:  MatSnackBarRef<SimpleSnackBar>;
-  formGroup: FormGroup;
+  formGroup: UntypedFormGroup;
  
   constructor(private log: NGXLogger, private settingsService: SettingsService, private snackBar: MatSnackBar, private translateService: TranslateService) {
   }
 
   ngOnInit() {
-    this.formGroup = new FormGroup({
-      server: new FormControl('', [Validators.required, Validators.minLength(7), Validators.maxLength(39)]),
-      port: new FormControl('', [Validators.required, Validators.min(1), Validators.max(65535)]),
-      publishEnabled: new FormControl('', []),
-      clientId: new FormControl('', [Validators.required, Validators.minLength(1), Validators.maxLength(23), Validators.pattern('^[a-zA-Z0-9]+$')])
+    this.formGroup = new UntypedFormGroup({
+      server: new UntypedFormControl('', [Validators.required, Validators.minLength(7), Validators.maxLength(39)]),
+      port: new UntypedFormControl('', [Validators.required, Validators.min(1), Validators.max(65535)]),
+      publishEnabled: new UntypedFormControl('', []),
+      clientId: new UntypedFormControl('', [Validators.required, Validators.minLength(1), Validators.maxLength(23), Validators.pattern('^[a-zA-Z0-9]+$')])
     });
     this.getMqttParams();
   }

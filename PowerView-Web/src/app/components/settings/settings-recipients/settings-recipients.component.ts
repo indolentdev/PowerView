@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, Validators, FormGroupDirective, NgForm } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup, Validators, FormGroupDirective, NgForm } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MatSnackBar, MatSnackBarRef, SimpleSnackBar } from '@angular/material/snack-bar';
 import { NGXLogger } from 'ngx-logger';
@@ -17,16 +17,16 @@ import { EmailRecipientSet } from '../../../model/emailRecipientSet';
 export class SettingsRecipientsComponent implements OnInit {
   private snackBarRef:  MatSnackBarRef<SimpleSnackBar>;
   emailRecipientSet: EmailRecipientSet;
-  formGroup: FormGroup;
+  formGroup: UntypedFormGroup;
   @ViewChild('form', { static: true }) form;
 
   constructor(private log: NGXLogger, private settingsService: SettingsService, private snackBar: MatSnackBar, private serieService: SerieService, private translateService: TranslateService) {
   }
 
   ngOnInit() {
-    this.formGroup = new FormGroup({
-      name: new FormControl('', [Validators.required, Validators.minLength(3), Validators.max(39)]),
-      emailAddress: new FormControl('', [Validators.required, Validators.minLength(3), Validators.max(39)]),
+    this.formGroup = new UntypedFormGroup({
+      name: new UntypedFormControl('', [Validators.required, Validators.minLength(3), Validators.max(39)]),
+      emailAddress: new UntypedFormControl('', [Validators.required, Validators.minLength(3), Validators.max(39)]),
     });
     
     this.getEmailRecipients();

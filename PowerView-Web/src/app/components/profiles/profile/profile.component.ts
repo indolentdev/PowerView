@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ViewChild } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { Router, ActivatedRoute, NavigationEnd } from "@angular/router";
 import { NGXLogger } from 'ngx-logger';
 import { MatDatepicker } from '@angular/material/datepicker';
@@ -22,7 +22,7 @@ const startTimeParam = "startTime";
 export class ProfileComponent implements OnInit {
   page: string;
   dpMinStartTime = moment("2010-01-01T00:00:00Z");
-  fcStartTime = new FormControl(null);
+  fcStartTime = new UntypedFormControl(null);
 
   profileSet: ProfilePage;
   profileTotalValues: ProfileTotalValue[] = [];

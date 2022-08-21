@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { Router, ActivatedRoute } from "@angular/router";
 import { NGXLogger } from 'ngx-logger';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
@@ -19,7 +19,7 @@ const dateParam = "date";
 export class GaugesBydateComponent implements OnInit {
   minDate = moment("2010-01-01T00:00:00Z");
   maxDate = moment().subtract(1, 'days');
-  fcDate = new FormControl(null);
+  fcDate = new UntypedFormControl(null);
 
   gaugeValueGroupSet: GaugeValueGroupSet;
 

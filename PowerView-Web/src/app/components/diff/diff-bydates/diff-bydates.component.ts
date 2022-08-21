@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { Router, ActivatedRoute } from "@angular/router";
 import { NGXLogger } from 'ngx-logger';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
@@ -22,8 +22,8 @@ export class DiffBydatesComponent implements OnInit {
   maxDateFrom = moment().subtract(2, 'days');
   minDateTo = moment("2010-01-02T00:00:00Z");
   maxDateTo = moment().subtract(1, 'days');
-  fcFromDate = new FormControl(null);
-  fcToDate = new FormControl(null);
+  fcFromDate = new UntypedFormControl(null);
+  fcToDate = new UntypedFormControl(null);
 
   diffValueSet: DiffValueSet;
 
@@ -44,7 +44,7 @@ export class DiffBydatesComponent implements OnInit {
     });
   }
 
-  parseDateSetFormControl(dateString: string, fcDate: FormControl): void {
+  parseDateSetFormControl(dateString: string, fcDate: UntypedFormControl): void {
     var parsedDate = moment(dateString);
     if (parsedDate.isValid() && !parsedDate.isSame(fcDate.value))
     {

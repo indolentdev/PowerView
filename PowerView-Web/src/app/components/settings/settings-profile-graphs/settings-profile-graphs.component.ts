@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, Validators, FormGroupDirective, NgForm } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup, Validators, FormGroupDirective, NgForm } from '@angular/forms';
 import { MatSnackBar, MatSnackBarRef, SimpleSnackBar } from '@angular/material/snack-bar';
 import { NGXLogger } from 'ngx-logger';
 import { TranslateService } from '@ngx-translate/core';
@@ -24,7 +24,7 @@ export class SettingsProfileGraphsComponent implements OnInit {
   profileGraphSerieSet: ProfileGraphSerieSet;
   profileGraphGroups: ProfileGraph[][];
 
-  formGroup: FormGroup;
+  formGroup: UntypedFormGroup;
   @ViewChild('form', { static: true }) form;
 
   createMode: boolean = true;
@@ -38,12 +38,12 @@ export class SettingsProfileGraphsComponent implements OnInit {
     this.profileGraphIntervals = [];
     this.profileGraphSeries = [];
   
-    this.formGroup = new FormGroup({
-      period: new FormControl('', [Validators.required]),
-      page: new FormControl('', [Validators.maxLength(25)]),
-      title: new FormControl('', [Validators.required, Validators.minLength(1), Validators.maxLength(25)]),
-      interval: new FormControl({value:'', disabled:true}, [Validators.required]),
-      series: new FormControl({value:'', disabled:true}, [Validators.required])
+    this.formGroup = new UntypedFormGroup({
+      period: new UntypedFormControl('', [Validators.required]),
+      page: new UntypedFormControl('', [Validators.maxLength(25)]),
+      title: new UntypedFormControl('', [Validators.required, Validators.minLength(1), Validators.maxLength(25)]),
+      interval: new UntypedFormControl({value:'', disabled:true}, [Validators.required]),
+      series: new UntypedFormControl({value:'', disabled:true}, [Validators.required])
     });
 
     this.getProfileGraphsSeries();
