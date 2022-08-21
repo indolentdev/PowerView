@@ -5,7 +5,7 @@ using System.Net.Sockets;
 using System.Reflection;
 using System.Threading.Tasks;
 using MQTTnet;
-using MQTTnet.Diagnostics.Logger;
+using MQTTnet.Diagnostics;
 using MQTTnet.Protocol;
 using MQTTnet.Server;
 using NUnit.Framework;
@@ -15,20 +15,20 @@ namespace PowerView.Service.Test.Mqtt
 {
   internal class TestMqttServer : IDisposable
   {
-    private IMqttServer mqttServer;
-    private List<MqttApplicationMessageReceivedEventArgs> published;
-    private List<MqttConnectionValidatorContext> connections;
+    private MqttServer mqttServer;
+    private List<InterceptingPublishEventArgs> published;
+    private List<ValidatingConnectionEventArgs> connections;
 
     public readonly string ServerName = "localhost";
     public readonly string ClientId = "PWClientId";
     public int Port { get; private set; }
-    public IList<MqttApplicationMessageReceivedEventArgs> Published { get { return published; } }
-    public IList<MqttConnectionValidatorContext> Connections { get { return connections; } }
+    public IList<InterceptingPublishEventArgs> Published { get { return published; } }
+    public IList<ValidatingConnectionEventArgs> Connections { get { return connections; } }
 
     public TestMqttServer()
     {
-      published = new List<MqttApplicationMessageReceivedEventArgs>();
-      connections = new List<MqttConnectionValidatorContext>();
+      published = new List<InterceptingPublishEventArgs>();
+      connections = new List<ValidatingConnectionEventArgs>();
       Port = FreeTcpPort();
     }
 
@@ -62,18 +62,12 @@ namespace PowerView.Service.Test.Mqtt
         .WithDefaultEndpointPort(Port)
         .WithDefaultEndpointBoundIPAddress(IPAddress.Loopback)
         .WithDefaultEndpointBoundIPV6Address(IPAddress.None)
-        .WithConnectionValidator(x => 
-        {
-          x.ReasonCode = MqttConnectReasonCode.Success;
-          connections.Add(x); 
-        })
         .Build();
 
-      var mqttNetLogger = new MqttNetEventLogger();
-      mqttNetLogger.LogMessagePublished += (sender, e) => Console.WriteLine(e.LogMessage);
-      mqttServer = new MqttFactory().CreateMqttServer(mqttNetLogger);
-      mqttServer.UseApplicationMessageReceivedHandler(e => published.Add(e));
-      Assert.That(mqttServer.StartAsync(options).Wait(3000), Is.True, "MQTT Server failed to start");
+      mqttServer = new MqttFactory().CreateMqttServer(options);
+      mqttServer.ValidatingConnectionAsync += e => { e.ReasonCode = MqttConnectReasonCode.Success; connections.Add(e); return Task.CompletedTask; };
+      mqttServer.InterceptingPublishAsync += e => { published.Add(e); return Task.CompletedTask; };
+      Assert.That(mqttServer.StartAsync().Wait(3000), Is.True, "MQTT Server failed to start");
     }
 
     #region IDisposable Support

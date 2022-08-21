@@ -87,7 +87,7 @@ namespace PowerView.Service.Test.Mqtt
       mqttServer.Start();
       var target = CreateTarget();
       var liveReadings = new LiveReading[1];
-      var mqttMessage = new MqttApplicationMessageBuilder().WithTopic("TheTopic").WithAtMostOnceQoS().Build();
+      var mqttMessage = new MqttApplicationMessageBuilder().WithTopic("TheTopic").WithQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel.AtMostOnce).Build();
       mqttMapper.Setup(mm => mm.Map(It.IsAny<ICollection<LiveReading>>())).Returns(new[] { mqttMessage });
       var config = mqttServer.GetClientConfig();
 

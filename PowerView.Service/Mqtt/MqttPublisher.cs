@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using MQTTnet;
 using MQTTnet.Client;
-using MQTTnet.Client.Options;
-using MQTTnet.Diagnostics.Logger;
+//using MQTTnet.Client.Options;
+using MQTTnet.Diagnostics;
 using MQTTnet.Exceptions;
 using PowerView.Model;
 
@@ -61,7 +61,7 @@ namespace PowerView.Service.Mqtt
         .WithClientId(config.ClientId)
         .WithCleanSession(true)
         .WithTcpServer(config.Server, config.Port)
-        .WithCommunicationTimeout(config.Timeout)
+        .WithTimeout(config.Timeout)
         .WithNoKeepAlive()
         .Build();
 
@@ -69,8 +69,8 @@ namespace PowerView.Service.Mqtt
       mqttNetLogger.LogMessagePublished += (sender, e) => LogMqtt(e.LogMessage);
       using (var mqttClient = new MqttFactory().CreateMqttClient(mqttNetLogger))
       {
-        mqttClient.UseConnectedHandler(e => { logger.LogDebug("Connected to MQTT server {0}:{1}. ResultCode:{2}", config.Server, config.Port, e.ConnectResult.ResultCode ); });
-        mqttClient.UseDisconnectedHandler(e => { logger.LogDebug(e.Exception, "Disconnected MQTT server" + (e.Exception == null ? string.Empty : " with error")); });
+        mqttClient.ConnectedAsync += e => { logger.LogDebug($"Connected to MQTT server {config.Server}:{config.Port}. ResultCode:{e.ConnectResult.ResultCode}"); return Task.CompletedTask; };
+        mqttClient.DisconnectedAsync += e => { logger.LogDebug(e.Exception, "Disconnected MQTT server" + (e.Exception == null ? string.Empty : " with error") + ". WasConnected:" + e.ClientWasConnected); return Task.CompletedTask; };
 
         try
         {

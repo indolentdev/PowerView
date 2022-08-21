@@ -21,7 +21,7 @@ namespace PowerView.Service.Mqtt
         if (string.IsNullOrEmpty(payload)) continue;
 
         var msg = new MqttApplicationMessageBuilder()
-          .WithAtMostOnceQoS()
+          .WithQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel.AtMostOnce)
           .WithRetainFlag(false)
           .WithTopic(topic)
           .WithPayload(payload)
