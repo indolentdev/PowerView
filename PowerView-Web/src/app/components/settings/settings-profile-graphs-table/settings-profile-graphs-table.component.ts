@@ -1,5 +1,4 @@
 import { Component, OnInit,ViewChild, Input, Output, OnChanges, SimpleChanges, EventEmitter } from '@angular/core';
-import { MatSort, MatSortable } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { NGXLogger } from 'ngx-logger';
 import { SerieService } from '../../../services/serie.service';
@@ -14,8 +13,6 @@ export class SettingsProfileGraphsTableComponent implements OnInit, OnChanges {
   displayedColumns = ['title', 'interval', 'series', 'actions'];
   dataSource: MatTableDataSource<any>;
 
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
-
   @Input('profileGraphs') profileGraphs: ProfileGraph[];
 
   @Output('editProfileGraph') editAction: EventEmitter<ProfileGraph> = new EventEmitter();
@@ -29,14 +26,7 @@ export class SettingsProfileGraphsTableComponent implements OnInit, OnChanges {
     let empty = [];
     this.dataSource = new MatTableDataSource<any>(empty);
 
-    this.sort.sort(<MatSortable>({id: 'rank', start: 'asc'}) );
-    this.sort.disableClear = true;
-
     this.refresh();
-  }
-
-  ngAfterViewInit() {
-    this.dataSource.sort = this.sort;
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -48,40 +38,27 @@ export class SettingsProfileGraphsTableComponent implements OnInit, OnChanges {
 
   private refresh(): void {
     if (this.dataSource != null && this.profileGraphs != null) {
-      var ranks = this.getProfileGraphRanks();
-
-      var distinctRanks = ranks.filter((value, index, self) => self.indexOf(value) === index);
-      var allowChangeRanks = true;
-      if (distinctRanks.length !== ranks.length) {
-        this.log.error("Profile graph ranks must be unique", this.profileGraphs);
-        allowChangeRanks = false;
-      }
-      var minRank = Math.min(...ranks);
-      var maxRank = Math.max(...ranks);
 
       let rows = [];
-      for (let pg of this.profileGraphs) {
+      this.profileGraphs.forEach((pg, index) => { 
         let row: any = pg;
 
         var intervalVars = pg.interval.split("-");
         row.intervalValue = intervalVars[0];
         row.intervalUnit = intervalVars[1];
-
         this.serieService.AddSerieProperty(pg.series);
-
-        if (allowChangeRanks) {
-          row.isFirst = false;
-          if (pg.rank === minRank) {
-            row.isFirst = true;
-          }
-          row.isLast = false;
-          if (pg.rank === maxRank) {
-            row.isLast = true;
-          }
+        row.isFirst = false;
+        if (index == 0) {
+          row.isFirst = true;
+        }
+        row.isLast = false;
+        if (index == this.profileGraphs.length - 1) {
+          row.isLast = true;
         }
 
         rows.push(row);
-      }
+      });
+
       this.dataSource.data = rows;
     }
   }
@@ -123,18 +100,12 @@ export class SettingsProfileGraphsTableComponent implements OnInit, OnChanges {
   }
 
   private swapRanks(item: ProfileGraph, withNext: boolean) {
-    var ranks = this.getProfileGraphRanks();
-    var swapIxDelta = withNext ? 1 : -1;
-    var swapRank = ranks[ranks.indexOf(item.rank) + swapIxDelta];
-    var swapProfileGraph = this.profileGraphs.filter(x => x.rank === swapRank);
-    var swapProfileGraphs = [item, ...swapProfileGraph];
-    this.log.debug("Swapping profile graph ranks", swapProfileGraphs);
+    let swapIxDelta = withNext ? 1 : -1;
+    let profileGraphIndex = this.profileGraphs.findIndex(x => item.period == x.period && item.page == x.page && item.title == x.title && item.interval == x.interval);
+    let swapProfileGraph = this.profileGraphs[profileGraphIndex + swapIxDelta];
+    let swapProfileGraphs = [item, swapProfileGraph];
+    this.log.debug("Swapping profile graphs", swapProfileGraphs);
     this.swapAction.emit(swapProfileGraphs);
-  }
-
-  private getProfileGraphRanks(): number[] {
-    return this.profileGraphs.map(x => x.rank);
-
   }
 
 }
