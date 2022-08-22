@@ -5,7 +5,6 @@ export let settingsProfileGraphs = {
          "page":"A page",
          "title":"Water",
          "interval":"5-minutes",
-         "rank":2,
          "series":[
             {
                "label":"Water",
@@ -22,7 +21,6 @@ export let settingsProfileGraphs = {
          "page":"Other page",
          "title":"El Import",
          "interval":"5-minutes",
-         "rank":3,
          "series":[
             {
                "label":"Heater",
@@ -47,7 +45,6 @@ export let settingsProfileGraphs = {
          "page":"Other page",
          "title":"El Export",
          "interval":"5-minutes",
-         "rank":5,
          "series":[
             {
                "label":"Inverter",
@@ -72,7 +69,6 @@ export let settingsProfileGraphs = {
          "page":"",
          "title":"Water",
          "interval":"1-days",
-         "rank":9,
          "series":[
             {
                "label":"Water",
@@ -89,7 +85,6 @@ export let settingsProfileGraphs = {
          "page":"",
          "title":"El Import",
          "interval":"1-days",
-         "rank":11,
          "series":[
             {
                "label":"Heater",
@@ -114,7 +109,6 @@ export let settingsProfileGraphs = {
          "page":"",
          "title":"El Export",
          "interval":"1-days",
-         "rank":12,
          "series":[
             {
                "label":"Inverter",
@@ -139,7 +133,6 @@ export let settingsProfileGraphs = {
          "page":"",
          "title":"Water",
          "interval":"1-months",
-         "rank":13,
          "series":[
             {
                "label":"Water",
@@ -156,7 +149,6 @@ export let settingsProfileGraphs = {
          "page":"",
          "title":"El Import",
          "interval":"1-months",
-         "rank":15,
          "series":[
             {
                "label":"Heater",
@@ -181,7 +173,6 @@ export let settingsProfileGraphs = {
          "page":"",
          "title":"El Export",
          "interval":"1-months",
-         "rank":16,
          "series":[
             {
                "label":"Inverter",
@@ -206,7 +197,6 @@ export let settingsProfileGraphs = {
          "page":"",
          "title":"Relay",
          "interval":"30-minutes",
-         "rank":20,
          "series":[
             {
                "label":"Heater",
@@ -227,7 +217,6 @@ export let settingsProfileGraphs = {
          "page":"",
          "title":"El Power",
          "interval":"30-minutes",
-         "rank":21,
          "series":[
             {
                "label":"Main",
@@ -256,7 +245,6 @@ export let settingsProfileGraphs = {
          "page":"",
          "title":"Conservatory",
          "interval":"30-minutes",
-         "rank":22,
          "series":[
             {
                "label":"Conservatory",

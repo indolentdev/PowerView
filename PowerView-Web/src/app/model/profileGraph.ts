@@ -5,7 +5,6 @@ export class ProfileGraph {
     page: string;
     title: string;
     interval: string;
-    rank: number;
     series: SerieName[];
 
     constructor() {
