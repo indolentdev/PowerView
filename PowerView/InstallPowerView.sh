@@ -136,5 +136,5 @@ fi
 
 
 echo Install complete
-echo Check http://localhost:47362
+echo Check http://localhost:22222
 
