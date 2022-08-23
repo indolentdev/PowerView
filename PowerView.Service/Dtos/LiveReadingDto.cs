@@ -2,13 +2,14 @@
 
 namespace PowerView.Service.Dtos
 {
-    public class LiveReadingDto
+    public class LiveReadingDto : IValidatableObject
     {
         [Required]
         public string Label { get; set; }
 
-        [Required]
         public string DeviceId { get; set; }
+
+        public string SerialNumber { get; set; }
 
         [Required]
         [UtcDateTime]
@@ -16,5 +17,13 @@ namespace PowerView.Service.Dtos
 
         [Required]
         public RegisterValueDto[] RegisterValues { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (string.IsNullOrEmpty(DeviceId) && string.IsNullOrEmpty(SerialNumber))
+            {
+                yield return new ValidationResult("DeviceId or SerialNumber must be present. Its recommended to use DeviceId. SerialNumber is obsolete.", new[] { nameof(DeviceId), nameof(SerialNumber) });
+            }
+       }
     }
 }

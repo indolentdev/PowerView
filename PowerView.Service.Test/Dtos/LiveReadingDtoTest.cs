@@ -52,6 +52,25 @@ namespace PowerView.Service.Test.Dto
             // Assert
             Assert.That(dto.Label, Is.EqualTo("lbl"));
             Assert.That(dto.DeviceId, Is.EqualTo("sn"));
+            Assert.That(dto.SerialNumber, Is.Null);
+            Assert.That(dto.Timestamp, Is.EqualTo(new DateTime(2020, 3, 7, 21, 44, 22, DateTimeKind.Utc)));
+            Assert.That(dto.RegisterValues, Is.Empty);
+        }
+
+        [Test]
+        public void DeserializeLiveReadingDtoWithSerialNumber()
+        {
+            // Arrange
+            const string json = "{\"Label\":\"lbl\",\"SerialNumber\":\"sn\",\"Timestamp\":\"2020-03-07T21:44:22Z\",\"RegisterValues\":[]}";
+
+            // Act
+            var dto = JsonSerializer.Deserialize<LiveReadingDto>(json);
+            Validator.ValidateObject(dto, new ValidationContext(dto), true);
+
+            // Assert
+            Assert.That(dto.Label, Is.EqualTo("lbl"));
+            Assert.That(dto.DeviceId, Is.Null);
+            Assert.That(dto.SerialNumber, Is.EqualTo("sn"));
             Assert.That(dto.Timestamp, Is.EqualTo(new DateTime(2020, 3, 7, 21, 44, 22, DateTimeKind.Utc)));
             Assert.That(dto.RegisterValues, Is.Empty);
         }
