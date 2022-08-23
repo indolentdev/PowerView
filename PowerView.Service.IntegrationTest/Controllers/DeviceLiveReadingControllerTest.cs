@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Threading.Tasks;
 using System.Net;
 using System.Net.Http;
@@ -84,14 +85,14 @@ public class DeviceLiveReadingControllerTest
         // Arrange
         var liveReadingDto = GetLiveReadingDto();
         liveReadingDto.DeviceId = null;
-        liveReadingDto.SerialNumber = "TheSerialNumber";
+        liveReadingDto.SerialNumber = 12345678;
 
         // Act
         var response = await httpClient.PostAsync("api/devices/livereadings", JsonContent.Create(new LiveReadingSetDto { Items = new[] { liveReadingDto } }));
 
         // Assert
         readingAccepter.Verify(ra => ra.Accept(It.Is<IList<LiveReading>>(x => x.Count == 1 &&
-            x[0].Label == liveReadingDto.Label && x[0].DeviceId == liveReadingDto.SerialNumber && x[0].Timestamp == liveReadingDto.Timestamp &&
+            x[0].Label == liveReadingDto.Label && x[0].DeviceId == liveReadingDto.SerialNumber.ToString() && x[0].Timestamp == liveReadingDto.Timestamp &&
             x[0].GetRegisterValues().Count == 1 &&
             x[0].GetRegisterValues()[0].ObisCode == liveReadingDto.RegisterValues[0].ObisCode &&
             x[0].GetRegisterValues()[0].Value == liveReadingDto.RegisterValues[0].Value &&
