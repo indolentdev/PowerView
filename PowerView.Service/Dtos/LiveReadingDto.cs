@@ -9,7 +9,7 @@ namespace PowerView.Service.Dtos
 
         public string DeviceId { get; set; }
 
-        public string SerialNumber { get; set; }
+        public int? SerialNumber { get; set; }
 
         [Required]
         [UtcDateTime]
@@ -20,7 +20,7 @@ namespace PowerView.Service.Dtos
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            if (string.IsNullOrEmpty(DeviceId) && string.IsNullOrEmpty(SerialNumber))
+            if (string.IsNullOrEmpty(DeviceId) && SerialNumber == null)
             {
                 yield return new ValidationResult("DeviceId or SerialNumber must be present. Its recommended to use DeviceId. SerialNumber is obsolete.", new[] { nameof(DeviceId), nameof(SerialNumber) });
             }
