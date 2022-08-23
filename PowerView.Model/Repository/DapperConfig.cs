@@ -25,7 +25,7 @@ public static class DapperConfig
         public override void SetValue(IDbDataParameter parameter, DateTime value) 
         {
             if (value.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException(nameof(value), $"Must be UTC. Was:{value.Kind}");
-            parameter.Value = new DateTimeOffset(value, TimeSpan.Zero).ToUnixTimeSeconds();
+            parameter.Value = value.ToString("o", CultureInfo.InvariantCulture);
         }
 
         public override DateTime Parse(object value)
