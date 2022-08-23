@@ -29,7 +29,7 @@ public class DeviceLiveReadingController : ControllerBase
     {
         var liveReadings = liveReadingSetDto.Items
             .Select(x =>
-                new LiveReading(x.Label, x.DeviceId, x.Timestamp.Value,
+                new LiveReading(x.Label, x.DeviceId != null ? x.DeviceId : x.SerialNumber, x.Timestamp.Value,
                     x.RegisterValues.Select(y => new RegisterValue(y.ObisCode, y.Value.Value, y.Scale.Value, y.Unit.Value))))
             .ToList();
 
