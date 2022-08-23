@@ -79,6 +79,28 @@ public class DeviceLiveReadingControllerTest
     }
 
     [Test]
+    public async Task PostApiDevicesLivereadings_CallsReadingAccepter_SerialNumber()
+    {
+        // Arrange
+        var liveReadingDto = GetLiveReadingDto();
+        liveReadingDto.DeviceId = null;
+        liveReadingDto.SerialNumber = "TheSerialNumber";
+
+        // Act
+        var response = await httpClient.PostAsync("api/devices/livereadings", JsonContent.Create(new LiveReadingSetDto { Items = new[] { liveReadingDto } }));
+
+        // Assert
+        readingAccepter.Verify(ra => ra.Accept(It.Is<IList<LiveReading>>(x => x.Count == 1 &&
+            x[0].Label == liveReadingDto.Label && x[0].DeviceId == liveReadingDto.SerialNumber && x[0].Timestamp == liveReadingDto.Timestamp &&
+            x[0].GetRegisterValues().Count == 1 &&
+            x[0].GetRegisterValues()[0].ObisCode == liveReadingDto.RegisterValues[0].ObisCode &&
+            x[0].GetRegisterValues()[0].Value == liveReadingDto.RegisterValues[0].Value &&
+            x[0].GetRegisterValues()[0].Scale == liveReadingDto.RegisterValues[0].Scale &&
+            x[0].GetRegisterValues()[0].Unit == liveReadingDto.RegisterValues[0].Unit
+         )));
+    }
+
+    [Test]
     public async Task PostApiDevicesLivereadings_DataStoreBusy()
     {
         // Arrange
