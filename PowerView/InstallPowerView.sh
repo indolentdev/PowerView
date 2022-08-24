@@ -123,7 +123,8 @@ systemctl daemon-reload
 systemctl enable powerview2.service
 if [ $? -ne 0 ]
 then
-  echo Serivce registration failed. Aborting install. 
+  echo Serivce registration failed. Aborting install.
+  exit 1
 fi
 
 echo Starting PowerView service
@@ -131,10 +132,10 @@ echo Starting PowerView service
 ./StartPowerView.sh
 if [ $? -ne 0 ]
 then
-  echo Service failed to start 
+  echo Service failed to start
+  exit 1
 fi
 
 
 echo Install complete
 echo Check http://localhost:22222
-
