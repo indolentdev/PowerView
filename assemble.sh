@@ -5,6 +5,7 @@ echo Building and testing server
 sh ./release.sh
 if [ $? -ne 0 ]
 then
+  echo release.sh returned $?
   exit 1
 fi
 
@@ -12,6 +13,7 @@ echo Building and testing web application
 sh ./release-web.sh
 if [ $? -ne 0 ]
 then
+  echo release-web returned $?
   exit 1
 fi
 
