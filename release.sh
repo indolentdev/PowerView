@@ -3,12 +3,14 @@
 dotnet clean PowerView.sln -c Release
 if [ $? -ne 0 ]
 then
+  echo dotnet clean Release returned $?
   exit 1
 fi
 
 dotnet clean PowerView.sln -c Debug
 if [ $? -ne 0 ]
 then
+  echo dotnet clean Debug returned $?
   exit 1
 fi
 
@@ -22,12 +24,14 @@ fi
 sh ./test.sh
 if [ $? -ne 0 ]
 then
+  echo test.sh returned $?
   exit 1
 fi
 
 dotnet publish PowerView.sln -c Release -p:UseAppHost=false
 if [ $? -ne 0 ]
 then
+  echo dotnet publish returned $?
   exit 1
 fi
 

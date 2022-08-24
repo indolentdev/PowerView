@@ -24,6 +24,7 @@ echo Building and testing server and web application
 sh ./assemble.sh
 if [ $? -ne 0 ]
 then
+  echo assemble.sh returned $?
   exit 1
 fi
 
