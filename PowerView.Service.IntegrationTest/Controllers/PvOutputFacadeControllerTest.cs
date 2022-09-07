@@ -1,14 +1,16 @@
-﻿
-using System;
+﻿using System;
 using System.Linq;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Primitives;
 using Moq;
 using NUnit.Framework;
 using PowerView.Model;
@@ -25,7 +27,7 @@ public class PvOutputFacadeControllerTest
     private Mock<IReadingAccepter> readingAccepter;
     private Mock<ILiveReadingMapper> liveReadingMapper;
     private PvOutputOptions options;
-    private Mock<IHttpWebRequestFactory> httpWebRequestFactory;
+    private Mock<IHttpClientFactory> httpClientFactory;
 
     private const string AddStatusRoute = "/service/r2/addstatus.jsp";
     private Uri pvOutputAddStatus = new Uri("http://TheRealPvOutput/service/r2/addstatus.jsp");
@@ -35,8 +37,6 @@ public class PvOutputFacadeControllerTest
     private const string powerL1Param = "v7";
     private const string powerL2Param = "v8";
     private const string powerL3Param = "v9";
-    private HttpWebRequestMock forwardRequest;
-    private HttpWebResponseMock forwardResponse;
 
     [SetUp]
     public void SetUp()
@@ -44,7 +44,7 @@ public class PvOutputFacadeControllerTest
         readingAccepter = new Mock<IReadingAccepter>();
         liveReadingMapper = new Mock<ILiveReadingMapper>();
         options = new PvOutputOptions();
-        httpWebRequestFactory = new Mock<IHttpWebRequestFactory>();
+        httpClientFactory = new Mock<IHttpClientFactory>();
 
         application = new WebApplicationFactory<TestProgram>()
             .WithWebHostBuilder(builder =>
@@ -54,14 +54,11 @@ public class PvOutputFacadeControllerTest
                     sc.AddSingleton(readingAccepter.Object);
                     sc.AddSingleton(liveReadingMapper.Object);
                     sc.AddSingleton((IOptions<PvOutputOptions>)options);
-                    sc.AddSingleton(httpWebRequestFactory.Object);
+                    sc.AddSingleton(httpClientFactory.Object);
                 });
             });
 
         httpClient = application.CreateClient();
-
-        forwardRequest = new HttpWebRequestMock();
-        forwardResponse = new HttpWebResponseMock();
 
         options.PvOutputAddStatusUrl = pvOutputAddStatus;
         options.PvDeviceLabel = deviceLabel;
@@ -70,8 +67,6 @@ public class PvOutputFacadeControllerTest
         options.ActualPowerP23L1Param = powerL1Param;
         options.ActualPowerP23L2Param = powerL2Param;
         options.ActualPowerP23L3Param = powerL3Param;
-
-        httpWebRequestFactory.Setup(f => f.Create(It.IsAny<Uri>())).Returns(forwardRequest);
     }
 
     [TearDown]
@@ -84,7 +79,7 @@ public class PvOutputFacadeControllerTest
     public async Task AddStatusPostMapsAndSavesToRepository()
     {
         // Arrange
-        SetupResponse(HttpStatusCode.OK, string.Empty, new byte[0]);
+        var httpMessageHandler = SetupHttpClientFactory(HttpStatusCode.OK);
         var liveReading = new LiveReading(deviceLabel, serialNumber, DateTime.UtcNow, new[] { new RegisterValue("1.2.3.4.5.6", 1, 0, Unit.Watt) });
 
         liveReadingMapper.Setup(lrm => lrm.MapPvOutputArgs(It.IsAny<Uri>(), It.IsAny<string>(), It.IsAny<Stream>(),
@@ -99,7 +94,7 @@ public class PvOutputFacadeControllerTest
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
 
-        Assert.That(forwardRequest.Method, Is.EqualTo("POST"));
+        httpMessageHandler.Verify(x => x(It.Is<HttpRequestMessage>(p => p.Method == HttpMethod.Post), It.IsAny<CancellationToken>()));
 
         liveReadingMapper.Verify(lrm => lrm.MapPvOutputArgs(
           It.Is<Uri>(p => p.Query == "?d=dV&t=tV"),
@@ -114,7 +109,7 @@ public class PvOutputFacadeControllerTest
     public async Task AddStatusPostMapsStream()
     {
         // Arrange
-        SetupResponse(HttpStatusCode.OK, string.Empty, new byte[0]);
+        SetupHttpClientFactory(HttpStatusCode.OK);
         var liveReading = new LiveReading(deviceLabel, serialNumber, DateTime.UtcNow, new[] { new RegisterValue("1.2.3.4.5.6", 1, 0, Unit.Watt) });
 
         var mapBodyStream = new MemoryStream();
@@ -142,7 +137,7 @@ public class PvOutputFacadeControllerTest
     public async Task AddStatusGetMapsAndSavesToRepository()
     {
         // Arrange
-        SetupResponse(HttpStatusCode.OK, string.Empty, new byte[0]);
+        var httpMessageHandler = SetupHttpClientFactory(HttpStatusCode.OK);
         var liveReading = new LiveReading(deviceLabel, serialNumber, DateTime.UtcNow, new[] { new RegisterValue("1.2.3.4.5.6", 1, 0, Unit.Watt) });
         liveReadingMapper.Setup(lrm => lrm.MapPvOutputArgs(It.IsAny<Uri>(), It.IsAny<string>(), It.IsAny<Stream>(),
           It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns(liveReading);
@@ -152,7 +147,7 @@ public class PvOutputFacadeControllerTest
 
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-        Assert.That(forwardRequest.Method, Is.EqualTo("GET"));
+        httpMessageHandler.Verify(x => x(It.Is<HttpRequestMessage>(p => p.Method == HttpMethod.Get), It.IsAny<CancellationToken>()));
         liveReadingMapper.Verify(lrm => lrm.MapPvOutputArgs(It.Is<Uri>(p => p.Query == "?d=dV&t=tV"), It.IsAny<string>(), It.IsAny<Stream>(),
           It.Is<string>(p => p == deviceLabel), It.Is<string>(p => p == serialNumber), It.Is<string>(p => p == serialNumberParam),
           It.Is<string>(p => p == powerL1Param), It.Is<string>(p => p == powerL2Param), It.Is<string>(p => p == powerL3Param)));
@@ -165,7 +160,7 @@ public class PvOutputFacadeControllerTest
     {
         // Arrange
         options.PvDeviceLabel = null;
-        SetupResponse(HttpStatusCode.OK, string.Empty, new byte[0]);
+        var httpMessageHandler = SetupHttpClientFactory(HttpStatusCode.OK);
         const string requestBody = "TheRequestBody";
         var content = new StringContent(requestBody, Encoding.UTF8, "custom/content");
 
@@ -174,7 +169,7 @@ public class PvOutputFacadeControllerTest
 
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-        Assert.That(forwardRequest.Method, Is.EqualTo("POST"));
+        httpMessageHandler.Verify(x => x(It.Is<HttpRequestMessage>(p => p.Method == HttpMethod.Post), It.IsAny<CancellationToken>()));
         liveReadingMapper.Verify(lrm => lrm.MapPvOutputArgs(It.IsAny<Uri>(), It.IsAny<string>(), It.IsAny<Stream>(), It.IsAny<string>(),
           It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
         readingAccepter.Verify(ra => ra.Accept(It.IsAny<LiveReading[]>()), Times.Never);
@@ -185,14 +180,14 @@ public class PvOutputFacadeControllerTest
     {
         // Arrange
         options.PvDeviceLabel = null;
-        SetupResponse(HttpStatusCode.OK, string.Empty, new byte[0]);
+        var httpMessageHandler = SetupHttpClientFactory(HttpStatusCode.OK);
 
         // Act
         var response = await httpClient.GetAsync($"service/r2/addstatus.jsp?d=dV&t=tV");
 
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-        Assert.That(forwardRequest.Method, Is.EqualTo("GET"));
+        httpMessageHandler.Verify(x => x(It.Is<HttpRequestMessage>(p => p.Method == HttpMethod.Get), It.IsAny<CancellationToken>()));
         liveReadingMapper.Verify(lrm => lrm.MapPvOutputArgs(It.IsAny<Uri>(), It.IsAny<string>(), It.IsAny<Stream>(), It.IsAny<string>(),
           It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
         readingAccepter.Verify(ra => ra.Accept(It.IsAny<LiveReading[]>()), Times.Never);
@@ -204,7 +199,7 @@ public class PvOutputFacadeControllerTest
         // Arrange
         const string responseContentType = "custom/content-response";
         var responseBody = Encoding.UTF8.GetBytes("TheResponseBody");
-        SetupResponse(HttpStatusCode.OK, responseContentType, responseBody);
+        var httpMessageHandler = SetupHttpClientFactory(HttpStatusCode.OK, responseContentType, responseBody);
         var content = new StringContent("TheRequestBody", Encoding.UTF8, "custom/content-request");
 
         // Act
@@ -212,8 +207,9 @@ public class PvOutputFacadeControllerTest
 
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-        Assert.That(forwardRequest.ContentType, Is.EqualTo(content.Headers.ContentType.ToString()));
-        Assert.That(forwardRequest.GetContentBytes(), Is.EqualTo(await content.ReadAsByteArrayAsync()));
+        httpMessageHandler.Verify(x => x(It.Is<HttpRequestMessage>(p => p.Content.Headers.ContentType.Equals(content.Headers.ContentType) &&
+                (p.Content.ReadAsByteArrayAsync().GetAwaiter().GetResult()).SequenceEqual(content.ReadAsByteArrayAsync().GetAwaiter().GetResult() )), 
+            It.IsAny<CancellationToken>()));
         Assert.That(response.Content.Headers.ContentType.MediaType, Is.EqualTo(responseContentType));
         Assert.That(await response.Content.ReadAsByteArrayAsync(), Is.EqualTo(responseBody));
     }
@@ -222,10 +218,12 @@ public class PvOutputFacadeControllerTest
     public async Task AddStatusPostCopiesPvOutputHeaders()
     {
         // Arrange
-        SetupResponse(HttpStatusCode.OK, string.Empty, new byte[0]);
+        var forwardResponse = new HttpResponseMessage(HttpStatusCode.OK);
         forwardResponse.Headers.Add("X-Rate-Limit-Remaining", "remaining");
         forwardResponse.Headers.Add("x-rate-limit-limit", "limit");
         forwardResponse.Headers.Add("X-RATE-LIMIT-RESET", "reset");
+        var httpMessageHandler = SetupHttpClientFactory(forwardResponse);
+
         var content = new StringContent("TheRequestBody", Encoding.UTF8, "custom/content-request");
         httpClient.DefaultRequestHeaders.Add("X-PVOUTPUT-APIKEY", "whatnot");
         httpClient.DefaultRequestHeaders.Add("x-pvoutput-systemid", "whatelsenot");
@@ -235,19 +233,23 @@ public class PvOutputFacadeControllerTest
 
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-        Assert.That(forwardRequest.Headers["x-pvoutput-apikey"], Is.EqualTo("whatnot"));
-        Assert.That(forwardRequest.Headers["X-PVOUTPUT-SYSTEMID"], Is.EqualTo("whatelsenot"));
+        httpMessageHandler.Verify(x => x(
+            It.Is<HttpRequestMessage>(p => 
+                new StringValues(p.Headers.GetValues("x-pvoutput-apikey").ToArray()) == "whatnot" &&
+                new StringValues(p.Headers.GetValues("X-PVOUTPUT-SYSTEMID").ToArray()) == "whatelsenot"),
+            It.IsAny<CancellationToken>()));
         Assert.That(response.Headers.GetValues("X-Rate-Limit-Remaining"), Is.EqualTo(new[] { "remaining" }));
         Assert.That(response.Headers.GetValues("X-Rate-Limit-Limit"), Is.EqualTo(new[] { "limit" }));
         Assert.That(response.Headers.GetValues("X-Rate-Limit-Reset"), Is.EqualTo(new[] { "reset" }));
     }
 
     [Test]
-    public async Task AddStatusPostPropagatesHttpWebExceptionRequest()
+    public async Task AddStatusPostPropagatesHttpRequestException()
     {
         // Arrange
-        var exception = new HttpWebException("Drugs are baaad - m'kay", WebExceptionStatus.ConnectFailure, null);
-        forwardRequest.SetRequestStream(exception);
+        var httpMessageHandler = SetupHttpClientFactory();
+        httpMessageHandler.Setup(x => x(It.IsAny<HttpRequestMessage>(), It.IsAny<CancellationToken>()))
+            .Throws(new HttpRequestException("Drugs are baaad - m'kay"));
         var content = new StringContent("TheRequestBody", Encoding.UTF8, "custom/content-request");
 
         // Act
@@ -255,36 +257,7 @@ public class PvOutputFacadeControllerTest
 
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.InternalServerError));
-        Assert.That(response.Content.Headers.ContentType.ToString(), Is.EqualTo("text/plain; charset=utf-8"));
-        Assert.That(await response.Content.ReadAsStringAsync(), Is.EqualTo("Internal error interacting with PVOutput. Error message:" + exception.Message));
-
-        liveReadingMapper.Verify(lrm => lrm.MapPvOutputArgs(
-          It.IsAny<Uri>(), It.IsAny<string>(), It.IsAny<Stream>(), It.IsAny<string>(),
-          It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
-        readingAccepter.Verify(ra => ra.Accept(It.IsAny<LiveReading[]>()), Times.Never);
-    }
-
-
-    [Test]
-    public async Task AddStatusPostPropagatesHttpWebExceptionResponse()
-    {
-        // Arrange
-        forwardResponse.StatusCode = HttpStatusCode.BadRequest;
-        forwardResponse.ContentType = "some/contentType";
-        var responseBodyContent = Encoding.UTF8.GetBytes("TheResponseBodyContent");
-        forwardResponse.SetContentBytes(responseBodyContent);
-
-        var exception = new HttpWebException("Drugs are baaad - m'kay", WebExceptionStatus.ProtocolError, forwardResponse);
-        forwardRequest.SetResponse(exception);
-        var content = new StringContent("TheRequestBody", Encoding.UTF8, "custom/content-request");
-
-        // Act
-        var response = await httpClient.PostAsync($"service/r2/addstatus.jsp", content);
-
-        // Assert
-        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
-        Assert.That(response.Content.Headers.ContentType.ToString(), Is.EqualTo(forwardResponse.ContentType));
-        Assert.That(await response.Content.ReadAsByteArrayAsync(), Is.EqualTo(responseBodyContent));
+        Assert.That((await response.Content.ReadAsByteArrayAsync()), Is.Empty);
 
         liveReadingMapper.Verify(lrm => lrm.MapPvOutputArgs(
           It.IsAny<Uri>(), It.IsAny<string>(), It.IsAny<Stream>(), It.IsAny<string>(),
@@ -293,16 +266,12 @@ public class PvOutputFacadeControllerTest
     }
 
     [Test]
-    public async Task AddStatusPostPropagatesHttpWebExceptionResponseLessLogging()
+    public async Task AddStatusPostPropagatesErrorStatusCodeResponse()
     {
         // Arrange
-        forwardResponse.StatusCode = HttpStatusCode.BadRequest;
-        forwardResponse.ContentType = "some/contentType";
+        const string responseContentType = "some/contentType";
         var responseBodyContent = Encoding.UTF8.GetBytes("TheResponseBodyContent");
-        forwardResponse.SetContentBytes(responseBodyContent);
-
-        var exception = new HttpWebException("Drugs are baaad - m'kay", WebExceptionStatus.ConnectFailure, forwardResponse);
-        forwardRequest.SetResponse(exception);
+        var httpMessageHandler = SetupHttpClientFactory(HttpStatusCode.BadRequest, responseContentType, responseBodyContent);
         var content = new StringContent("TheRequestBody", Encoding.UTF8, "custom/content-request");
 
         // Act
@@ -310,7 +279,7 @@ public class PvOutputFacadeControllerTest
 
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
-        Assert.That(response.Content.Headers.ContentType.ToString(), Is.EqualTo(forwardResponse.ContentType));
+        Assert.That(response.Content.Headers.ContentType.ToString(), Is.EqualTo(responseContentType));
         Assert.That(await response.Content.ReadAsByteArrayAsync(), Is.EqualTo(responseBodyContent));
 
         liveReadingMapper.Verify(lrm => lrm.MapPvOutputArgs(
@@ -323,20 +292,43 @@ public class PvOutputFacadeControllerTest
     public void AddStatusPostThrows()
     {
         // Arrange
-        forwardRequest.SetResponse(new InvalidOperationException());
+        var httpMessageHandler = SetupHttpClientFactory();
+        httpMessageHandler.Setup(x => x(It.IsAny<HttpRequestMessage>(), It.IsAny<CancellationToken>()))
+            .Throws(new InvalidOperationException());
         var content = new StringContent("TheRequestBody", Encoding.UTF8, "custom/content-request");
 
         // Act & Assert
         Assert.ThrowsAsync<InvalidOperationException>(() => httpClient.PostAsync($"service/r2/addstatus.jsp", content));
     }
 
-    private void SetupResponse(HttpStatusCode statusCode, string contentType, byte[] responseBodyContent)
+    private Mock<Func<HttpRequestMessage, CancellationToken, HttpResponseMessage>> SetupHttpClientFactory(HttpStatusCode statusCode, string contentType = null, byte[] responseBodyContent = null)
     {
-        forwardRequest.SetResponse(forwardResponse);
+        var response = new HttpResponseMessage(statusCode);
 
-        forwardResponse.StatusCode = statusCode;
-        forwardResponse.ContentType = contentType;
-        forwardResponse.SetContentBytes(responseBodyContent);
+        if (! string.IsNullOrEmpty(contentType) && responseBodyContent != null)
+        {
+            var content = new ByteArrayContent(responseBodyContent);
+            content.Headers.ContentType = MediaTypeHeaderValue.Parse(contentType);
+            response.Content = content;
+        }
+
+        return SetupHttpClientFactory(response);
+    }
+
+    private Mock<Func<HttpRequestMessage, CancellationToken, HttpResponseMessage>> SetupHttpClientFactory(HttpResponseMessage response)
+    {
+        var httpMessageHandler = SetupHttpClientFactory();
+        httpMessageHandler.Setup(x => x(It.IsAny<HttpRequestMessage>(), It.IsAny<CancellationToken>())).Returns(response);
+        return httpMessageHandler;
+    }
+
+    private Mock<Func<HttpRequestMessage, CancellationToken, HttpResponseMessage>> SetupHttpClientFactory()
+    {
+        var func = new Mock<Func<HttpRequestMessage, CancellationToken, HttpResponseMessage>>();
+        var stub = new HttpMessageHandlerStub(func.Object);
+        var httpClient = new HttpClient(stub);
+        httpClientFactory.Setup(x => x.CreateClient(It.IsAny<string>())).Returns(httpClient);
+        return func;
     }
 
 }

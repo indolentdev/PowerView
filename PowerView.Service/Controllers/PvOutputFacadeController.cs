@@ -1,4 +1,6 @@
 ﻿using System.Globalization;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Http;
@@ -20,9 +22,9 @@ public class PvOutputFacadeController : ControllerBase
     private readonly IReadingAccepter readingAccepter;
     private readonly ILiveReadingMapper liveReadingMapper;
     private readonly PvOutputOptions options;
-    private readonly IHttpWebRequestFactory httpWebRequestFactory;
+    private readonly IHttpClientFactory httpClientFactory;
 
-    public PvOutputFacadeController(ILogger<PvOutputFacadeController> logger, IReadingAccepter readingAccepter, ILiveReadingMapper liveReadingMapper, IOptions<PvOutputOptions> options, IHttpWebRequestFactory httpWebRequestFactory)
+    public PvOutputFacadeController(ILogger<PvOutputFacadeController> logger, IReadingAccepter readingAccepter, ILiveReadingMapper liveReadingMapper, IOptions<PvOutputOptions> options, IHttpClientFactory httpClientFactory)
     {
         if (options == null) throw new ArgumentNullException(nameof(options));
 
@@ -30,7 +32,7 @@ public class PvOutputFacadeController : ControllerBase
         this.readingAccepter = readingAccepter ?? throw new ArgumentNullException(nameof(readingAccepter));
         this.liveReadingMapper = liveReadingMapper ?? throw new ArgumentNullException(nameof(liveReadingMapper));
         this.options = options.Value;
-        this.httpWebRequestFactory = httpWebRequestFactory ?? throw new ArgumentNullException(nameof(httpWebRequestFactory));
+        this.httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
     }
 
     [HttpGet("addstatus.jsp")]
@@ -40,45 +42,46 @@ public class PvOutputFacadeController : ControllerBase
         ControllerContext.HttpContext.Features.Get<IHttpBodyControlFeature>().AllowSynchronousIO = true;
         Request.EnableBuffering();
 
-        IHttpWebResponse forwardResponse;
+        var forwardRequest = CreateForwardRequest(Request, options.PvOutputAddStatusUrl);
+        HttpResponseMessage forwardResponse;
         try
         {
-            var forwardRequest = CreateForwardRequest(Request, options.PvOutputAddStatusUrl);
-            forwardResponse = forwardRequest.GetResponse();
+            using var httpClient = httpClientFactory.CreateClient(nameof(PvOutputFacadeController));
+            forwardResponse = httpClient.Send(forwardRequest, HttpCompletionOption.ResponseContentRead);
         }
-        catch (HttpWebException httpWebException)
+        catch (HttpRequestException httpRequestException)
         {
-            var forwardErrorResponse = httpWebException.Response;
-            if (forwardErrorResponse != null)
-            {
-                const string msg = "Experienced web exception forwarding PVOutput request";
-                if (httpWebException.Status == System.Net.WebExceptionStatus.ConnectFailure)
-                {
-                    logger.LogDebug(msg + $". Message:{httpWebException.Message} - Status:{httpWebException.Status}");
-                }
-                else
-                {
-                    logger.LogDebug(httpWebException, msg);
-                }
-                SetResponse(forwardErrorResponse);
-                return new EmptyResult();
-            }
-            logger.LogError(httpWebException, "Experienced web exception forwarding PVOutput request. Failed generating response. Responding with general error");
-            return StatusCode(StatusCodes.Status500InternalServerError, $"Internal error interacting with PVOutput. Error message:{httpWebException.Message}");
+            logger.LogInformation(httpRequestException, $"Experienced error forwarding request to PVOutput. Request:{forwardRequest}");
+
+            Response.StatusCode = 500;
+            return new EmptyResult();
+        }
+
+        try
+        {
+            forwardResponse.EnsureSuccessStatusCode();
+        }
+        catch (HttpRequestException httpRequestException)
+        {
+            logger.LogInformation(httpRequestException, $"Experienced error processing response from PVOutput. Request:{forwardRequest}, Response:{forwardResponse}");
+
+            SetResponse(forwardResponse);
+            forwardResponse.Dispose();
+            return new EmptyResult();
         }
 
         StoreValues(Request);
 
         SetResponse(forwardResponse);
+        forwardResponse.Dispose();
         return new EmptyResult();
     }
 
-    private IHttpWebRequest CreateForwardRequest(HttpRequest request, Uri pvOutputAddStatus)
+    private HttpRequestMessage CreateForwardRequest(HttpRequest request, Uri pvOutputAddStatus)
     {
+        var method = new HttpMethod(request.Method);
         var pvOutputAddStatusUrl = new Uri(pvOutputAddStatus, request.QueryString.ToString());
-        var forwardRequest = httpWebRequestFactory.Create(pvOutputAddStatusUrl);
-        forwardRequest.Method = request.Method;
-        forwardRequest.ContentType = request.Headers.ContentType;
+        var forwardRequest = new HttpRequestMessage(method, pvOutputAddStatusUrl);
 
         CopyHeader("X-Pvoutput-Apikey", request, forwardRequest);
         CopyHeader("X-Pvoutput-SystemId", request, forwardRequest);
@@ -88,9 +91,9 @@ public class PvOutputFacadeController : ControllerBase
         return forwardRequest;
     }
 
-    private void SetResponse(IHttpWebResponse forwardResponse)
+    private void SetResponse(HttpResponseMessage forwardResponse)
     {
-        Response.ContentType = forwardResponse.ContentType;
+        Response.ContentType = forwardResponse.Content.Headers.ContentType?.ToString();
         Response.StatusCode = (int)forwardResponse.StatusCode;
 
         CopyHeader("X-Rate-Limit-Remaining", forwardResponse.Headers, Response.Headers);
@@ -102,26 +105,33 @@ public class PvOutputFacadeController : ControllerBase
         forwardResponse.Dispose();
     }
 
-    private static void CopyHeader(string header, HttpRequest request, IHttpWebRequest forwardRequest)
+    private static void CopyHeader(string header, HttpRequest request, HttpRequestMessage forwardRequest)
     {
-        if (!request.Headers.Keys.Contains(header, new CaseInsensitiveStringEqualityComparer()))
+        if (!request.Headers.ContainsKey(header))
         {
             return;
         }
-        forwardRequest.Headers.Add(header, request.Headers[header].First());
+        IEnumerable<string> headerValues = request.Headers[header];
+        forwardRequest.Headers.Add(header, headerValues);
     }
 
-    private static void CopyHeader(string header, System.Net.WebHeaderCollection forwardResponse, IHeaderDictionary response)
+    private static void CopyHeader(string header, HttpResponseHeaders forwardResponse, IHeaderDictionary response)
     {
-        if (!forwardResponse.AllKeys.Contains(header, new CaseInsensitiveStringEqualityComparer()))
+        if (!forwardResponse.Contains(header))
         {
             return;
         }
-        response.Add(header, forwardResponse[header]);
+
+        response.Add(header, forwardResponse.GetValues(header).ToArray());
     }
 
-    private static void CopyContent(HttpRequest request, IHttpWebRequest forwardRequest)
+    private static void CopyContent(HttpRequest request, HttpRequestMessage forwardRequest)
     {
+        if (request.ContentType == null)
+        {
+            return;
+        }
+
         byte[] contentBytes;
         using (var memoryStream = new MemoryStream())
         {
@@ -130,18 +140,16 @@ public class PvOutputFacadeController : ControllerBase
             memoryStream.Position = 0; // rewind for reading to array
             contentBytes = memoryStream.ToArray();
         }
-        using (var forwardRequestContentStream = forwardRequest.GetRequestStream())
-        {
-            forwardRequestContentStream.Write(contentBytes, 0, contentBytes.Length);
-        }
+        forwardRequest.Content = new ByteArrayContent(contentBytes);
+        forwardRequest.Content.Headers.ContentType = MediaTypeHeaderValue.Parse(request.ContentType);
     }
 
-    private static void CopyContent(IHttpWebResponse forwardResponse, HttpResponse response)
+    private static void CopyContent(HttpResponseMessage forwardResponse, HttpResponse response)
     {
         byte[] contentBytes;
         using (var ms = new MemoryStream())
         {
-            using (var responseStream = forwardResponse.GetResponseStream())
+            using (var responseStream = forwardResponse.Content.ReadAsStream())
             {
                 responseStream.CopyTo(ms);
                 contentBytes = ms.ToArray();

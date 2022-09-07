@@ -2,8 +2,9 @@
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Text.Json;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
+using System.Net.Http.Json;
 using PowerView.Model.Repository;
 
 namespace PowerView.Service.EventHub
@@ -12,13 +13,13 @@ namespace PowerView.Service.EventHub
     {
         private static readonly Uri uri = new Uri("http://ip-api.com/json/");
         private readonly ILogger logger;
-        private readonly IHttpWebRequestFactory webRequestFactory;
+        private readonly IHttpClientFactory httpClientFactory;
         private readonly ISettingRepository settingRepository;
 
-        public LocationResolver(ILogger<LocationResolver> logger, IHttpWebRequestFactory webRequestFactory, ISettingRepository settingRepository)
+        public LocationResolver(ILogger<LocationResolver> logger, IHttpClientFactory httpClientFactory, ISettingRepository settingRepository)
         {
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            this.webRequestFactory = webRequestFactory ?? throw new ArgumentNullException(nameof(webRequestFactory));
+            this.httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
             this.settingRepository = settingRepository ?? throw new ArgumentNullException(nameof(settingRepository));
         }
 
@@ -72,40 +73,33 @@ namespace PowerView.Service.EventHub
 
         private LocationDto GetLocationContentFromIpAddress()
         {
-            string content;
-
-            var request = webRequestFactory.Create(uri);
-            request.Method = "GET";
-            request.Timeout = 10 * 1000; // 10 sec.
-            try
-            {
-                var response = request.GetResponse();
-                using (var sr = new System.IO.StreamReader(response.GetResponseStream(), System.Text.Encoding.UTF8))
-                {
-                    content = sr.ReadToEnd();
-                }
-            }
-            catch (HttpWebException e)
-            {
-                var msg = string.Format(CultureInfo.InvariantCulture, "Location resolve failed. Request error. {0}", uri);
-                logger.LogInformation(e, msg);
-                return null;
-            }
-
             LocationDto dto;
+
+            var request = new HttpRequestMessage(HttpMethod.Get, uri);
+            
+            using var httpClient = httpClientFactory.CreateClient(nameof(LocationResolver));
+            httpClient.Timeout = TimeSpan.FromSeconds(10);
+
             try
             {
-                dto = JsonConvert.DeserializeObject<LocationDto>(content);
+                var response = httpClient.Send(request, HttpCompletionOption.ResponseContentRead);
+                response.EnsureSuccessStatusCode();
+                dto = response.Content.ReadFromJsonAsync<LocationDto>().GetAwaiter().GetResult();
+            }
+            catch (HttpRequestException e)
+            {
+                logger.LogInformation(e, $"Location resolve failed. Request error. {request}");
+                return null;
             }
             catch (JsonException e)
             {
-                logger.LogWarning(e, "Location resolve failed. Respnose decoding error. Response:" + content);
+                logger.LogWarning(e, "Location resolve failed. Respnose decoding error.");
                 return null;
             }
 
             if (dto == null || !string.Equals(dto.status, "success", StringComparison.OrdinalIgnoreCase))
             {
-                logger.LogWarning("Location resolve failed. Respnose error. Response:" + content);
+                logger.LogWarning($"Location resolve failed. Respnose error. {dto?.status}");
                 return null;
             }
 
