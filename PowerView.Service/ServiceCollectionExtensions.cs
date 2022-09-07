@@ -16,7 +16,6 @@ namespace PowerView.Service
         {
             serviceCollection.AddTransient<IEventQueue, EventQueue>();
             serviceCollection.AddTransient<IReadingAccepter, ReadingAccepter>();
-            serviceCollection.AddTransient<IHttpWebRequestFactory, HttpWebRequestFactory>();
             serviceCollection.AddTransient<IUrlProvider, UrlProvider>();
 
             // Translations
@@ -52,61 +51,6 @@ namespace PowerView.Service
 
             return serviceCollection;
         }
-        /*      
-                public static void Register(ContainerBuilder containerBuilder, Uri baseUri, Uri pvOutputAddStatusUri, string pvDeviceLabel, string pvDeviceId, string pvDeviceIdParam,
-                                            string actualPowerP23L1Param, string actualPowerP23L2Param, string actualPowerP23L3Param)
-                {
-                    containerBuilder.RegisterType<ExitSignal>().As<IExitSignal>().As<IExitSignalProvider>().SingleInstance();
-
-
-
-
-                    // Modules
-                    containerBuilder.RegisterType<PvOutputFacadeModuleConfigProvider>().As<IPvOutputFacadeModuleConfigProvider>()
-                      .WithParameter(new ResolvedParameter(
-                        (pi, ctx) => pi.Position == 0 && pi.ParameterType == typeof(Uri),
-                        (pi, ctx) => pvOutputAddStatusUri
-                      ))
-                      .WithParameter(new ResolvedParameter(
-                        (pi, ctx) => pi.Position == 1 && pi.ParameterType == typeof(string),
-                        (pi, ctx) => pvDeviceLabel
-                      ))
-                      .WithParameter(new ResolvedParameter(
-                        (pi, ctx) => pi.Position == 2 && pi.ParameterType == typeof(string),
-                        (pi, ctx) => pvDeviceId
-                      ))
-                      .WithParameter(new ResolvedParameter(
-                        (pi, ctx) => pi.Position == 3 && pi.ParameterType == typeof(string),
-                        (pi, ctx) => pvDeviceIdParam
-                      ))
-                      .WithParameter(new ResolvedParameter(
-                        (pi, ctx) => pi.Position == 4 && pi.ParameterType == typeof(string),
-                        (pi, ctx) => actualPowerP23L1Param
-                      ))
-                      .WithParameter(new ResolvedParameter(
-                        (pi, ctx) => pi.Position == 5 && pi.ParameterType == typeof(string),
-                        (pi, ctx) => actualPowerP23L2Param
-                      ))
-                      .WithParameter(new ResolvedParameter(
-                        (pi, ctx) => pi.Position == 6 && pi.ParameterType == typeof(string),
-                        (pi, ctx) => actualPowerP23L3Param
-                      ));
-
-
-                    // "Root"
-                    containerBuilder.RegisterType<UrlProvider>().As<IUrlProvider>()
-                      .WithParameter(new ResolvedParameter(
-                        (pi, ctx) => pi.Position == 0 && pi.ParameterType == typeof(Uri),
-                        (pi, ctx) => baseUri
-                      ));
-                    containerBuilder.RegisterType<ServiceHost>().As<IServiceHost>()
-                      .WithParameter(new ResolvedParameter(
-                        (pi, ctx) => pi.Position == 1 && pi.ParameterType == typeof(Uri),
-                        (pi, ctx) => baseUri
-                      )).SingleInstance();
-                    containerBuilder.RegisterType<UsageMonitor>().As<IUsageMonitor>();
-                }
-        */
     }
 }
 

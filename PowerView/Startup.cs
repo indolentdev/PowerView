@@ -35,7 +35,7 @@ public class Startup
         services.AddTransient<ILocationSetup, LocationSetup>();
         services.AddTransient<ITestDataSetup, TestDataSetup>();
 
-        // Add services to the container.
+        services.AddHttpClient();
 
         services.AddControllers(x => x.ModelBinderProviders.Insert(0, new PowerView.Service.Controllers.EmptyQueryStringBinderProvider()));
 
