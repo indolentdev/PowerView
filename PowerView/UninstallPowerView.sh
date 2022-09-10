@@ -15,7 +15,7 @@ then
   exit 1
 fi
 
-rm /etc/systemd/system/powerview.service
+rm /etc/systemd/system/powerview2.service
 systemctl daemon-reload
 
 echo PowerView service unregistered
