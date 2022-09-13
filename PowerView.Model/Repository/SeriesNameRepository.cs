@@ -82,10 +82,10 @@ namespace PowerView.Model.Repository
       var cutoffDateTime = DateTime.UtcNow - TimeSpan.FromDays(cutoffDays);
 
       string sqlQuery = @"
-SELECT rea.Label AS Label, reg.ObisCode AS ObisCode
-FROM {0} AS rea JOIN {1} AS reg ON rea.Id=reg.ReadingId
+SELECT lbl.LabelName AS Label, reg.ObisCode AS ObisCode
+FROM {0} AS rea JOIN Label AS lbl ON rea.LabelId=lbl.Id JOIN {1} AS reg ON rea.Id=reg.ReadingId
 WHERE rea.Timestamp > @Cutoff
-GROUP BY rea.Label, reg.ObisCode;";
+GROUP BY lbl.LabelName, reg.ObisCode;";
 
       var readingTable = typeof(TReading).Name;
       var registerTable = typeof(TRegister).Name;

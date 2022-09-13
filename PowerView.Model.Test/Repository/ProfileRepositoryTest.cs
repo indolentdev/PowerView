@@ -27,7 +27,7 @@ namespace PowerView.Model.Test.Repository
     {
       // Arrange
       var timestamp = new DateTime(2015, 02, 12, 22, 15, 33, DateTimeKind.Utc);
-      Insert(new Db.LiveReading { Label = "TheLabel", DeviceId = "1", Timestamp = timestamp },
+      DbContext.Insert(new Db.LiveReading { LabelId = 1, DeviceId = 10, Timestamp = timestamp },
         new Db.LiveRegister { ObisCode = (ObisCode)"1.0.1.8.0.255", Value = 1 });
       var target = CreateTarget();
 
@@ -43,15 +43,14 @@ namespace PowerView.Model.Test.Repository
     public void GetDayProfileForOneLabel()
     {
       // Arrange
-      const string label = "TheLabel";
       var timestamp = new DateTime(2015, 02, 11, 23, 55, 0, DateTimeKind.Local).ToUniversalTime();
-      Insert(new Db.LiveReading { Label = label, DeviceId = "1", Timestamp = timestamp },
+      (var labels, var _) = DbContext.Insert(new Db.LiveReading { LabelId = 1, DeviceId = 10, Timestamp = timestamp },
         new Db.LiveRegister { ObisCode = (ObisCode)"1.1.1.1.1.1", Value = 1, Unit = (byte)Unit.WattHour },
         new Db.LiveRegister { ObisCode = (ObisCode)"11.11.11.11.11.11", Value = 11, Unit = (byte)Unit.Watt });
-      Insert(new Db.LiveReading { Label = label, DeviceId = "1", Timestamp = timestamp + TimeSpan.FromMinutes(5) },
+      DbContext.Insert(new Db.LiveReading { LabelId = 1, DeviceId = 10, Timestamp = timestamp + TimeSpan.FromMinutes(5) },
         new Db.LiveRegister { ObisCode = (ObisCode)"1.1.1.1.1.1", Value = 2, Unit = (byte)Unit.WattHour },
         new Db.LiveRegister { ObisCode = (ObisCode)"11.11.11.11.11.11", Value = 22, Unit = (byte)Unit.Watt });
-      Insert(new Db.LiveReading { Label = label, DeviceId = "1", Timestamp = timestamp + TimeSpan.FromMinutes(10) },
+      DbContext.Insert(new Db.LiveReading { LabelId = 1, DeviceId = 10, Timestamp = timestamp + TimeSpan.FromMinutes(10) },
         new Db.LiveRegister { ObisCode = (ObisCode)"1.1.1.1.1.1", Value = 3, Unit = (byte)Unit.WattHour });
       var target = CreateTarget();
       var start = timestamp + TimeSpan.FromMinutes(5);
@@ -66,7 +65,7 @@ namespace PowerView.Model.Test.Repository
       Assert.That(labelSeriesSet.End, Is.EqualTo(end));
       Assert.That(labelSeriesSet.Count(), Is.EqualTo(1));
       var labelProfile = labelSeriesSet.First();
-      Assert.That(labelProfile.Label, Is.EqualTo(label));
+      Assert.That(labelProfile.Label, Is.EqualTo(labels.First()));
       Assert.That(labelProfile.Count(), Is.EqualTo(2));
       Assert.That(labelProfile["1.1.1.1.1.1"].Count(), Is.EqualTo(3));
       Assert.That(labelProfile["11.11.11.11.11.11"].Count(), Is.EqualTo(2));
@@ -91,7 +90,7 @@ namespace PowerView.Model.Test.Repository
     {
       // Arrange
       var timestamp = new DateTime(2015, 02, 12, 22, 15, 33, DateTimeKind.Utc);
-      Insert(new Db.DayReading { Label = "TheLabel", DeviceId = "1", Timestamp = timestamp },
+      DbContext.Insert(new Db.DayReading { LabelId = 1, DeviceId = 10, Timestamp = timestamp },
         new Db.DayRegister { ObisCode = (ObisCode)"1.0.1.8.0.255", Value = 1 });
       var target = CreateTarget();
 
@@ -107,15 +106,14 @@ namespace PowerView.Model.Test.Repository
     public void GetMonthProfileForOneLabel()
     {
       // Arrange
-      const string label = "TheLabel";
       var timestamp = new DateTime(2015, 01, 31, 0, 0, 0, DateTimeKind.Local).ToUniversalTime();
-      Insert(new Db.DayReading { Label = label, DeviceId = "1", Timestamp = timestamp },
+      (var labels, var _) = DbContext.Insert(new Db.DayReading { LabelId = 1, DeviceId = 10, Timestamp = timestamp },
         new Db.DayRegister { ObisCode = (ObisCode)"1.1.1.1.1.1", Value = 1, Unit = (byte)Unit.WattHour },
         new Db.DayRegister { ObisCode = (ObisCode)"11.11.11.11.11.11", Value = 11, Unit = (byte)Unit.Watt });
-      Insert(new Db.DayReading { Label = label, DeviceId = "1", Timestamp = timestamp + TimeSpan.FromDays(1) },
+      DbContext.Insert(new Db.DayReading { LabelId = 1, DeviceId = 10, Timestamp = timestamp + TimeSpan.FromDays(1) },
         new Db.DayRegister { ObisCode = (ObisCode)"1.1.1.1.1.1", Value = 2, Unit = (byte)Unit.WattHour },
         new Db.DayRegister { ObisCode = (ObisCode)"11.11.11.11.11.11", Value = 22, Unit = (byte)Unit.Watt });
-      Insert(new Db.DayReading { Label = label, DeviceId = "1", Timestamp = timestamp + TimeSpan.FromDays(2) },
+      DbContext.Insert(new Db.DayReading { LabelId = 1, DeviceId = 10, Timestamp = timestamp + TimeSpan.FromDays(2) },
         new Db.DayRegister { ObisCode = (ObisCode)"1.1.1.1.1.1", Value = 3, Unit = (byte)Unit.WattHour });
       var target = CreateTarget();
       var start = timestamp + TimeSpan.FromDays(1);
@@ -130,7 +128,7 @@ namespace PowerView.Model.Test.Repository
       Assert.That(labelSeriesSet.End, Is.EqualTo(end));
       Assert.That(labelSeriesSet.Count(), Is.EqualTo(1));
       var labelProfile = labelSeriesSet.First();
-      Assert.That(labelProfile.Label, Is.EqualTo(label));
+      Assert.That(labelProfile.Label, Is.EqualTo(labels.First()));
       Assert.That(labelProfile.Count(), Is.EqualTo(2));
       Assert.That(labelProfile["1.1.1.1.1.1"].Count(), Is.EqualTo(3));
       Assert.That(labelProfile["11.11.11.11.11.11"].Count(), Is.EqualTo(2));
@@ -155,7 +153,7 @@ namespace PowerView.Model.Test.Repository
     {
       // Arrange
       var timestamp = new DateTime(2015, 02, 12, 22, 15, 33, DateTimeKind.Utc);
-      Insert(new Db.MonthReading { Label = "TheLabel", DeviceId = "1", Timestamp = timestamp },
+      DbContext.Insert(new Db.MonthReading { LabelId = 1, DeviceId = 10, Timestamp = timestamp },
         new Db.MonthRegister { ObisCode = (ObisCode)"1.0.1.8.0.255", Value = 1 });
       var target = CreateTarget();
 
@@ -171,15 +169,14 @@ namespace PowerView.Model.Test.Repository
     public void GetYearProfileForOneLabel()
     {
       // Arrange
-      const string label = "TheLabel";
       var timestamp = new DateTime(2014, 12, 01, 0, 0, 0, DateTimeKind.Local).ToUniversalTime();
-      Insert(new Db.MonthReading { Label = label, DeviceId = "1", Timestamp = timestamp },
+      (var labels, var _) = DbContext.Insert(new Db.MonthReading { LabelId = 1, DeviceId = 10, Timestamp = timestamp },
         new Db.MonthRegister { ObisCode = (ObisCode)"1.1.1.1.1.1", Value = 1, Unit = (byte)Unit.WattHour },
         new Db.MonthRegister { ObisCode = (ObisCode)"11.11.11.11.11.11", Value = 11, Unit = (byte)Unit.Watt });
-      Insert(new Db.MonthReading { Label = label, DeviceId = "1", Timestamp = timestamp.AddMonths(1) },
+      DbContext.Insert(new Db.MonthReading { LabelId = 1, DeviceId = 10, Timestamp = timestamp.AddMonths(1) },
         new Db.MonthRegister { ObisCode = (ObisCode)"1.1.1.1.1.1", Value = 2, Unit = (byte)Unit.WattHour },
         new Db.MonthRegister { ObisCode = (ObisCode)"11.11.11.11.11.11", Value = 22, Unit = (byte)Unit.Watt });
-      Insert(new Db.MonthReading { Label = label, DeviceId = "1", Timestamp = timestamp.AddMonths(2) },
+      DbContext.Insert(new Db.MonthReading { LabelId = 1, DeviceId = 10, Timestamp = timestamp.AddMonths(2) },
         new Db.MonthRegister { ObisCode = (ObisCode)"1.1.1.1.1.1", Value = 3, Unit = (byte)Unit.WattHour });
       var target = CreateTarget();
       var start = timestamp.AddMonths(1);
@@ -194,22 +191,10 @@ namespace PowerView.Model.Test.Repository
       Assert.That(labelSeriesSet.End, Is.EqualTo(end));
       Assert.That(labelSeriesSet.Count(), Is.EqualTo(1));
       var labelProfile = labelSeriesSet.First();
-      Assert.That(labelProfile.Label, Is.EqualTo(label));
+      Assert.That(labelProfile.Label, Is.EqualTo(labels.First()));
       Assert.That(labelProfile.Count(), Is.EqualTo(2));
       Assert.That(labelProfile["1.1.1.1.1.1"].Count(), Is.EqualTo(3));
       Assert.That(labelProfile["11.11.11.11.11.11"].Count(), Is.EqualTo(2));
-    }
-
-    private void Insert<TReading, TRegister>(TReading reading, params TRegister[] registers) 
-      where TReading : class, IDbReading
-      where TRegister : class, IDbRegister
-    {
-      DbContext.InsertReadings(reading);
-      foreach (var register in registers)
-      {
-        register.ReadingId = reading.Id;
-      }
-      DbContext.InsertRegisters(registers);
     }
 
     private ProfileRepository CreateTarget()

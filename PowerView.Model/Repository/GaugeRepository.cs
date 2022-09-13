@@ -46,8 +46,8 @@ namespace PowerView.Model.Repository
             var cutoffDateTime = dateTime - TimeSpan.FromDays(cutoffDays);
 
             var sqlQuery = @"
-SELECT rea.Label,rea.DeviceId,rea.Timestamp,reg.ObisCode,reg.Value,reg.Scale,reg.Unit 
-FROM {0} AS rea JOIN {1} AS reg ON rea.Id=reg.ReadingId
+SELECT lbl.LabelName AS Label,dev.DeviceName AS DeviceId,rea.Timestamp,reg.ObisCode,reg.Value,reg.Scale,reg.Unit 
+FROM {0} AS rea JOIN Label AS lbl ON rea.LabelId=lbl.Id JOIN Device AS dev ON rea.DeviceId=dev.Id JOIN {1} AS reg ON rea.Id=reg.ReadingId
 WHERE rea.Timestamp > @Cutoff
 ORDER BY rea.Timestamp DESC;";
             var readingTable = typeof(TReading).Name;
@@ -96,8 +96,8 @@ ORDER BY rea.Timestamp DESC;";
             var cutoffDateTime = dateTime - TimeSpan.FromDays(cutoffDays);
 
             var sqlQuery = @"
-SELECT rea.Label,rea.DeviceId,rea.Timestamp,reg.ObisCode,reg.Value,reg.Scale,reg.Unit 
-FROM {0} AS rea JOIN {1} AS reg ON rea.Id=reg.ReadingId
+SELECT lbl.LabelName AS Label,dev.DeviceName AS DeviceId,rea.Timestamp,reg.ObisCode,reg.Value,reg.Scale,reg.Unit 
+FROM {0} AS rea JOIN Label AS lbl ON rea.LabelId=lbl.Id JOIN Device AS dev ON rea.DeviceId=dev.Id JOIN {1} AS reg ON rea.Id=reg.ReadingId
 WHERE rea.Timestamp > @Cutoff AND rea.Timestamp < @dateTime
 ORDER BY rea.Timestamp DESC;";
             var readingTable = typeof(TReading).Name;

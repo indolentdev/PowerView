@@ -98,8 +98,8 @@ namespace PowerView.Model.Repository
             var cutoffDateTime = dateTime - TimeSpan.FromDays(cutoffDays);
 
             var sqlQuery = @"
-SELECT rea.Label,rea.Timestamp,reg.ObisCode,reg.Unit 
-FROM {0} AS rea JOIN {1} AS reg ON rea.Id=reg.ReadingId
+SELECT lbl.LabelName AS Label,rea.Timestamp,reg.ObisCode,reg.Unit 
+FROM {0} AS rea JOIN Label AS lbl ON rea.LabelId=lbl.Id JOIN {1} AS reg ON rea.Id=reg.ReadingId
 WHERE rea.Timestamp > @Cutoff
 ORDER BY rea.Timestamp DESC;";
             var readingTable = typeof(TReading).Name;

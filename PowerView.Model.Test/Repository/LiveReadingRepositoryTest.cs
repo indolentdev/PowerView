@@ -68,7 +68,7 @@ namespace PowerView.Model.Test.Repository
 
     private void AssertLiveReading(LiveReading liveReading)
     {
-      var rd = DbContext.QueryTransaction<long>("SELECT Id FROM LiveReading WHERE Label = @Label AND DeviceId = @DeviceId AND Timestamp = @Timestamp;", liveReading);
+      var rd = DbContext.QueryTransaction<long>("SELECT lr.Id FROM LiveReading AS lr JOIN Label AS lbl ON lr.LabelId=lbl.Id JOIN Device AS dev ON lr.DeviceId=dev.Id WHERE lbl.LabelName = @Label AND dev.DeviceName = @DeviceId AND lr.Timestamp = @Timestamp;", liveReading);
       Assert.That(rd.Count, Is.EqualTo(1));
 
       var reg = DbContext.QueryTransaction<dynamic>("SELECT * FROM LiveRegister WHERE ReadingId = @ReadingId;", new { ReadingId = rd.First() });
