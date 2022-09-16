@@ -655,7 +655,7 @@ namespace PowerView.Model.Test.Repository
       AssertStreamPosition("YearReading", 1, monthReading3.Id);
     }
 
-    private void AssertReading<TReading>(byte labelId, byte deviceId, DateTime timestamp)
+    private void AssertReading<TReading>(byte labelId, byte deviceId, UnixTime timestamp)
       where TReading : class, IDbReading
     {
       var tableName = typeof(TReading).Name;

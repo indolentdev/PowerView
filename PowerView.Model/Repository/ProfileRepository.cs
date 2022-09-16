@@ -40,7 +40,7 @@ FROM {0} AS rea JOIN Label AS lbl ON rea.LabelId=lbl.Id JOIN Device AS dev ON re
 WHERE rea.Timestamp >= @From AND rea.Timestamp < @To;";
       sqlQuery = string.Format(CultureInfo.InvariantCulture, sqlQuery, readingTable, registerTable);
 
-      var resultSet = DbContext.QueryTransaction<RowLocal>(sqlQuery, new { From = preStart, To = end });
+      var resultSet = DbContext.QueryTransaction<RowLocal>(sqlQuery, new { From = (UnixTime)preStart, To = (UnixTime)end });
 
       var labelSeries = GetLabelSeries(resultSet);
 
@@ -74,7 +74,7 @@ WHERE rea.Timestamp >= @From AND rea.Timestamp < @To;";
         {
             public string Label { get; set; }
             public string DeviceId { get; set; }
-            public DateTime Timestamp { get; set; }
+            public UnixTime Timestamp { get; set; }
             public long ObisCode { get; set; }
             public int Value { get; set; }
             public short Scale { get; set; }

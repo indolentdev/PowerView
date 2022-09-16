@@ -2,19 +2,19 @@
 
 namespace PowerView.Model.Repository
 {
-    public interface IDbEntity
+    internal interface IDbEntity
     {
         long Id { get; set; }
     }
 
-    public interface IDbReading : IDbEntity
+    internal interface IDbReading : IDbEntity
     {
         byte LabelId { get; set; }
         byte DeviceId { get; set; }
-        DateTime Timestamp { get; set; }
+        UnixTime Timestamp { get; set; }
     }
 
-    public interface IDbRegister
+    internal interface IDbRegister
     {
         long ObisCode { get; set; }
         int Value { get; set; }
@@ -30,7 +30,7 @@ namespace PowerView.Model.Repository
             public long Id { get; set; }
             public byte LabelId { get; set; }
             public byte DeviceId { get; set; }
-            public DateTime Timestamp { get; set; }
+            public UnixTime Timestamp { get; set; }
         }
 
         public class LiveRegister : IDbRegister
@@ -47,7 +47,7 @@ namespace PowerView.Model.Repository
             public long Id { get; set; }
             public byte LabelId { get; set; }
             public byte DeviceId { get; set; }
-            public DateTime Timestamp { get; set; }
+            public UnixTime Timestamp { get; set; }
         }
 
         public class DayRegister : IDbRegister
@@ -65,7 +65,7 @@ namespace PowerView.Model.Repository
             public long Id { get; set; }
             public byte LabelId { get; set; }
             public byte DeviceId { get; set; }
-            public DateTime Timestamp { get; set; }
+            public UnixTime Timestamp { get; set; }
         }
 
         public class MonthRegister : IDbRegister
@@ -83,7 +83,7 @@ namespace PowerView.Model.Repository
             public long Id { get; set; }
             public byte LabelId { get; set; }
             public byte DeviceId { get; set; }
-            public DateTime Timestamp { get; set; }
+            public UnixTime Timestamp { get; set; }
         }
 
         public class YearRegister : IDbRegister
@@ -167,7 +167,7 @@ namespace PowerView.Model.Repository
             public long Id { get; set; }
             public string Label { get; set; }
             public string MeterEventType { get; set; }
-            public DateTime DetectTimestamp { get; set; }
+            public UnixTime DetectTimestamp { get; set; }
             public bool Flag { get; set; }
             public string Amplification { get; set; }
         }

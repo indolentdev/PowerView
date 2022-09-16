@@ -1,6 +1,7 @@
 using System.Data;
-using System.Globalization;
 using Dapper;
+
+namespace PowerView.Model.Repository;
 
 public static class DapperConfig
 {
@@ -10,38 +11,55 @@ public static class DapperConfig
     {
         if (configureComplete) return;
 
-        SqlMapper.AddTypeHandler(new DateTimeUtcHandler());
+        SqlMapper.AddTypeHandler(new UnixTimeHandler());
+        SqlMapper.AddTypeHandler(new DateTimeBlockerHandler());
 
         configureComplete = true;
     }
 
     /// <summary>
-    /// Microsoft.Data.Sqlite defaults to string type in the database and DateTimeKind.Unspecified.
-    /// PowerView uses invariant UTC.
-    /// So bridge the two.
+    /// Microsoft.Data.Sqlite defaults to string type in the database (and DateTimeKind.Unspecified).
+    /// We want to use unix timestamps in the database to circumvent the (costy) string representations.
+    /// This handler enables <see cref="UnixTime"/> for use with Dapper.
     /// </summary>
-    private class DateTimeUtcHandler : SqlMapper.TypeHandler<DateTime>
+    internal class UnixTimeHandler : Dapper.SqlMapper.TypeHandler<UnixTime>
     {
-        public override void SetValue(IDbDataParameter parameter, DateTime value) 
+        public override UnixTime Parse(object value)
         {
-            if (value.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException(nameof(value), $"Must be UTC. Was:{value.Kind}");
+            if (value is long valueLong)
+            {
+                return new UnixTime(valueLong);
+            }
+            throw new ArgumentOutOfRangeException(nameof(value), value, "Must be Int64.");
+        }
+
+        public override void SetValue(IDbDataParameter parameter, UnixTime value)
+        {
+            parameter.Value = value.ToUnixTimeSeconds();
+        }
+    }
+
+
+    /// <summary>
+    /// Microsoft.Data.Sqlite defaults to string type in the database (and DateTimeKind.Unspecified).
+    /// We want to use unix timestamps in the database to circumvent the (costy) string representations.
+    /// This handler prevents use of <see cref="DateTime"/> with Dapper (more or less..)
+    /// </summary>
+    internal class DateTimeBlockerHandler : SqlMapper.TypeHandler<DateTime>
+    {
+        public override void SetValue(IDbDataParameter parameter, DateTime value)
+        {
+            throw new NotSupportedException("Do not use DateTime with Microsoft.Data.Sqlite as it enforces use of an underlying string. Use UnixTime instead, it uses Int64.");
+            //            if (value.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException(nameof(value), $"Must be UTC. Was:{value.Kind}");
 
             // Leave it to the provider to convert DateTime to string:
             // https://github.com/dotnet/efcore/blob/release/7.0/src/Microsoft.Data.Sqlite.Core/SqliteValueBinder.cs#L97
-            parameter.Value = value;
+            //            parameter.Value = value;
         }
 
         public override DateTime Parse(object value)
         {
-            if (value is string stringValue)
-            {
-                var dateTime = DateTime.Parse(stringValue, CultureInfo.InvariantCulture);
-                return DateTime.SpecifyKind(dateTime, DateTimeKind.Utc);
-            }
-            else
-            {
-                throw new ArgumentOutOfRangeException(nameof(value), $"Must be string. Was:{value.GetType().Name}");
-            }
+            throw new NotSupportedException("Do not use DateTime with Microsoft.Data.Sqlite as it enforces use of an underlying string. Use UnixTime instead, it uses Int64.");
         }
     }
 }

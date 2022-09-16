@@ -79,7 +79,7 @@ namespace PowerView.Model.Repository
 
     private IList<dynamic> GetRecent<TReading, TRegister>(IDbTransaction transaction, int cutoffDays) where TReading : IDbReading where TRegister : IDbRegister
     {
-      var cutoffDateTime = DateTime.UtcNow - TimeSpan.FromDays(cutoffDays);
+      UnixTime cutoffDateTime = DateTime.UtcNow - TimeSpan.FromDays(cutoffDays);
 
       string sqlQuery = @"
 SELECT lbl.LabelName AS Label, reg.ObisCode AS ObisCode

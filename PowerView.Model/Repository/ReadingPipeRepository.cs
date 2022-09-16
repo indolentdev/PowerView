@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Reflection;
+﻿using System.Globalization;
 using Microsoft.Data.Sqlite;
 using Dapper;
 
@@ -93,7 +89,7 @@ namespace PowerView.Model.Repository
     private class RowLocal
     {
       public byte LabelId { get; set; }
-      public DateTime MaxTimestamp { get; set; }
+      public UnixTime MaxTimestamp { get; set; }
     }
 
     private IDictionary<byte, IList<TSrcReading>> GetReadingsByLabelId<TSrcReading>(IDictionary<byte, long> streamPositions)
@@ -125,7 +121,7 @@ namespace PowerView.Model.Repository
       
       var tableName = GetTableName<TSrcReading>();
 
-      var timestamp = DateTime.UtcNow.Subtract(TimeSpan.FromDays(600)); // cap.. max almost two years..
+      UnixTime timestamp = DateTime.UtcNow.Subtract(TimeSpan.FromDays(600)); // cap.. max almost two years..
 
       var sqlQuery = "SELECT DISTINCT LabelId FROM {0} WHERE Timestamp > @Timestamp;";
       sqlQuery = string.Format(CultureInfo.InvariantCulture, sqlQuery, tableName);

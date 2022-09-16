@@ -95,7 +95,7 @@ namespace PowerView.Model.Repository
 
         private IList<RowLocal> GetLatestRegisters<TReading, TRegister>(DateTime dateTime, int cutoffDays) where TReading : IDbReading where TRegister : IDbRegister
         {
-            var cutoffDateTime = dateTime - TimeSpan.FromDays(cutoffDays);
+            UnixTime cutoffDateTime = dateTime - TimeSpan.FromDays(cutoffDays);
 
             var sqlQuery = @"
 SELECT lbl.LabelName AS Label,rea.Timestamp,reg.ObisCode,reg.Unit 
@@ -113,7 +113,7 @@ ORDER BY rea.Timestamp DESC;";
         {
             public string Label { get; set; }
             public long ObisCode { get; set; }
-            public DateTime Timestamp { get; set; }
+            public UnixTime Timestamp { get; set; }
             public byte Unit { get; set; }
         }
 

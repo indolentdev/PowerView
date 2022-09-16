@@ -43,7 +43,7 @@ namespace PowerView.Model.Repository
         /// </summary>
         private void GetLatestGaugeValueSet<TReading, TRegister>(IDbTransaction transaction, GaugeSetName name, DateTime dateTime, int cutoffDays, List<GaugeValueSet> result) where TReading : IDbReading where TRegister : IDbRegister
         {
-            var cutoffDateTime = dateTime - TimeSpan.FromDays(cutoffDays);
+            UnixTime cutoffDateTime = dateTime - TimeSpan.FromDays(cutoffDays);
 
             var sqlQuery = @"
 SELECT lbl.LabelName AS Label,dev.DeviceName AS DeviceId,rea.Timestamp,reg.ObisCode,reg.Value,reg.Scale,reg.Unit 
@@ -93,7 +93,7 @@ ORDER BY rea.Timestamp DESC;";
         /// </summary>
         private void GetCustomGaugeValueSet<TReading, TRegister>(IDbTransaction transaction, GaugeSetName name, DateTime dateTime, int cutoffDays, List<GaugeValueSet> result) where TReading : IDbReading where TRegister : IDbRegister
         {
-            var cutoffDateTime = dateTime - TimeSpan.FromDays(cutoffDays);
+            UnixTime cutoffDateTime = dateTime - TimeSpan.FromDays(cutoffDays);
 
             var sqlQuery = @"
 SELECT lbl.LabelName AS Label,dev.DeviceName AS DeviceId,rea.Timestamp,reg.ObisCode,reg.Value,reg.Scale,reg.Unit 
@@ -132,7 +132,7 @@ ORDER BY rea.Timestamp DESC;";
         {
             public string Label { get; set; }
             public string DeviceId { get; set; }
-            public DateTime Timestamp { get; set; }
+            public UnixTime Timestamp { get; set; }
             public long ObisCode { get; set; }
             public int Value { get; set; }
             public short Scale { get; set; }
