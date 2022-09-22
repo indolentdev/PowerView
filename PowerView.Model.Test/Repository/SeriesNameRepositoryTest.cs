@@ -92,8 +92,9 @@ namespace PowerView.Model.Test.Repository
             var reading = new TReading { LabelId = labelId, DeviceId = 10, Timestamp = DateTime.UtcNow };
             (var labels, var _) = DbContext.InsertReadings(reading);
 
+            var obisCodesDict = DbContext.InsertObisCodes(obisCodes).ToDictionary(x => x.ObisCode, x => x.Id);
             var registers = obisCodes
-              .Select(oc => (IDbRegister)new TRegister { ObisCode = oc, Value = 2, Scale = 0, Unit = (byte)Unit.Watt, ReadingId = reading.Id })
+              .Select(oc => (IDbRegister)new TRegister { ObisId = obisCodesDict[oc], Value = 2, Scale = 0, Unit = (byte)Unit.Watt, ReadingId = reading.Id })
               .ToArray();
             DbContext.InsertRegisters(registers);
 

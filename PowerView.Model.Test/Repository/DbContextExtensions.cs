@@ -50,7 +50,7 @@ namespace PowerView.Model.Test.Repository
 
         private static List<string> InsertLabels(DbContext dbContext, IDbReading[] dbReadings)
         {
-            var now = DateTime.UtcNow;
+            UnixTime now = DateTime.UtcNow;
             var labels = dbReadings.Select(x => x.LabelId).Distinct().Select(x => new { Id = x, LabelName = "Label-" + x, Timestamp = now }).ToList();
 
             dbContext.ExecuteTransaction(@"
@@ -62,7 +62,7 @@ namespace PowerView.Model.Test.Repository
 
         private static List<string> InsertDevices(DbContext dbContext, IDbReading[] dbReadings)
         {
-            var now = DateTime.UtcNow;
+            UnixTime now = DateTime.UtcNow;
             var devices = dbReadings.Select(x => x.DeviceId).Distinct().Select(x => new { Id = x, DeviceName = "DeviceId-" + x, Timestamp = now }).ToList();
 
             dbContext.ExecuteTransaction(@"
@@ -72,11 +72,13 @@ namespace PowerView.Model.Test.Repository
             return devices.Select(x => x.DeviceName).ToList();
         }
 
-        internal static void InsertRegisters(this DbContext dbContext, params IDbRegister[] dbRegisters)
+        internal static IList<ObisCode> InsertRegisters(this DbContext dbContext, params IDbRegister[] dbRegisters)
         {
-            if (dbRegisters.Length == 0) return;
+            if (dbRegisters.Length == 0) return Array.Empty<ObisCode>();
 
-            var sql = "INSERT INTO {0} (ObisCode,Value,Scale,Unit,ReadingId) VALUES (@ObisCode,@Value,@Scale,@Unit,@ReadingId);";
+            var obisCodes = InsertObisCodes(dbContext, dbRegisters);
+
+            var sql = "INSERT INTO {0} (ReadingId,ObisId,Value,Scale,Unit) VALUES (@ReadingId,@ObisId,@Value,@Scale,@Unit);";
 
             var dbRegisterGroups = dbRegisters.GroupBy(x => x.GetType().Name);
             foreach (var group in dbRegisterGroups)
@@ -85,6 +87,40 @@ namespace PowerView.Model.Test.Repository
                 var groupSql = string.Format(CultureInfo.InvariantCulture, sql, tableName);
                 dbContext.ExecuteTransaction(groupSql, group);
             }
+
+            return obisCodes.Select(x => x.ObisCode).ToList();
+        }
+
+        private static List<(byte Id, ObisCode ObisCode)> InsertObisCodes(DbContext dbContext, IDbRegister[] dbRegisters)
+        {
+            var obisCodes = dbRegisters.Select(x => x.ObisId).Distinct()
+                .Select(x => ( x, new ObisCode(Enumerable.Repeat(x, 6).ToArray()) )).ToArray();
+
+            return InsertObisCodes(dbContext, obisCodes);
+        }
+
+        public static List<(byte Id, ObisCode ObisCode)> InsertObisCodes(this DbContext dbContext, params (byte Id, ObisCode ObisCode)[] obisCodes)
+        {
+            dbContext.ExecuteTransaction(@"
+              INSERT INTO Obis (Id, ObisCode) 
+              SELECT @Id, @ObisCode WHERE NOT EXISTS (SELECT 1 FROM Obis WHERE Id = @Id);", 
+                  obisCodes.Select(x => new { x.Id, ObisCode = (long)x.ObisCode}).ToList());
+
+            var allObisCodes = dbContext.QueryTransaction<(byte Id, long ObisCode)>("SELECT Id, ObisCode FROM Obis;");
+
+            return allObisCodes.Select(x => (x.Id, (ObisCode)x.ObisCode)).Where(x => obisCodes.Any(oc => oc.Id == x.Id)).ToList();
+        }
+
+        public static List<(byte Id, ObisCode ObisCode)> InsertObisCodes(this DbContext dbContext, IList<ObisCode> obisCodes)
+        {
+            dbContext.ExecuteTransaction(@"
+              INSERT INTO Obis (ObisCode) 
+              SELECT @ObisCode WHERE NOT EXISTS (SELECT 1 FROM Obis WHERE ObisCode = @ObisCode);",
+                  obisCodes.Select(x => new { ObisCode = (long)x }).ToList());
+
+            var allObisCodes = dbContext.QueryTransaction<(byte Id, long ObisCode)>("SELECT Id, ObisCode FROM Obis;");
+
+            return allObisCodes.Select(x => (x.Id, ObisCode: (ObisCode)x.ObisCode)).Where(x => obisCodes.Any(oc => oc == x.ObisCode)).ToList();
         }
 
     }

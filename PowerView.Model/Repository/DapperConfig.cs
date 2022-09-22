@@ -30,7 +30,7 @@ public static class DapperConfig
             {
                 return new UnixTime(valueLong);
             }
-            throw new ArgumentOutOfRangeException(nameof(value), value, "Must be Int64.");
+            throw new ArgumentOutOfRangeException(nameof(value), value, $"Type must be Int64. Was type:{value?.GetType().Name}");
         }
 
         public override void SetValue(IDbDataParameter parameter, UnixTime value)

@@ -16,11 +16,11 @@ namespace PowerView.Model.Repository
 
     internal interface IDbRegister
     {
-        long ObisCode { get; set; }
+        long ReadingId { get; set; }
+        byte ObisId { get; set; }
         int Value { get; set; }
         short Scale { get; set; }
         byte Unit { get; set; }
-        long ReadingId { get; set; }
     }
 
     internal static class Db
@@ -36,7 +36,7 @@ namespace PowerView.Model.Repository
         public class LiveRegister : IDbRegister
         {
             public long ReadingId { get; set; }
-            public long ObisCode { get; set; }
+            public byte ObisId { get; set; }
             public int Value { get; set; }
             public short Scale { get; set; }
             public byte Unit { get; set; }
@@ -52,12 +52,11 @@ namespace PowerView.Model.Repository
 
         public class DayRegister : IDbRegister
         {
-            public long Id { get; set; }
-            public long ObisCode { get; set; }
+            public long ReadingId { get; set; }
+            public byte ObisId { get; set; }
             public int Value { get; set; }
             public short Scale { get; set; }
             public byte Unit { get; set; }
-            public long ReadingId { get; set; }
         }
 
         public class MonthReading : IDbReading
@@ -70,12 +69,11 @@ namespace PowerView.Model.Repository
 
         public class MonthRegister : IDbRegister
         {
-            public long Id { get; set; }
-            public long ObisCode { get; set; }
+            public long ReadingId { get; set; }
+            public byte ObisId { get; set; }
             public int Value { get; set; }
             public short Scale { get; set; }
             public byte Unit { get; set; }
-            public long ReadingId { get; set; }
         }
 
         public class YearReading : IDbReading
@@ -88,12 +86,11 @@ namespace PowerView.Model.Repository
 
         public class YearRegister : IDbRegister
         {
-            public long Id { get; set; }
-            public long ObisCode { get; set; }
+            public long ReadingId { get; set; }
+            public byte ObisId { get; set; }
             public int Value { get; set; }
             public short Scale { get; set; }
             public byte Unit { get; set; }
-            public long ReadingId { get; set; }
         }
 
         public class StreamPosition : IDbEntity

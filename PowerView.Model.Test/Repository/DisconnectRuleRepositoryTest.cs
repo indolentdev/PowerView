@@ -229,13 +229,15 @@ namespace PowerView.Model.Test.Repository
         public void GetLatestSerieNamesFromLive()
         {
             // Arrange
+            byte electrActualPowerP23L2 = 1;
+            DbContext.InsertObisCodes((electrActualPowerP23L2, ObisCode.ElectrActualPowerP23L2));
             var reading1 = new Db.LiveReading { LabelId = 1, DeviceId = 10, Timestamp = DateTime.UtcNow };
             var reading2 = new Db.LiveReading { LabelId = 2, DeviceId = 20, Timestamp = DateTime.UtcNow - TimeSpan.FromDays(3) };
             var reading3 = new Db.LiveReading { LabelId = 1, DeviceId = 10, Timestamp = DateTime.UtcNow - TimeSpan.FromDays(1) };
             DbContext.InsertReadings(reading1, reading2, reading3);
-            var register1 = new Db.LiveRegister { ObisCode = ObisCode.ElectrActualPowerP23L2, Unit = (byte)Unit.Watt, ReadingId = reading1.Id };
-            var register2 = new Db.LiveRegister { ObisCode = ObisCode.ElectrActualPowerP23L2, Unit = (byte)Unit.Joule, ReadingId = reading2.Id };
-            var register3 = new Db.LiveRegister { ObisCode = ObisCode.ElectrActualPowerP23L2, Unit = (byte)Unit.Percentage, ReadingId = reading3.Id };
+            var register1 = new Db.LiveRegister { ObisId = electrActualPowerP23L2, Unit = (byte)Unit.Watt, ReadingId = reading1.Id };
+            var register2 = new Db.LiveRegister { ObisId = electrActualPowerP23L2, Unit = (byte)Unit.Joule, ReadingId = reading2.Id };
+            var register3 = new Db.LiveRegister { ObisId = electrActualPowerP23L2, Unit = (byte)Unit.Percentage, ReadingId = reading3.Id };
             DbContext.InsertRegisters(register1, register2, register3);
             var dateTime = DateTime.UtcNow;
             var target = CreateTarget();
@@ -253,13 +255,15 @@ namespace PowerView.Model.Test.Repository
         public void GetLatestSerieNamesFromDay()
         {
             // Arrange
+            byte electrActualPowerP23L2 = 1;
+            DbContext.InsertObisCodes((electrActualPowerP23L2, ObisCode.ElectrActualPowerP23L2));
             var reading1 = new Db.DayReading { LabelId = 1, DeviceId = 10, Timestamp = DateTime.UtcNow - TimeSpan.FromDays(4) };
             var reading2 = new Db.DayReading { LabelId = 2, DeviceId = 20, Timestamp = DateTime.UtcNow - TimeSpan.FromDays(8) };
             var reading3 = new Db.DayReading { LabelId = 1, DeviceId = 10, Timestamp = DateTime.UtcNow - TimeSpan.FromDays(6) };
             DbContext.InsertReadings(reading1, reading2, reading3);
-            var register1 = new Db.DayRegister { ObisCode = ObisCode.ElectrActualPowerP23L2, Unit = (byte)Unit.Watt, ReadingId = reading1.Id };
-            var register2 = new Db.DayRegister { ObisCode = ObisCode.ElectrActualPowerP23L2, Unit = (byte)Unit.Joule, ReadingId = reading2.Id };
-            var register3 = new Db.DayRegister { ObisCode = ObisCode.ElectrActualPowerP23L2, Unit = (byte)Unit.Percentage, ReadingId = reading3.Id };
+            var register1 = new Db.DayRegister { ObisId = electrActualPowerP23L2, Unit = (byte)Unit.Watt, ReadingId = reading1.Id };
+            var register2 = new Db.DayRegister { ObisId = electrActualPowerP23L2, Unit = (byte)Unit.Joule, ReadingId = reading2.Id };
+            var register3 = new Db.DayRegister { ObisId = electrActualPowerP23L2, Unit = (byte)Unit.Percentage, ReadingId = reading3.Id };
             DbContext.InsertRegisters(register1, register2, register3);
             var dateTime = DateTime.UtcNow;
             var target = CreateTarget();

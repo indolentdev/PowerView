@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Data.Sqlite;
 using Dapper;
 
@@ -26,6 +23,8 @@ namespace PowerView.Model.Repository
                 .ToDictionary(x => x.Label, x => x.Id);
             var deviceIds = GetDeviceIds(liveReadings.Select(l => l.DeviceId).Distinct().ToList())
                 .ToDictionary(x => x.DeviceId, x => x.Id);
+            var obisIds = GetObisIds(liveReadings.SelectMany(x => x.GetRegisterValues()).Select(x => x.ObisCode).Distinct().ToList())
+                .ToDictionary(x => x.ObisCode, x => x.Id);
 
             var dbLiveReadingsMap = liveReadings.ToDictionary(lr => new Db.LiveReading { LabelId = labels[lr.Label], DeviceId = deviceIds[lr.DeviceId], Timestamp = lr.Timestamp });
             using var transaction = DbContext.BeginTransaction();
@@ -39,9 +38,9 @@ namespace PowerView.Model.Repository
                       liveReading, transaction);
                 }
                 // then insert the registers
-                var dbLiveRegisters = GetDbLiveRegisters(dbLiveReadingsMap);
+                var dbLiveRegisters = GetDbLiveRegisters(dbLiveReadingsMap, obisIds);
                 DbContext.Connection.Execute(
-                  "INSERT INTO LiveRegister (ReadingId, ObisCode, Value, Scale, Unit) VALUES (@ReadingId, @ObisCode, @Value, @Scale, @Unit);",
+                  "INSERT INTO LiveRegister (ReadingId, ObisId, Value, Scale, Unit) VALUES (@ReadingId, @ObisId, @Value, @Scale, @Unit);",
                   dbLiveRegisters, transaction);
                 transaction.Commit();
             }
@@ -52,20 +51,20 @@ namespace PowerView.Model.Repository
             }
         }
 
-        private static IEnumerable<Db.LiveRegister> GetDbLiveRegisters(IDictionary<Db.LiveReading, LiveReading> dbLiveReadingsMap)
+        private static IEnumerable<Db.LiveRegister> GetDbLiveRegisters(IDictionary<Db.LiveReading, LiveReading> dbLiveReadingsMap, IDictionary<ObisCode, byte> obisIds)
         {
             foreach (var entry in dbLiveReadingsMap)
             {
                 foreach (var lr in entry.Value.GetRegisterValues())
                 {
-                    yield return new Db.LiveRegister { ReadingId = entry.Key.Id, ObisCode = lr.ObisCode, Value = lr.Value, Scale = lr.Scale, Unit = (byte)lr.Unit };
+                    yield return new Db.LiveRegister { ReadingId = entry.Key.Id, ObisId = obisIds[lr.ObisCode], Value = lr.Value, Scale = lr.Scale, Unit = (byte)lr.Unit };
                 }
             }
         }
 
         private IList<(byte Id, string Label)> GetLabelIds(List<string> labels)
         {
-            var now = DateTime.UtcNow;
+            UnixTime now = DateTime.UtcNow;
             var labelsAndTimestamps = labels.Select(x => new { LabelName = x, Timestamp = now });
             DbContext.ExecuteTransaction(@"
               INSERT INTO Label (LabelName, Timestamp) VALUES (@LabelName, @Timestamp)
@@ -76,13 +75,25 @@ namespace PowerView.Model.Repository
 
         private IList<(byte Id, string DeviceId)> GetDeviceIds(List<string> deviceIds)
         {
-            var now = DateTime.UtcNow;
+            UnixTime now = DateTime.UtcNow;
             var deviceIdsAndTimestamps = deviceIds.Select(x => new { DeviceName = x, Timestamp = now });
             DbContext.ExecuteTransaction(@"
               INSERT INTO Device (DeviceName, Timestamp) VALUES (@DeviceName, @Timestamp)
                 ON CONFLICT(DeviceName) DO UPDATE SET Timestamp = @Timestamp;", deviceIdsAndTimestamps);
 
             return DbContext.QueryTransaction<(byte Id, string DeviceId)>("SELECT Id, DeviceName FROM Device;");
+        }
+
+        private IList<(byte Id, ObisCode ObisCode)> GetObisIds(List<ObisCode> obisCodes)
+        {
+            var obisCodesLocal = obisCodes.Select(x => new { ObisCode = (long)x });
+            DbContext.ExecuteTransaction(@"
+              INSERT INTO Obis (ObisCode) VALUES (@ObisCode)
+                ON CONFLICT(ObisCode) DO NOTHING;", obisCodesLocal);
+
+            return DbContext.QueryTransaction<(byte Id, long ObisCode)>("SELECT Id, ObisCode FROM Obis;")
+                .Select(x => (x.Id, (ObisCode)x.ObisCode))
+                .ToList();
         }
 
     }

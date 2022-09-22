@@ -46,8 +46,8 @@ namespace PowerView.Model.Repository
             UnixTime cutoffDateTime = dateTime - TimeSpan.FromDays(cutoffDays);
 
             var sqlQuery = @"
-SELECT lbl.LabelName AS Label,dev.DeviceName AS DeviceId,rea.Timestamp,reg.ObisCode,reg.Value,reg.Scale,reg.Unit 
-FROM {0} AS rea JOIN Label AS lbl ON rea.LabelId=lbl.Id JOIN Device AS dev ON rea.DeviceId=dev.Id JOIN {1} AS reg ON rea.Id=reg.ReadingId
+SELECT lbl.LabelName AS Label,dev.DeviceName AS DeviceId,rea.Timestamp,o.ObisCode,reg.Value,reg.Scale,reg.Unit 
+FROM {0} AS rea JOIN Label AS lbl ON rea.LabelId=lbl.Id JOIN Device AS dev ON rea.DeviceId=dev.Id JOIN {1} AS reg ON rea.Id=reg.ReadingId JOIN Obis o ON reg.ObisId=o.Id
 WHERE rea.Timestamp > @Cutoff
 ORDER BY rea.Timestamp DESC;";
             var readingTable = typeof(TReading).Name;
@@ -96,15 +96,15 @@ ORDER BY rea.Timestamp DESC;";
             UnixTime cutoffDateTime = dateTime - TimeSpan.FromDays(cutoffDays);
 
             var sqlQuery = @"
-SELECT lbl.LabelName AS Label,dev.DeviceName AS DeviceId,rea.Timestamp,reg.ObisCode,reg.Value,reg.Scale,reg.Unit 
-FROM {0} AS rea JOIN Label AS lbl ON rea.LabelId=lbl.Id JOIN Device AS dev ON rea.DeviceId=dev.Id JOIN {1} AS reg ON rea.Id=reg.ReadingId
+SELECT lbl.LabelName AS Label,dev.DeviceName AS DeviceId,rea.Timestamp,o.ObisCode,reg.Value,reg.Scale,reg.Unit 
+FROM {0} AS rea JOIN Label AS lbl ON rea.LabelId=lbl.Id JOIN Device AS dev ON rea.DeviceId=dev.Id JOIN {1} AS reg ON rea.Id=reg.ReadingId JOIN Obis o ON reg.ObisId=o.Id
 WHERE rea.Timestamp > @Cutoff AND rea.Timestamp < @dateTime
 ORDER BY rea.Timestamp DESC;";
             var readingTable = typeof(TReading).Name;
             var registerTable = typeof(TRegister).Name;
             sqlQuery = string.Format(CultureInfo.InvariantCulture, sqlQuery, readingTable, registerTable);
 
-            var resultSet = DbContext.Connection.Query<RowLocal>(sqlQuery, new { Cutoff = cutoffDateTime, dateTime }, transaction, buffered: true);
+            var resultSet = DbContext.Connection.Query<RowLocal>(sqlQuery, new { Cutoff = cutoffDateTime, dateTime = (UnixTime)dateTime }, transaction, buffered: true);
 
             var values = resultSet.Select(GetObisCode).Where(x => x.ObisCode.IsCumulative)
                                   .Select(ToGaugeValue).GroupBy(gv => new { gv.Label, gv.ObisCode, gv.DeviceId })

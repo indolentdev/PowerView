@@ -328,7 +328,7 @@ namespace PowerView.Model.Repository
         {
           register.ReadingId = dstReading.Id;
         }
-        sql = "INSERT INTO {0} (ReadingId,ObisCode,Value,Scale,Unit) VALUES (@ReadingId,@ObisCode,@Value,@Scale,@Unit);";
+        sql = "INSERT INTO {0} (ReadingId,ObisId,Value,Scale,Unit) VALUES (@ReadingId,@ObisId,@Value,@Scale,@Unit);";
         sql = string.Format(CultureInfo.InvariantCulture, sql, dstRegisterTable);
         DbContext.Connection.Execute(sql, registers, transaction);
 

@@ -29,6 +29,58 @@ namespace PowerView.Model.Test.Repository
             target.Add(new LiveReading[0]);
 
             // Assert
+            var count = DbContext.QueryTransaction<int>("SELECT count(*) FROM LiveReading;").First();
+            Assert.That(count, Is.Zero);
+        }
+
+        [Test]
+        public void AddCreatesLabel()
+        {
+            // Arrange
+            var liveReading = new LiveReading("ALabel1", "DID1", DateTime.UtcNow, new[] { new RegisterValue("7.7.7.7.7.7", 10, -1, Unit.WattHour) });
+            var target = CreateTarget();
+
+            // Act
+            target.Add(new[] { liveReading });
+
+            // Assert
+            var labels = DbContext.QueryTransaction<(string LabelName, UnixTime Timestamp)>("SELECT LabelName, Timestamp FROM Label;");
+            Assert.That(labels.Count, Is.EqualTo(1));
+            Assert.That(labels[0].LabelName, Is.EqualTo(liveReading.Label));
+            Assert.That(labels[0].Timestamp.ToUnixTimeSeconds(), Is.EqualTo(DateTimeOffset.UtcNow.ToUnixTimeSeconds()).Within(2));
+        }
+
+        [Test]
+        public void AddCreatesDevice()
+        {
+            // Arrange
+            var liveReading = new LiveReading("ALabel2", "DID2", DateTime.UtcNow, new[] { new RegisterValue("8.8.8.8.8.8", 10, -1, Unit.WattHour) });
+            var target = CreateTarget();
+
+            // Act
+            target.Add(new[] { liveReading });
+
+            // Assert
+            var devices = DbContext.QueryTransaction<(string DeviceName, UnixTime Timestamp)>("SELECT DeviceName, Timestamp FROM Device;");
+            Assert.That(devices.Count, Is.EqualTo(1));
+            Assert.That(devices[0].DeviceName, Is.EqualTo(liveReading.DeviceId));
+            Assert.That(devices[0].Timestamp.ToUnixTimeSeconds(), Is.EqualTo(DateTimeOffset.UtcNow.ToUnixTimeSeconds()).Within(2));
+        }
+
+        [Test]
+        public void AddCreatesObis()
+        {
+            // Arrange
+            var liveReading = new LiveReading("ALabel3", "DID3", DateTime.UtcNow, new[] { new RegisterValue("9.9.9.9.9.9", 10, -1, Unit.WattHour) });
+            var target = CreateTarget();
+
+            // Act
+            target.Add(new[] { liveReading });
+
+            // Assert
+            var obis = DbContext.QueryTransaction<long>("SELECT ObisCode FROM Obis;");
+            Assert.That(obis.Count, Is.EqualTo(1));
+            Assert.That(obis[0], Is.EqualTo((long)liveReading.GetRegisterValues().First().ObisCode));
         }
 
         [Test]
@@ -72,7 +124,7 @@ namespace PowerView.Model.Test.Repository
                 new { Label = liveReading.Label, DeviceId = liveReading.DeviceId, Timestamp = (UnixTime)liveReading.Timestamp });
             Assert.That(rd.Count, Is.EqualTo(1));
 
-            var reg = DbContext.QueryTransaction<dynamic>("SELECT * FROM LiveRegister WHERE ReadingId = @ReadingId;", new { ReadingId = rd.First() });
+            var reg = DbContext.QueryTransaction<dynamic>("SELECT o.ObisCode,reg.Scale,reg.Unit,Reg.Value FROM LiveRegister reg JOIN Obis o ON reg.ObisId=o.Id WHERE ReadingId = @ReadingId;", new { ReadingId = rd.First() });
             var registerValues = liveReading.GetRegisterValues();
             Assert.That(reg.Count, Is.EqualTo(registerValues.Count));
             var expectedRegisters = registerValues.Select(x => new { ObisCode = (long)x.ObisCode, x.Scale, Unit = (byte)x.Unit, x.Value }).ToArray();
