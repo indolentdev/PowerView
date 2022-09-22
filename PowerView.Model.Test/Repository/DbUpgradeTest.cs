@@ -62,7 +62,7 @@ namespace PowerView.Model.Test.Repository
     {
       Connection.Execute("CREATE TABLE Version (Id INTEGER PRIMARY KEY, Number INTEGER NOT NULL, Timestamp DATETIME NOT NULL);");
       DbContext.ExecuteTransaction("INSERT INTO Version (Number, Timestamp) VALUES (@Number, @Timestamp);", 
-        new { Number = version, Timestamp = DateTime.UtcNow });
+        new { Number = version, Timestamp = (UnixTime)DateTime.UtcNow });
     }
 
     private long GetTableCount()

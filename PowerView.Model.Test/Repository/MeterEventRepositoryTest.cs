@@ -139,7 +139,7 @@ namespace PowerView.Model.Test.Repository
     {
       var meterEvents = DbContext.QueryTransaction<Db.MeterEvent>(
         "SELECT * FROM MeterEvent WHERE Label=@Label AND MeterEventType=@MeterEventType AND DetectTimestamp=@DetectTimestamp AND Flag=@Flag AND Amplification=@Amplification;", 
-        new { meterEvent.Label, MeterEventType = meterEvent.Amplification.GetMeterEventType(), meterEvent.DetectTimestamp, meterEvent.Flag, Amplification = MeterEventAmplificationSerializer.Serialize(meterEvent.Amplification) });
+        new { meterEvent.Label, MeterEventType = meterEvent.Amplification.GetMeterEventType(), DetectTimestamp = (UnixTime)meterEvent.DetectTimestamp, meterEvent.Flag, Amplification = MeterEventAmplificationSerializer.Serialize(meterEvent.Amplification) });
       Assert.That(meterEvents.Count, Is.EqualTo(not ? 0 : 1));
     }
 

@@ -98,7 +98,7 @@ namespace PowerView.Model.Repository
     private class RowLocal
     {
       public string Label { get; set; }
-      public DateTime DetectTimestamp { get; set; }
+      public UnixTime DetectTimestamp { get; set; }
       public bool Flag { get; set; }
       public string Amplification { get; set; }
 

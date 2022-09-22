@@ -96,7 +96,7 @@ namespace PowerView.Model.Test.Repository
       // Arrange
       var target = CreateTarget();
       var emailRecipient = new EmailRecipient("TheName", "a@b.com");
-      var dbMeterEvent = new Db.MeterEvent { Label = "ehh", MeterEventType = "ohh", Amplification = "ihh", Flag = true };
+      var dbMeterEvent = new Db.MeterEvent { Label = "ehh", MeterEventType = "ohh", Amplification = "ihh", Flag = true, DetectTimestamp = DateTime.UtcNow };
       InsertMeterEvents(dbMeterEvent);
 
       // Act
@@ -122,7 +122,6 @@ namespace PowerView.Model.Test.Repository
       // Act & Assert
       Assert.That(() => target.AddEmailRecipient(emailRecipient), Throws.TypeOf<DataStoreUniqueConstraintException>());
     }
-
 
     private void AssertEmailRecipientExists(EmailRecipient emailRecipient, bool not = false)
     {
@@ -150,7 +149,7 @@ namespace PowerView.Model.Test.Repository
       var target = CreateTarget();
       var dbEmailRecipient = new Db.EmailRecipient { Name = "TheName", EmailAddress = "a@b.com " };
       InsertEmailRecipients(dbEmailRecipient);
-      var dbMeterEvent = new Db.MeterEvent { Label = "ehh", MeterEventType = "ohh", Amplification = "ihh", Flag = true };
+      var dbMeterEvent = new Db.MeterEvent { Label = "ehh", MeterEventType = "ohh", Amplification = "ihh", Flag = true, DetectTimestamp = DateTime.UtcNow };
       InsertMeterEvents(dbMeterEvent);
       var dbPosition = new Db.EmailRecipientMeterEventPosition { EmailRecipientId = dbEmailRecipient.Id, MeterEventId = dbMeterEvent.Id };
       InsertEmailRecipientMeterEventPosition(dbPosition);
@@ -272,9 +271,11 @@ namespace PowerView.Model.Test.Repository
     {
       foreach (var meterEvent in meterEvents)
       {
-        var id = DbContext.QueryTransaction<long>(
+        var id = DbContext
+        .QueryTransaction<long>(
           "INSERT INTO MeterEvent (Label,MeterEventType,DetectTimestamp,Flag,Amplification) VALUES (@Label,@MeterEventType,@DetectTimestamp,@Flag,@Amplification); SELECT last_insert_rowid();",
-          meterEvent).First();
+          new { meterEvent.Label, meterEvent.MeterEventType, DetectTimestamp = (UnixTime)meterEvent.DetectTimestamp, meterEvent.Flag, meterEvent.Amplification })
+        .First();
         meterEvent.Id = id;
       }
     }

@@ -11,6 +11,7 @@ namespace PowerView.Model.Test.Repository
   public class DbMigrateTest : DbTestFixtureWithSchema
   {
     // Test obsolete.. Kept here for reference..
+/*    
     private void MigrateVersion6PopulateSerialNumber()
     {
       // Arrange
@@ -34,7 +35,7 @@ namespace PowerView.Model.Test.Repository
       AssertLiveReadings(3, "Label1", "111");
       AssertLiveReadings(3, "Label2", "222");
     }
-      
+*/      
     private static void SetTimestamp(IEnumerable<Db.LiveReading> readings)
     {
       var dateTime = DateTime.Now;

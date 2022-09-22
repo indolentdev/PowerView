@@ -43,11 +43,11 @@ namespace PowerView.Model.Repository
         /// </summary>
         private void GetLatestGaugeValueSet<TReading, TRegister>(IDbTransaction transaction, GaugeSetName name, DateTime dateTime, int cutoffDays, List<GaugeValueSet> result) where TReading : IDbReading where TRegister : IDbRegister
         {
-            var cutoffDateTime = dateTime - TimeSpan.FromDays(cutoffDays);
+            UnixTime cutoffDateTime = dateTime - TimeSpan.FromDays(cutoffDays);
 
             var sqlQuery = @"
-SELECT rea.Label,rea.DeviceId,rea.Timestamp,reg.ObisCode,reg.Value,reg.Scale,reg.Unit 
-FROM {0} AS rea JOIN {1} AS reg ON rea.Id=reg.ReadingId
+SELECT lbl.LabelName AS Label,dev.DeviceName AS DeviceId,rea.Timestamp,o.ObisCode,reg.Value,reg.Scale,reg.Unit 
+FROM {0} AS rea JOIN Label AS lbl ON rea.LabelId=lbl.Id JOIN Device AS dev ON rea.DeviceId=dev.Id JOIN {1} AS reg ON rea.Id=reg.ReadingId JOIN Obis o ON reg.ObisId=o.Id
 WHERE rea.Timestamp > @Cutoff
 ORDER BY rea.Timestamp DESC;";
             var readingTable = typeof(TReading).Name;
@@ -93,18 +93,18 @@ ORDER BY rea.Timestamp DESC;";
         /// </summary>
         private void GetCustomGaugeValueSet<TReading, TRegister>(IDbTransaction transaction, GaugeSetName name, DateTime dateTime, int cutoffDays, List<GaugeValueSet> result) where TReading : IDbReading where TRegister : IDbRegister
         {
-            var cutoffDateTime = dateTime - TimeSpan.FromDays(cutoffDays);
+            UnixTime cutoffDateTime = dateTime - TimeSpan.FromDays(cutoffDays);
 
             var sqlQuery = @"
-SELECT rea.Label,rea.DeviceId,rea.Timestamp,reg.ObisCode,reg.Value,reg.Scale,reg.Unit 
-FROM {0} AS rea JOIN {1} AS reg ON rea.Id=reg.ReadingId
+SELECT lbl.LabelName AS Label,dev.DeviceName AS DeviceId,rea.Timestamp,o.ObisCode,reg.Value,reg.Scale,reg.Unit 
+FROM {0} AS rea JOIN Label AS lbl ON rea.LabelId=lbl.Id JOIN Device AS dev ON rea.DeviceId=dev.Id JOIN {1} AS reg ON rea.Id=reg.ReadingId JOIN Obis o ON reg.ObisId=o.Id
 WHERE rea.Timestamp > @Cutoff AND rea.Timestamp < @dateTime
 ORDER BY rea.Timestamp DESC;";
             var readingTable = typeof(TReading).Name;
             var registerTable = typeof(TRegister).Name;
             sqlQuery = string.Format(CultureInfo.InvariantCulture, sqlQuery, readingTable, registerTable);
 
-            var resultSet = DbContext.Connection.Query<RowLocal>(sqlQuery, new { Cutoff = cutoffDateTime, dateTime }, transaction, buffered: true);
+            var resultSet = DbContext.Connection.Query<RowLocal>(sqlQuery, new { Cutoff = cutoffDateTime, dateTime = (UnixTime)dateTime }, transaction, buffered: true);
 
             var values = resultSet.Select(GetObisCode).Where(x => x.ObisCode.IsCumulative)
                                   .Select(ToGaugeValue).GroupBy(gv => new { gv.Label, gv.ObisCode, gv.DeviceId })
@@ -132,7 +132,7 @@ ORDER BY rea.Timestamp DESC;";
         {
             public string Label { get; set; }
             public string DeviceId { get; set; }
-            public DateTime Timestamp { get; set; }
+            public UnixTime Timestamp { get; set; }
             public long ObisCode { get; set; }
             public int Value { get; set; }
             public short Scale { get; set; }

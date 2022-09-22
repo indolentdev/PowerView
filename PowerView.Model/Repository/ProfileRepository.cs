@@ -35,12 +35,12 @@ namespace PowerView.Model.Repository
       if (end.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("end", "Must be UTC");
 
       var sqlQuery = @"
-SELECT rea.Label,rea.DeviceId,rea.Timestamp,reg.ObisCode,reg.Value,reg.Scale,reg.Unit 
-FROM {0} AS rea JOIN {1} AS reg ON rea.Id=reg.ReadingId
+SELECT lbl.LabelName AS Label,dev.DeviceName AS DeviceId,rea.Timestamp,o.ObisCode,reg.Value,reg.Scale,reg.Unit 
+FROM {0} AS rea JOIN Label AS lbl ON rea.LabelId=lbl.Id JOIN Device AS dev ON rea.DeviceId=dev.Id JOIN {1} AS reg ON rea.Id=reg.ReadingId JOIN Obis o ON reg.ObisId=o.Id
 WHERE rea.Timestamp >= @From AND rea.Timestamp < @To;";
       sqlQuery = string.Format(CultureInfo.InvariantCulture, sqlQuery, readingTable, registerTable);
 
-      var resultSet = DbContext.QueryTransaction<RowLocal>(sqlQuery, new { From = preStart, To = end });
+      var resultSet = DbContext.QueryTransaction<RowLocal>(sqlQuery, new { From = (UnixTime)preStart, To = (UnixTime)end });
 
       var labelSeries = GetLabelSeries(resultSet);
 
@@ -74,7 +74,7 @@ WHERE rea.Timestamp >= @From AND rea.Timestamp < @To;";
         {
             public string Label { get; set; }
             public string DeviceId { get; set; }
-            public DateTime Timestamp { get; set; }
+            public UnixTime Timestamp { get; set; }
             public long ObisCode { get; set; }
             public int Value { get; set; }
             public short Scale { get; set; }

@@ -25,11 +25,11 @@ namespace PowerView.Model.Repository
             if (labels.Count == 0) throw new ArgumentOutOfRangeException("labels", "Must not be emtpy");
 
             var sqlQuery = @"
-SELECT rea.Label,rea.DeviceId,rea.Timestamp,reg.ObisCode,reg.Value,reg.Scale,reg.Unit 
-FROM {0} AS rea JOIN {1} AS reg ON rea.Id=reg.ReadingId
-WHERE rea.Timestamp >= @from AND rea.Timestamp <= @to AND rea.Label IN @labels;";
+SELECT lbl.LabelName AS Label,dev.DeviceName AS DeviceId,rea.Timestamp,o.ObisCode,reg.Value,reg.Scale,reg.Unit 
+FROM {0} AS rea JOIN Label AS lbl ON rea.LabelId=lbl.Id JOIN Device AS dev ON rea.DeviceId=dev.Id JOIN {1} AS reg ON rea.Id=reg.ReadingId JOIN Obis o ON reg.ObisId=o.Id
+WHERE rea.Timestamp >= @from AND rea.Timestamp <= @to AND lbl.LabelName IN @labels;";
             sqlQuery = string.Format(CultureInfo.InvariantCulture, sqlQuery, readingTable, registerTable);
-            var resultSet = DbContext.QueryTransaction<RowLocal>(sqlQuery, new { from, to, labels });
+            var resultSet = DbContext.QueryTransaction<RowLocal>(sqlQuery, new { from = (UnixTime)from, to = (UnixTime)to, labels });
 
             var labelSeries = GetLabelSeries(resultSet, includeObisCode);
 
@@ -69,7 +69,7 @@ WHERE rea.Timestamp >= @from AND rea.Timestamp <= @to AND rea.Label IN @labels;"
             public string Label { get; set; }
             public string DeviceId { get; set; }
             public long ObisCode { get; set; }
-            public DateTime Timestamp { get; set; }
+            public UnixTime Timestamp { get; set; }
             public int Value { get; set; }
             public short Scale { get; set; }
             public byte Unit { get; set; }

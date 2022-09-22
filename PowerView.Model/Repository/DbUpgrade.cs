@@ -50,7 +50,7 @@ namespace PowerView.Model.Repository
             {
                 using (var ddlResourceReader = new StreamReader(asm.GetManifestResourceStream(dbUpgradeResource.ResourceName)))
                 {
-                    var newVersion = new { Number = long.MaxValue, Timestamp = DateTime.UtcNow };
+                    var newVersion = new { Number = long.MaxValue, Timestamp = (UnixTime)DateTime.UtcNow };
                     DbContext.ExecuteTransaction("INSERT INTO Version (Number, Timestamp) VALUES (@Number, @Timestamp);", newVersion);
 
                     logger.LogInformation($"Applying database schema update for version {dbUpgradeResource.Version}");

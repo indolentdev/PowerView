@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Reflection;
+﻿using System.Globalization;
 using Microsoft.Data.Sqlite;
 using Dapper;
 
@@ -52,39 +48,39 @@ namespace PowerView.Model.Repository
       where TSrcReading : class, IDbReading, new()
       where TDstReading : class, IDbReading, new()
     {
-      var existingLabelToTimeStamp = GetLabelMaxTimestamps<TDstReading>();
+      var existingLabelToTimeStamp = GetLabelIdMaxTimestamps<TDstReading>();
 
       var streamPositions = GetStreamPositions<TDstReading>();
-      var readingsByLabel = GetReadingsByLabel<TSrcReading>(streamPositions);
-      var readingsToPipeByLabel = GetReadingsToPipeByLabel<TSrcReading, TDstReading>(maximumDateTime, existingLabelToTimeStamp, readingsByLabel);
+      var readingsByLabelId = GetReadingsByLabelId<TSrcReading>(streamPositions);
+      var readingsToPipeByLabel = GetReadingsToPipeByLabelId<TSrcReading, TDstReading>(maximumDateTime, existingLabelToTimeStamp, readingsByLabelId);
 
       var pipedSomething = PipeReadings<TSrcReading, TDstReading>(readingsToPipeByLabel);
 
       return pipedSomething;
     }
 
-    private IDictionary<string, long> GetStreamPositions<TDstReading>()
+    private IDictionary<byte, long> GetStreamPositions<TDstReading>()
       where TDstReading : class, IDbReading
     {
       var streamName = GetTableName<TDstReading>();
       var resultSet = DbContext.QueryTransaction<Db.StreamPosition>(
-        "SELECT Id,StreamName,Label,Position FROM StreamPosition WHERE StreamName = @streamName;",
+        "SELECT Id,StreamName,LabelId,Position FROM StreamPosition WHERE StreamName = @streamName;",
         new { streamName });
-      return resultSet.ToDictionary(sp => sp.Label, sp => sp.Position);
+      return resultSet.ToDictionary(sp => sp.LabelId, sp => sp.Position);
     }
       
-    private IDictionary<string, DateTime> GetLabelMaxTimestamps<TDstReading>()
+    private IDictionary<byte, DateTime> GetLabelIdMaxTimestamps<TDstReading>()
       where TDstReading : class, IDbReading
     {
       var tableName = GetTableName<TDstReading>();
-      var labelToTimeStamp = new Dictionary<string, DateTime>(4);
+      var labelToTimeStamp = new Dictionary<byte, DateTime>(4);
 
-      var sqlQuery = "SELECT Label, MAX(Timestamp) AS MaxTimeStamp FROM {0} GROUP BY Label;";
+      var sqlQuery = "SELECT LabelId, MAX(Timestamp) AS MaxTimeStamp FROM {0} GROUP BY LabelId;";
       sqlQuery = string.Format(CultureInfo.InvariantCulture, sqlQuery, tableName);
       var resultSet = DbContext.QueryTransaction<RowLocal>(sqlQuery);
       foreach (var row in resultSet)
       {
-        labelToTimeStamp.Add(row.Label, row.MaxTimestamp);
+        labelToTimeStamp.Add(row.LabelId, row.MaxTimestamp);
       }
 
       return labelToTimeStamp;
@@ -92,81 +88,79 @@ namespace PowerView.Model.Repository
 
     private class RowLocal
     {
-      public string Label { get; set; }
-      public DateTime MaxTimestamp { get; set; }
+      public byte LabelId { get; set; }
+      public UnixTime MaxTimestamp { get; set; }
     }
 
-    private IDictionary<string, IList<TSrcReading>> GetReadingsByLabel<TSrcReading>(IDictionary<string, long> streamPositions)
+    private IDictionary<byte, IList<TSrcReading>> GetReadingsByLabelId<TSrcReading>(IDictionary<byte, long> streamPositions)
       where TSrcReading : class, IDbReading
     {
-      var labels = GetLabels<TSrcReading>();
+      var labelIds = GetLabelIds<TSrcReading>();
 
-      var resultSet = new Dictionary<string, IList<TSrcReading>>(labels.Count);
+      var resultSet = new Dictionary<byte, IList<TSrcReading>>(labelIds.Count);
 
-      foreach (var label in labels)
+      foreach (var labelId in labelIds)
       {
         long position = 0;
-        if (streamPositions.ContainsKey(label))
+        if (streamPositions.ContainsKey(labelId))
         {
-          position = streamPositions[label];
+          position = streamPositions[labelId];
         }
         
-        var readings = GetReadings<TSrcReading>(label, position, readingsPerLabel);
-        resultSet.Add(label, readings);
+        var readings = GetReadings<TSrcReading>(labelId, position, readingsPerLabel);
+        resultSet.Add(labelId, readings);
       }
 
       return resultSet;
     }
 
-    private ICollection<string> GetLabels<TSrcReading>()
+    private ICollection<byte> GetLabelIds<TSrcReading>()
       where TSrcReading : class, IDbReading
     {
-      var labels = new List<string>(5);
+      var labels = new List<byte>(5);
       
       var tableName = GetTableName<TSrcReading>();
 
-      var timestamp = DateTime.UtcNow.Subtract(TimeSpan.FromDays(600)); // cap.. max almost two years..
+      UnixTime timestamp = DateTime.UtcNow.Subtract(TimeSpan.FromDays(600)); // cap.. max almost two years..
 
-      var sqlQuery = "SELECT DISTINCT Label FROM {0} WHERE Timestamp > @Timestamp;";
+      var sqlQuery = "SELECT DISTINCT LabelId FROM {0} WHERE Timestamp > @Timestamp;";
       sqlQuery = string.Format(CultureInfo.InvariantCulture, sqlQuery, tableName);
-      var resultSet = DbContext.QueryTransaction<dynamic>(sqlQuery, new { Timestamp = timestamp });
-      foreach (dynamic row in resultSet)
+      var resultSet = DbContext.QueryTransaction<byte>(sqlQuery, new { Timestamp = timestamp });
+      foreach (var row in resultSet)
       {
-        string label = row.Label;
-        labels.Add(label);
+        labels.Add(row);
       }
-
       return labels;
     }
 
-    private IList<TSrcReading> GetReadings<TSrcReading>(string label, long position, int limit)
+    private IList<TSrcReading> GetReadings<TSrcReading>(byte labelId, long position, int limit)
       where TSrcReading : class, IDbReading
     {
       var tableName = GetTableName<TSrcReading>();
 
-      var sqlQuery = "SELECT * FROM {0} WHERE Id > @Position AND Label = @Label ORDER BY Id ASC LIMIT @Limit;";
+      var sqlQuery = "SELECT * FROM {0} WHERE Id > @Position AND LabelId = @LabelId ORDER BY Id ASC LIMIT @Limit;";
       sqlQuery = string.Format(CultureInfo.InvariantCulture, sqlQuery, tableName);
-      var args = new { Label = label, Position = position, Limit = limit };
+      var args = new { LabelId = labelId, Position = position, Limit = limit };
       var resultSet = DbContext.QueryTransaction<TSrcReading>(sqlQuery, args);
 
       return resultSet;
     }
 
-    private IDictionary<string, IEnumerable<TSrcReading>> GetReadingsToPipeByLabel<TSrcReading, TDstReading>(DateTime maximumDateTime, IDictionary<string, DateTime> existingLabelToTimeStamp, IDictionary<string, IList<TSrcReading>> readingsByLabel)
+    private IDictionary<byte, IEnumerable<TSrcReading>> GetReadingsToPipeByLabelId<TSrcReading, TDstReading>(DateTime maximumDateTime, IDictionary<byte, DateTime> existingLabelIdToTimeStamp, IDictionary<byte, IList<TSrcReading>> readingsByLabelId)
       where TSrcReading : class, IDbReading
       where TDstReading : class, IDbReading
     {
-      var readingsToPipe = new Dictionary<string, IEnumerable<TSrcReading>>(readingsByLabel.Count);
-      foreach (var labelGrouping in readingsByLabel)
+      var readingsToPipe = new Dictionary<byte, IEnumerable<TSrcReading>>(readingsByLabelId.Count);
+      foreach (var labelGrouping in readingsByLabelId)
       {
-        var label = labelGrouping.Key;
+        var labelId = labelGrouping.Key;
         var minimumDateTime = DateTime.MinValue.ToUniversalTime();
-        if (existingLabelToTimeStamp.ContainsKey(label))
+        if (existingLabelIdToTimeStamp.ContainsKey(labelId))
         {
-          minimumDateTime = existingLabelToTimeStamp[label];
+          minimumDateTime = existingLabelIdToTimeStamp[labelId];
         }
         var reducedLabelReadings = Reduce<TSrcReading, TDstReading>(labelGrouping.Value, minimumDateTime, maximumDateTime);
-        readingsToPipe.Add(label, reducedLabelReadings);
+        readingsToPipe.Add(labelId, reducedLabelReadings);
       }
 
       return readingsToPipe;
@@ -261,7 +255,7 @@ namespace PowerView.Model.Repository
       }
     }
 
-    private bool PipeReadings<TSrcReading, TDstReading>(IDictionary<string, IEnumerable<TSrcReading>> readingsToPipeByLabel) 
+    private bool PipeReadings<TSrcReading, TDstReading>(IDictionary<byte, IEnumerable<TSrcReading>> readingsToPipeByLabel) 
       where TSrcReading : class, IDbReading, new()
       where TDstReading : class, IDbReading, new()
     {
@@ -269,20 +263,20 @@ namespace PowerView.Model.Repository
       IList<IDbRegister> registers;
       foreach (var labelGrouping in readingsToPipeByLabel)
       {
-        var label = labelGrouping.Key;
+        var labelId = labelGrouping.Key;
         var readingsToPipe = labelGrouping.Value;
 
         if (typeof(TSrcReading) == typeof(Db.LiveReading))
         {
-          registers = GetRegisters<TSrcReading, Db.LiveRegister>(label, readingsToPipe);
+          registers = GetRegisters<TSrcReading, Db.LiveRegister>(labelId, readingsToPipe);
         }
         else if (typeof(TSrcReading) == typeof(Db.DayReading))
         {
-          registers = GetRegisters<TSrcReading, Db.DayRegister>(label, readingsToPipe);
+          registers = GetRegisters<TSrcReading, Db.DayRegister>(labelId, readingsToPipe);
         }
         else if (typeof(TSrcReading) == typeof(Db.MonthReading))
         {
-          registers = GetRegisters<TSrcReading, Db.MonthRegister>(label, readingsToPipe);
+          registers = GetRegisters<TSrcReading, Db.MonthRegister>(labelId, readingsToPipe);
         }
         else
         {
@@ -293,7 +287,7 @@ namespace PowerView.Model.Repository
         {
           var registersForReading = registers.Where(r => r.ReadingId == reading.Id).ToList();
 
-          InsertReadingAndRegisters<TSrcReading, TDstReading>(label, reading, registersForReading);
+          InsertReadingAndRegisters<TSrcReading, TDstReading>(labelId, reading, registersForReading);
 
           result = true;
         }
@@ -301,7 +295,7 @@ namespace PowerView.Model.Repository
       return result;
     }
 
-    private IList<IDbRegister> GetRegisters<TSrcReading, TSrcRegister>(string label, IEnumerable<TSrcReading> readingsToPipe)
+    private IList<IDbRegister> GetRegisters<TSrcReading, TSrcRegister>(byte labelId, IEnumerable<TSrcReading> readingsToPipe)
       where TSrcReading : class, IDbReading
       where TSrcRegister : class, IDbRegister
     {
@@ -315,7 +309,7 @@ namespace PowerView.Model.Repository
       return resultSet.Cast<IDbRegister>().ToList();
     }
 
-    private void InsertReadingAndRegisters<TSrcReading, TDstReading>(string label, TSrcReading reading, ICollection<IDbRegister> registers) 
+    private void InsertReadingAndRegisters<TSrcReading, TDstReading>(byte labelId, TSrcReading reading, ICollection<IDbRegister> registers) 
       where TSrcReading : class, IDbReading, new()
       where TDstReading : class, IDbReading, new()
     {
@@ -325,7 +319,7 @@ namespace PowerView.Model.Repository
       using var transaction = DbContext.BeginTransaction();
       try
       {
-        var sql = "INSERT INTO {0} (Label, DeviceId, Timestamp) VALUES (@Label, @DeviceId, @Timestamp); SELECT last_insert_rowid();";
+        var sql = "INSERT INTO {0} (LabelId, DeviceId, Timestamp) VALUES (@LabelId, @DeviceId, @Timestamp); SELECT last_insert_rowid();";
         sql = string.Format(CultureInfo.InvariantCulture, sql, dstReadingTable);
         var dstReading = ToDstReading<TDstReading>(reading);
         dstReading.Id = DbContext.Connection.QueryFirst<long>(sql, dstReading, transaction);
@@ -334,17 +328,17 @@ namespace PowerView.Model.Repository
         {
           register.ReadingId = dstReading.Id;
         }
-        sql = "INSERT INTO {0} (ReadingId,ObisCode,Value,Scale,Unit) VALUES (@ReadingId,@ObisCode,@Value,@Scale,@Unit);";
+        sql = "INSERT INTO {0} (ReadingId,ObisId,Value,Scale,Unit) VALUES (@ReadingId,@ObisId,@Value,@Scale,@Unit);";
         sql = string.Format(CultureInfo.InvariantCulture, sql, dstRegisterTable);
         DbContext.Connection.Execute(sql, registers, transaction);
 
         // Upsert StreamPosition
-        sql = "UPDATE StreamPosition SET Position=@Position WHERE StreamName=@StreamName AND Label=@Label;";
-        var affectedRecords = DbContext.Connection.Execute(sql, new { Position = reading.Id, StreamName = dstReadingTable, Label = label }, transaction);
+        sql = "UPDATE StreamPosition SET Position=@Position WHERE StreamName=@StreamName AND LabelId=@LabelId;";
+        var affectedRecords = DbContext.Connection.Execute(sql, new { Position = reading.Id, StreamName = dstReadingTable, LabelId = labelId }, transaction);
         if (affectedRecords == 0)
         {
-          var streamPosition = new Db.StreamPosition { StreamName = dstReadingTable, Label = label, Position = reading.Id };
-          sql = "INSERT INTO StreamPosition (StreamName,Label,Position) VALUES (@StreamName, @Label, @Position);";
+          var streamPosition = new Db.StreamPosition { StreamName = dstReadingTable, LabelId = labelId, Position = reading.Id };
+          sql = "INSERT INTO StreamPosition (StreamName,LabelId,Position) VALUES (@StreamName, @LabelId, @Position);";
           DbContext.Connection.Execute(sql, streamPosition, transaction);
         }
 
@@ -362,7 +356,7 @@ namespace PowerView.Model.Repository
     {
       var dstReading = new TDstReading
       { 
-        Label = srcReading.Label,
+        LabelId = srcReading.LabelId,
         DeviceId = srcReading.DeviceId,
         Timestamp = srcReading.Timestamp
       };
