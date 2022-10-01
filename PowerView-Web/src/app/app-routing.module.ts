@@ -11,6 +11,7 @@ import { DiffBydatesComponent } from './components/diff/diff-bydates/diff-bydate
 import { GaugesLatestComponent } from './components/gauges/gauges-latest/gauges-latest.component';
 import { GaugesBydateComponent } from './components/gauges/gauges-bydate/gauges-bydate.component';
 import { EventsLatestComponent } from './components/events/events-latest/events-latest.component';
+import { DataCrudeComponent } from './components/data/data-crude/data-crude.component';
 import { ExportDiffsHourlyComponent } from './components/export/export-diffs-hourly/export-diffs-hourly.component';
 import { ExportGaugesHourlyComponent } from './components/export/export-gauges-hourly/export-gauges-hourly.component';
 import { SettingsSeriesColorsComponent } from './components/settings/settings-series-colors/settings-series-colors.component';
@@ -32,6 +33,7 @@ const routes: Routes = [
   { path: 'gauges/latest', component: GaugesLatestComponent },
   { path: 'gauges/bydate', component: GaugesBydateComponent },
   { path: 'events/latest', component: EventsLatestComponent },
+  { path: 'data/crude', component: DataCrudeComponent },
   { path: 'export/diffs/hourly', component: ExportDiffsHourlyComponent },
   { path: 'export/gauges/hourly', component: ExportGaugesHourlyComponent },
   { path: 'settings/seriescolors', component: SettingsSeriesColorsComponent },

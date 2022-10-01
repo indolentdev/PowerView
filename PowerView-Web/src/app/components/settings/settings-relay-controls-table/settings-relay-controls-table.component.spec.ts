@@ -8,7 +8,7 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { NGXLogger } from 'ngx-logger';
 import { of } from 'rxjs';
-import { SerieService } from '../../../services/serie.service';
+import { ObisService } from '../../../services/obis.service';
 
 import { mock, instance, when, verify } from 'ts-mockito';
 import { SettingsRelayControlsTableComponent } from './settings-relay-controls-table.component';
@@ -18,7 +18,7 @@ describe('SettingsRelayControlsTableComponent', () => {
   let fixture: ComponentFixture<SettingsRelayControlsTableComponent>;
 
   let log = mock(NGXLogger);    
-  let serieService = mock(SerieService);
+  let obisService = mock(ObisService);
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
@@ -38,7 +38,7 @@ describe('SettingsRelayControlsTableComponent', () => {
       ],
       providers: [
         {provide: NGXLogger, useValue: instance(log)},
-        {provide: SerieService, useValue: instance(serieService)}
+        {provide: ObisService, useValue: instance(obisService)}
       ]
     })
     .compileComponents();

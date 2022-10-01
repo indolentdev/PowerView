@@ -1,7 +1,7 @@
 import { Component, OnInit,ViewChild, Input, Output, OnChanges, SimpleChanges, EventEmitter } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { NGXLogger } from 'ngx-logger';
-import { SerieService } from '../../../services/serie.service';
+import { ObisService } from '../../../services/obis.service';
 import { ProfileGraph } from '../../../model/profileGraph';
 
 @Component({
@@ -19,7 +19,7 @@ export class SettingsProfileGraphsTableComponent implements OnInit, OnChanges {
   @Output('deleteProfileGraph') deleteAction: EventEmitter<ProfileGraph> = new EventEmitter();
   @Output('swapProfileGraphs') swapAction: EventEmitter<ProfileGraph[]> = new EventEmitter();
 
-  constructor(private log: NGXLogger, private serieService: SerieService) { 
+  constructor(private log: NGXLogger, private obisService: ObisService) { 
   }
 
   ngOnInit() {
@@ -46,7 +46,7 @@ export class SettingsProfileGraphsTableComponent implements OnInit, OnChanges {
         var intervalVars = pg.interval.split("-");
         row.intervalValue = intervalVars[0];
         row.intervalUnit = intervalVars[1];
-        this.serieService.AddSerieProperty(pg.series);
+        this.obisService.AddSerieProperty(pg.series);
         row.isFirst = false;
         if (index == 0) {
           row.isFirst = true;

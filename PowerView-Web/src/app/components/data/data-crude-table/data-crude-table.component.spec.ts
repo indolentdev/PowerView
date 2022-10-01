@@ -12,19 +12,18 @@ import { ObisService } from '../../../services/obis.service';
 
 import { mock, instance, when, verify } from 'ts-mockito';
 
-import { SettingsRecipientsTableComponent } from './settings-recipients-table.component';
-import { EmailRecipientSet } from '../../../model/emailRecipientSet';
+import { DataCrudeTableComponent } from './data-crude-table.component';
 
-describe('SettingsRecipientsTableComponent', () => {
-  let component: SettingsRecipientsTableComponent;
-  let fixture: ComponentFixture<SettingsRecipientsTableComponent>;
+describe('DataCrudeTableComponent', () => {
+  let component: DataCrudeTableComponent;
+  let fixture: ComponentFixture<DataCrudeTableComponent>;
 
-  let log = mock(NGXLogger);    
+  let log = mock(NGXLogger);
   let obisService = mock(ObisService);
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-      declarations: [ SettingsRecipientsTableComponent ],
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [DataCrudeTableComponent],
       imports: [
         HttpClientTestingModule,
         TranslateModule.forRoot({
@@ -35,19 +34,16 @@ describe('SettingsRecipientsTableComponent', () => {
           }
         }),
         BrowserAnimationsModule,
-        MatSortModule,
         MatTableModule
       ],
       providers: [
-        {provide: NGXLogger, useValue: instance(log)},
-        {provide: ObisService, useValue: instance(obisService)}
+        { provide: NGXLogger, useValue: instance(log) },
+        { provide: ObisService, useValue: instance(obisService) }
       ]
     })
     .compileComponents();
-  }));
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(SettingsRecipientsTableComponent);
+    fixture = TestBed.createComponent(DataCrudeTableComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

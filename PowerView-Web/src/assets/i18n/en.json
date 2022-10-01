@@ -2,6 +2,7 @@
   "menu": {
     "byDate": "By Date",
     "betweenDates": "Between Dates",
+    "data": "Data",
     "defaultPage": "[Default]",
     "diff": "Diff",
     "email": "Email",
@@ -20,6 +21,7 @@
     "profileLast31d": "Last 31 Days",
     "profileMonth": "Month Profile",
     "profileYear": "Year Profile",
+    "crude": "Crude",
     "recipients": "Recipients",
     "relayControls": "Relay Controls",
     "seriesColors": "Series Colors",
@@ -46,6 +48,7 @@
   },
 
   "headings": {
+    "crudeData": "Crude Data",
     "dayProfile": "Day Profile",
     "diffByDates": "Diff Between Dates",
     "emailRecipients": "Email Recipients",
@@ -118,6 +121,7 @@
     "name": "Name",
     "page": "Page",
     "relayUnit": "Relay Unit",
+    "scale": "Scale",
     "serie": "Series",
     "series": "Series",
     "status": "Status",
@@ -126,7 +130,8 @@
     "to": "To",
     "total": "Total",
     "typicalUnits": "Typical Units",
-    "unit": "Unit"
+    "unit": "Unit",
+    "value": "Value"
   },
 
   "forms": {

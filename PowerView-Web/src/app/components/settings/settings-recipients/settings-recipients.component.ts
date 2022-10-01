@@ -4,7 +4,7 @@ import { ErrorStateMatcher } from '@angular/material/core';
 import { MatSnackBar, MatSnackBarRef, SimpleSnackBar } from '@angular/material/snack-bar';
 import { NGXLogger } from 'ngx-logger';
 import { TranslateService } from '@ngx-translate/core';
-import { SerieService } from '../../../services/serie.service';
+import { ObisService } from '../../../services/obis.service';
 import { SettingsService, AddDisconnectRuleError, TestEmailRecipientError } from '../../../services/settings.service';
 import { EmailRecipient } from '../../../model/emailRecipient';
 import { EmailRecipientSet } from '../../../model/emailRecipientSet';
@@ -20,7 +20,7 @@ export class SettingsRecipientsComponent implements OnInit {
   formGroup: UntypedFormGroup;
   @ViewChild('form', { static: true }) form;
 
-  constructor(private log: NGXLogger, private settingsService: SettingsService, private snackBar: MatSnackBar, private serieService: SerieService, private translateService: TranslateService) {
+  constructor(private log: NGXLogger, private settingsService: SettingsService, private snackBar: MatSnackBar, private obisService: ObisService, private translateService: TranslateService) {
   }
 
   ngOnInit() {
