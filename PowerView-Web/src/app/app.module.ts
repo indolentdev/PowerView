@@ -73,6 +73,7 @@ import { ExportGaugesHourlyComponent } from './components/export/export-gauges-h
 import { ExportDiffsHourlyComponent } from './components/export/export-diffs-hourly/export-diffs-hourly.component';
 import { DataCrudeTableComponent } from './components/data/data-crude-table/data-crude-table.component';
 import { DataCrudeComponent } from './components/data/data-crude/data-crude.component';
+import { ScalerPipe } from './pipes/scaler.pipe';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -142,7 +143,8 @@ if (environment.useMockBackend == true) {
     ExportGaugesHourlyComponent,
     ExportDiffsHourlyComponent,
     DataCrudeTableComponent,
-    DataCrudeComponent
+    DataCrudeComponent,
+    ScalerPipe
   ],
   imports: [
     BrowserModule,

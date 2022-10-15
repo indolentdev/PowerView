@@ -20,7 +20,7 @@
         </ng-container>
         <ng-container matColumnDef="scale">
             <th mat-header-cell *matHeaderCellDef>{{ 'columns.scale' | translate }}</th>
-            <td mat-cell *matCellDef="let v">{{ v.scale }}</td>
+            <td mat-cell *matCellDef="let v">{{ v.scale | scaler }}</td>
         </ng-container>
         <ng-container matColumnDef="unit">
             <th mat-header-cell *matHeaderCellDef>{{ 'columns.unit' | translate }}</th>
