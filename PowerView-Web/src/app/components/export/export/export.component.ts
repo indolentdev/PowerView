@@ -63,14 +63,14 @@ export class ExportComponent implements OnInit {
       const fromDateString = queryParams.get(fromParam);
       this.parseDateSetFormControl(fromDateString, fromDateCtl);
 
-      let toDateCtl = this.getControl("toDate");
+      let toDateCtl = this.getControl("toDate"); // .subtract(1, 'days')
       const toDateString = queryParams.get(toParam);
       this.parseDateSetFormControl(toDateString, toDateCtl);
 
       const decimalSeparatorString = queryParams.get(decimalSeparatorParam);
       var decimalSeparatorItem = this.fetchDecimalSeparator(decimalSeparatorString);
       this.setDecimalSeparator(decimalSeparatorItem.name);
-    });    
+    });
   }
 
   private getLabels(): void {

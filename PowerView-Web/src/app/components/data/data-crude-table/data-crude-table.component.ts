@@ -5,6 +5,9 @@ import { NGXLogger } from 'ngx-logger';
 import { ObisService } from '../../../services/obis.service';
 import { CrudeValue } from '../../../model/crudeValue';
 
+import { Moment } from 'moment'
+import * as moment from 'moment';
+
 @Component({
   selector: 'app-data-crude-table',
   templateUrl: './data-crude-table.component.html',
@@ -12,12 +15,13 @@ import { CrudeValue } from '../../../model/crudeValue';
 })
 export class DataCrudeTableComponent implements OnInit, OnChanges {
 
-  displayedColumns = ['register', 'value', 'scale', 'unit'];
+  displayedColumns = ['timestamp', 'register', 'value', 'scale', 'unit', 'deviceId'];
   dataSource: MatTableDataSource<any>;
 
 //  @ViewChild(MatSort, { static: true }) sort: MatSort;
 
-  @Input('crudeValues') crudeValues: CrudeValue[];
+  @Input('label') label: string;
+  @Input('from') from: Moment;
 
   constructor(private log: NGXLogger, private obisService: ObisService) {
   }
@@ -37,16 +41,27 @@ export class DataCrudeTableComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['crudeValues']) {
-      this.crudeValues = changes['crudeValues'].currentValue;
+    if (changes['label']) {
+      console.log(changes['label'].currentValue);
+      console.log(changes);
+
+//      this.crudeValues = changes['crudeValues'].currentValue;
       this.refresh();
     }
+
+    if (changes['from']) {
+      console.log(changes['from'].currentValue);
+
+      //      this.crudeValues = changes['crudeValues'].currentValue;
+//      this.refresh();
+    }
+
   }
 
   private refresh(): void {
-    if (this.dataSource != null && this.crudeValues != null) {
-      this.dataSource.data = this.obisService.AddRegisterProperty(this.crudeValues);
-    }
+//    if (this.dataSource != null && this.crudeValues != null) {
+//      this.dataSource.data = this.obisService.AddRegisterProperty(this.crudeValues);
+//    }
   }
 
 }
