@@ -8,6 +8,7 @@ import { diffBackend } from './mock-backends/diff.backend';
 import { gaugesBackend } from './mock-backends/gauges.backend';
 import { eventsBackend } from './mock-backends/events.backend';
 import { labelsBackend } from './mock-backends/labels.backend';
+import { crudeDataBackend } from './mock-backends/crudeData.backend';
 import { exportBackend } from './mock-backends/export.backend';
 import { settingsBackend } from './mock-backends/settings.backend';
 
@@ -29,6 +30,7 @@ export class MockHttpInterceptor implements HttpInterceptor {
       gaugesBackend(url, method, request) ||
       eventsBackend(url, method, request) ||
       labelsBackend(url, method, request) ||
+      crudeDataBackend(url, method, request) ||
       exportBackend(url, method, request) ||
       settingsBackend(url, method, request) ||
       next.handle(request); // fallback in case url isn't caught

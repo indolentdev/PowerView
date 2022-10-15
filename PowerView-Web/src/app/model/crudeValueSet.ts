@@ -1,6 +1,6 @@
 import { CrudeValue } from './crudeValue';
 
-export class CrudeValueset {
+export class CrudeValueSet {
     label: string;
     values: CrudeValue[];
 

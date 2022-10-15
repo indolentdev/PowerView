@@ -14,9 +14,9 @@
 
         <br />
 
-        <mat-form-field>
+        <mat-form-field style="width:13em">
             <input matInput [min]="minDate" [max]="maxDate" [matDatepicker]="dp"
-                placeholder="{{ 'common.chooseDate' | translate }}" required (dateChange)="dateChangeEvent($event)"
+                placeholder="{{ 'common.chooseDateFrom' | translate }}" required (dateChange)="dateChangeEvent($event)"
                 [formControl]="fcDate" />
             <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
             <mat-datepicker #dp startView="month"></mat-datepicker>

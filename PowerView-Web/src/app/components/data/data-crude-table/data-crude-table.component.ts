@@ -2,8 +2,9 @@ import { Component, OnInit, ViewChild, Input, OnChanges, SimpleChanges } from '@
 import { MatSort, MatSortable } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { NGXLogger } from 'ngx-logger';
+import { CrudeDataService } from '../../../services/crude-data.service';
 import { ObisService } from '../../../services/obis.service';
-import { CrudeValue } from '../../../model/crudeValue';
+import { CrudeValueSet } from '../../../model/crudeValueSet';
 
 import { Moment } from 'moment'
 import * as moment from 'moment';
@@ -23,7 +24,9 @@ export class DataCrudeTableComponent implements OnInit, OnChanges {
   @Input('label') label: string;
   @Input('from') from: Moment;
 
-  constructor(private log: NGXLogger, private obisService: ObisService) {
+  crudeValueSet: CrudeValueSet;
+
+  constructor(private log: NGXLogger, private obisService: ObisService, private crudeDataService: CrudeDataService) {
   }
 
   ngOnInit() {
@@ -41,27 +44,16 @@ export class DataCrudeTableComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['label']) {
-      console.log(changes['label'].currentValue);
-      console.log(changes);
-
-//      this.crudeValues = changes['crudeValues'].currentValue;
-      this.refresh();
-    }
-
-    if (changes['from']) {
-      console.log(changes['from'].currentValue);
-
-      //      this.crudeValues = changes['crudeValues'].currentValue;
-//      this.refresh();
-    }
-
+    this.refresh();
   }
 
   private refresh(): void {
-//    if (this.dataSource != null && this.crudeValues != null) {
-//      this.dataSource.data = this.obisService.AddRegisterProperty(this.crudeValues);
-//    }
+    if (this.label == null || this.from == null) return;
+
+    this.crudeDataService.getCrudeValues(this.label, this.from).subscribe(x => {
+      this.crudeValueSet = x;
+      this.dataSource.data = this.obisService.AddRegisterProperty(this.crudeValueSet.values);
+    });
   }
 
 }
