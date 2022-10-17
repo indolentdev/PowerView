@@ -44,7 +44,7 @@ export class DataCrudeComponent implements OnInit {
   private getLabels(): void {
     if (this.labels == null) {
       this.labelsService.getLabels().subscribe(x => {
-        this.labels = x;
+        this.labels = x.sort((a: string, b: string) => (a > b) ? 1 : -1);;
       });
     }
   }
