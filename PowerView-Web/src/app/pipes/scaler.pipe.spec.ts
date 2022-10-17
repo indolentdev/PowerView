@@ -6,9 +6,9 @@ describe('ScalerPipe', () => {
     expect(pipe).toBeTruthy();
   });
 
-  it('1', () => {
+  it('Absent', () => {
     const pipe = new ScalerPipe();
-    expect(pipe.transform(0)).toBe("1");
+    expect(pipe.transform(0)).toBe("");
   });
 
   it('10', () => {
