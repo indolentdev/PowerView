@@ -1,0 +1,36 @@
+<div *ngIf="crudeValueSet !== undefined && crudeValueSet.values.length == 0">
+    <h3>{{ 'common.noDataFound' | translate }}</h3>
+</div>
+
+<div *ngIf="crudeValueSet !== undefined && crudeValueSet.values.length > 0">
+    <h4>{{ 'headings.crudeDataCounts' | translate : { count: crudeValueSet.values.length, total: crudeValueSet.totalCount } }}</h4>
+
+    <table mat-table [dataSource]="dataSource" matSort class="center">
+        <ng-container matColumnDef="timestamp">
+            <th mat-header-cell *matHeaderCellDef>{{ 'columns.timestamp' | translate }}</th>
+            <td mat-cell *matCellDef="let v">{{ v.timestamp | date:'medium' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="register">
+            <th mat-header-cell *matHeaderCellDef>{{ 'columns.name' | translate }}</th>
+            <td mat-cell *matCellDef="let v">{{ v.register }}</td>
+        </ng-container>
+        <ng-container matColumnDef="value">
+            <th mat-header-cell *matHeaderCellDef>{{ 'columns.value' | translate }}</th>
+            <td mat-cell *matCellDef="let v">{{ v.value }}</td>
+        </ng-container>
+        <ng-container matColumnDef="scale">
+            <th mat-header-cell *matHeaderCellDef>{{ 'columns.scale' | translate }}</th>
+            <td mat-cell *matCellDef="let v">{{ v.scale | scaler }}</td>
+        </ng-container>
+        <ng-container matColumnDef="unit">
+            <th mat-header-cell *matHeaderCellDef>{{ 'columns.unit' | translate }}</th>
+            <td mat-cell *matCellDef="let v">{{ v.unit }}</td>
+        </ng-container>
+        <ng-container matColumnDef="deviceId">
+            <th mat-header-cell *matHeaderCellDef>{{ 'columns.deviceId' | translate }}</th>
+            <td mat-cell *matCellDef="let v">{{ v.deviceId }}</td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+</div>

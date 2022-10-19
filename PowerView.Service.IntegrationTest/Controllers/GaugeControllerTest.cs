@@ -214,8 +214,8 @@ public class GaugeControllerTest
         Assert.That(actual.label, Is.EqualTo(expected.Label));
         Assert.That(actual.timestamp, Is.EqualTo(expected.DateTime.ToString("o").Substring(0, 16) + "Z"));
         Assert.That(actual.obiscode, Is.EqualTo(expected.ObisCode.ToString()));
-        Assert.That(actual.value, Is.EqualTo(ValueAndUnitMapper.Map(expected.UnitValue.Value, expected.UnitValue.Unit)));
-        Assert.That(actual.unit, Is.EqualTo(ValueAndUnitMapper.Map(expected.UnitValue.Unit)));
+        Assert.That(actual.value, Is.EqualTo(ValueAndUnitConverter.Convert(expected.UnitValue.Value, expected.UnitValue.Unit)));
+        Assert.That(actual.unit, Is.EqualTo(ValueAndUnitConverter.Convert(expected.UnitValue.Unit)));
     }
 
     internal class TestGaugeDto

@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, Inject, Input, LOCALE_ID } from '@angular
 import { formatNumber } from '@angular/common';
 import { NGXLogger } from 'ngx-logger';
 import { TranslateService } from '@ngx-translate/core';
-import { SerieService } from '../../../services/serie.service';
+import { ObisService } from '../../../services/obis.service';
 import * as Highcharts from 'highcharts';
 import { Profile } from '../../../model/profile';
 import { ProfileSerie } from '../../../model/profileSerie';
@@ -25,7 +25,7 @@ export class ProfileGraphComponent implements OnInit {
   @Input('profileGraph') profileGraph: Profile;
   @Input('timeFormat') timeFormat: string;
 
-  constructor(private log: NGXLogger, @Inject(LOCALE_ID) private locale: string, private serieService: SerieService, private translateService: TranslateService) {
+  constructor(private log: NGXLogger, @Inject(LOCALE_ID) private locale: string, private obisService: ObisService, private translateService: TranslateService) {
   }
 
   ngOnInit() {
@@ -194,7 +194,7 @@ export class ProfileGraphComponent implements OnInit {
   }
 
   private GetSeries(profileSeries: ProfileSerie[]): any[] {
-    var series = this.serieService.AddSerieProperty(profileSeries)
+    var series = this.obisService.AddSerieProperty(profileSeries)
 
     var chartSeries = [];
     for (let serie of series) {

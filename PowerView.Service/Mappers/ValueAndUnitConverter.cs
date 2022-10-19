@@ -3,12 +3,12 @@ using PowerView.Model;
 
 namespace PowerView.Service.Mappers
 {
-  internal static class ValueAndUnitMapper
+  internal static class ValueAndUnitConverter
   {
     private static readonly double jouleToKiloWattHourFactor = 2.7777777778 * Math.Pow(10, -7);
     private static readonly double joulePrHourToWattFactor = 0.00027777777778;
 
-    public static double? Map(double? value, Unit unit, bool reduceUnit = false)
+    public static double? Convert(double? value, Unit unit, bool reduceUnit = false)
     {
       if (value == null)
       {
@@ -41,7 +41,7 @@ namespace PowerView.Service.Mappers
       return Math.Round(newValue, 3);
     }
 
-    public static string Map(Unit unit, bool reduceUnit = false)
+    public static string Convert(Unit unit, bool reduceUnit = false)
     {
       switch (unit)
       {
@@ -63,19 +63,6 @@ namespace PowerView.Service.Mappers
           return string.Empty;
         default:
           return "Unknown";
-      }
-    }
-
-    public static Unit Map(string unit)
-    {
-      if (string.IsNullOrEmpty(unit)) throw new ArgumentNullException("unit");
-        
-      switch (unit)
-      {
-        case "W":
-          return Unit.Watt;
-        default:
-          throw new ArgumentOutOfRangeException("unit", unit, "Unable to map unit:" + unit);
       }
     }
 

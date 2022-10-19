@@ -23,10 +23,4 @@ export class EventsService {
     return this.dataService.get<EventSet>(constLocal.events, undefined, new EventSet);
   }
   
-/*
-  public getCustomGaugeValues(timestamp: Moment): Observable<GaugeValueGroupSet> {
-    var params = new HttpParams().set("timestamp", timestamp.toISOString());
-    return this.dataService.get<GaugeValueGroupSet>(constLocal.guagesCustom, params, new GaugeValueGroupSet);
-  }  
-*/  
 }

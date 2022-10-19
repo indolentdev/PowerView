@@ -2,6 +2,7 @@
   "menu": {
     "byDate": "Pr. Dato",
     "betweenDates": "Mellem Datoer",
+    "data": "Data",
     "defaultPage": "[Standard]",
     "diff": "Forskel",
     "email": "E-mail",
@@ -20,6 +21,7 @@
     "profileLast31d": "Seneste 31 Dage",
     "profileMonth": "Månedsprofil",
     "profileYear": "Årsprofil",
+    "crude": "Rå",
     "recipients": "Modtagere",
     "relayControls": "Relæ Kontroller",
     "seriesColors": "Serie Farver",
@@ -34,11 +36,13 @@
     "chooseDateFrom": "Vælg fra dato (inkl.)",
     "chooseDateTo": "Vælg til dato (inkl.)",
     "chooseFromMenu": "Vælg fra menuen",
+    "chooseLabel": "Vælg etiket",
     "chooseLabels": "Vælg etiketter",
     "chooseMonth": "Vælg måned",
     "chooseYear": "Vælg årstal",
     "forExampleProfileGraph": "Eksempel: For at tilføje en profil graf med serier vælg 'Indstillinger' derefter 'Profil Grafer'.",
     "noDataFound": "Ingen data fundet",
+    "placeholderLabel": "Etiket",
     "placeholderLabels": "Etiketter",
     "serverVersion": "Server version:",
     "serverLanguage": "Server sprog:",
@@ -46,6 +50,8 @@
   },
 
   "headings": {
+    "crudeData": "Rå Data",
+    "crudeDataCounts": "Viser {{count}} af {{total}} indgange",
     "dayProfile": "Dagsprofil",
     "diffByDates": "Forskel Mellem Datoer",
     "emailRecipients": "E-mail Modtagere",
@@ -118,6 +124,7 @@
     "name": "Navn",
     "page": "Side",
     "relayUnit": "Relæ enhed",
+    "scale": "Skalering",
     "serie": "Serie",
     "series": "Serier",
     "status": "Status",
@@ -126,7 +133,8 @@
     "to": "Til",
     "total": "Total",
     "typicalUnits": "Typiske Enheder",
-    "unit": "Enhed"
+    "unit": "Enhed",
+    "value": "Værdi"
   },
 
   "forms": {

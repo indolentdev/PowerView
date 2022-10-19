@@ -75,7 +75,7 @@ public class SettingsDisconnectRulesModuleTest
         Assert.That(actual.DurationMinutes, Is.EqualTo((int)expected.Duration.TotalMinutes));
         Assert.That(actual.DisconnectToConnectValue, Is.EqualTo(expected.DisconnectToConnectValue));
         Assert.That(actual.ConnectToDisconnectValue, Is.EqualTo(expected.ConnectToDisconnectValue));
-        Assert.That(actual.Unit?.ToString(), Is.EqualTo(ValueAndUnitMapper.Map(expected.Unit)));
+        Assert.That(actual.Unit?.ToString(), Is.EqualTo(ValueAndUnitConverter.Convert(expected.Unit)));
     }
 
     [Test]

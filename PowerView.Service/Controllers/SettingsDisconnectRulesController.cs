@@ -37,7 +37,7 @@ public class SettingsDisconnectRulesController : ControllerBase
                 DurationMinutes = (int)disconnectRule.Duration.TotalMinutes,
                 DisconnectToConnectValue = disconnectRule.DisconnectToConnectValue,
                 ConnectToDisconnectValue = disconnectRule.ConnectToDisconnectValue,
-                Unit = ValueAndUnitMapper.Map(disconnectRule.Unit, false)
+                Unit = ValueAndUnitConverter.Convert(disconnectRule.Unit, false)
             })
             .ToArray();
         var disconnectRuleSetDto = new { Items = disconnectRuleDtos };
@@ -63,7 +63,7 @@ public class SettingsDisconnectRulesController : ControllerBase
         {
             Label = x.Key.Label,
             ObisCode = x.Key.ObisCode.ToString(),
-            Unit = ValueAndUnitMapper.Map(x.Value, false)
+            Unit = ValueAndUnitConverter.Convert(x.Value, false)
         });
         return Ok(new { DisconnectControlItems = disconnectControlNameDtos, EvaluationItems = evaluationItemDtos });
     }

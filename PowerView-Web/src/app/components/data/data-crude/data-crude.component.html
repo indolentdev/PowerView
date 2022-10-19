@@ -1,0 +1,27 @@
+<h3>{{ 'headings.crudeData' | translate }}</h3>
+
+<div class="divCenterOuter">
+    <div class="divCenterInner">
+        <mat-form-field style="width:13em">
+            <mat-select placeholder="{{ 'common.placeholderLabel' | translate }}" id="label"
+                required (selectionChange)="labelChangeEvent($event)" [formControl]="fcLabel">
+                <mat-option *ngFor="let opt of labels" [value]="opt">
+                    {{ opt }}
+                </mat-option>
+            </mat-select>
+            <mat-hint align="end">{{ 'common.chooseLabel' | translate }}</mat-hint>
+        </mat-form-field>
+
+        <br />
+
+        <mat-form-field style="width:13em">
+            <input matInput [min]="minDate" [max]="maxDate" [matDatepicker]="dp"
+                placeholder="{{ 'common.chooseDateFrom' | translate }}" required (dateChange)="dateChangeEvent($event)"
+                [formControl]="fcDate" />
+            <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+            <mat-datepicker #dp startView="month"></mat-datepicker>
+        </mat-form-field>
+    </div>
+</div>
+
+<app-data-crude-table [label]="fcLabel.value" [from]="fcDate.value"></app-data-crude-table>

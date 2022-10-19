@@ -2,6 +2,7 @@
   "menu": {
     "byDate": "By Date",
     "betweenDates": "Between Dates",
+    "data": "Data",
     "defaultPage": "[Default]",
     "diff": "Diff",
     "email": "Email",
@@ -20,6 +21,7 @@
     "profileLast31d": "Last 31 Days",
     "profileMonth": "Month Profile",
     "profileYear": "Year Profile",
+    "crude": "Crude",
     "recipients": "Recipients",
     "relayControls": "Relay Controls",
     "seriesColors": "Series Colors",
@@ -34,11 +36,13 @@
     "chooseDateFrom": "Choose from date (incl.)",
     "chooseDateTo": "Choose to date (incl.)",
     "chooseFromMenu": "Choose from the menu",
+    "chooseLabel": "Choose label",
     "chooseLabels": "Choose labels",
     "chooseMonth": "Choose month",
     "chooseYear": "Choose year",
     "forExampleProfileGraph": "For example: To add a profile graph with series go to 'Settings' then 'ProfileGraphs'.",
     "noDataFound": "No data found",
+    "placeholderLabel": "Label",
     "placeholderLabels": "Labels",
     "serverVersion": "Server version:",
     "serverLanguage": "Server language:",
@@ -46,6 +50,8 @@
   },
 
   "headings": {
+    "crudeData": "Crude Data",
+    "crudeDataCounts": "Showing {{count}} of {{total}} entries",
     "dayProfile": "Day Profile",
     "diffByDates": "Diff Between Dates",
     "emailRecipients": "Email Recipients",
@@ -118,6 +124,7 @@
     "name": "Name",
     "page": "Page",
     "relayUnit": "Relay Unit",
+    "scale": "Scale",
     "serie": "Series",
     "series": "Series",
     "status": "Status",
@@ -126,7 +133,8 @@
     "to": "To",
     "total": "Total",
     "typicalUnits": "Typical Units",
-    "unit": "Unit"
+    "unit": "Unit",
+    "value": "Value"
   },
 
   "forms": {

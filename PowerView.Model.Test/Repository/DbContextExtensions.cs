@@ -50,8 +50,10 @@ namespace PowerView.Model.Test.Repository
 
         private static List<string> InsertLabels(DbContext dbContext, IDbReading[] dbReadings)
         {
-            UnixTime now = DateTime.UtcNow;
-            var labels = dbReadings.Select(x => x.LabelId).Distinct().Select(x => new { Id = x, LabelName = "Label-" + x, Timestamp = now }).ToList();
+            var labels = dbReadings
+              .GroupBy(x => x.LabelId)
+              .Select(x => new { Id = x.Key, LabelName = "Label-" + x.Key, Timestamp = (UnixTime)x.First().Timestamp })
+              .ToList();
 
             dbContext.ExecuteTransaction(@"
               INSERT INTO Label (Id, LabelName, Timestamp) 
