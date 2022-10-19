@@ -19,8 +19,6 @@ export class DataCrudeTableComponent implements OnInit, OnChanges {
   displayedColumns = ['timestamp', 'register', 'value', 'scale', 'unit', 'deviceId'];
   dataSource: MatTableDataSource<any>;
 
-//  @ViewChild(MatSort, { static: true }) sort: MatSort;
-
   @Input('label') label: string;
   @Input('from') from: Moment;
 
@@ -33,14 +31,7 @@ export class DataCrudeTableComponent implements OnInit, OnChanges {
     let empty = [];
     this.dataSource = new MatTableDataSource<any>(empty);
 
-//    this.sort.sort(<MatSortable>({ id: 'serie', start: 'asc' }));
-//    this.sort.disableClear = true;
-
     this.refresh();
-  }
-
-  ngAfterViewInit() {
-//    this.dataSource.sort = this.sort;
   }
 
   ngOnChanges(changes: SimpleChanges) {

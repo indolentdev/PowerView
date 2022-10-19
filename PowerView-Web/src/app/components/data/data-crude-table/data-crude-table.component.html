@@ -1,10 +1,10 @@
-<!-- <h3>{{ 'headings.crudeData' | translate }}</h3> -->
-
 <div *ngIf="crudeValueSet !== undefined && crudeValueSet.values.length == 0">
     <h3>{{ 'common.noDataFound' | translate }}</h3>
 </div>
 
 <div *ngIf="crudeValueSet !== undefined && crudeValueSet.values.length > 0">
+    <h4>{{ 'headings.crudeDataCounts' | translate : { count: crudeValueSet.values.length, total: crudeValueSet.totalCount } }}</h4>
+
     <table mat-table [dataSource]="dataSource" matSort class="center">
         <ng-container matColumnDef="timestamp">
             <th mat-header-cell *matHeaderCellDef>{{ 'columns.timestamp' | translate }}</th>

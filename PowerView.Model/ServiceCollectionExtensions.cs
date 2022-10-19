@@ -37,6 +37,7 @@ namespace PowerView.Model
             serviceCollection.AddTransient<IDisconnectRuleRepository, DisconnectRuleRepository>();
             serviceCollection.AddTransient<IEnvironmentRepository, EnvironmentRepository>();
             serviceCollection.AddTransient<IExportRepository, ExportRepository>();
+            serviceCollection.AddTransient<ICrudeDataRepository, CrudeDataRepository>();
 
             return serviceCollection;
         }

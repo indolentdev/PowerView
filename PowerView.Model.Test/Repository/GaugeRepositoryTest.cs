@@ -9,7 +9,7 @@ namespace PowerView.Model.Test.Repository
     public class GaugeRepositoryTest : DbTestFixtureWithSchema
     {
         [Test]
-        public void GetThrows()
+        public void GetLatestThrows()
         {
             // Arrange
             var target = CreateTarget();
@@ -118,6 +118,16 @@ namespace PowerView.Model.Test.Repository
 
             // Assert
             Assert.That(values.Count, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void GetCustomThrows()
+        {
+            // Arrange
+            var target = CreateTarget();
+
+            // Act & Assert
+            Assert.That(() => target.GetCustom(DateTime.Now), Throws.TypeOf<ArgumentOutOfRangeException>());
         }
 
         [Test]

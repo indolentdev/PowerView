@@ -128,11 +128,11 @@ public class ProfileController : ControllerBase
         {
             x.SeriesName.Label,
             ObisCode = x.SeriesName.ObisCode.ToString(),
-            Unit = ValueAndUnitMapper.Map(x.Unit),
+            Unit = ValueAndUnitConverter.Convert(x.Unit),
             SerieType = serieMapper.MapToSerieType(x.SeriesName.ObisCode),
             SerieYAxis = serieMapper.MapToSerieYAxis(x.SeriesName.ObisCode),
             SerieColor = serieRepository.GetColorCached(x.SeriesName.Label, x.SeriesName.ObisCode),
-            Values = x.Values.Select(value => ValueAndUnitMapper.Map(value, x.Unit)).ToList()
+            Values = x.Values.Select(value => ValueAndUnitConverter.Convert(value, x.Unit)).ToList()
         });
 
         return new
@@ -149,8 +149,8 @@ public class ProfileController : ControllerBase
         {
             maxValue.SerieName.Label,
             ObisCode = maxValue.SerieName.ObisCode.ToString(),
-            Value = ValueAndUnitMapper.Map(maxValue.UnitValue.Value, maxValue.UnitValue.Unit),
-            Unit = ValueAndUnitMapper.Map(maxValue.UnitValue.Unit)
+            Value = ValueAndUnitConverter.Convert(maxValue.UnitValue.Value, maxValue.UnitValue.Unit),
+            Unit = ValueAndUnitConverter.Convert(maxValue.UnitValue.Unit)
         };
     }
 

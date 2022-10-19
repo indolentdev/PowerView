@@ -11,6 +11,7 @@ export function crudeDataBackend(url: string, method: string, request: HttpReque
                 status: 200,
                 body: {
                     label: crudeData.label,
+                    totalCount: 888,
                     values: crudeData.values
                 }
             }));

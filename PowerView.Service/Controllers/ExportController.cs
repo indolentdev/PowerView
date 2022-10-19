@@ -110,8 +110,8 @@ public class ExportController : ControllerBase
                     {
                         From = (DateTime?)x.Start,
                         To = (DateTime?)x.End,
-                        Value = ValueAndUnitMapper.Map(x.UnitValue.Value, unit),
-                        Unit = ValueAndUnitMapper.Map(unit)
+                        Value = ValueAndUnitConverter.Convert(x.UnitValue.Value, unit),
+                        Unit = ValueAndUnitConverter.Convert(unit)
                     };
                 }).ToList()
             };
@@ -243,8 +243,8 @@ public class ExportController : ControllerBase
                     return new
                     {
                         Timestamp = (DateTime?)x.TimeRegisterValue.Timestamp,
-                        Value = ValueAndUnitMapper.Map(x.TimeRegisterValue.UnitValue.Value, unit),
-                        Unit = ValueAndUnitMapper.Map(unit),
+                        Value = ValueAndUnitConverter.Convert(x.TimeRegisterValue.UnitValue.Value, unit),
+                        Unit = ValueAndUnitConverter.Convert(unit),
                         DeviceId = x.TimeRegisterValue.DeviceId
                     };
                 }).ToList()

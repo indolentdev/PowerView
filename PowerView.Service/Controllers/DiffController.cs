@@ -85,8 +85,8 @@ public class DiffController : ControllerBase
                     ObisCode = obisCode.ToString(),
                     From = last.Start.ToString("o"),
                     To = last.End.ToString("o"),
-                    Value = ValueAndUnitMapper.Map(last.UnitValue.Value, last.UnitValue.Unit),
-                    Unit = ValueAndUnitMapper.Map(last.UnitValue.Unit)
+                    Value = ValueAndUnitConverter.Convert(last.UnitValue.Value, last.UnitValue.Unit),
+                    Unit = ValueAndUnitConverter.Convert(last.UnitValue.Unit)
                 };
             }
         }
@@ -109,8 +109,8 @@ public class DiffController : ControllerBase
             gaugeValue.DeviceId,
             Timestamp = DateTimeMapper.Map(gaugeValue.DateTime),
             ObisCode = gaugeValue.ObisCode.ToString(),
-            Value = ValueAndUnitMapper.Map(gaugeValue.UnitValue.Value, gaugeValue.UnitValue.Unit),
-            Unit = ValueAndUnitMapper.Map(gaugeValue.UnitValue.Unit)
+            Value = ValueAndUnitConverter.Convert(gaugeValue.UnitValue.Value, gaugeValue.UnitValue.Unit),
+            Unit = ValueAndUnitConverter.Convert(gaugeValue.UnitValue.Unit)
         };
     }
 

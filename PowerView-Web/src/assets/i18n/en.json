@@ -51,6 +51,7 @@
 
   "headings": {
     "crudeData": "Crude Data",
+    "crudeDataCounts": "Showing {{count}} of {{total}} entries",
     "dayProfile": "Day Profile",
     "diffByDates": "Diff Between Dates",
     "emailRecipients": "Email Recipients",

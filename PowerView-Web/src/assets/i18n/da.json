@@ -51,6 +51,7 @@
 
   "headings": {
     "crudeData": "Rå Data",
+    "crudeDataCounts": "Viser {{count}} af {{total}} indgange",
     "dayProfile": "Dagsprofil",
     "diffByDates": "Forskel Mellem Datoer",
     "emailRecipients": "E-mail Modtagere",
