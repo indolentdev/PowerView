@@ -2,6 +2,8 @@
   "menu": {
     "byDate": "By Date",
     "betweenDates": "Between Dates",
+    "crudeAdd": "Crude Add",
+    "crudeByDate": "Crude By Date",
     "data": "Data",
     "defaultPage": "[Default]",
     "diff": "Diff",
@@ -21,7 +23,6 @@
     "profileLast31d": "Last 31 Days",
     "profileMonth": "Month Profile",
     "profileYear": "Year Profile",
-    "crude": "Crude",
     "recipients": "Recipients",
     "relayControls": "Relay Controls",
     "seriesColors": "Series Colors",
@@ -50,7 +51,8 @@
   },
 
   "headings": {
-    "crudeData": "Crude Data",
+    "crudeDataAdd": "Add Crude Data",
+    "crudeDataByDate": "Crude Data By Date",
     "crudeDataCounts": "Showing {{count}} of {{total}} entries",
     "dayProfile": "Day Profile",
     "diffByDates": "Diff Between Dates",

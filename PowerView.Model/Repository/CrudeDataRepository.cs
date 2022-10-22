@@ -5,9 +5,12 @@ namespace PowerView.Model.Repository
 {
     internal class CrudeDataRepository : RepositoryBase, ICrudeDataRepository
     {
-        public CrudeDataRepository(IDbContext dbContext)
+        private readonly ILocationContext locationContext;
+
+        public CrudeDataRepository(IDbContext dbContext, ILocationContext locationContext)
           : base(dbContext)
         {
+            this.locationContext = locationContext ?? throw new ArgumentNullException(nameof(locationContext));
         }
 
         public WithCount<ICollection<CrudeDataValue>> GetCrudeData(string label, DateTime from, int skip = 0, int take = 3000)
@@ -64,5 +67,89 @@ WHERE lbl.LabelName = @Label AND rea.Timestamp >= @From;";
             public string DeviceId { get; set; }
         }
 
+        public IList<MissingDate> GetMissingDays(string label)
+        {
+            if (label == null) throw new ArgumentNullException(nameof(label));
+
+            var readingInfo = GetReadingInfo(label);
+            var dayReadingInfo = readingInfo
+              .Select(x => new { LocalDateTime = locationContext.ConvertTimeFromUtc(x.Timestamp), ReadingInfo = x })
+              .GroupBy(x => DateOnly.FromDateTime(x.LocalDateTime), x => x)
+              .Select(x => new { Date = x.Key, ReadingInfo = x.OrderByDescending(r => r.LocalDateTime).First().ReadingInfo })
+              .OrderBy(x => x.Date)
+              .ToList();
+
+            if (dayReadingInfo.Count < 2)
+            {
+                return Array.Empty<MissingDate>();
+            }
+
+            var missingDays = new List<MissingDate>();
+
+            var minItem = dayReadingInfo[0];
+            var maxItem = dayReadingInfo[dayReadingInfo.Count - 1];
+            var date = minItem.Date;
+            var ix = 1;
+            while (date < maxItem.Date)
+            {
+                date = date.AddDays(1);
+
+                var item = dayReadingInfo[ix];
+                if (date == item.Date)
+                {
+                    ix++;
+                    continue;
+                }
+
+                var previousReadingInfo = dayReadingInfo[ix - 1].ReadingInfo;
+                var nextReadingInfo = dayReadingInfo[ix].ReadingInfo;
+                if (!DeviceId.Equals(previousReadingInfo.DeviceId, nextReadingInfo.DeviceId))
+                {  // No support for adding readings between meter exchanges.
+                    continue;
+                }
+
+                var dateTime = date.ToDateTime(new TimeOnly(23, 59, 59));
+                var dateTimeUtc = locationContext.ConvertTimeToUtc(dateTime);
+
+                var missingDay = new { Date = date, Prev = previousReadingInfo, Next = nextReadingInfo };
+                missingDays.Add(new MissingDate(dateTimeUtc, previousReadingInfo.Timestamp, nextReadingInfo.Timestamp));
+            }
+
+            return missingDays;
+        }
+
+        private record ReadingInfo(long Id, string DeviceId, UnixTime Timestamp)
+        {
+            public ReadingInfo() : this(0, string.Empty, new UnixTime(0)) {}
+        }
+
+        private IEnumerable<ReadingInfo> GetReadingInfo(string label)
+        {
+            IEnumerable<ReadingInfo> rows = Array.Empty<ReadingInfo>();
+
+            long lastId = 0;
+            var limit = 250000;
+            var read = true;
+            while (read)
+            {
+                var sql = @"
+SELECT rea.Id, DeviceId, rea.Timestamp
+FROM LiveReading rea
+JOIN Label l on l.Id = rea.LabelId
+WHERE l.LabelName = @label AND rea.Id > @lastId
+ORDER BY rea.Id
+LIMIT @limit";
+                var page = DbContext.QueryTransaction<ReadingInfo>(sql, new { label, lastId, limit });
+                rows = rows.Concat(page);
+                lastId = page[page.Count - 1].Id;
+
+                if (page.Count < limit)
+                {
+                    read = false;
+                }
+            }
+
+            return rows;
+        }
     }
 }

@@ -94,7 +94,8 @@
 
 <button mat-raised-button color="primary" [matMenuTriggerFor]="dataMenu">{{ 'menu.data' | translate }}</button>
 <mat-menu #dataMenu="matMenu">
-  <button mat-menu-item [routerLink]="['/data/crude']">{{ 'menu.crude' | translate }}</button>
+  <button mat-menu-item [routerLink]="['/data/crude/add']">{{ 'menu.crudeAdd' | translate }}</button>
+  <button mat-menu-item [routerLink]="['/data/crude/bydate']">{{ 'menu.crudeByDate' | translate }}</button>
 </mat-menu>
 
 <button mat-raised-button color="primary" [matMenuTriggerFor]="exportMenu">{{ 'menu.export' | translate }}</button>

@@ -4,27 +4,24 @@ import { Router, ActivatedRoute } from "@angular/router";
 import { NGXLogger } from 'ngx-logger';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { LabelsService } from 'src/app/services/labels.service';
+import { CrudeDataService } from 'src/app/services/crude-data.service';
 
 import { Moment } from 'moment'
 import * as moment from 'moment';
 
 const labelParam = "label";
-const dateParam = "date";
 
 @Component({
-  selector: 'app-data-crude',
-  templateUrl: './data-crude.component.html',
-  styleUrls: ['./data-crude.component.css']
+  selector: 'app-data-crude-add',
+  templateUrl: './data-crude-add.component.html',
+  styleUrls: ['./data-crude-add.component.css']
 })
-export class DataCrudeComponent implements OnInit {
-  minDate = moment("2010-01-01T00:00:00Z");
-  maxDate = moment();
+export class DataCrudeAddComponent implements OnInit {
   fcLabel = new UntypedFormControl(null);
-  fcDate = new UntypedFormControl(null);
 
   labels: string[];
 
-  constructor(private log: NGXLogger, private router: Router, private route: ActivatedRoute, private labelsService: LabelsService) { }
+  constructor(private log: NGXLogger, private router: Router, private route: ActivatedRoute, private labelsService: LabelsService, private crudeDataService: CrudeDataService) { }
 
   ngOnInit(): void {
     this.getLabels();
@@ -32,12 +29,6 @@ export class DataCrudeComponent implements OnInit {
     this.route.queryParamMap.subscribe(queryParams => {
       const labelString = queryParams.get(labelParam);
       this.fcLabel.setValue(labelString);
-
-      const dateString = queryParams.get(dateParam);
-      var parsedDate = moment(dateString);
-      if (parsedDate.isValid() && !parsedDate.isSame(this.fcDate.value)) {
-        this.fcDate.setValue(parsedDate);
-      }
     });
   }
 
@@ -54,13 +45,6 @@ export class DataCrudeComponent implements OnInit {
     if (event.value == null) return;
 
     this.navigate({ label: event.value });
-  }
-
-  dateChangeEvent(event: MatDatepickerInputEvent<Moment>) {
-    if (event == null) return;
-    if (event.value == null) return;
-
-    this.navigate({ date: event.value.toISOString() });
   }
 
   private navigate(queryParams: any): void {

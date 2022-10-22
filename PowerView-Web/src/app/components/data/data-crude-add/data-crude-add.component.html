@@ -1,0 +1,19 @@
+<h2>{{ 'headings.crudeDataAdd' | translate }}</h2>
+
+<div class="divCenterOuter">
+    <div class="divCenterInner">
+        <mat-form-field style="width:13em">
+            <mat-select placeholder="{{ 'common.placeholderLabel' | translate }}" id="label" required
+                (selectionChange)="labelChangeEvent($event)" [formControl]="fcLabel">
+                <mat-option *ngFor="let opt of labels" [value]="opt">
+                    {{ opt }}
+                </mat-option>
+            </mat-select>
+            <mat-hint align="end">{{ 'common.chooseLabel' | translate }}</mat-hint>
+        </mat-form-field>
+    </div>
+</div>
+
+<div *ngIf="fcLabel.value !== undefined && fcLabel.value != null && fcLabel.value !== ''">
+Kom så
+</div>

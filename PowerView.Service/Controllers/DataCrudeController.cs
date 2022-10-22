@@ -41,5 +41,19 @@ public class CrudeDataController : ControllerBase
         return Ok(r);
     }
 
+    [HttpGet("missing-days")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public ActionResult GetMissingDays(
+        [BindRequired, FromQuery, MinLength(1)] string label
+        )
+    {
+        var missingDates = crudeDataRepository.GetMissingDays(label);
+
+        var r = missingDates
+          .Select(x => new { x.Timestamp, x.PreviousTimestamp, x.NextTimestamp })
+          .ToList();
+
+        return Ok(r);
+    }
 
 }

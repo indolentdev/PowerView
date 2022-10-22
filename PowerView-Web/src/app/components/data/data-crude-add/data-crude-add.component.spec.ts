@@ -16,25 +16,23 @@ import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import { NGXLogger } from 'ngx-logger';
 import { of } from 'rxjs';
 import { LabelsService } from '../../../services/labels.service';
+import { CrudeDataService } from 'src/app/services/crude-data.service';
 
 import { mock, instance, when, verify } from 'ts-mockito';
 
-import { DataCrudeTableComponent } from '../data-crude-table/data-crude-table.component';
+import { DataCrudeAddComponent } from './data-crude-add.component';
 
-import { DataCrudeComponent } from './data-crude.component';
-
-describe('DataCrudeComponent', () => {
-  let component: DataCrudeComponent;
-  let fixture: ComponentFixture<DataCrudeComponent>;
+describe('DataCrudeAddComponent', () => {
+  let component: DataCrudeAddComponent;
+  let fixture: ComponentFixture<DataCrudeAddComponent>;
 
   let log = mock(NGXLogger);
   let labelsService = mock(LabelsService);
+  let crudeDataService = mock(CrudeDataService);
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [
-        DataCrudeTableComponent,
-        DataCrudeComponent],
+      declarations: [ DataCrudeAddComponent ],
       imports: [
         HttpClientTestingModule,
         TranslateModule.forRoot({
@@ -55,14 +53,15 @@ describe('DataCrudeComponent', () => {
       ],
       providers: [
         { provide: NGXLogger, useValue: instance(log) },
-        { provide: LabelsService, useValue: instance(labelsService) }
+        { provide: LabelsService, useValue: instance(labelsService) },
+        { provide: CrudeDataService, useValue: instance(CrudeDataService)}
       ]
     })
     .compileComponents();
-
+    
     when(labelsService.getLabels()).thenReturn(of([]));
 
-    fixture = TestBed.createComponent(DataCrudeComponent);
+    fixture = TestBed.createComponent(DataCrudeAddComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

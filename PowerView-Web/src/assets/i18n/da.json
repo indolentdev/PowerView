@@ -2,6 +2,8 @@
   "menu": {
     "byDate": "Pr. Dato",
     "betweenDates": "Mellem Datoer",
+    "crudeAdd": "Rå Tilføj",
+    "crudeByDate": "Rå Pr. Dato",
     "data": "Data",
     "defaultPage": "[Standard]",
     "diff": "Forskel",
@@ -21,7 +23,6 @@
     "profileLast31d": "Seneste 31 Dage",
     "profileMonth": "Månedsprofil",
     "profileYear": "Årsprofil",
-    "crude": "Rå",
     "recipients": "Modtagere",
     "relayControls": "Relæ Kontroller",
     "seriesColors": "Serie Farver",
@@ -50,7 +51,8 @@
   },
 
   "headings": {
-    "crudeData": "Rå Data",
+    "crudeDataAdd": "Tilføj Rå Data",
+    "crudeDataByDate": "Rå Data pr. Dato",
     "crudeDataCounts": "Viser {{count}} af {{total}} indgange",
     "dayProfile": "Dagsprofil",
     "diffByDates": "Forskel Mellem Datoer",

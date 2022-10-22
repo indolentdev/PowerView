@@ -9,13 +9,15 @@ namespace PowerView.Model.Test.Repository
     [TestFixture]
     public class CrudeDataRepositoryTest : DbTestFixtureWithSchema
     {
+        private ILocationContext LocationContext = TimeZoneHelper.GetDenmarkLocationContext();
+
         [Test]
         [TestCase(null, "2022-10-18T13:21:10Z", 0, 1, typeof(ArgumentNullException))]
         [TestCase("Label", "2022-10-18T13:21:10", 0, 1, typeof(ArgumentOutOfRangeException))]
         [TestCase("Label", "2022-10-18T13:21:10Z", -1, 1, typeof(ArgumentOutOfRangeException))]
         [TestCase("Label", "2022-10-18T13:21:10Z", 0, 0, typeof(ArgumentOutOfRangeException))]
         [TestCase("Label", "2022-10-18T13:21:10Z", 0, 10001, typeof(ArgumentOutOfRangeException))]
-        public void GetMeterEventsThrows(string label, string dateTimeString, int skip, int take, Type exceptionType)
+        public void GetCrudeDataThrows(string label, string dateTimeString, int skip, int take, Type exceptionType)
         {
             // Arrange
             var dateTime = DateTime.Parse(dateTimeString, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
@@ -70,9 +72,106 @@ namespace PowerView.Model.Test.Repository
             Assert.That(values2.Result.Last().Value, Is.EqualTo(301));
         }
 
+        [Test]
+        public void GetMissingDaysThrows()
+        {
+            // Arrange
+            var target = CreateTarget();
+
+            // Act & Asssert
+            Assert.That(() => target.GetMissingDays(null), Throws.TypeOf<ArgumentNullException>());
+        }
+
+        [Test]
+        public void GetMissingDays()
+        {
+            // Arrange
+            var dtA = new DateTime(2017, 2, 17, 8, 0, 0, DateTimeKind.Utc);
+            (var labels, var deviceIds) = DbContext.Insert(new Db.LiveReading { LabelId = 1, DeviceId = 10, Timestamp = dtA },
+                new Db.LiveRegister { ObisId = 111, Value = 101, Scale = 1, Unit = 1 });
+
+            var dtB = dtA.AddHours(24 + 25);
+            DbContext.Insert(new Db.LiveReading { LabelId = 1, DeviceId = 10, Timestamp = dtB },
+                new Db.LiveRegister { ObisId = 111, Value = 201, Scale = 1, Unit = 1 });
+
+            var dtC = dtB.AddHours(48 + 26);
+            DbContext.Insert(new Db.LiveReading { LabelId = 1, DeviceId = 10, Timestamp = dtC },
+                new Db.LiveRegister { ObisId = 111, Value = 301, Scale = 1, Unit = 1 });
+
+            var target = CreateTarget();
+
+            // Act
+            var missingDays = target.GetMissingDays(labels.First());
+
+            // Assert
+            Assert.That(missingDays.Count, Is.EqualTo(3));
+            Assert.That(missingDays, Contains.Item(new MissingDate(LocationContext.ConvertTimeToUtc(new DateTime(2017, 2, 18, 23, 59, 59)), dtA, dtB)));
+            Assert.That(missingDays, Contains.Item(new MissingDate(LocationContext.ConvertTimeToUtc(new DateTime(2017, 2, 20, 23, 59, 59)), dtB, dtC)));
+            Assert.That(missingDays, Contains.Item(new MissingDate(LocationContext.ConvertTimeToUtc(new DateTime(2017, 2, 21, 23, 59, 59)), dtB, dtC)));
+        }
+
+        [Test]
+        public void GetMissingDaysOneReading()
+        {
+            // Arrange
+            var dtA = new DateTime(2017, 2, 17, 8, 0, 0, DateTimeKind.Utc);
+            (var labels, var deviceIds) = DbContext.Insert(new Db.LiveReading { LabelId = 1, DeviceId = 10, Timestamp = dtA },
+                new Db.LiveRegister { ObisId = 111, Value = 101, Scale = 1, Unit = 1 });
+
+            var target = CreateTarget();
+
+            // Act
+            var missingDays = target.GetMissingDays(labels.First());
+
+            // Assert
+            Assert.That(missingDays, Is.Empty);
+        }
+
+        [Test]
+        public void GetMissingDaysTwoReadingsSameDay()
+        {
+            // Arrange
+            var dtA = new DateTime(2017, 2, 17, 8, 0, 0, DateTimeKind.Utc);
+            (var labels, var deviceIds) = DbContext.Insert(new Db.LiveReading { LabelId = 1, DeviceId = 10, Timestamp = dtA },
+                new Db.LiveRegister { ObisId = 111, Value = 101, Scale = 1, Unit = 1 });
+
+            var dtB = dtA.AddHours(2);
+            DbContext.Insert(new Db.LiveReading { LabelId = 1, DeviceId = 10, Timestamp = dtB },
+                new Db.LiveRegister { ObisId = 111, Value = 201, Scale = 1, Unit = 1 });
+
+            var target = CreateTarget();
+
+            // Act
+            var missingDays = target.GetMissingDays(labels.First());
+
+            // Assert
+            Assert.That(missingDays, Is.Empty);
+        }
+
+        [Test]
+        public void GetMissingDaysTworReadingsDifferentDeviceIds()
+        {
+            // Arrange
+            var dtA = new DateTime(2017, 2, 17, 8, 0, 0, DateTimeKind.Utc);
+            (var labels, var deviceIds) = DbContext.Insert(new Db.LiveReading { LabelId = 1, DeviceId = 10, Timestamp = dtA },
+                new Db.LiveRegister { ObisId = 111, Value = 101, Scale = 1, Unit = 1 });
+
+            var dtB = dtA.AddHours(24 + 25);
+            DbContext.Insert(new Db.LiveReading { LabelId = 1, DeviceId = 20, Timestamp = dtB },
+                new Db.LiveRegister { ObisId = 111, Value = 201, Scale = 1, Unit = 1 });
+
+            var target = CreateTarget();
+
+            // Act
+            var missingDays = target.GetMissingDays(labels.First());
+
+            // Assert
+            Assert.That(missingDays, Is.Empty);
+        }
+
         private CrudeDataRepository CreateTarget()
         {
-            return new CrudeDataRepository(DbContext);
+            return new CrudeDataRepository(DbContext, LocationContext);
         }
 
     }

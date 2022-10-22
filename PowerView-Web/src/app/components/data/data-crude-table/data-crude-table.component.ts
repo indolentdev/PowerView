@@ -1,13 +1,8 @@
-import { Component, OnInit, ViewChild, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { MatSort, MatSortable } from '@angular/material/sort';
+import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { NGXLogger } from 'ngx-logger';
-import { CrudeDataService } from '../../../services/crude-data.service';
 import { ObisService } from '../../../services/obis.service';
-import { CrudeValueSet } from '../../../model/crudeValueSet';
-
-import { Moment } from 'moment'
-import * as moment from 'moment';
+import { CrudeValue } from '../../../model/crudeValue';
 
 @Component({
   selector: 'app-data-crude-table',
@@ -19,12 +14,9 @@ export class DataCrudeTableComponent implements OnInit, OnChanges {
   displayedColumns = ['timestamp', 'register', 'value', 'scale', 'unit', 'deviceId'];
   dataSource: MatTableDataSource<any>;
 
-  @Input('label') label: string;
-  @Input('from') from: Moment;
+  @Input('crudeValues') crudeValues: CrudeValue[];
 
-  crudeValueSet: CrudeValueSet;
-
-  constructor(private log: NGXLogger, private obisService: ObisService, private crudeDataService: CrudeDataService) {
+  constructor(private log: NGXLogger, private obisService: ObisService) {
   }
 
   ngOnInit() {
@@ -39,12 +31,7 @@ export class DataCrudeTableComponent implements OnInit, OnChanges {
   }
 
   private refresh(): void {
-    if (this.label == null || this.from == null) return;
-
-    this.crudeDataService.getCrudeValues(this.label, this.from).subscribe(x => {
-      this.crudeValueSet = x;
-      this.dataSource.data = this.obisService.AddRegisterProperty(this.crudeValueSet.values);
-    });
+    this.dataSource.data = this.obisService.AddRegisterProperty(this.crudeValues);
   }
 
 }
