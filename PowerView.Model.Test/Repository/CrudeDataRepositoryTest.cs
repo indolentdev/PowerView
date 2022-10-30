@@ -73,6 +73,54 @@ namespace PowerView.Model.Test.Repository
         }
 
         [Test]
+        [TestCase(null, "2022-10-18T13:21:10Z", typeof(ArgumentNullException))]
+        [TestCase("Label", "2022-10-18T13:21:10", typeof(ArgumentOutOfRangeException))]
+        public void GetCrudeDataByThrows(string label, string dateTimeString, Type exceptionType)
+        {
+            // Arrange
+            var dateTime = DateTime.Parse(dateTimeString, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
+            var target = CreateTarget();
+
+            // Act & Asssert
+            Assert.That(() => target.GetCrudeDataBy(label, dateTime), Throws.TypeOf(exceptionType));
+        }
+
+        [Test]
+        public void GetCrudeDataBy()
+        {
+            // Arrange
+            var dtA = new DateTime(2017, 2, 27, 12, 0, 0, DateTimeKind.Utc);
+            (var labels, var deviceIds) = DbContext.Insert(new Db.LiveReading { LabelId = 1, DeviceId = 10, Timestamp = dtA },
+                new Db.LiveRegister { ObisId = 111, Value = 101, Scale = 1, Unit = 1 });
+
+            var dtB = dtA.AddSeconds(44);
+            DbContext.Insert(new Db.LiveReading { LabelId = 1, DeviceId = 10, Timestamp = dtB },
+                new Db.LiveRegister { ObisId = 111, Value = 201, Scale = 1, Unit = 1 }, new Db.LiveRegister { ObisId = 112, Value = 202, Scale = 1, Unit = 1 });
+            DbContext.Insert(new Db.LiveReading { LabelId = 99, DeviceId = 99, Timestamp = dtB },
+                new Db.LiveRegister { ObisId = 99, Value = 99, Scale = 1, Unit = 1 });
+
+            var dtC = dtB.AddSeconds(28);
+            DbContext.Insert(new Db.LiveReading { LabelId = 1, DeviceId = 10, Timestamp = dtC },
+                new Db.LiveRegister { ObisId = 111, Value = 301, Scale = 1, Unit = 1 });
+
+            var target = CreateTarget();
+
+            // Act & Assert
+            var values = target.GetCrudeDataBy(labels.First(), dtB);
+
+            Assert.That(values.Count, Is.EqualTo(2));
+            Assert.That(values.First().DateTime, Is.EqualTo(dtB));
+            Assert.That(values.First().Scale, Is.EqualTo(1));
+            Assert.That(values.First().Unit, Is.EqualTo(Unit.WattHour));
+            Assert.That(values.First().DeviceId, Is.EqualTo(deviceIds.First()));
+
+            Assert.That(values.First().ObisCode, Is.EqualTo(new ObisCode(new byte[] { 111, 111, 111, 111, 111, 111 })));
+            Assert.That(values.First().Value, Is.EqualTo(201));
+            Assert.That(values.Last().ObisCode, Is.EqualTo(new ObisCode(new byte[] { 112, 112, 112, 112, 112, 112 })));
+            Assert.That(values.Last().Value, Is.EqualTo(202));
+        }
+
+        [Test]
         public void GetMissingDaysThrows()
         {
             // Arrange

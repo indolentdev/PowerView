@@ -154,6 +154,111 @@ public class DataCrudeControllerTest
         AssertCrudeDataVaue(value3, json.values[2]);
     }
 
+    [Test]
+    public async Task GetCrudeDataByLabelAbsent()
+    {
+        // Arrange
+
+        // Act
+        var response = await httpClient.GetAsync($"api/data/crude/by/");
+
+        // Assert
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+        crudeDataRepository.Verify(cdr => cdr.GetCrudeDataBy(It.IsAny<string>(), It.IsAny<DateTime>()), Times.Never);
+    }
+
+    [Test]
+    public async Task GetCrudeDataByLabelEmpty()
+    {
+        // Arrange
+        var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
+
+        // Act
+        var response = await httpClient.GetAsync($"api/data/crude/by//{today.ToString("o")}");
+
+        // Assert
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+        crudeDataRepository.Verify(cdr => cdr.GetCrudeDataBy(It.IsAny<string>(), It.IsAny<DateTime>()), Times.Never);
+    }
+
+    [Test]
+    public async Task GetCrudeDataByTimestampAbsent()
+    {
+        // Arrange
+        var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
+
+        // Act
+        var response = await httpClient.GetAsync($"api/data/crude/by/lbl/");
+
+        // Assert
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+        crudeDataRepository.Verify(cdr => cdr.GetCrudeDataBy(It.IsAny<string>(), It.IsAny<DateTime>()), Times.Never);
+    }
+
+    [Test]
+    public async Task GetCrudeDataByTimestampBadFormat()
+    {
+        // Arrange
+        var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
+
+        // Act
+        var response = await httpClient.GetAsync($"api/data/crude/by/lbl/bad");
+
+        // Assert
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+        crudeDataRepository.Verify(cdr => cdr.GetCrudeDataBy(It.IsAny<string>(), It.IsAny<DateTime>()), Times.Never);
+    }
+
+    [Test]
+    public async Task GetCrudeDataByTimestampNotUtc()
+    {
+        // Arrange
+        var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
+        var local = DateTime.SpecifyKind(today, DateTimeKind.Unspecified);
+
+        // Act
+        var response = await httpClient.GetAsync($"api/data/crude/by/lbl/{local.ToString("o")}");
+
+        // Assert
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+        crudeDataRepository.Verify(cdr => cdr.GetCrudeDataBy(It.IsAny<string>(), It.IsAny<DateTime>()), Times.Never);
+    }
+
+    [Test]
+    public async Task GetCrudeDataByCallsRepository()
+    {
+        // Arrange
+        var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
+        SetupCrudeDataRepositoryGetCrudeDataBy();
+
+        // Act
+        var response = await httpClient.GetAsync($"api/data/crude/by/lbl/{today.ToString("o")}");
+
+        // Assert
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        crudeDataRepository.Verify(cdr => cdr.GetCrudeDataBy(It.Is<string>(p => p == "lbl"), It.Is<DateTime>(p => p == today && p.Kind == today.Kind)));
+    }
+
+    [Test]
+    public async Task GetCrudeDataBy()
+    {
+        // Arrange
+        var baseTime = new DateTime(2022, 10, 18, 19, 39, 12, DateTimeKind.Utc);
+        var value1 = new CrudeDataValue(baseTime, ObisCode.ElectrActiveEnergyA14, 123, 1, Unit.WattHour, "SN1");
+        var value2 = new CrudeDataValue(baseTime, ObisCode.ElectrActiveEnergyA23, 321, 1, Unit.WattHour, "SN1");
+        SetupCrudeDataRepositoryGetCrudeDataBy(value1, value2);
+
+        // Act
+        var response = await httpClient.GetAsync($"api/data/crude/by/lbl/{baseTime.ToString("o")}");
+
+        // Assert
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        var json = await response.Content.ReadFromJsonAsync<TestCrudeDataValueDto[]>();
+        Assert.That(json.Length, Is.EqualTo(2));
+        AssertCrudeDataVaue(value1, json[0]);
+        AssertCrudeDataVaue(value2, json[1]);
+    }
+
     private static void AssertCrudeDataVaue(CrudeDataValue expected, TestCrudeDataValueDto actual)
     {
         Assert.That(actual, Is.Not.Null);
@@ -238,6 +343,12 @@ public class DataCrudeControllerTest
     {
         crudeDataRepository.Setup(x => x.GetCrudeData(It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<int>(), It.IsAny<int>()))
             .Returns(new WithCount<ICollection<CrudeDataValue>>(totalCount, values));
+    }
+
+    private void SetupCrudeDataRepositoryGetCrudeDataBy(params CrudeDataValue[] values)
+    {
+        crudeDataRepository.Setup(x => x.GetCrudeDataBy(It.IsAny<string>(), It.IsAny<DateTime>()))
+            .Returns(values);
     }
 
     private void SetupCrudeDataRepositoryGetMissingDays(params MissingDate[] missingDays)

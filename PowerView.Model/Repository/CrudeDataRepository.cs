@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Dapper;
+﻿using Dapper;
 using Microsoft.Data.Sqlite;
 
 namespace PowerView.Model.Repository
@@ -66,6 +65,25 @@ WHERE lbl.LabelName = @Label AND rea.Timestamp >= @From;";
             public short Scale { get; set; }
             public byte Unit { get; set; }
             public string DeviceId { get; set; }
+        }
+
+        public ICollection<CrudeDataValue> GetCrudeDataBy(string label, DateTime timestamp)
+        {
+            if (label == null) throw new ArgumentNullException(nameof(label));
+            if (timestamp.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException(nameof(timestamp), $"Must be UTC. Was:{timestamp.Kind}");
+
+            var sql = @"
+SELECT rea.Timestamp,o.ObisCode,reg.Value,reg.Scale,reg.Unit,dev.DeviceName AS DeviceId 
+FROM LiveReading AS rea JOIN Label AS lbl ON rea.LabelId=lbl.Id JOIN Device AS dev ON rea.DeviceId=dev.Id JOIN LiveRegister AS reg ON rea.Id=reg.ReadingId JOIN Obis o ON reg.ObisId=o.Id
+WHERE lbl.LabelName = @Label AND rea.Timestamp = @Timestamp;";
+
+            var resultSet = DbContext.QueryTransaction<RowLocal>(sql, new { Label = label, Timestamp = (UnixTime)timestamp });
+
+            var crudeDataValues = resultSet
+                .Select(x => new CrudeDataValue(x.Timestamp, x.ObisCode, x.Value, x.Scale, (Unit)x.Unit, x.DeviceId))
+                .ToList();
+
+            return crudeDataValues;
         }
 
         public IList<MissingDate> GetMissingDays(string label)

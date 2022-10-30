@@ -41,6 +41,28 @@ public class CrudeDataController : ControllerBase
         return Ok(r);
     }
 
+    [HttpGet("by/{label}/{timestamp}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public ActionResult GetBy(
+        [BindRequired, FromRoute, MinLength(1)] string label,
+        [BindRequired, FromRoute, UtcDateTime] DateTime timestamp
+        )
+    {
+        var crudeData = crudeDataRepository.GetCrudeDataBy(label, timestamp);
+
+        var r = crudeData.Select(x => new
+        {
+            Timestamp = x.DateTime,
+            ObisCode = x.ObisCode.ToString(),
+            x.Value,
+            x.Scale,
+            Unit = UnitMapper.Map(x.Unit),
+            x.DeviceId
+        }).ToList();
+
+        return Ok(r);
+    }
+
     [HttpGet("missing-days")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public ActionResult GetMissingDays(
