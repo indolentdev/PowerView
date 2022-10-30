@@ -140,6 +140,27 @@
   },
 
   "forms": {
+    "crudeData":{
+      "add": {
+        "buttonAdd": "Add",
+        "confirmAdd": "Crude value added. Day, month and year history has been removed and will be recalculated.",
+        "errorAdd": "Add crude value failed. ",
+        "errorDuplicate": "Already exists. Change date. ",
+        "hintDate": "Choose date and time for new value",
+        "hintName": "Choose name",
+        "hintValue": "Enter new value",
+        "placeholderDate": "Date and time",
+        "placeholderName": "Name",
+        "placeholderValue": "Value",
+        "valErrors": {
+          "max": "Maximum value is {{ maxValue }}",
+          "min": "Minimum value is {{ minValue }}",
+          "required": "Required"
+        },
+        "scaleUnitDescription": "E.g. Value:1234, Scale:2, Unit:Wh means 123.4 kWh. Or Value:12345, Scale:-3, Unit:m3 means 1.234 m3",
+        "preselected": "Scale, Unit and DeviceID are preselected."
+      }
+    },
     "export": {
       "hintDecimalSeparator": "Choose decimal separator",
       "placeholderDecimalSeparator": "Decimal Separator",

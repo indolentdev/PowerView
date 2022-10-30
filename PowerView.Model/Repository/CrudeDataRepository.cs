@@ -1,4 +1,5 @@
-﻿using Dapper;
+﻿using System.Linq;
+using Dapper;
 using Microsoft.Data.Sqlite;
 
 namespace PowerView.Model.Repository
@@ -74,8 +75,8 @@ WHERE lbl.LabelName = @Label AND rea.Timestamp >= @From;";
             var readingInfo = GetReadingInfo(label);
             var dayReadingInfo = readingInfo
               .Select(x => new { LocalDateTime = locationContext.ConvertTimeFromUtc(x.Timestamp), ReadingInfo = x })
-              .GroupBy(x => DateOnly.FromDateTime(x.LocalDateTime), x => x)
-              .Select(x => new { Date = x.Key, ReadingInfo = x.OrderByDescending(r => r.LocalDateTime).First().ReadingInfo })
+              .GroupBy(x => DateOnly.FromDateTime(x.LocalDateTime))
+              .Select(x => new { Date = x.Key, ReadingInfos = x.Select(y => y.ReadingInfo).OrderBy(x => x.Timestamp).ToList() })
               .OrderBy(x => x.Date)
               .ToList();
 
@@ -101,8 +102,8 @@ WHERE lbl.LabelName = @Label AND rea.Timestamp >= @From;";
                     continue;
                 }
 
-                var previousReadingInfo = dayReadingInfo[ix - 1].ReadingInfo;
-                var nextReadingInfo = dayReadingInfo[ix].ReadingInfo;
+                var previousReadingInfo = dayReadingInfo[ix - 1].ReadingInfos.Last();
+                var nextReadingInfo = dayReadingInfo[ix].ReadingInfos.First();
                 if (!DeviceId.Equals(previousReadingInfo.DeviceId, nextReadingInfo.DeviceId))
                 {  // No support for adding readings between meter exchanges.
                     continue;

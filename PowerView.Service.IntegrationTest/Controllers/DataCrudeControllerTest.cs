@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Net;
 using System.Net.Http;
@@ -153,12 +154,6 @@ public class DataCrudeControllerTest
         AssertCrudeDataVaue(value3, json.values[2]);
     }
 
-    private void SetupCrudeDataRepositoryGetCrudeData(int totalCount, params CrudeDataValue[] values)
-    {
-        crudeDataRepository.Setup(x => x.GetCrudeData(It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<int>(), It.IsAny<int>()))
-            .Returns(new WithCount<ICollection<CrudeDataValue>>(totalCount, values));
-    }
-
     private static void AssertCrudeDataVaue(CrudeDataValue expected, TestCrudeDataValueDto actual)
     {
         Assert.That(actual, Is.Not.Null);
@@ -169,6 +164,88 @@ public class DataCrudeControllerTest
         Assert.That(actual.unit, Is.EqualTo(UnitMapper.Map(expected.Unit)));
         Assert.That(actual.deviceId, Is.EqualTo(expected.DeviceId));
     }
+
+    [Test]
+    public async Task GetMissingDaysLabelAbsent()
+    {
+        // Arrange
+
+        // Act
+        var response = await httpClient.GetAsync($"api/data/crude/missing-days");
+
+        // Assert
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+        crudeDataRepository.Verify(cdr => cdr.GetMissingDays(It.IsAny<string>()), Times.Never);
+    }
+
+    [Test]
+    public async Task GetMissingDaysLabelEmpty()
+    {
+        // Arrange
+
+        // Act
+        var response = await httpClient.GetAsync($"api/data/crude/missing-days?label=");
+
+        // Assert
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+        crudeDataRepository.Verify(cdr => cdr.GetMissingDays(It.IsAny<string>()), Times.Never);
+    }
+
+    [Test]
+    public async Task GetMissingDaysCallsRepository()
+    {
+        // Arrange
+        SetupCrudeDataRepositoryGetMissingDays();
+
+        // Act
+        var response = await httpClient.GetAsync($"api/data/crude/missing-days?label=lbl");
+
+        // Assert
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        crudeDataRepository.Verify(cdr => cdr.GetMissingDays(It.Is<string>(p => p == "lbl")));
+    }
+
+    [Test]
+    public async Task GetMissingDays()
+    {
+        // Arrange
+        var baseTime = new DateTime(2022, 10, 18, 19, 39, 12, DateTimeKind.Utc);
+        var previousDateTime = new DateTime(2022, 10, 17, 19, 39, 12, DateTimeKind.Utc);
+        var nextDateTime = new DateTime(2022, 10, 20, 19, 39, 12, DateTimeKind.Utc);
+        var missingDay1 = new MissingDate(baseTime, previousDateTime, nextDateTime);
+        var missingDay2 = new MissingDate(baseTime.AddDays(1), previousDateTime, nextDateTime);
+        SetupCrudeDataRepositoryGetMissingDays(missingDay1, missingDay2);
+
+        // Act
+        var response = await httpClient.GetAsync($"api/data/crude/missing-days?label=lbl");
+
+        // Assert
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        var json = await response.Content.ReadFromJsonAsync<TestMissingDateDto[]>();
+        AssertMissingDate(missingDay1, json.First());
+        AssertMissingDate(missingDay2, json.Last());
+    }
+
+    private static void AssertMissingDate(MissingDate expected, TestMissingDateDto actual)
+    {
+        Assert.That(actual, Is.Not.Null);
+        Assert.That(actual.timestamp, Is.EqualTo(expected.Timestamp.ToString("o").Substring(0, 19) + "Z"));
+        Assert.That(actual.previousTimestamp, Is.EqualTo(expected.PreviousTimestamp.ToString("o").Substring(0, 19) + "Z"));
+        Assert.That(actual.nextTimestamp, Is.EqualTo(expected.NextTimestamp.ToString("o").Substring(0, 19) + "Z"));
+    }
+
+    private void SetupCrudeDataRepositoryGetCrudeData(int totalCount, params CrudeDataValue[] values)
+    {
+        crudeDataRepository.Setup(x => x.GetCrudeData(It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<int>(), It.IsAny<int>()))
+            .Returns(new WithCount<ICollection<CrudeDataValue>>(totalCount, values));
+    }
+
+    private void SetupCrudeDataRepositoryGetMissingDays(params MissingDate[] missingDays)
+    {
+        crudeDataRepository.Setup(x => x.GetMissingDays(It.IsAny<string>()))
+            .Returns(missingDays);
+    }
+
 
     internal class TestCrudeDataSetDto
     {
@@ -185,6 +262,13 @@ public class DataCrudeControllerTest
         public short scale { get; set; }
         public string unit { get; set; }
         public string deviceId { get; set; }
+    }
+
+    internal class TestMissingDateDto
+    {
+        public string timestamp { get; set; }
+        public string previousTimestamp { get; set; }
+        public string nextTimestamp { get; set; }
     }
 
 }

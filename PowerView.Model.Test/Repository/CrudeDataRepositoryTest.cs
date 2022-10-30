@@ -90,11 +90,14 @@ namespace PowerView.Model.Test.Repository
             (var labels, var deviceIds) = DbContext.Insert(new Db.LiveReading { LabelId = 1, DeviceId = 10, Timestamp = dtA },
                 new Db.LiveRegister { ObisId = 111, Value = 101, Scale = 1, Unit = 1 });
 
-            var dtB = dtA.AddHours(24 + 25);
-            DbContext.Insert(new Db.LiveReading { LabelId = 1, DeviceId = 10, Timestamp = dtB },
-                new Db.LiveRegister { ObisId = 111, Value = 201, Scale = 1, Unit = 1 });
+            var dtB1 = dtA.AddHours(24 + 24 + 1);
+            DbContext.Insert(new Db.LiveReading { LabelId = 1, DeviceId = 10, Timestamp = dtB1 },
+                new Db.LiveRegister { ObisId = 111, Value = 211, Scale = 1, Unit = 1 });
+            var dtB2 = dtA.AddHours(24 + 24 + 4);
+            DbContext.Insert(new Db.LiveReading { LabelId = 1, DeviceId = 10, Timestamp = dtB2 },
+                new Db.LiveRegister { ObisId = 111, Value = 221, Scale = 1, Unit = 1 });
 
-            var dtC = dtB.AddHours(48 + 26);
+            var dtC = dtA.AddHours(24 + 24 + 24 + 24 + 24 + 3);
             DbContext.Insert(new Db.LiveReading { LabelId = 1, DeviceId = 10, Timestamp = dtC },
                 new Db.LiveRegister { ObisId = 111, Value = 301, Scale = 1, Unit = 1 });
 
@@ -105,9 +108,9 @@ namespace PowerView.Model.Test.Repository
 
             // Assert
             Assert.That(missingDays.Count, Is.EqualTo(3));
-            Assert.That(missingDays, Contains.Item(new MissingDate(LocationContext.ConvertTimeToUtc(new DateTime(2017, 2, 18, 23, 59, 59)), dtA, dtB)));
-            Assert.That(missingDays, Contains.Item(new MissingDate(LocationContext.ConvertTimeToUtc(new DateTime(2017, 2, 20, 23, 59, 59)), dtB, dtC)));
-            Assert.That(missingDays, Contains.Item(new MissingDate(LocationContext.ConvertTimeToUtc(new DateTime(2017, 2, 21, 23, 59, 59)), dtB, dtC)));
+            Assert.That(missingDays, Contains.Item(new MissingDate(LocationContext.ConvertTimeToUtc(new DateTime(2017, 2, 18, 23, 59, 59)), dtA, dtB1)));
+            Assert.That(missingDays, Contains.Item(new MissingDate(LocationContext.ConvertTimeToUtc(new DateTime(2017, 2, 20, 23, 59, 59)), dtB2, dtC)));
+            Assert.That(missingDays, Contains.Item(new MissingDate(LocationContext.ConvertTimeToUtc(new DateTime(2017, 2, 21, 23, 59, 59)), dtB2, dtC)));
         }
 
         [Test]

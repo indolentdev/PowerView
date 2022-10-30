@@ -9,6 +9,7 @@ import { HttpLoaderFactory } from "../../../app.module";
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
@@ -17,8 +18,12 @@ import { NGXLogger } from 'ngx-logger';
 import { of } from 'rxjs';
 import { LabelsService } from '../../../services/labels.service';
 import { CrudeDataService } from 'src/app/services/crude-data.service';
+import { ObisService } from 'src/app/services/obis.service';
+import { TranslateService } from '@ngx-translate/core';
 
-import { mock, instance, when, verify } from 'ts-mockito';
+import { mock, instance, when, verify, anyString } from 'ts-mockito';
+
+import { DataCrudeTableComponent } from '../data-crude-table/data-crude-table.component';
 
 import { DataCrudeAddComponent } from './data-crude-add.component';
 
@@ -29,10 +34,14 @@ describe('DataCrudeAddComponent', () => {
   let log = mock(NGXLogger);
   let labelsService = mock(LabelsService);
   let crudeDataService = mock(CrudeDataService);
+  let obisService = mock(ObisService);
+  let snackBar = mock(MatSnackBar);
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ DataCrudeAddComponent ],
+      declarations: [
+        DataCrudeTableComponent,
+        DataCrudeAddComponent],
       imports: [
         HttpClientTestingModule,
         TranslateModule.forRoot({
@@ -49,12 +58,15 @@ describe('DataCrudeAddComponent', () => {
         MatTableModule,
         MatSelectModule,
         MatDatepickerModule,
-        MatMomentDateModule
+        MatMomentDateModule,
+        MatSnackBarModule
       ],
       providers: [
         { provide: NGXLogger, useValue: instance(log) },
         { provide: LabelsService, useValue: instance(labelsService) },
-        { provide: CrudeDataService, useValue: instance(CrudeDataService)}
+        { provide: CrudeDataService, useValue: instance(crudeDataService)},
+        { provide: ObisService, useValue: instance(obisService) },
+        { provide: MatSnackBar, useValue: instance(snackBar) }
       ]
     })
     .compileComponents();

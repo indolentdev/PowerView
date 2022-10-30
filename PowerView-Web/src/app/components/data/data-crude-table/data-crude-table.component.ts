@@ -17,12 +17,11 @@ export class DataCrudeTableComponent implements OnInit, OnChanges {
   @Input('crudeValues') crudeValues: CrudeValue[];
 
   constructor(private log: NGXLogger, private obisService: ObisService) {
+    let empty = [];
+    this.dataSource = new MatTableDataSource<any>(empty);
   }
 
   ngOnInit() {
-    let empty = [];
-    this.dataSource = new MatTableDataSource<any>(empty);
-
     this.refresh();
   }
 
@@ -31,7 +30,11 @@ export class DataCrudeTableComponent implements OnInit, OnChanges {
   }
 
   private refresh(): void {
-    this.dataSource.data = this.obisService.AddRegisterProperty(this.crudeValues);
+    var values = [];
+    if (this.crudeValues !== undefined) {
+      values = this.crudeValues;
+    }
+    this.dataSource.data = this.obisService.AddRegisterProperty(values);
   }
 
 }

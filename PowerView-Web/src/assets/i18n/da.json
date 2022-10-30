@@ -140,6 +140,25 @@
   },
 
   "forms": {
+    "crudeData": {
+      "add": {
+        "buttonAdd": "Tilføj",
+        "confirmAdd": "Rå data tilføjet. Dag, måned og årshistorik er blevet fjernet og bliver genberegnet.",
+        "errorAdd": "Tilføj rå data fejlede. ",
+        "errorDuplicate": "Eksisterer allerede. Skift dato. ",
+        "hintDate": "Vælg dato og tid for ny værdi",
+        "hintName": "Vælg navn",
+        "hintValue": "Indtast ny værdi",
+        "placeholderDate": "Dato og tid",
+        "placeholderName": "Navn",
+        "placeholderValue": "Værdi",
+        "valErrors": {
+          "required": "Påkrævet"
+        },
+        "scaleUnitDescription": "Betydning Værdi:1234, Skalering:2, Enhed:Wh er 123,4 kWh. Eller Værdi:1234, Skalering:-3, Enhed:m3 er 1,234 m3",
+        "preselected": "Skalering, Enhed og Apparate ID er forudvalgt."
+      }
+    },
     "export": {
       "hintDecimalSeparator": "Vælg decimal separator",
       "placeholderDecimalSeparator": "Decimal Separator",
