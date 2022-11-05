@@ -10,7 +10,7 @@ namespace PowerView.Model.Repository
         {
         }
 
-        public void Add(IList<LiveReading> liveReadings)
+        public void Add(IList<Reading> liveReadings)
         {
             if (liveReadings == null) throw new ArgumentNullException("liveReadings");
             if (liveReadings.Any(lr => lr == null)) throw new ArgumentOutOfRangeException("liveReadings", "Must not contain nulls");
@@ -34,14 +34,19 @@ namespace PowerView.Model.Repository
                 foreach (var liveReading in dbLiveReadingsMap.Keys)
                 {
                     liveReading.Id = DbContext.Connection.QueryFirst<long>(
-                      "INSERT INTO LiveReading (LabelId, DeviceId, Timestamp) VALUES (@LabelId, @DeviceId, @Timestamp); SELECT last_insert_rowid();",
+                      "INSERT OR IGNORE INTO LiveReading (LabelId, DeviceId, Timestamp) VALUES (@LabelId, @DeviceId, @Timestamp); SELECT Id FROM LiveReading WHERE Timestamp=@Timestamp AND LabelId=@LabelId;",
                       liveReading, transaction);
                 }
                 // then insert the registers
-                var dbLiveRegisters = GetDbLiveRegisters(dbLiveReadingsMap, obisIds);
-                DbContext.Connection.Execute(
-                  "INSERT INTO LiveRegister (ReadingId, ObisId, Value, Scale, Unit) VALUES (@ReadingId, @ObisId, @Value, @Scale, @Unit);",
+                var dbLiveRegisters = GetDbLiveRegisters(dbLiveReadingsMap, obisIds).ToList();
+                DbContext.Connection.Execute("INSERT INTO LiveRegister (ReadingId, ObisId, Value, Scale, Unit) VALUES (@ReadingId, @ObisId, @Value, @Scale, @Unit);",
                   dbLiveRegisters, transaction);
+
+                // then insert the register tags
+                var dbLiveRegisterTags = GetDbLiveRegisterTags(dbLiveReadingsMap, obisIds).Where(x => x.Tags != 0).ToList();
+                DbContext.Connection.Execute("INSERT INTO LiveRegisterTag (ReadingId, ObisId, Tags) VALUES (@ReadingId, @ObisId, @Tags);",
+                  dbLiveRegisterTags, transaction);
+
                 transaction.Commit();
             }
             catch (SqliteException e)
@@ -51,13 +56,24 @@ namespace PowerView.Model.Repository
             }
         }
 
-        private static IEnumerable<Db.LiveRegister> GetDbLiveRegisters(IDictionary<Db.LiveReading, LiveReading> dbLiveReadingsMap, IDictionary<ObisCode, byte> obisIds)
+        private static IEnumerable<Db.LiveRegister> GetDbLiveRegisters(IDictionary<Db.LiveReading, Reading> dbLiveReadingsMap, IDictionary<ObisCode, byte> obisIds)
         {
             foreach (var entry in dbLiveReadingsMap)
             {
                 foreach (var lr in entry.Value.GetRegisterValues())
                 {
                     yield return new Db.LiveRegister { ReadingId = entry.Key.Id, ObisId = obisIds[lr.ObisCode], Value = lr.Value, Scale = lr.Scale, Unit = (byte)lr.Unit };
+                }
+            }
+        }
+
+        private static IEnumerable<Db.LiveRegisterTag> GetDbLiveRegisterTags(IDictionary<Db.LiveReading, Reading> dbLiveReadingsMap, IDictionary<ObisCode, byte> obisIds)
+        {
+            foreach (var entry in dbLiveReadingsMap)
+            {
+                foreach (var lr in entry.Value.GetRegisterValues())
+                {
+                    yield return new Db.LiveRegisterTag { ReadingId = entry.Key.Id, ObisId = obisIds[lr.ObisCode], Tags = (byte)lr.Tag };
                 }
             }
         }

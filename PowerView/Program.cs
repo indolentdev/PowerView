@@ -5,11 +5,22 @@ using NLog.Web;
 using PowerView;
 using PowerView.Service;
 
+System.Diagnostics.Debugger.Break();
+
 string exeDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
 Directory.SetCurrentDirectory(exeDir);
 
 LogManager.ThrowConfigExceptions = true;
-var logger = LogManager.Setup().LoadConfigurationFromFile().GetLogger("PowerView.Program");
+var logSetup = LogManager.Setup().LoadConfigurationFromFile();
+var logger = logSetup.GetLogger("PowerView.Program");
+
+var logConfigWatcher = new FileSystemWatcher { Filter = "NLog.config", Path = exeDir, IncludeSubdirectories = false, EnableRaisingEvents = true };
+logConfigWatcher.Changed += (sender, args) =>
+{
+    LogManager.Configuration = LogManager.Configuration.Reload();
+    LogManager.ReconfigExistingLoggers();
+};
+
 AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
 {
     var exception = e.ExceptionObject as Exception;
@@ -48,5 +59,6 @@ var serviceOptions = app.Services.GetRequiredService<IOptions<ServiceOptions>>()
 app.Run(serviceOptions.Value.BaseUrl);
 
 // Cleanup
+logConfigWatcher.Dispose();
 LogManager.Flush();
 LogManager.Shutdown();

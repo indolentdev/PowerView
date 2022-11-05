@@ -2,6 +2,9 @@
   "menu": {
     "byDate": "By Date",
     "betweenDates": "Between Dates",
+    "crudeAdd": "Crude Add",
+    "crudeByDate": "Crude By Date",
+    "data": "Data",
     "defaultPage": "[Default]",
     "diff": "Diff",
     "email": "Email",
@@ -34,11 +37,13 @@
     "chooseDateFrom": "Choose from date (incl.)",
     "chooseDateTo": "Choose to date (incl.)",
     "chooseFromMenu": "Choose from the menu",
+    "chooseLabel": "Choose label",
     "chooseLabels": "Choose labels",
     "chooseMonth": "Choose month",
     "chooseYear": "Choose year",
     "forExampleProfileGraph": "For example: To add a profile graph with series go to 'Settings' then 'ProfileGraphs'.",
     "noDataFound": "No data found",
+    "placeholderLabel": "Label",
     "placeholderLabels": "Labels",
     "serverVersion": "Server version:",
     "serverLanguage": "Server language:",
@@ -46,6 +51,9 @@
   },
 
   "headings": {
+    "crudeDataAdd": "Add Crude Data",
+    "crudeDataByDate": "Crude Data By Date",
+    "crudeDataCounts": "Showing {{count}} of {{total}} entries",
     "dayProfile": "Day Profile",
     "diffByDates": "Diff Between Dates",
     "emailRecipients": "Email Recipients",
@@ -118,6 +126,7 @@
     "name": "Name",
     "page": "Page",
     "relayUnit": "Relay Unit",
+    "scale": "Scale",
     "serie": "Series",
     "series": "Series",
     "status": "Status",
@@ -126,10 +135,33 @@
     "to": "To",
     "total": "Total",
     "typicalUnits": "Typical Units",
-    "unit": "Unit"
+    "unit": "Unit",
+    "value": "Value"
   },
 
   "forms": {
+    "crudeData":{
+      "add": {
+        "buttonAdd": "Add",
+        "closestValues": "Closest Values",
+        "confirmAdd": "Crude value added. Day, month and year history has been removed and will be recalculated.",
+        "errorAdd": "Add crude value failed. ",
+        "errorDuplicate": "Already exists. Change date. ",
+        "hintDate": "Choose date and time for new value",
+        "hintName": "Choose name",
+        "hintValue": "Enter new value",
+        "placeholderDate": "Date and time",
+        "placeholderName": "Name",
+        "placeholderValue": "Value",
+        "valErrors": {
+          "max": "Maximum value is {{ maxValue }}",
+          "min": "Minimum value is {{ minValue }}",
+          "required": "Required"
+        },
+        "scaleUnitDescription": "E.g. Value:1234, Scale:2, Unit:Wh means 123.4 kWh. Or Value:12345, Scale:-3, Unit:m3 means 1.234 m3",
+        "preselected": "Scale, Unit and DeviceID are preselected."
+      }
+    },
     "export": {
       "hintDecimalSeparator": "Choose decimal separator",
       "placeholderDecimalSeparator": "Decimal Separator",

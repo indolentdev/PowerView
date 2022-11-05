@@ -5,5 +5,5 @@ namespace PowerView.Service.Controllers;
 
 public interface IReadingAccepter
 {
-    void Accept(IList<LiveReading> liveReadings);
+    void Accept(IList<Reading> liveReadings);
 }

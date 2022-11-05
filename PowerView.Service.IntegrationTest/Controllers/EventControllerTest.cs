@@ -48,7 +48,7 @@ public class EventControllerTest
     public async Task GetMeterEvents_CallsMeterEventRepository()
     {
         // Arrange
-        SetupProfileRepositoryGetMonthProfileSet();
+        SetupMeterEventRepositoryGetMeterEvents();
 
         // Act
         var response = await httpClient.GetAsync($"api/events");
@@ -67,7 +67,7 @@ public class EventControllerTest
         var dt = new DateTime(637950601049991234, DateTimeKind.Utc);
         var meterEvent = new MeterEvent("lbl", dt, true,
                               new LeakMeterEventAmplification(dt.Subtract(TimeSpan.FromHours(20)), dt.Subtract(TimeSpan.FromHours(10)), new UnitValue(44.55d, Unit.DegreeCelsius)));
-        SetupProfileRepositoryGetMonthProfileSet(meterEvent);
+        SetupMeterEventRepositoryGetMeterEvents(meterEvent);
 
         // Act
         var response = await httpClient.GetAsync($"api/events");
@@ -116,7 +116,7 @@ public class EventControllerTest
         public IDictionary<string, object> amplification { get; set; }
     }
 
-    private void SetupProfileRepositoryGetMonthProfileSet(params MeterEvent[] events)
+    private void SetupMeterEventRepositoryGetMeterEvents(params MeterEvent[] events)
     {
         meterEventRepository.Setup(x => x.GetMeterEvents(It.IsAny<int>(), It.IsAny<int>()))
             .Returns(new WithCount<ICollection<MeterEvent>>(events.Length, events));

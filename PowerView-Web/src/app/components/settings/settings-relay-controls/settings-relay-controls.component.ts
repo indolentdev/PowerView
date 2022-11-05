@@ -4,7 +4,7 @@ import { ErrorStateMatcher } from '@angular/material/core';
 import { MatSnackBar, MatSnackBarRef, SimpleSnackBar } from '@angular/material/snack-bar';
 import { NGXLogger } from 'ngx-logger';
 import { TranslateService } from '@ngx-translate/core';
-import { SerieService } from '../../../services/serie.service';
+import { ObisService } from '../../../services/obis.service';
 import { SettingsService, AddDisconnectRuleError } from '../../../services/settings.service';
 import { DisconnectRule } from '../../../model/disconnectRule';
 import { DisconnectRuleSet } from '../../../model/disconnectRuleSet';
@@ -41,7 +41,7 @@ export class SettingsRelayControlsComponent implements OnInit {
   errorMatcher = new CrossFieldErrorMatcher();
   @ViewChild('form', { static: true }) form;
 
-  constructor(private log: NGXLogger, private settingsService: SettingsService, private snackBar: MatSnackBar, private serieService: SerieService, private translateService: TranslateService) {
+  constructor(private log: NGXLogger, private settingsService: SettingsService, private snackBar: MatSnackBar, private obisService: ObisService, private translateService: TranslateService) {
   }
 
   ngOnInit() {
@@ -83,8 +83,8 @@ export class SettingsRelayControlsComponent implements OnInit {
 
   private getDisconnectRuleOptions(): void {
     this.settingsService.getDisconnectRuleOptions().subscribe(x => { 
-      this.disconnectControlOptions = this.serieService.AddSerieProperty(x.disconnectControlItems);
-      this.evaluationSerieOptions = this.serieService.AddSerieProperty(x.evaluationItems);
+      this.disconnectControlOptions = this.obisService.AddSerieProperty(x.disconnectControlItems);
+      this.evaluationSerieOptions = this.obisService.AddSerieProperty(x.evaluationItems);
     });
   }
 

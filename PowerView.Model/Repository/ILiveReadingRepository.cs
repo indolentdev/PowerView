@@ -4,6 +4,6 @@ namespace PowerView.Model.Repository
 {
   public interface ILiveReadingRepository
   {
-    void Add(IList<LiveReading> liveReadings);
+    void Add(IList<Reading> liveReadings);
   }
 }

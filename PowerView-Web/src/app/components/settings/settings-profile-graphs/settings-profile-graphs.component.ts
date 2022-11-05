@@ -3,7 +3,7 @@ import { UntypedFormControl, UntypedFormGroup, Validators, FormGroupDirective, N
 import { MatSnackBar, MatSnackBarRef, SimpleSnackBar } from '@angular/material/snack-bar';
 import { NGXLogger } from 'ngx-logger';
 import { TranslateService } from '@ngx-translate/core';
-import { SerieService } from '../../../services/serie.service';
+import { ObisService } from '../../../services/obis.service';
 import { SettingsService, AddProfileGraphError, UpdateProfileGraphError } from '../../../services/settings.service';
 import { MenuService } from '../../../services/menu.service';
 import { ProfileGraph } from '../../../model/profileGraph';
@@ -30,7 +30,7 @@ export class SettingsProfileGraphsComponent implements OnInit {
   createMode: boolean = true;
   updateProfileGraphId: any;
 
-  constructor(private log: NGXLogger, private settingsService: SettingsService, private snackBar: MatSnackBar, private translateService: TranslateService, private serieService: SerieService, private menuService: MenuService) {
+  constructor(private log: NGXLogger, private settingsService: SettingsService, private snackBar: MatSnackBar, private translateService: TranslateService, private obisService: ObisService, private menuService: MenuService) {
   }
 
   ngOnInit() {
@@ -85,7 +85,7 @@ export class SettingsProfileGraphsComponent implements OnInit {
     seriesControl.reset();
 
     let profileGraphSeriesForPeriod = this.profileGraphSerieSet.items.filter(x => x.period === selectedPeriod);
-    this.profileGraphSeries = this.serieService.AddSerieProperty(profileGraphSeriesForPeriod);
+    this.profileGraphSeries = this.obisService.AddSerieProperty(profileGraphSeriesForPeriod);
   }
 
   private getProfileGraphsSeries(): void {

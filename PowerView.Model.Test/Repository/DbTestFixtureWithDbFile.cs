@@ -12,7 +12,8 @@ namespace PowerView.Model.Test.Repository
             DbName = DateTime.Now.ToString("yyyyMMddHHmmss") + "_" + Guid.NewGuid() + ".sqlite3";
         }
 
-        public string DbName { get; private set; }
+        public string DbName { get; protected set; }
+        public bool DeleteDbFiles { get; protected set; } = true;
         private DbContextFactory dbContextFactory;
 
         internal DbContext DbContext { get; private set; }
@@ -30,13 +31,16 @@ namespace PowerView.Model.Test.Repository
         {
             DbContext?.Dispose();
 
-            if (File.Exists(DbName))
+            if (DeleteDbFiles)
             {
-                File.Delete(DbName);
-            }
-            if (File.Exists(DbName + "-journal"))
-            {
-                File.Delete(DbName + "-journal");
+                if (File.Exists(DbName))
+                {
+                    File.Delete(DbName);
+                }
+                if (File.Exists(DbName + "-journal"))
+                {
+                    File.Delete(DbName + "-journal");
+                }
             }
         }
 

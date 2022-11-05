@@ -9,7 +9,7 @@ namespace PowerView.Service.Mqtt
 {
   public class MqttMapper : IMqttMapper
   {
-    public MqttApplicationMessage[] Map(ICollection<LiveReading> liveReadings)
+    public MqttApplicationMessage[] Map(ICollection<Reading> liveReadings)
     {
       var pubs = new List<MqttApplicationMessage>();
       foreach (var pubItem in GetPublishItems(liveReadings))
@@ -31,7 +31,7 @@ namespace PowerView.Service.Mqtt
       return pubs.ToArray();
     }
 
-    private IEnumerable<PublishItem> GetPublishItems(ICollection<LiveReading> liveReadings)
+    private IEnumerable<PublishItem> GetPublishItems(ICollection<Reading> liveReadings)
     {
       foreach (var liveReading in liveReadings)
       {

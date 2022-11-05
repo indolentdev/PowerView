@@ -5,6 +5,6 @@ namespace PowerView.Service.Mqtt
 {
   public interface IMqttPublisher
   {
-    void Publish(MqttConfig config, ICollection<LiveReading> liveReadings);
+    void Publish(MqttConfig config, ICollection<Reading> liveReadings);
   }
 }

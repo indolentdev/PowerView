@@ -30,7 +30,7 @@ namespace PowerView.Service.EventHub
 
     #region IHub implementation
 
-    public void Signal(IList<LiveReading> liveReadings)
+    public void Signal(IList<Reading> liveReadings)
     {
       eventQueue.Enqueue(InScope((ss) => mqttPublisherFactory.Publish(ss, liveReadings)));
       eventQueue.Enqueue(InScope((ss) => disconnectControlFactory.Process(ss, liveReadings)));

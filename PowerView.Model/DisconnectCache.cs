@@ -39,7 +39,7 @@ namespace PowerView.Model
       }
     }
 
-    public void Add(ICollection<LiveReading> liveReadings)
+    public void Add(ICollection<Reading> liveReadings)
     {
       var itemGropups = liveReadings.SelectMany(lr => lr.GetRegisterValues(), (reading, register) => 
                                       new { Key = new SeriesName(reading.Label, register.ObisCode), reading, register })

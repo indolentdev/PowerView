@@ -140,7 +140,7 @@ public class SettingsMqttControllerTest
         // Arrange
         var mqttConfigDto = new { publishEnabled = true, server = "theServer", port = 1234, clientId = "theClientId" };
         var content = JsonContent.Create(mqttConfigDto);
-        mqttPublisher.Setup(mp => mp.Publish(It.IsAny<MqttConfig>(), It.IsAny<LiveReading[]>())).Throws(new MqttException());
+        mqttPublisher.Setup(mp => mp.Publish(It.IsAny<MqttConfig>(), It.IsAny<Reading[]>())).Throws(new MqttException());
 
         // Act
         var response = await httpClient.PutAsync($"api/settings/mqtt/test", content);
@@ -162,7 +162,7 @@ public class SettingsMqttControllerTest
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
         mqttPublisher.Verify(mp => mp.Publish(It.Is<MqttConfig>(x => x.Server == mqttConfigDto.server && x.Port == mqttConfigDto.port && x.ClientId == mqttConfigDto.clientId),
-                                             It.Is<ICollection<LiveReading>>(x => !x.Any())));
+                                             It.Is<ICollection<Reading>>(x => !x.Any())));
     }
 
     internal class TestMqttConfigDto

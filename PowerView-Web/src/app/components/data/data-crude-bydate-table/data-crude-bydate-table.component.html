@@ -1,0 +1,10 @@
+<div *ngIf="crudeValueSet !== undefined && crudeValueSet.values.length == 0">
+    <h3>{{ 'common.noDataFound' | translate }}</h3>
+</div>
+
+<div *ngIf="crudeValueSet !== undefined && crudeValueSet.values.length > 0">
+    <h4>{{ 'headings.crudeDataCounts' | translate : { count: crudeValueSet.values.length, total:
+        crudeValueSet.totalCount } }}</h4>
+
+    <app-data-crude-table [crudeValues]="crudeValueSet.values"></app-data-crude-table>
+</div>

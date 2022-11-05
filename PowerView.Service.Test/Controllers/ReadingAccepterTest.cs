@@ -31,7 +31,7 @@ public class ReadingAccepterTest
         var liveReadingRepository = new Mock<ILiveReadingRepository>();
         var hub = new Mock<IHub>();
         var target = new ReadingAccepter(liveReadingRepository.Object, hub.Object);
-        var liveReadings = new[] { new LiveReading("lbl", "sn1", DateTime.UtcNow,
+        var liveReadings = new[] { new Reading("lbl", "sn1", DateTime.UtcNow,
                                                   new [] { new RegisterValue(ObisCode.ElectrActiveEnergyA14, 1, 0, Unit.WattHour)}) };
 
         // Act
@@ -52,15 +52,15 @@ public class ReadingAccepterTest
         var liveReadingRepository = new Mock<ILiveReadingRepository>();
         var hub = new Mock<IHub>();
         var target = new ReadingAccepter(liveReadingRepository.Object, hub.Object);
-        var liveReadings = new[] { new LiveReading("lbl", "sn1", DateTime.UtcNow,
+        var liveReadings = new[] { new Reading("lbl", "sn1", DateTime.UtcNow,
                                                   new [] { new RegisterValue(obisCode, 1, 0, Unit.WattHour)}) };
 
         // Act
         target.Accept(liveReadings);
 
         // Assert
-        liveReadingRepository.Verify(lrr => lrr.Add(It.Is<IList<LiveReading>>(p => p.Count == 0)));
-        hub.Verify(h => h.Signal(It.Is<IList<LiveReading>>(p => p.Count == 0)));
+        liveReadingRepository.Verify(lrr => lrr.Add(It.Is<IList<Reading>>(p => p.Count == 0)));
+        hub.Verify(h => h.Signal(It.Is<IList<Reading>>(p => p.Count == 0)));
     }
 
 }

@@ -1,0 +1,88 @@
+<h2>{{ 'headings.crudeDataAdd' | translate }}</h2>
+
+<div class="divCenterOuter">
+    <div class="divCenterInner">
+        <form #form="ngForm" [formGroup]="formGroup" (ngSubmit)="submitForm(formGroup.value)" #formDirective="ngForm">
+
+            <mat-form-field style="width:13em">
+                <mat-select placeholder="{{ 'common.placeholderLabel' | translate }}" formControlName="label" id="label"
+                    required>
+                    <mat-option *ngFor="let opt of labels" [value]="opt">
+                        {{ opt }}
+                    </mat-option>
+                </mat-select>
+                <mat-hint align="end">{{ 'common.chooseLabel' | translate }}</mat-hint>
+                <mat-error *ngIf="hasError('label', 'required')">{{ 'forms.crudeData.add.valErrors.required' | translate }}</mat-error>
+            </mat-form-field>
+
+            <br />
+
+            <mat-form-field style="width:13em">
+                <mat-select placeholder="{{ 'forms.crudeData.add.placeholderDate' | translate }}"
+                    formControlName="date" id="date" required>
+                    <mat-option *ngFor="let opt of missingDays" [value]="opt">
+                        {{ opt.timestamp | date:'medium' }}
+                    </mat-option>
+                </mat-select>
+                <mat-hint align="end">{{ 'forms.crudeData.add.hintDate' | translate }}</mat-hint>
+                <mat-error *ngIf="hasError('date', 'required')">{{ 'forms.crudeData.add.valErrors.required' | translate }}</mat-error>
+            </mat-form-field>
+
+            <br />
+
+            <mat-form-field style="width:13em">
+                <mat-select placeholder="{{ 'forms.crudeData.add.placeholderName' | translate }}"
+                    formControlName="register" id="register" required>
+                    <mat-option *ngFor="let opt of previousCrudeValues" [value]="opt">
+                        {{ opt.register }}
+                    </mat-option>
+                </mat-select>
+                <mat-hint align="end">{{ 'forms.crudeData.add.hintName' | translate }}</mat-hint>
+                <mat-error *ngIf="hasError('register', 'required')">{{ 'forms.crudeData.add.valErrors.required' | translate }}</mat-error>
+            </mat-form-field>
+
+            <br />
+
+            <h4 *ngIf="crudeValues !== undefined && crudeValues.length > 0">
+                {{ 'forms.crudeData.add.closestValues' | translate }}
+            </h4>
+
+            <app-data-crude-table [crudeValues]="crudeValues"></app-data-crude-table>
+
+            <br />
+
+            <div *ngIf="crudeValues !== undefined && crudeValues.length > 0">
+                {{ 'forms.crudeData.add.scaleUnitDescription' | translate }}
+                <br />
+            </div>
+
+            <br />
+            
+            <mat-form-field style="width:13em">
+                <input matInput type="number" min="minValue" max="maxValue"
+                    onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+                    placeholder="{{ 'forms.crudeData.add.placeholderValue' | translate }}"
+                    formControlName="value" id="value" required>
+                <mat-hint align="end">{{ 'forms.crudeData.add.hintValue' | translate }}
+                </mat-hint>
+                <mat-error *ngIf="hasError('value', 'required')">{{ 'forms.crudeData.add.valErrors.required' | translate }}</mat-error>
+                <mat-error *ngIf="hasError('value', 'min')">{{ 'forms.crudeData.add.valErrors.min' | translate: ({minValue: minValue}) }}</mat-error>
+                <mat-error *ngIf="hasError('value', 'max')">{{ 'forms.crudeData.add.valErrors.max' | translate: ({maxValue: maxValue}) }}</mat-error>
+            </mat-form-field>
+
+            <br />
+
+            <div *ngIf="crudeValues !== undefined && crudeValues.length > 0">
+                {{ 'forms.crudeData.add.preselected' | translate }}
+                <br />
+            </div>
+
+            <br />
+
+            <button mat-raised-button style="margin:5px;" type="submit" 
+              [disabled]="!formGroup.valid">{{ 'forms.crudeData.add.buttonAdd' | translate }}</button>
+
+        </form>
+
+    </div>
+</div>

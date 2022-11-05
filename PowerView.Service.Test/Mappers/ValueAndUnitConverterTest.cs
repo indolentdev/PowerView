@@ -6,294 +6,269 @@ using PowerView.Service.Mappers;
 namespace PowerView.Service.Test.Mappers
 {
   [TestFixture]
-  public class VaueAndUnitMapperTest
+  public class VaueAndUnitConverterTest
   {
     [Test]
-    public void MapValueNull()
+    public void ConvertValueNull()
     {
       // Arrange
 
       // Act
-      var unitString = ValueAndUnitMapper.Map(null, Unit.Watt);
+      var unitString = ValueAndUnitConverter.Convert(null, Unit.Watt);
 
       // Assert
       Assert.That(unitString, Is.Null);
     }
 
     [Test]
-    public void MapValueWattHour()
+    public void ConvertValueWattHour()
     {
       // Arrange
 
       // Act
-      var valueString = ValueAndUnitMapper.Map(1234.56789d, Unit.WattHour);
+      var valueString = ValueAndUnitConverter.Convert(1234.56789d, Unit.WattHour);
 
       // Assert
       Assert.That(valueString, Is.EqualTo(1.235d));
     }
 
     [Test]
-    public void MapValueWatt()
+    public void ConvertValueWatt()
     {
       // Arrange
 
       // Act
-      var valueString = ValueAndUnitMapper.Map(1234.56789d, Unit.Watt);
+      var valueString = ValueAndUnitConverter.Convert(1234.56789d, Unit.Watt);
 
       // Assert
       Assert.That(valueString, Is.EqualTo(1234.568d));
     }
 
     [Test]
-    public void MapValueJoule()
+    public void ConvertValueJoule()
     {
       // Arrange
 
       // Act
-      var valueString = ValueAndUnitMapper.Map(12345678.9123d, Unit.Joule);
+      var valueString = ValueAndUnitConverter.Convert(12345678.9123d, Unit.Joule);
 
       // Assert
       Assert.That(valueString, Is.EqualTo(3.429).Within(.00000000000001));
     }
 
     [Test]
-    public void MapValueJoulePrHour()
+    public void ConvertValueJoulePrHour()
     {
       // Arrange
 
       // Act
-      var valueString = ValueAndUnitMapper.Map(12345678.9123d, Unit.JoulePrHour);
+      var valueString = ValueAndUnitConverter.Convert(12345678.9123d, Unit.JoulePrHour);
 
       // Assert
       Assert.That(valueString, Is.EqualTo(3429.355d));
     }
 
     [Test]
-    public void MapValueCubicMetre()
+    public void ConvertValueCubicMetre()
     {
       // Arrange
 
       // Act
-      var valueString = ValueAndUnitMapper.Map(1234.56789d, Unit.CubicMetre);
+      var valueString = ValueAndUnitConverter.Convert(1234.56789d, Unit.CubicMetre);
 
       // Assert
       Assert.That(valueString, Is.EqualTo(1234.568d));
     }
 
     [Test]
-    public void MapValueCubicMetreWithReduceUnit()
+    public void ConvertValueCubicMetreWithReduceUnit()
     {
       // Arrange
 
       // Act
-      var valueString = ValueAndUnitMapper.Map(0.123456789d, Unit.CubicMetre, true);
+      var valueString = ValueAndUnitConverter.Convert(0.123456789d, Unit.CubicMetre, true);
 
       // Assert
       Assert.That(valueString, Is.EqualTo(123.457d));
     }
 
     [Test]
-    public void MapValueCubicMetrePrHour()
+    public void ConvertValueCubicMetrePrHour()
     {
       // Arrange
 
       // Act
-      var valueString = ValueAndUnitMapper.Map(1234.5678d, Unit.CubicMetrePrHour);
+      var valueString = ValueAndUnitConverter.Convert(1234.5678d, Unit.CubicMetrePrHour);
 
       // Assert
       Assert.That(valueString, Is.EqualTo(1234567.8d));
     }
 
     [Test]
-    public void MapValueDegreeCelsius()
+    public void ConvertValueDegreeCelsius()
     {
       // Arrange
 
       // Act
-      var valueString = ValueAndUnitMapper.Map(1234.56789d, Unit.DegreeCelsius);
+      var valueString = ValueAndUnitConverter.Convert(1234.56789d, Unit.DegreeCelsius);
 
       // Assert
       Assert.That(valueString, Is.EqualTo(1234.568d));
     }
 
     [Test]
-    public void MapValuePercentage()
+    public void ConvertValuePercentage()
     {
       // Arrange
 
       // Act
-      var valueString = ValueAndUnitMapper.Map(1234.56789d, Unit.Percentage);
+      var valueString = ValueAndUnitConverter.Convert(1234.56789d, Unit.Percentage);
 
       // Assert
       Assert.That(valueString, Is.EqualTo(1234.568d));
     }
 
     [Test]
-    public void MapUnitUnknown()
+    public void ConvertUnitUnknown()
     {
       // Arrange
       var unit = (Unit)54;
 
       // Act
-      var unitString = ValueAndUnitMapper.Map(unit);
+      var unitString = ValueAndUnitConverter.Convert(unit);
 
       // Assert
       Assert.That(unitString, Is.EqualTo("Unknown"));
     }
 
     [Test]
-    public void MapUnitWattHour()
+    public void ConvertUnitWattHour()
     {
       // Arrange
       var unit = Unit.WattHour;
 
       // Act
-      var unitString = ValueAndUnitMapper.Map(unit);
+      var unitString = ValueAndUnitConverter.Convert(unit);
 
       // Assert
       Assert.That(unitString, Is.EqualTo("kWh"));
     }
 
     [Test]
-    public void MapUnitWatt()
+    public void ConvertUnitWatt()
     {
       // Arrange
       var unit = Unit.Watt;
 
       // Act
-      var unitString = ValueAndUnitMapper.Map(unit);
+      var unitString = ValueAndUnitConverter.Convert(unit);
 
       // Assert
       Assert.That(unitString, Is.EqualTo("W"));
     }
 
     [Test]
-    public void MapUnitJoule()
+    public void ConvertUnitJoule()
     {
       // Arrange
       var unit = Unit.Joule;
 
       // Act
-      var unitString = ValueAndUnitMapper.Map(unit);
+      var unitString = ValueAndUnitConverter.Convert(unit);
 
       // Assert
       Assert.That(unitString, Is.EqualTo("kWh"));
     }
 
     [Test]
-    public void MapUnitJoulePrHour()
+    public void ConvertUnitJoulePrHour()
     {
       // Arrange
       var unit = Unit.JoulePrHour;
 
       // Act
-      var unitString = ValueAndUnitMapper.Map(unit);
+      var unitString = ValueAndUnitConverter.Convert(unit);
 
       // Assert
       Assert.That(unitString, Is.EqualTo("W"));
     }
 
     [Test]
-    public void MapUnitCubicMetre()
+    public void ConvertUnitCubicMetre()
     {
       // Arrange
       var unit = Unit.CubicMetre;
 
       // Act
-      var unitString = ValueAndUnitMapper.Map(unit);
+      var unitString = ValueAndUnitConverter.Convert(unit);
 
       // Assert
       Assert.That(unitString, Is.EqualTo("m3"));
     }
 
     [Test]
-    public void MapUnitCubicMetreWihUnitReduce()
+    public void ConvertUnitCubicMetreWihUnitReduce()
     {
       // Arrange
       var unit = Unit.CubicMetre;
 
       // Act
-      var unitString = ValueAndUnitMapper.Map(unit, true);
+      var unitString = ValueAndUnitConverter.Convert(unit, true);
 
       // Assert
       Assert.That(unitString, Is.EqualTo("l"));
     }
 
     [Test]
-    public void MapUnitCubicMetrePrHour()
+    public void ConvertUnitCubicMetrePrHour()
     {
       // Arrange
       var unit = Unit.CubicMetrePrHour;
 
       // Act
-      var unitString = ValueAndUnitMapper.Map(unit);
+      var unitString = ValueAndUnitConverter.Convert(unit);
 
       // Assert
       Assert.That(unitString, Is.EqualTo("l/h"));
     }
 
     [Test]
-    public void MapUnitDegreeCelsius()
+    public void ConvertUnitDegreeCelsius()
     {
       // Arrange
       var unit = Unit.DegreeCelsius;
 
       // Act
-      var unitString = ValueAndUnitMapper.Map(unit);
+      var unitString = ValueAndUnitConverter.Convert(unit);
 
       // Assert
       Assert.That(unitString, Is.EqualTo("C"));
     }
 
     [Test]
-    public void MapUnitPercentage()
+    public void ConvertUnitPercentage()
     {
       // Arrange
       var unit = Unit.Percentage;
 
       // Act
-      var unitString = ValueAndUnitMapper.Map(unit);
+      var unitString = ValueAndUnitConverter.Convert(unit);
 
       // Assert
       Assert.That(unitString, Is.EqualTo("%"));
     }
 
     [Test]
-    public void MapUnitNoUnit()
+    public void ConvertUnitNoUnit()
     {
       // Arrange
       var unit = Unit.NoUnit;
 
       // Act
-      var unitString = ValueAndUnitMapper.Map(unit);
+      var unitString = ValueAndUnitConverter.Convert(unit);
 
       // Assert
       Assert.That(unitString, Is.EqualTo(string.Empty));
-    }
-
-    [Test]
-    [TestCase(Unit.Watt, "W")]
-    public void MapUnitString(Unit expectedUnit, string unitString)
-    {
-      // Arrange
-
-      // Act
-      var unit = ValueAndUnitMapper.Map(unitString);
-
-      // Assert
-      Assert.That(unit, Is.EqualTo(expectedUnit));
-    }
-
-    [Test]
-    [TestCase(typeof(ArgumentNullException), null)]
-    [TestCase(typeof(ArgumentNullException), "")]
-    [TestCase(typeof(ArgumentOutOfRangeException), "whatnot")]
-    public void MapUnitStringUnsupported(Type expectedException, string unitString)
-    {
-      // Arrange
-
-      // Act & Assert
-      Assert.That(() => ValueAndUnitMapper.Map(unitString), Throws.TypeOf(expectedException));
     }
 
   }

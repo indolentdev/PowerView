@@ -25,6 +25,8 @@ namespace PowerView.Model
             serviceCollection.AddTransient<ILiveReadingRepository, LiveReadingRepository>();
             serviceCollection.AddTransient<IProfileRepository, ProfileRepository>();
             serviceCollection.AddTransient<IReadingPipeRepository, ReadingPipeRepository>();
+            serviceCollection.AddTransient<IReadingHistoryRepository, ReadingHistoryRepository>();
+            serviceCollection.AddTransient<ILabelRepository, LabelRepository>();
             serviceCollection.AddTransient<ISettingRepository, SettingRepository>();
             serviceCollection.AddTransient<ISeriesNameRepository, SeriesNameRepository>();
             serviceCollection.AddTransient<ISeriesColorRepository, SeriesColorRepository>();
@@ -36,6 +38,7 @@ namespace PowerView.Model
             serviceCollection.AddTransient<IDisconnectRuleRepository, DisconnectRuleRepository>();
             serviceCollection.AddTransient<IEnvironmentRepository, EnvironmentRepository>();
             serviceCollection.AddTransient<IExportRepository, ExportRepository>();
+            serviceCollection.AddTransient<ICrudeDataRepository, CrudeDataRepository>();
 
             return serviceCollection;
         }

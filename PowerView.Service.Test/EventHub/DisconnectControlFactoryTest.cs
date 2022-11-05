@@ -17,7 +17,7 @@ namespace PowerView.Service.Test.EventHub
       // Arrange
       var target = CreateTarget();
       var (serviceScope, _) = GetServiceScope();
-      var liveReadings = Array.Empty<LiveReading>();
+      var liveReadings = Array.Empty<Reading>();
 
       // Act & Assert
       Assert.That(() => target.Process(null, liveReadings), Throws.ArgumentNullException);
@@ -31,7 +31,7 @@ namespace PowerView.Service.Test.EventHub
       var disconnectWarden = new Mock<IDisconnectWarden>();
       var (serviceScope, serviceProvider) = GetServiceScope();
       serviceProvider.Setup(sp => sp.GetService(It.IsAny<Type>())).Returns(disconnectWarden.Object);
-      var liveReadings = new LiveReading[1];
+      var liveReadings = new Reading[1];
 
       var target = CreateTarget();
 
@@ -47,7 +47,7 @@ namespace PowerView.Service.Test.EventHub
     public void ProcessEmptyLiveReadings()
     {
       // Arrange
-      var liveReadings = new LiveReading[0];
+      var liveReadings = new Reading[0];
       var (serviceScope, serviceProvider) = GetServiceScope();
 
       var target = CreateTarget();

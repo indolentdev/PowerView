@@ -55,8 +55,8 @@ public class EventController : ControllerBase
             {
                 StartTimestamp = leakAmplification.Start,
                 EndTimestamp = leakAmplification.End,
-                Value = ValueAndUnitMapper.Map(leakAmplification.UnitValue.Value, leakAmplification.UnitValue.Unit, reduceUnit),
-                Unit = ValueAndUnitMapper.Map(leakAmplification.UnitValue.Unit, reduceUnit)
+                Value = ValueAndUnitConverter.Convert(leakAmplification.UnitValue.Value, leakAmplification.UnitValue.Unit, reduceUnit),
+                Unit = ValueAndUnitConverter.Convert(leakAmplification.UnitValue.Unit, reduceUnit)
             };
         }
 

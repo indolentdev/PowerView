@@ -1,0 +1,1 @@
+CREATE TABLE LiveRegisterTag (ReadingId INTEGER NOT NULL, ObisId INTEGER NOT NULL, Tags INTEGER NOT NULL, PRIMARY KEY(ReadingId,ObisId), FOREIGN KEY (ReadingId,ObisId) REFERENCES LiveRegister(ReadingId,ObisId)) WITHOUT ROWID;

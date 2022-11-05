@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, Input, OnChanges, SimpleChanges } from '@
 import { MatSort, MatSortable } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { NGXLogger } from 'ngx-logger';
-import { SerieService } from '../../../services/serie.service';
+import { ObisService } from '../../../services/obis.service';
 import { ProfileTotalValue } from '../../../model/profileTotalValue';
 
 @Component({
@@ -18,7 +18,7 @@ export class ProfileTotalTableComponent implements OnInit, OnChanges {
 
   @Input('profileTotalValues') profileTotalValues: ProfileTotalValue[];
 
-  constructor(private log: NGXLogger, private serieService: SerieService) {
+  constructor(private log: NGXLogger, private obisService: ObisService) {
   }
   
   ngOnInit() {
@@ -44,7 +44,7 @@ export class ProfileTotalTableComponent implements OnInit, OnChanges {
 
   private refresh(): void {
     if (this.dataSource != null && this.profileTotalValues != null) {
-      this.dataSource.data = this.serieService.AddSerieProperty(this.profileTotalValues);
+      this.dataSource.data = this.obisService.AddSerieProperty(this.profileTotalValues);
     }
   }
 }

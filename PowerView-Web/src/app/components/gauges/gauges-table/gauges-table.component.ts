@@ -2,7 +2,7 @@ import { Component, OnInit,ViewChild, Input, OnChanges, SimpleChanges } from '@a
 import { MatSort, MatSortable } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { NGXLogger } from 'ngx-logger';
-import { SerieService } from '../../../services/serie.service';
+import { ObisService } from '../../../services/obis.service';
 import { GaugeValueGroup } from '../../../model/gaugeValueGroup';
 
 @Component({
@@ -18,7 +18,7 @@ export class GaugesTableComponent implements OnInit, OnChanges {
 
   @Input('gaugeValueGroup') gaugeValueGroup: GaugeValueGroup;
 
-  constructor(private log: NGXLogger, private serieService: SerieService) {
+  constructor(private log: NGXLogger, private obisService: ObisService) {
   }
 
   ngOnInit() {
@@ -44,7 +44,7 @@ export class GaugesTableComponent implements OnInit, OnChanges {
 
   private refresh(): void {
     if (this.dataSource != null && this.gaugeValueGroup != null) {
-      this.dataSource.data = this.serieService.AddSerieProperty(this.gaugeValueGroup.registers);
+      this.dataSource.data = this.obisService.AddSerieProperty(this.gaugeValueGroup.registers);
     }
   }
 }

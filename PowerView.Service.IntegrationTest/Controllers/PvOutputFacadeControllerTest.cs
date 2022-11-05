@@ -80,7 +80,7 @@ public class PvOutputFacadeControllerTest
     {
         // Arrange
         var httpMessageHandler = SetupHttpClientFactory(HttpStatusCode.OK);
-        var liveReading = new LiveReading(deviceLabel, serialNumber, DateTime.UtcNow, new[] { new RegisterValue("1.2.3.4.5.6", 1, 0, Unit.Watt) });
+        var liveReading = new Reading(deviceLabel, serialNumber, DateTime.UtcNow, new[] { new RegisterValue("1.2.3.4.5.6", 1, 0, Unit.Watt) });
 
         liveReadingMapper.Setup(lrm => lrm.MapPvOutputArgs(It.IsAny<Uri>(), It.IsAny<string>(), It.IsAny<Stream>(),
             It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
@@ -102,7 +102,7 @@ public class PvOutputFacadeControllerTest
           It.Is<string>(p => p == deviceLabel), It.Is<string>(p => p == serialNumber), It.Is<string>(p => p == serialNumberParam),
           It.Is<string>(p => p == powerL1Param), It.Is<string>(p => p == powerL2Param), It.Is<string>(p => p == powerL3Param)));
 
-        readingAccepter.Verify(ra => ra.Accept(It.Is<LiveReading[]>(lr => lr.Length == 1 && lr.First() == liveReading)));
+        readingAccepter.Verify(ra => ra.Accept(It.Is<Reading[]>(lr => lr.Length == 1 && lr.First() == liveReading)));
     }
 
     [Test]
@@ -110,7 +110,7 @@ public class PvOutputFacadeControllerTest
     {
         // Arrange
         SetupHttpClientFactory(HttpStatusCode.OK);
-        var liveReading = new LiveReading(deviceLabel, serialNumber, DateTime.UtcNow, new[] { new RegisterValue("1.2.3.4.5.6", 1, 0, Unit.Watt) });
+        var liveReading = new Reading(deviceLabel, serialNumber, DateTime.UtcNow, new[] { new RegisterValue("1.2.3.4.5.6", 1, 0, Unit.Watt) });
 
         var mapBodyStream = new MemoryStream();
         liveReadingMapper.Setup(lrm => lrm.MapPvOutputArgs(It.IsAny<Uri>(), It.IsAny<string>(), It.IsAny<Stream>(),
@@ -138,7 +138,7 @@ public class PvOutputFacadeControllerTest
     {
         // Arrange
         var httpMessageHandler = SetupHttpClientFactory(HttpStatusCode.OK);
-        var liveReading = new LiveReading(deviceLabel, serialNumber, DateTime.UtcNow, new[] { new RegisterValue("1.2.3.4.5.6", 1, 0, Unit.Watt) });
+        var liveReading = new Reading(deviceLabel, serialNumber, DateTime.UtcNow, new[] { new RegisterValue("1.2.3.4.5.6", 1, 0, Unit.Watt) });
         liveReadingMapper.Setup(lrm => lrm.MapPvOutputArgs(It.IsAny<Uri>(), It.IsAny<string>(), It.IsAny<Stream>(),
           It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns(liveReading);
 
@@ -151,7 +151,7 @@ public class PvOutputFacadeControllerTest
         liveReadingMapper.Verify(lrm => lrm.MapPvOutputArgs(It.Is<Uri>(p => p.Query == "?d=dV&t=tV"), It.IsAny<string>(), It.IsAny<Stream>(),
           It.Is<string>(p => p == deviceLabel), It.Is<string>(p => p == serialNumber), It.Is<string>(p => p == serialNumberParam),
           It.Is<string>(p => p == powerL1Param), It.Is<string>(p => p == powerL2Param), It.Is<string>(p => p == powerL3Param)));
-        readingAccepter.Verify(ra => ra.Accept(It.Is<LiveReading[]>(lr => lr.Length == 1 && lr.First() == liveReading)));
+        readingAccepter.Verify(ra => ra.Accept(It.Is<Reading[]>(lr => lr.Length == 1 && lr.First() == liveReading)));
     }
 
 
@@ -172,7 +172,7 @@ public class PvOutputFacadeControllerTest
         httpMessageHandler.Verify(x => x(It.Is<HttpRequestMessage>(p => p.Method == HttpMethod.Post), It.IsAny<CancellationToken>()));
         liveReadingMapper.Verify(lrm => lrm.MapPvOutputArgs(It.IsAny<Uri>(), It.IsAny<string>(), It.IsAny<Stream>(), It.IsAny<string>(),
           It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
-        readingAccepter.Verify(ra => ra.Accept(It.IsAny<LiveReading[]>()), Times.Never);
+        readingAccepter.Verify(ra => ra.Accept(It.IsAny<Reading[]>()), Times.Never);
     }
 
     [Test]
@@ -190,7 +190,7 @@ public class PvOutputFacadeControllerTest
         httpMessageHandler.Verify(x => x(It.Is<HttpRequestMessage>(p => p.Method == HttpMethod.Get), It.IsAny<CancellationToken>()));
         liveReadingMapper.Verify(lrm => lrm.MapPvOutputArgs(It.IsAny<Uri>(), It.IsAny<string>(), It.IsAny<Stream>(), It.IsAny<string>(),
           It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
-        readingAccepter.Verify(ra => ra.Accept(It.IsAny<LiveReading[]>()), Times.Never);
+        readingAccepter.Verify(ra => ra.Accept(It.IsAny<Reading[]>()), Times.Never);
     }
 
     [Test]
@@ -262,7 +262,7 @@ public class PvOutputFacadeControllerTest
         liveReadingMapper.Verify(lrm => lrm.MapPvOutputArgs(
           It.IsAny<Uri>(), It.IsAny<string>(), It.IsAny<Stream>(), It.IsAny<string>(),
           It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
-        readingAccepter.Verify(ra => ra.Accept(It.IsAny<LiveReading[]>()), Times.Never);
+        readingAccepter.Verify(ra => ra.Accept(It.IsAny<Reading[]>()), Times.Never);
     }
 
     [Test]
@@ -285,7 +285,7 @@ public class PvOutputFacadeControllerTest
         liveReadingMapper.Verify(lrm => lrm.MapPvOutputArgs(
           It.IsAny<Uri>(), It.IsAny<string>(), It.IsAny<Stream>(), It.IsAny<string>(),
           It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
-        readingAccepter.Verify(ra => ra.Accept(It.IsAny<LiveReading[]>()), Times.Never);
+        readingAccepter.Verify(ra => ra.Accept(It.IsAny<Reading[]>()), Times.Never);
     }
 
     [Test]

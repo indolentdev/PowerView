@@ -6,6 +6,6 @@ namespace PowerView.Service.Mqtt
 {
   public interface IMqttMapper
   {
-    MqttApplicationMessage[] Map(ICollection<LiveReading> liveReadings);
+    MqttApplicationMessage[] Map(ICollection<Reading> liveReadings);
   }
 }

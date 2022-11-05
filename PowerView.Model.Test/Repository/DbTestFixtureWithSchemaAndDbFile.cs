@@ -16,7 +16,7 @@ namespace PowerView.Model.Test.Repository
       DbName = DateTime.Now.ToString("yyyyMMddHHmmss") + "_" + Guid.NewGuid() + ".sqlite3";
     }
 
-    public string DbName { get; private set; }
+    public string DbName { get; protected set; }
     private DbContextFactory dbContextFactory;
 
     internal DbContext DbContext { get; private set; }

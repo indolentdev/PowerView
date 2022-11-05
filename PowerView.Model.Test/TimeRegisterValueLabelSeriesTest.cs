@@ -219,7 +219,8 @@ namespace PowerView.Model.Test
         new TimeRegisterValue("sn1", new DateTime(now.Year, now.Month, now.Day, 12, 0, 0, DateTimeKind.Utc), 11, Unit.WattHour)
       };
       var target = new TimeRegisterValueLabelSeries(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, timeRegisterValues } });
-      var timeDivider = new DateTimeHelper(TimeZoneInfo.Local, DateTime.Today.ToUniversalTime()).GetDivider("60-minutes");
+      var day = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0, DateTimeKind.Utc);
+      var timeDivider = new DateTimeHelper(TimeZoneInfo.Local, day).GetDivider("60-minutes");
 
       // Act
       var normalized = target.Normalize(timeDivider);

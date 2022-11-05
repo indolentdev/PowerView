@@ -2,7 +2,7 @@ import { Component, OnInit,ViewChild, Input, Output, OnChanges, SimpleChanges, E
 import { MatSort, MatSortable } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { NGXLogger } from 'ngx-logger';
-import { SerieService } from '../../../services/serie.service';
+import { ObisService } from '../../../services/obis.service';
 import { DisconnectRuleSet } from '../../../model/disconnectRuleSet';
 import { DisconnectRule } from '../../../model/disconnectRule';
 
@@ -21,7 +21,7 @@ export class SettingsRelayControlsTableComponent implements OnInit, OnChanges {
 
   @Output('deleteDisconnectRule') deleteAction: EventEmitter<DisconnectRule> = new EventEmitter();
 
-  constructor(private log: NGXLogger, private serieService: SerieService) {
+  constructor(private log: NGXLogger, private obisService: ObisService) {
   }
 
   ngOnInit() {
@@ -48,8 +48,8 @@ export class SettingsRelayControlsTableComponent implements OnInit, OnChanges {
   private refresh(): void {
     if (this.dataSource != null && this.disconnectRuleSet != null) {
       let rows = [];
-      rows = this.serieService.AddSerieProperty(this.disconnectRuleSet.items, "nameLabel", "nameObisCode", "nameSerie");
-      rows = this.serieService.AddSerieProperty(rows, "evaluationLabel", "evaluationObisCode", "evaluationSerie");
+      rows = this.obisService.AddSerieProperty(this.disconnectRuleSet.items, "nameLabel", "nameObisCode", "nameSerie");
+      rows = this.obisService.AddSerieProperty(rows, "evaluationLabel", "evaluationObisCode", "evaluationSerie");
       this.dataSource.data = rows;
     }
   }

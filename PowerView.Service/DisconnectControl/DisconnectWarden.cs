@@ -36,13 +36,13 @@ namespace PowerView.Service.DisconnectControl
       return filtered;
     }
 
-    public void Process(IList<LiveReading> liveReadings)
+    public void Process(IList<Reading> liveReadings)
     {
       var time = DateTime.UtcNow;
       eventQueue.Enqueue(() => ProcessInner(time, liveReadings));
     }
 
-    private void ProcessInner(DateTime time, IList<LiveReading> liveReadings)
+    private void ProcessInner(DateTime time, IList<Reading> liveReadings)
     {
       var calculator = serviceProvider.GetRequiredService<IDisconnectCalculator>();
       calculator.SynchronizeAndCalculate(time, disconnectCache, liveReadings);

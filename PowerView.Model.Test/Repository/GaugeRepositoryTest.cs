@@ -9,7 +9,7 @@ namespace PowerView.Model.Test.Repository
     public class GaugeRepositoryTest : DbTestFixtureWithSchema
     {
         [Test]
-        public void GetThrows()
+        public void GetLatestThrows()
         {
             // Arrange
             var target = CreateTarget();
@@ -59,9 +59,9 @@ namespace PowerView.Model.Test.Repository
             var dt = new DateTime(2017, 2, 27, 12, 0, 0, DateTimeKind.Utc);
             var target = CreateTarget();
             var rd1 = new Db.LiveReading { LabelId = 1, DeviceId = 10, Timestamp = dt };
-            var rd2 = new Db.LiveReading { LabelId = 1, DeviceId = 20, Timestamp = dt };
+            var rd2 = new Db.LiveReading { LabelId = 1, DeviceId = 20, Timestamp = dt.AddMinutes(30) };
             var rd3 = new Db.LiveReading { LabelId = 2, DeviceId = 20, Timestamp = dt };
-            var rd4 = new Db.LiveReading { LabelId = 2, DeviceId = 20, Timestamp = dt };
+            var rd4 = new Db.LiveReading { LabelId = 2, DeviceId = 20, Timestamp = dt.AddMinutes(30) };
             DbContext.InsertReadings(rd1, rd2, rd3, rd4);
             byte electrActiveEnergyA14 = 1;
             byte electrActiveEnergyA23 = 2;
@@ -121,6 +121,16 @@ namespace PowerView.Model.Test.Repository
         }
 
         [Test]
+        public void GetCustomThrows()
+        {
+            // Arrange
+            var target = CreateTarget();
+
+            // Act & Assert
+            Assert.That(() => target.GetCustom(DateTime.Now), Throws.TypeOf<ArgumentOutOfRangeException>());
+        }
+
+        [Test]
         public void GetCustom()
         {
             // Arrange
@@ -149,9 +159,9 @@ namespace PowerView.Model.Test.Repository
             var dt = new DateTime(2017, 2, 27, 12, 0, 0, DateTimeKind.Utc);
             var target = CreateTarget();
             var rd1 = new Db.DayReading { LabelId = 1, DeviceId = 10, Timestamp = dt };
-            var rd2 = new Db.DayReading { LabelId = 1, DeviceId = 20, Timestamp = dt };
+            var rd2 = new Db.DayReading { LabelId = 1, DeviceId = 20, Timestamp = dt.AddMinutes(30) };
             var rd3 = new Db.DayReading { LabelId = 2, DeviceId = 20, Timestamp = dt };
-            var rd4 = new Db.DayReading { LabelId = 2, DeviceId = 20, Timestamp = dt };
+            var rd4 = new Db.DayReading { LabelId = 2, DeviceId = 20, Timestamp = dt.AddMinutes(30) };
             DbContext.InsertReadings(rd1, rd2, rd3, rd4);
             byte electrActiveEnergyA14 = 1;
             byte electrActiveEnergyA23 = 2;

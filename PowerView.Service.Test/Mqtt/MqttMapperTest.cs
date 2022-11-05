@@ -18,7 +18,7 @@ namespace PowerView.Service.Test.Mqtt
       var target = CreateTarget();
 
       // Act
-      var mqttMsqs = target.Map(new LiveReading[0]);
+      var mqttMsqs = target.Map(new Reading[0]);
 
       // Assert
       Assert.That(mqttMsqs, Is.Empty);
@@ -133,7 +133,7 @@ namespace PowerView.Service.Test.Mqtt
       Assert.That(mqttMsqs[0].Retain, Is.EqualTo(false));
     }
 
-    private ICollection<LiveReading> GetLiveReading(string label = "lbl", ObisCode? obisCode = null, DateTime? dateTime = null, int value = 1, Unit unit = default(Unit))
+    private ICollection<Reading> GetLiveReading(string label = "lbl", ObisCode? obisCode = null, DateTime? dateTime = null, int value = 1, Unit unit = default(Unit))
     {
       if (dateTime == null)
       {
@@ -143,7 +143,7 @@ namespace PowerView.Service.Test.Mqtt
       {
         obisCode = ObisCode.ElectrActiveEnergyA14;
       }
-      return new[] { new LiveReading(label, "SN", dateTime.Value, new[] { new RegisterValue(obisCode.Value, value, 0, unit) }) };
+      return new[] { new Reading(label, "SN", dateTime.Value, new[] { new RegisterValue(obisCode.Value, value, 0, unit) }) };
     }
 
     private MqttMapper CreateTarget()

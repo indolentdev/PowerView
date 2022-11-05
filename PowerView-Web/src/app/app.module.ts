@@ -71,6 +71,11 @@ import { SeriesMeasureKindsTableComponent } from './components/help/series-measu
 import { ExportComponent } from './components/export/export/export.component';
 import { ExportGaugesHourlyComponent } from './components/export/export-gauges-hourly/export-gauges-hourly.component';
 import { ExportDiffsHourlyComponent } from './components/export/export-diffs-hourly/export-diffs-hourly.component';
+import { DataCrudeTableComponent } from './components/data/data-crude-table/data-crude-table.component';
+import { DataCrudeByDateComponent } from './components/data/data-crude-bydate/data-crude-bydate.component';
+import { ScalerPipe } from './pipes/scaler.pipe';
+import { DataCrudeBydateTableComponent } from './components/data/data-crude-bydate-table/data-crude-bydate-table.component';
+import { DataCrudeAddComponent } from './components/data/data-crude-add/data-crude-add.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -138,7 +143,12 @@ if (environment.useMockBackend == true) {
     SeriesMeasureKindsTableComponent,
     ExportComponent,
     ExportGaugesHourlyComponent,
-    ExportDiffsHourlyComponent
+    ExportDiffsHourlyComponent,
+    DataCrudeTableComponent,
+    DataCrudeByDateComponent,
+    ScalerPipe,
+    DataCrudeBydateTableComponent,
+    DataCrudeAddComponent
   ],
   imports: [
     BrowserModule,
