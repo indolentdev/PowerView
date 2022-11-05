@@ -9,7 +9,7 @@ namespace PowerView.Service.EventHub
 {
   internal class MqttPublisherFactory : IMqttPublisherFactory
   {
-    public void Publish(IServiceScope serviceScope, IList<LiveReading> liveReadings)
+    public void Publish(IServiceScope serviceScope, IList<Reading> liveReadings)
     {
       if (serviceScope == null) throw new ArgumentNullException(nameof(serviceScope));
       if (liveReadings == null) throw new ArgumentNullException("liveReadings");

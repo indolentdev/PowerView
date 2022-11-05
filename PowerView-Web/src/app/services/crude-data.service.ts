@@ -14,8 +14,10 @@ import { CrudeValue } from '../model/crudeValue';
 
 const constLocal = {
   dataCrude: "data/crude",
-  dataCrudeOnDate: "data/crude/by/",
-  dataCrudeMissingDays: "data/crude/missing-days"
+  dataCrudeOnDate: "data/crude/by",
+  dataCrudeMissingDays: "data/crude/missing-days",
+
+  devicesManualregisters: "devices/manualregisters"
 };
 
 @Injectable({
@@ -33,10 +35,10 @@ export class CrudeDataService {
     return this.dataService.get<CrudeValueSet>(constLocal.dataCrude, params, new CrudeValueSet);
   }
 
-  public addCrudeValue(label: string, crudeValue: CrudeValue): Observable<any> {
+  public addManualReading(label: string, crudeValue: CrudeValue): Observable<any> {
     let body = { ...crudeValue };
     body["label"] = label;
-    return this.dataService.post(constLocal.dataCrude, body)
+    return this.dataService.post(constLocal.devicesManualregisters, body)
       .pipe(catchError(error => {
         return throwError(this.convertToAddCrudeValueError(error));
       }));

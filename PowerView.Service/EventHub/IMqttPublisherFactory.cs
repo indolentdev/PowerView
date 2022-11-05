@@ -7,6 +7,6 @@ namespace PowerView.Service.EventHub
 {
   internal interface IMqttPublisherFactory
   {
-    void Publish(IServiceScope serviceScope, IList<LiveReading> liveReadings);
+    void Publish(IServiceScope serviceScope, IList<Reading> liveReadings);
   }
 }

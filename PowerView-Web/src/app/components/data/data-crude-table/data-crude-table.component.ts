@@ -22,17 +22,16 @@ export class DataCrudeTableComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-    this.refresh();
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    this.refresh();
+    this.refresh(changes.crudeValues.currentValue);
   }
 
-  private refresh(): void {
-    var values = [];
-    if (this.crudeValues !== undefined) {
-      values = this.crudeValues;
+  private refresh(values): void {
+    if (values == undefined || values == null) {
+      this.dataSource.data = [];
+      return;
     }
     this.dataSource.data = this.obisService.AddRegisterProperty(values);
   }

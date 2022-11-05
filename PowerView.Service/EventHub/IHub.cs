@@ -6,6 +6,6 @@ namespace PowerView.Service.EventHub
 {
   public interface IHub : IDisposable
   {
-    void Signal(IList<LiveReading> liveReadings);
+    void Signal(IList<Reading> liveReadings);
   }
 }

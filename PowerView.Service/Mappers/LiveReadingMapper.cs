@@ -21,7 +21,7 @@ namespace PowerView.Service.Mappers
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));      
     }
 
-    public LiveReading MapPvOutputArgs(Uri requestUrl, string contentType, Stream body, string deviceLabel, string deviceId, string deviceIdParam,
+    public Reading MapPvOutputArgs(Uri requestUrl, string contentType, Stream body, string deviceLabel, string deviceId, string deviceIdParam,
                                        string actualPowerP23L1Param, string actualPowerP23L2Param, string actualPowerP23L3Param)
     {
       if (requestUrl == null) throw new ArgumentNullException("requestUrl");
@@ -59,9 +59,9 @@ namespace PowerView.Service.Mappers
         GetRegisterValue(pvArgs, actualPowerP23L1Param, ObisCode.ElectrActualPowerP23L1, Unit.Watt),
         GetRegisterValue(pvArgs, actualPowerP23L2Param, ObisCode.ElectrActualPowerP23L2, Unit.Watt),
         GetRegisterValue(pvArgs, actualPowerP23L3Param, ObisCode.ElectrActualPowerP23L3, Unit.Watt),
-      }.Where(rv => rv != null);
+      }.Where(rv => rv != null).Select(rv => rv.Value);
 
-      return new LiveReading(deviceLabel, resolvedDeviceId, timestamp, registerValues);
+      return new Reading(deviceLabel, resolvedDeviceId, timestamp, registerValues);
     }
 
     private static string GetPvArgs(Uri requestUrl, string contentType, Stream body)
@@ -119,7 +119,7 @@ namespace PowerView.Service.Mappers
       return pvArgs[deviceIdParam][0];
     }
 
-    private RegisterValue GetRegisterValue(IDictionary<string, IList<string>> pvArgs, string param, ObisCode obisCode, Unit unit)
+    private RegisterValue? GetRegisterValue(IDictionary<string, IList<string>> pvArgs, string param, ObisCode obisCode, Unit unit)
     {
       if (string.IsNullOrEmpty(param))
       {

@@ -81,6 +81,10 @@ export class DataCrudeAddComponent implements OnInit {
 
     this.getControl("date").reset();
 
+    if (this.selectedLabel == undefined || this.selectedLabel == null) return;
+
+    this.crudeValues = [];
+
     this.crudeDataService.getDaysMissingCrudeValues(selectedLabel).subscribe(x => {
       this.missingDays = x.sort(function (obj1, obj2) {
         if (obj1.timestamp === obj2.timestamp) {
@@ -102,7 +106,9 @@ export class DataCrudeAddComponent implements OnInit {
 
     this.getControl("register").reset();
 
-    if (selectedMissingDate == null) return;
+    if (this.selectedLabel == null || selectedMissingDate == null) return;
+
+    this.crudeValues = [];
 
     this.crudeDataService.getCrudeValuesOnDate(this.selectedLabel, this.selectedMissingDate.previousTimestamp).subscribe(x => {
       this.previousCrudeValues = this.obisService.AddRegisterProperty(x).sort((a, b) => a.register > b.register ? 1 : -1);
@@ -116,18 +122,21 @@ export class DataCrudeAddComponent implements OnInit {
   private registerOnChange(selectedRegister: CrudeValue) {
     this.selectedRegister = selectedRegister;
 
-    this.crudeValues = [];
     this.getControl("value").reset();
 
     if (this.selectedMissingDate == null || this.selectedRegister == null) return;
+
+    this.crudeValues = [];
 
     this.crudeDataService.getCrudeValuesOnDate(this.selectedLabel, this.selectedMissingDate.nextTimestamp).subscribe(x => {
       this.nextCrudeValues = x;
 
       if (this.nextCrudeValues.length > 0) {
-        this.crudeValues.push(this.selectedRegister);
+        let contextList = [];
+        contextList.push(this.selectedRegister);
         var nextRegister = this.nextCrudeValues.find(e => e.obisCode === this.selectedRegister.obisCode);
-        this.crudeValues.push(nextRegister);
+        contextList.push(nextRegister);
+        this.crudeValues = contextList;
 
         if (this.crudeValues.length === 2) {
           this.minValue = this.selectedRegister.value;
@@ -169,11 +178,12 @@ export class DataCrudeAddComponent implements OnInit {
     };
     this.log.debug("Adding crude value", crudeValue);
 
-    this.crudeDataService.addCrudeValue(formGroupValue.label, crudeValue).subscribe(_ => {
+    this.crudeDataService.addManualReading(formGroupValue.label, crudeValue).subscribe(_ => {
       this.log.debug("Add ok");
       this.translateService.get('forms.crudeData.add.confirmAdd').subscribe(message => {
         this.getControl("value").clearValidators();
         this.formDirective.resetForm();
+        this.crudeValues = [];
         this.snackBarRef = this.snackBar.open(message, undefined, { duration: 9000 });
       });
     }, err => {

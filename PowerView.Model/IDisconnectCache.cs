@@ -8,7 +8,7 @@ namespace PowerView.Model
     int Count { get; }
 
     void SynchronizeRules(ICollection<IDisconnectRule> rules);
-    void Add(ICollection<LiveReading> liveReadings);
+    void Add(ICollection<Reading> liveReadings);
     void Calculate(DateTime time);
     IDictionary<ISeriesName, bool> GetStatus();
   }

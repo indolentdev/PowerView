@@ -18,6 +18,8 @@ export class ObisService {
       let row: any = item;
       rows.push(row);
 
+      if (item.hasOwnProperty(registerName)) continue;
+
       if (!item.hasOwnProperty(obisCodeName)) {
         this.log.warn(`Unable to add ${registerName} property. Object is missing ${obisCodeName} property.`, item);
         continue;

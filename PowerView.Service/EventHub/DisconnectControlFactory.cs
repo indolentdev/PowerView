@@ -9,7 +9,7 @@ namespace PowerView.Service.EventHub
   internal class DisconnectControlFactory : IDisconnectControlFactory
   {
 
-    public void Process(IServiceScope serviceScope, IList<LiveReading> liveReadings)
+    public void Process(IServiceScope serviceScope, IList<Reading> liveReadings)
     {
       if (serviceScope == null) throw new ArgumentNullException(nameof(serviceScope));
       if (liveReadings == null) throw new ArgumentNullException("liveReadings");

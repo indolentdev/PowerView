@@ -50,7 +50,7 @@ namespace PowerView.Service.Test.Mqtt
       var target = CreateTarget();
 
       // Act & Assert
-      Assert.That(() => target.Publish(null, new LiveReading[0]), Throws.ArgumentNullException);
+      Assert.That(() => target.Publish(null, new Reading[0]), Throws.ArgumentNullException);
       Assert.That(() => target.Publish(mqttServer.GetClientConfig(), null), Throws.ArgumentNullException);
     }
 
@@ -61,7 +61,7 @@ namespace PowerView.Service.Test.Mqtt
       var target = CreateTarget();
 
       // Act & Assert
-      Assert.That(() => target.Publish(mqttServer.GetClientConfig(), new LiveReading[1]), Throws.TypeOf<ConnectMqttException>());
+      Assert.That(() => target.Publish(mqttServer.GetClientConfig(), new Reading[1]), Throws.TypeOf<ConnectMqttException>());
     }
 
     [Test]
@@ -70,8 +70,8 @@ namespace PowerView.Service.Test.Mqtt
       // Arrange
       mqttServer.Start();
       var target = CreateTarget();
-      var liveReadings = new LiveReading[0];
-      mqttMapper.Setup(mm => mm.Map(It.IsAny<ICollection<LiveReading>>())).Returns(new MqttApplicationMessage[0]);
+      var liveReadings = new Reading[0];
+      mqttMapper.Setup(mm => mm.Map(It.IsAny<ICollection<Reading>>())).Returns(new MqttApplicationMessage[0]);
 
       // Act
       target.Publish(mqttServer.GetClientConfig(), liveReadings);
@@ -86,9 +86,9 @@ namespace PowerView.Service.Test.Mqtt
       // Arrange
       mqttServer.Start();
       var target = CreateTarget();
-      var liveReadings = new LiveReading[1];
+      var liveReadings = new Reading[1];
       var mqttMessage = new MqttApplicationMessageBuilder().WithTopic("TheTopic").WithQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel.AtMostOnce).Build();
-      mqttMapper.Setup(mm => mm.Map(It.IsAny<ICollection<LiveReading>>())).Returns(new[] { mqttMessage });
+      mqttMapper.Setup(mm => mm.Map(It.IsAny<ICollection<Reading>>())).Returns(new[] { mqttMessage });
       var config = mqttServer.GetClientConfig();
 
       // Act

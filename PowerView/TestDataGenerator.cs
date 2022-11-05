@@ -128,13 +128,13 @@ namespace PowerView
             return result;
         }
 
-        private static IEnumerable<LiveReading> GenerateLiveReadings(Random rnd, string label, SerieGenerator[] serieGenerators)
+        private static IEnumerable<Reading> GenerateLiveReadings(Random rnd, string label, SerieGenerator[] serieGenerators)
         {
             var timestamps = GetReadingTimestamps(DateTime.Now).ToArray();
             foreach (var timestamp in timestamps)
             {
                 var registerValues = GenerateRegisterValues(rnd, serieGenerators).ToArray();
-                var liveReading = new LiveReading(label, "1", timestamp, registerValues);
+                var liveReading = new Reading(label, "1", timestamp, registerValues);
                 yield return liveReading;
             }
         }

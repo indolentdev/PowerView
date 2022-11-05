@@ -143,6 +143,7 @@
     "crudeData":{
       "add": {
         "buttonAdd": "Add",
+        "closestValues": "Closest Values",
         "confirmAdd": "Crude value added. Day, month and year history has been removed and will be recalculated.",
         "errorAdd": "Add crude value failed. ",
         "errorDuplicate": "Already exists. Change date. ",

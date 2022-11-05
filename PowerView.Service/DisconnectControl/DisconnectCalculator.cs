@@ -17,7 +17,7 @@ namespace PowerView.Service.DisconnectControl
       this.disconnectRuleRepository = disconnectRuleRepository;
     }
 
-    public void SynchronizeAndCalculate(DateTime time, IDisconnectCache disconnectCache, IList<LiveReading> liveReadings)
+    public void SynchronizeAndCalculate(DateTime time, IDisconnectCache disconnectCache, IList<Reading> liveReadings)
     {
       var disconnectRules = disconnectRuleRepository.GetDisconnectRules();
       disconnectCache.SynchronizeRules(disconnectRules.OfType<IDisconnectRule>().ToList());

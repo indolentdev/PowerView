@@ -175,7 +175,7 @@ public class PvOutputFacadeController : ControllerBase
         {
             return;
         }
-        readingAccepter.Accept(new LiveReading[] { liveReading });
+        readingAccepter.Accept(new Reading[] { liveReading });
     }
 
 }

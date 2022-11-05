@@ -62,7 +62,7 @@ public class SettingsMqttController : ControllerBase
 
         try
         {
-            mqttPublisher.Publish(mqttConfig, new LiveReading[0]);
+            mqttPublisher.Publish(mqttConfig, new Reading[0]);
             return NoContent();
         }
         catch (MqttException e)

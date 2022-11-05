@@ -6,6 +6,6 @@ namespace PowerView.Service.DisconnectControl
 {
   internal interface IDisconnectWarden : IDisposable
   {
-    void Process(IList<LiveReading> liveReadings);
+    void Process(IList<Reading> liveReadings);
   }
 }

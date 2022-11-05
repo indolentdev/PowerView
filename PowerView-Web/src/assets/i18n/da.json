@@ -143,6 +143,7 @@
     "crudeData": {
       "add": {
         "buttonAdd": "Tilføj",
+        "closestValues": "Tætteste værdier",
         "confirmAdd": "Rå data tilføjet. Dag, måned og årshistorik er blevet fjernet og bliver genberegnet.",
         "errorAdd": "Tilføj rå data fejlede. ",
         "errorDuplicate": "Eksisterer allerede. Skift dato. ",

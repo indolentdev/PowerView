@@ -43,6 +43,10 @@
 
             <br />
 
+            <h4 *ngIf="crudeValues !== undefined && crudeValues.length > 0">
+                {{ 'forms.crudeData.add.closestValues' | translate }}
+            </h4>
+
             <app-data-crude-table [crudeValues]="crudeValues"></app-data-crude-table>
 
             <br />

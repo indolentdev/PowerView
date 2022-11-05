@@ -44,7 +44,7 @@ export function crudeDataBackend(url: string, method: string, request: HttpReque
         });            
     }
 
-    if (url.endsWith('crude') && method === "POST") {
+    if (url.endsWith('devices/manualregisters') && method === "POST") {
         //        return throwError(new HttpErrorResponse({status:409}));
         return new Observable(resp => {
             resp.next(new HttpResponse({

@@ -31,7 +31,7 @@ namespace PowerView.Service.Test.EventHub
 
       // Act & Assert
       Assert.That(() => target.Publish(serviceScope.Object, null), Throws.ArgumentNullException);
-      Assert.That(() => target.Publish(null, Array.Empty<LiveReading>()), Throws.ArgumentNullException);
+      Assert.That(() => target.Publish(null, Array.Empty<Reading>()), Throws.ArgumentNullException);
     }
 
     [Test]
@@ -47,7 +47,7 @@ namespace PowerView.Service.Test.EventHub
       var mqttPublisher = new Mock<IMqttPublisher>();
       serviceProvider.Setup(sp => sp.GetService(typeof(IMqttPublisher))).Returns(mqttPublisher.Object);
 
-      var liveReadings = new LiveReading[1];
+      var liveReadings = new Reading[1];
 
       var target = CreateTarget();
 
@@ -65,7 +65,7 @@ namespace PowerView.Service.Test.EventHub
     public void PublishEmptyLiveReadings()
     {
       // Arrange
-      var liveReadings = new LiveReading[0];
+      var liveReadings = new Reading[0];
 
       var target = CreateTarget();
 
@@ -87,7 +87,7 @@ namespace PowerView.Service.Test.EventHub
       var mqttConfig = new MqttConfig("theServer", 1234, false, "theClientId");
       settingsRepository.Setup(sr => sr.GetMqttConfig()).Returns(mqttConfig);
 
-      var liveReadings = new LiveReading[1];
+      var liveReadings = new Reading[1];
 
       var target = CreateTarget();
 

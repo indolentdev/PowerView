@@ -23,6 +23,13 @@ namespace PowerView.Model.Repository
         byte Unit { get; set; }
     }
 
+    internal interface IDbRegisterTag
+    {
+        public long ReadingId { get; set; }
+        public byte ObisId { get; set; }
+        public byte Tags { get; set; }
+    }
+
     internal static class Db
     {
         public class LiveReading : IDbReading
@@ -40,6 +47,13 @@ namespace PowerView.Model.Repository
             public int Value { get; set; }
             public short Scale { get; set; }
             public byte Unit { get; set; }
+        }
+
+        public class LiveRegisterTag : IDbRegisterTag
+        {
+            public long ReadingId { get; set; }
+            public byte ObisId { get; set; }
+            public byte Tags { get; set; }
         }
 
         public class DayReading : IDbReading

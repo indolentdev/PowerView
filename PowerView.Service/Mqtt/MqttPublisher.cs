@@ -23,7 +23,7 @@ namespace PowerView.Service.Mqtt
       this.mqttMapper = mqttMapper ?? throw new ArgumentNullException(nameof(mqttMapper));
     }
 
-    public void Publish(MqttConfig config, ICollection<LiveReading> liveReadings)
+    public void Publish(MqttConfig config, ICollection<Reading> liveReadings)
     {
       if (config == null) throw new ArgumentNullException("config");
       if (liveReadings == null) throw new ArgumentNullException("liveReadings");
@@ -54,7 +54,7 @@ namespace PowerView.Service.Mqtt
       }
     }
 
-    private async Task PublishInner(MqttConfig config, ICollection<LiveReading> liveReadings)
+    private async Task PublishInner(MqttConfig config, ICollection<Reading> liveReadings)
     {
       var opts = new MqttClientOptionsBuilder()
         .WithProtocolVersion(MQTTnet.Formatter.MqttProtocolVersion.V500)

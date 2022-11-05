@@ -26,7 +26,7 @@ namespace PowerView.Service.Test.DisconnectControl
       // Arrange
       var time = DateTime.UtcNow;
       var disconnectCache = new Mock<IDisconnectCache>();
-      var liveReadings = new List<LiveReading>();
+      var liveReadings = new List<Reading>();
       var disconnectRuleRepository = new Mock<IDisconnectRuleRepository>();
       var disconnectRule = new DisconnectRule(new SeriesName("lbl", ObisCode.ColdWaterFlow1), new SeriesName("other", ObisCode.ElectrActualPowerP23L1),
                                              TimeSpan.FromMinutes(30), 1500, 300, Unit.Watt);

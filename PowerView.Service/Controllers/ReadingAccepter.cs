@@ -18,14 +18,14 @@ public class ReadingAccepter : IReadingAccepter
         this.hub = hub ?? throw new ArgumentNullException(nameof(hub));
     }
 
-    public void Accept(IList<LiveReading> liveReadings)
+    public void Accept(IList<Reading> liveReadings)
     {
         var liveReadingsAdd = liveReadings;
 
         var liveReadingsOk = liveReadings.Where(x => x.GetRegisterValues().Any(RegisterValueOk));
         var liveReadingsToFilter = liveReadings.Except(liveReadingsOk).ToList();
 
-        var liveReadingsFiltered = new List<LiveReading>();
+        var liveReadingsFiltered = new List<Reading>();
         if (liveReadingsToFilter.Any())
         {
             foreach (var liveReading in liveReadingsToFilter)
@@ -35,7 +35,7 @@ public class ReadingAccepter : IReadingAccepter
                 {
                     continue;
                 }
-                liveReadingsFiltered.Add(new LiveReading(liveReading.Label, liveReading.DeviceId, liveReading.Timestamp, filteredRegisterValues));
+                liveReadingsFiltered.Add(new Reading(liveReading.Label, liveReading.DeviceId, liveReading.Timestamp, filteredRegisterValues));
             }
             liveReadingsFiltered.AddRange(liveReadingsOk);
             liveReadingsAdd = liveReadingsFiltered;

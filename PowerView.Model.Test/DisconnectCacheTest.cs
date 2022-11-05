@@ -67,10 +67,10 @@ namespace PowerView.Model.Test
       var cacheItem = new Mock<IDisconnectCacheItem>();
       var factory = GetFactory(cacheItem.Object);
       target.SynchronizeRules(new[] { rule }, factory);
-      var lr1 = new LiveReading(meterSerieName.Label, "1", DateTime.UtcNow, new[] {
+      var lr1 = new Reading(meterSerieName.Label, "1", DateTime.UtcNow, new[] {
         new RegisterValue(meterSerieName.ObisCode, 1, 1, Unit.Watt),
         new RegisterValue(ObisCode.ElectrActualPowerP14L2, 2, 2, Unit.Watt)});
-      var lr2 = new LiveReading("OtherMeter", "2", DateTime.UtcNow, new[] {
+      var lr2 = new Reading("OtherMeter", "2", DateTime.UtcNow, new[] {
         new RegisterValue(meterSerieName.ObisCode, 3, 3, Unit.Watt),
         new RegisterValue(ObisCode.ElectrActualPowerP14L2, 4, 4, Unit.Watt)});
 
