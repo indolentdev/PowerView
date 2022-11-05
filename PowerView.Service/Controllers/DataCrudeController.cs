@@ -4,8 +4,6 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using PowerView.Model.Repository;
-using PowerView.Model;
-using PowerView.Service.Dtos;
 using PowerView.Service.Mappers;
 
 namespace PowerView.Service.Controllers;

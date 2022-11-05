@@ -25,6 +25,7 @@ namespace PowerView.Model
             serviceCollection.AddTransient<ILiveReadingRepository, LiveReadingRepository>();
             serviceCollection.AddTransient<IProfileRepository, ProfileRepository>();
             serviceCollection.AddTransient<IReadingPipeRepository, ReadingPipeRepository>();
+            serviceCollection.AddTransient<IReadingHistoryRepository, ReadingHistoryRepository>();
             serviceCollection.AddTransient<ILabelRepository, LabelRepository>();
             serviceCollection.AddTransient<ISettingRepository, SettingRepository>();
             serviceCollection.AddTransient<ISeriesNameRepository, SeriesNameRepository>();

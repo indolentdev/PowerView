@@ -22,11 +22,13 @@ public class DeviceReadingControllerTest
     private HttpClient httpClient;
 
     private Mock<IReadingAccepter> readingAccepter;
+    private Mock<IReadingHistoryRepository> readingHistoryRepository;
 
     [SetUp]
     public void Setup()
     {
         readingAccepter = new Mock<IReadingAccepter>();
+        readingHistoryRepository = new Mock<IReadingHistoryRepository>();
 
         application = new WebApplicationFactory<TestProgram>()
             .WithWebHostBuilder(builder =>
@@ -34,6 +36,7 @@ public class DeviceReadingControllerTest
                 builder.ConfigureServices((ctx, sc) =>
                 {
                     sc.AddSingleton(readingAccepter.Object);
+                    sc.AddSingleton(readingHistoryRepository.Object);
                 });
             });
 
@@ -170,6 +173,19 @@ public class DeviceReadingControllerTest
             x[0].GetRegisterValues()[0].Scale == dto.Scale &&
             x[0].GetRegisterValues()[0].Unit == UnitMapper.Map(dto.Unit)
          )));
+    }
+
+    [Test]
+    public async Task PostApiDevicesManualRegister_CallsReadingHistoryRepository()
+    {
+        // Arrange
+        var dto = GetPostCrudeValueDto();
+
+        // Act
+        var response = await httpClient.PostAsync("api/devices/manualregisters", JsonContent.Create(dto));
+
+        // Assert
+        readingHistoryRepository.Verify(x => x.ClearDayMonthYearHistory());
     }
 
     [Test]

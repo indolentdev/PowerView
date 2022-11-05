@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using PowerView.Model;
+﻿using PowerView.Model;
 using PowerView.Model.Repository;
 using PowerView.Service.EventHub;
 

@@ -16,11 +16,13 @@ public class DeviceReadingController : ControllerBase
 {
     private readonly ILogger logger;
     private readonly IReadingAccepter readingAccepter;
+    private readonly IReadingHistoryRepository readingHistoryRepository;
 
-    public DeviceReadingController(ILogger<DeviceReadingController> logger, IReadingAccepter readingAccepter)
+    public DeviceReadingController(ILogger<DeviceReadingController> logger, IReadingAccepter readingAccepter, IReadingHistoryRepository readingHistoryRepository)
     {
         this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         this.readingAccepter = readingAccepter ?? throw new ArgumentNullException(nameof(readingAccepter));
+        this.readingHistoryRepository = readingHistoryRepository ?? throw new ArgumentNullException(nameof(readingHistoryRepository));
     }
 
     [HttpPost("livereadings")]
@@ -68,6 +70,7 @@ public class DeviceReadingController : ControllerBase
         try
         {
             readingAccepter.Accept(new [] { reading });
+            readingHistoryRepository.ClearDayMonthYearHistory();
         }
         catch (DataStoreUniqueConstraintException e)
         {
