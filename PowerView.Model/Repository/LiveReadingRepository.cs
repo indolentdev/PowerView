@@ -14,6 +14,7 @@ namespace PowerView.Model.Repository
         {
             if (liveReadings == null) throw new ArgumentNullException("liveReadings");
             if (liveReadings.Any(lr => lr == null)) throw new ArgumentOutOfRangeException("liveReadings", "Must not contain nulls");
+
             if (liveReadings.Count == 0)
             {
                 return;
@@ -26,24 +27,33 @@ namespace PowerView.Model.Repository
             var obisIds = GetObisIds(liveReadings.SelectMany(x => x.GetRegisterValues()).Select(x => x.ObisCode).Distinct().ToList())
                 .ToDictionary(x => x.ObisCode, x => x.Id);
 
-            var dbLiveReadingsMap = liveReadings.ToDictionary(lr => new Db.LiveReading { LabelId = labels[lr.Label], DeviceId = deviceIds[lr.DeviceId], Timestamp = lr.Timestamp });
+            var dbReadingsMap = liveReadings.ToDictionary(lr => new Db.LiveReading { LabelId = labels[lr.Label], DeviceId = deviceIds[lr.DeviceId], Timestamp = lr.Timestamp });
             using var transaction = DbContext.BeginTransaction();
             try
             {
                 // First insert the readings
-                foreach (var liveReading in dbLiveReadingsMap.Keys)
+                foreach (var reading in dbReadingsMap.Keys)
                 {
-                    liveReading.Id = DbContext.Connection.QueryFirst<long>(
+                    var readingId = DbContext.Connection.QueryFirstOrDefault<long?>(
                       "INSERT OR IGNORE INTO LiveReading (LabelId, DeviceId, Timestamp) VALUES (@LabelId, @DeviceId, @Timestamp); SELECT Id FROM LiveReading WHERE Timestamp=@Timestamp AND LabelId=@LabelId;",
-                      liveReading, transaction);
+                      reading, transaction);
+
+                    if (readingId == null || readingId == 0)
+                    {
+                        throw new SqliteException($"Reading.Id not provided after insert. Timestamp:{((DateTime)reading.Timestamp).ToString("o")}, LabelId:{reading.LabelId}, Reading.Id:{readingId}", 28); // 28: SQLITE Warning
+                    }
+
+                    // remember the Reading.Id value for the reading, for foreign key composition.
+                    reading.Id = readingId.Value;
                 }
+
                 // then insert the registers
-                var dbLiveRegisters = GetDbLiveRegisters(dbLiveReadingsMap, obisIds).ToList();
+                var dbLiveRegisters = GetDbLiveRegisters(dbReadingsMap, obisIds).ToList();
                 DbContext.Connection.Execute("INSERT INTO LiveRegister (ReadingId, ObisId, Value, Scale, Unit) VALUES (@ReadingId, @ObisId, @Value, @Scale, @Unit);",
                   dbLiveRegisters, transaction);
 
                 // then insert the register tags
-                var dbLiveRegisterTags = GetDbLiveRegisterTags(dbLiveReadingsMap, obisIds).Where(x => x.Tags != 0).ToList();
+                var dbLiveRegisterTags = GetDbLiveRegisterTags(dbReadingsMap, obisIds).Where(x => x.Tags != 0).ToList();
                 DbContext.Connection.Execute("INSERT INTO LiveRegisterTag (ReadingId, ObisId, Tags) VALUES (@ReadingId, @ObisId, @Tags);",
                   dbLiveRegisterTags, transaction);
 
@@ -52,7 +62,9 @@ namespace PowerView.Model.Repository
             catch (SqliteException e)
             {
                 transaction.Rollback();
-                throw DataStoreExceptionFactory.Create(e);
+                var readingDetails = string.Join(", ", dbReadingsMap
+                  .Select(x => $"(Label:{labels.FirstOrDefault(z => z.Value == x.Key.LabelId)} ({x.Key.LabelId}), Timestamp:{((DateTime)x.Key.Timestamp).ToString("o")}, Id:{x.Key.Id})"));
+                throw DataStoreExceptionFactory.Create(e, $"Insert readings failed. Readings:{readingDetails}");
             }
         }
 

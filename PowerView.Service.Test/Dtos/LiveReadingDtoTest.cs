@@ -30,6 +30,7 @@ namespace PowerView.Service.Test.Dto
         [TestCase("{\"Label\":\"lbl\",\"DeviceId\":\"sn\",\"Timestamp\":\"2020-03-07T21:44:22\",\"RegisterValues\":[]}", "Timestamp property not UTC")]
         [TestCase("{\"Label\":\"lbl\",\"DeviceId\":\"sn\",\"Timestamp\":\"2020-03-07T21:44:22Z\"}", "RegisterValues property absent")]
         [TestCase("{\"Label\":\"lbl\",\"DeviceId\":\"sn\",\"Timestamp\":\"2020-03-07T21:44:22Z\",\"RegisterValues\":null}", "RegisterValues property absent")]
+        [TestCase("{\"Label\":\"lbl\",\"DeviceId\":\"sn\",\"Timestamp\":\"2020-03-07T21:44:22Z\",\"RegisterValues\":[{\"ObisCode\":\"1.2.3.4.5.6\"},{\"ObisCode\":\"1.2.3.4.5.6\"}]}", "RegisterValues duplicate obis codes")]
         public void DeserializeLiveReadingDtoInvalidThrowsValidationException(string json, string message)
         {
             // Arrange
