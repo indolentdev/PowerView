@@ -11,29 +11,37 @@ namespace PowerView.Model.Repository
         public DbContextFactory(IOptions<DatabaseOptions> options)
         {
             if (options == null) throw new ArgumentNullException(nameof(options));
+            
+            connectionStringBuilder = GetConnectionStringBuilder(options.Value.Name);
+        }
 
+        internal static SqliteConnectionStringBuilder GetConnectionStringBuilder(string dataSource)
+        {
             var builder = new SqliteConnectionStringBuilder();
-            builder.DataSource = options.Value.Name;
+            builder.DataSource = dataSource;
             builder.DefaultTimeout = 10; //000;
             builder.ForeignKeys = true;
             builder.Mode = SqliteOpenMode.ReadWriteCreate;
-            builder.ForeignKeys = true;
             builder.Cache = SqliteCacheMode.Default;
             builder.Pooling = false;
-
-            connectionStringBuilder = builder;
+            return builder;
         }
 
         public IDbContext CreateContext()
         {
-            var conn = new SqliteConnection(connectionStringBuilder.ToString());
+            return new DbContext(GetConnection(connectionStringBuilder));
+        }
+
+        internal static SqliteConnection GetConnection(SqliteConnectionStringBuilder builder)
+        {
+            var conn = new SqliteConnection(builder.ToString());
             try
             {
                 conn.Open();
                 conn.Execute("PRAGMA journal_mode = DELETE;");
                 conn.Execute("PRAGMA encoding = 'UTF-8';");
-                conn.Execute("PRAGMA synchronous = NORMAL;");
-                return new DbContext(conn);
+                conn.Execute("PRAGMA synchronous = FULL;");
+                return conn;
             }
             catch (SqliteException e)
             {

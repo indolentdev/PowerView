@@ -1,13 +1,17 @@
 using Microsoft.Data.Sqlite;
+using Microsoft.Extensions.Logging;
 using Dapper;
 
 namespace PowerView.Model.Repository
 {
     internal class LiveReadingRepository : RepositoryBase, ILiveReadingRepository
     {
-        public LiveReadingRepository(IDbContext dbContext)
+        private readonly ILogger logger;
+
+        public LiveReadingRepository(ILogger<LiveReadingRepository> logger, IDbContext dbContext)
           : base(dbContext)
         {
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public void Add(IList<Reading> liveReadings)
@@ -28,34 +32,45 @@ namespace PowerView.Model.Repository
                 .ToDictionary(x => x.ObisCode, x => x.Id);
 
             var dbReadingsMap = liveReadings.ToDictionary(lr => new Db.LiveReading { LabelId = labels[lr.Label], DeviceId = deviceIds[lr.DeviceId], Timestamp = lr.Timestamp });
+            var ignoredRegisters = new Dictionary<(long ReadingId, byte ObisId), Db.LiveRegister>();
+
             using var transaction = DbContext.BeginTransaction();
             try
             {
                 // First insert the readings
                 foreach (var reading in dbReadingsMap.Keys)
                 {
-                    var readingId = DbContext.Connection.QueryFirstOrDefault<long?>(
-                      "INSERT OR IGNORE INTO LiveReading (LabelId, DeviceId, Timestamp) VALUES (@LabelId, @DeviceId, @Timestamp); SELECT Id FROM LiveReading WHERE Timestamp=@Timestamp AND LabelId=@LabelId;",
-                      reading, transaction);
+                    var readingsAffected = DbContext.Connection.Execute("INSERT OR IGNORE INTO LiveReading (LabelId, DeviceId, Timestamp) VALUES (@LabelId, @DeviceId, @Timestamp);", reading, transaction);
+                    var readingId = DbContext.Connection.QueryFirstOrDefault<long?>("SELECT Id FROM LiveReading WHERE Timestamp=@Timestamp AND LabelId=@LabelId;", reading, transaction);
 
                     if (readingId == null || readingId == 0)
                     {
-                        throw new SqliteException($"Reading.Id not provided after insert. Timestamp:{((DateTime)reading.Timestamp).ToString("o")}, LabelId:{reading.LabelId}, Reading.Id:{readingId}", 28); // 28: SQLITE Warning
+                        throw new SqliteException($"Reading.Id not provided after insert. Timestamp:{((DateTime)reading.Timestamp).ToString("o")}, LabelId:{reading.LabelId}, Reading.Id:{readingId}. Insert rows affected:{readingsAffected}", 28); // 28: SQLITE Warning
                     }
 
                     // remember the Reading.Id value for the reading, for foreign key composition.
                     reading.Id = readingId.Value;
                 }
 
+
                 // then insert the registers
-                var dbLiveRegisters = GetDbLiveRegisters(dbReadingsMap, obisIds).ToList();
-                DbContext.Connection.Execute("INSERT INTO LiveRegister (ReadingId, ObisId, Value, Scale, Unit) VALUES (@ReadingId, @ObisId, @Value, @Scale, @Unit);",
-                  dbLiveRegisters, transaction);
+                var dbRegisters = GetDbLiveRegisters(dbReadingsMap, obisIds).ToList();
+                foreach (var register in dbRegisters)
+                {
+                    var registersAffected = DbContext.Connection.Execute("INSERT OR IGNORE INTO LiveRegister (ReadingId, ObisId, Value, Scale, Unit) VALUES (@ReadingId, @ObisId, @Value, @Scale, @Unit);",
+                      register, transaction);
+                    if (registersAffected == 0)
+                    {
+                        ignoredRegisters.Add((register.ReadingId, register.ObisId), register);
+                    }
+                }
 
                 // then insert the register tags
-                var dbLiveRegisterTags = GetDbLiveRegisterTags(dbReadingsMap, obisIds).Where(x => x.Tags != 0).ToList();
-                DbContext.Connection.Execute("INSERT INTO LiveRegisterTag (ReadingId, ObisId, Tags) VALUES (@ReadingId, @ObisId, @Tags);",
-                  dbLiveRegisterTags, transaction);
+                var dbRegisterTags = GetDbLiveRegisterTags(dbReadingsMap, obisIds)
+                    .Where(x => !ignoredRegisters.ContainsKey((x.ReadingId, x.ObisId)))
+                    .Where(x => x.Tags != 0)
+                    .ToList();
+                DbContext.Connection.Execute("INSERT INTO LiveRegisterTag (ReadingId, ObisId, Tags) VALUES (@ReadingId, @ObisId, @Tags);", dbRegisterTags, transaction);
 
                 transaction.Commit();
             }
@@ -65,6 +80,19 @@ namespace PowerView.Model.Repository
                 var readingDetails = string.Join(", ", dbReadingsMap
                   .Select(x => $"(Label:{labels.FirstOrDefault(z => z.Value == x.Key.LabelId)} ({x.Key.LabelId}), Timestamp:{((DateTime)x.Key.Timestamp).ToString("o")}, Id:{x.Key.Id})"));
                 throw DataStoreExceptionFactory.Create(e, $"Insert readings failed. Readings:{readingDetails}");
+            }
+
+            if (ignoredRegisters.Count > 0)
+            {
+                var ignoredRegistersByReadingId = ignoredRegisters.Values.GroupBy(x => x.ReadingId).ToList();
+                var ignoredReadingsAndRegisters = ignoredRegistersByReadingId.Join(dbReadingsMap, x => x.Key, x => x.Key.Id, (registers, reading) => new { DbRegisters = registers.ToList(), DbReading = reading.Key, Reading = reading.Value }).ToList();
+                var details = new System.Text.StringBuilder();
+                foreach (var item in ignoredReadingsAndRegisters)
+                {
+                    details.AppendLine(string.Empty).Append("Label:").Append(item.Reading.Label).Append("Timestamp:")
+                      .Append(item.Reading.Timestamp.ToString("o")).Append("ObisCodes:").Append(string.Join(", ", item.DbRegisters.Select(x => obisIds.FirstOrDefault(o => o.Value == x.ObisId).Key)));
+                }
+                logger.LogInformation($"{ignoredRegisters.Count} register(s) and associated tag(s) were ignored during insert to database due to duplicate constraints.{details.ToString()}");
             }
         }
 

@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 using PowerView.Model.Repository;
 
@@ -131,9 +132,26 @@ namespace PowerView.Model.Test.Repository
             AssertLiveReading(expectedReading);
         }
 
+        [Test]
+        public void AddOneReadingWithOneRegisterDuplicateLabelTimestampAndObisCode()
+        {
+            // Arrange
+            var timestamp = DateTime.UtcNow;
+            var readingA = new Reading("TheLabel", "1", timestamp, new[] { new RegisterValue("1.1.1.1.1.1", 10, 1, Unit.WattHour) });
+            var readingB = new Reading("TheLabel", "2", timestamp, new[] { new RegisterValue("1.1.1.1.1.1", 20, 2, Unit.Watt, RegisterValueTag.Manual) });
+            var target = CreateTarget();
+
+            // Act
+            target.Add(new[] { readingA });
+            target.Add(new[] { readingB });
+
+            // Assert
+            AssertLiveReading(readingA);
+        }
+
         private LiveReadingRepository CreateTarget()
         {
-            return new LiveReadingRepository(DbContext);
+            return new LiveReadingRepository(new NullLogger<LiveReadingRepository>(), DbContext);
         }
 
         private void AssertLiveReading(Reading reading)
