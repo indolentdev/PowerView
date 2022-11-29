@@ -18,6 +18,9 @@ namespace PowerView.Service.Controllers;
 [Route("/service/r2")]
 public class PvOutputFacadeController : ControllerBase
 {
+    private const string PvoutputApiKeyHeaderName = "X-Pvoutput-Apikey";
+    private const string PvoutputSystemIdHeaderName = "X-Pvoutput-SystemId";
+
     private readonly ILogger logger;
     private readonly IReadingAccepter readingAccepter;
     private readonly ILiveReadingMapper liveReadingMapper;
@@ -49,9 +52,16 @@ public class PvOutputFacadeController : ControllerBase
             using var httpClient = httpClientFactory.CreateClient(nameof(PvOutputFacadeController));
             forwardResponse = httpClient.Send(forwardRequest, HttpCompletionOption.ResponseContentRead);
         }
-        catch (HttpRequestException httpRequestException)
+        catch (TaskCanceledException e)
         {
-            logger.LogInformation(httpRequestException, $"Experienced error forwarding request to PVOutput. Request:{forwardRequest}");
+            logger.LogInformation(e, $"Experienced timeout forwarding request to PVOutput. Request:{MaskHeaders(forwardRequest)}");
+
+            Response.StatusCode = 504;
+            return new EmptyResult();
+        }
+        catch (HttpRequestException e)
+        {
+            logger.LogInformation(e, $"Experienced error forwarding request to PVOutput. Request:{MaskHeaders(forwardRequest)}");
 
             Response.StatusCode = 500;
             return new EmptyResult();
@@ -63,7 +73,7 @@ public class PvOutputFacadeController : ControllerBase
         }
         catch (HttpRequestException httpRequestException)
         {
-            logger.LogInformation(httpRequestException, $"Experienced error processing response from PVOutput. Request:{forwardRequest}, Response:{forwardResponse}");
+            logger.LogInformation(httpRequestException, $"Experienced error processing response from PVOutput. Request:{MaskHeaders(forwardRequest)}, Response:{forwardResponse}");
 
             SetResponse(forwardResponse);
             forwardResponse.Dispose();
@@ -83,12 +93,25 @@ public class PvOutputFacadeController : ControllerBase
         var pvOutputAddStatusUrl = new Uri(pvOutputAddStatus, request.QueryString.ToString());
         var forwardRequest = new HttpRequestMessage(method, pvOutputAddStatusUrl);
 
-        CopyHeader("X-Pvoutput-Apikey", request, forwardRequest);
-        CopyHeader("X-Pvoutput-SystemId", request, forwardRequest);
+        CopyHeader(PvoutputApiKeyHeaderName, request, forwardRequest);
+        CopyHeader(PvoutputSystemIdHeaderName, request, forwardRequest);
 
         CopyContent(request, forwardRequest);
 
         return forwardRequest;
+    }
+
+    private static HttpRequestMessage MaskHeaders(HttpRequestMessage request)
+    {
+        SetHeader(request, PvoutputApiKeyHeaderName, "[MaskedApiKeyValue]");
+        SetHeader(request, PvoutputSystemIdHeaderName, "[MaskedSystemIdValue]");
+        return request;
+    }
+
+    private static void SetHeader(HttpRequestMessage request, string name, string value)
+    {
+        if (request.Headers.Contains(name)) request.Headers.Remove(name);
+        request.Headers.Add(name, value);
     }
 
     private void SetResponse(HttpResponseMessage forwardResponse)
