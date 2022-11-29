@@ -244,6 +244,28 @@ public class PvOutputFacadeControllerTest
     }
 
     [Test]
+    public async Task AddStatusPostPropagatesTaskCanceledException()
+    {
+        // Arrange
+        var httpMessageHandler = SetupHttpClientFactory();
+        httpMessageHandler.Setup(x => x(It.IsAny<HttpRequestMessage>(), It.IsAny<CancellationToken>()))
+            .Throws(new TaskCanceledException("Drugs are baaad - m'kay"));
+        var content = new StringContent("TheRequestBody", Encoding.UTF8, "custom/content-request");
+
+        // Act
+        var response = await httpClient.PostAsync($"service/r2/addstatus.jsp", content);
+
+        // Assert
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.GatewayTimeout));
+        Assert.That((await response.Content.ReadAsByteArrayAsync()), Is.Empty);
+
+        liveReadingMapper.Verify(lrm => lrm.MapPvOutputArgs(
+          It.IsAny<Uri>(), It.IsAny<string>(), It.IsAny<Stream>(), It.IsAny<string>(),
+          It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+        readingAccepter.Verify(ra => ra.Accept(It.IsAny<Reading[]>()), Times.Never);
+    }
+
+    [Test]
     public async Task AddStatusPostPropagatesHttpRequestException()
     {
         // Arrange
