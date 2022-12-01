@@ -1,4 +1,4 @@
-PowerView version 1.0.0 - November 2022
+PowerView version 1.0.0 - December 2022
 - Added view of crude metering data and ability to manually create crude metering data
 - Ability to set username for email smtp server configuration
 - Upgraded to .NET 6
