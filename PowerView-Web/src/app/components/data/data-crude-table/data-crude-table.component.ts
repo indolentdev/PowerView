@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit, Input, Output, OnChanges, SimpleChanges, EventEmitter } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { NGXLogger } from 'ngx-logger';
 import { ObisService } from '../../../services/obis.service';
@@ -15,6 +15,9 @@ export class DataCrudeTableComponent implements OnInit, OnChanges {
   dataSource: MatTableDataSource<any>;
 
   @Input('crudeValues') crudeValues: CrudeValue[];
+  @Input('allowDelete') allowDelete: boolean;
+
+  @Output('deleteCrudeValue') deleteAction: EventEmitter<CrudeValue> = new EventEmitter();
 
   constructor(private log: NGXLogger, private obisService: ObisService) {
     let empty = [];
@@ -22,6 +25,9 @@ export class DataCrudeTableComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
+    if (this.allowDelete) {
+      this.displayedColumns.push('actions');
+    }      
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -34,6 +40,14 @@ export class DataCrudeTableComponent implements OnInit, OnChanges {
       return;
     }
     this.dataSource.data = this.obisService.AddRegisterProperty(values);
+  }
+
+  deleteClick(item: any) {
+    if (item == null) {
+      return;
+    }
+    this.log.debug("Delete clicked", item);
+    this.deleteAction.emit(item);
   }
 
 }

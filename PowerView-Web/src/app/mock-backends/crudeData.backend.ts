@@ -54,4 +54,14 @@ export function crudeDataBackend(url: string, method: string, request: HttpReque
         });
     }
 
+    if (url.indexOf('data/crude/values/') > -1 && method === "DELETE") {
+        //        return throwError(new HttpErrorResponse({status:409}));
+        return new Observable(resp => {
+            resp.next(new HttpResponse({
+                status: 204
+            }));
+            resp.complete();
+        });
+    }
+
 }

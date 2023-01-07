@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { LOCALE_ID, NgModule } from '@angular/core';
 import { registerLocaleData } from '@angular/common';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { TranslateModule, TranslateLoader, TranslateService } from '@ngx-translate/core';
@@ -16,6 +16,7 @@ import { LoggerModule, NgxLoggerLevel } from 'ngx-logger';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
@@ -76,6 +77,7 @@ import { DataCrudeByDateComponent } from './components/data/data-crude-bydate/da
 import { ScalerPipe } from './pipes/scaler.pipe';
 import { DataCrudeBydateTableComponent } from './components/data/data-crude-bydate-table/data-crude-bydate-table.component';
 import { DataCrudeAddComponent } from './components/data/data-crude-add/data-crude-add.component';
+import { ConfirmComponent } from './components/confirm/confirm.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -148,7 +150,8 @@ if (environment.useMockBackend == true) {
     DataCrudeByDateComponent,
     ScalerPipe,
     DataCrudeBydateTableComponent,
-    DataCrudeAddComponent
+    DataCrudeAddComponent,
+    ConfirmComponent
   ],
   imports: [
     BrowserModule,
@@ -163,6 +166,7 @@ if (environment.useMockBackend == true) {
     LoggerModule.forRoot({ level: NgxLoggerLevel.DEBUG }),
     AppRoutingModule,
     BrowserAnimationsModule,
+    FormsModule,
     ReactiveFormsModule,
     MatInputModule,
     MatMenuModule,
@@ -170,6 +174,7 @@ if (environment.useMockBackend == true) {
     MatTableModule,
     MatSortModule,
     MatCheckboxModule,
+    MatDialogModule,
     MatSnackBarModule,
     MatSelectModule,
     MatDatepickerModule, 

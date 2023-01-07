@@ -1,0 +1,12 @@
+<h1 mat-dialog-title>{{ data.title | translate }}</h1>
+<div mat-dialog-content>
+    <p>{{ data.message | translate }}</p>
+    <pre>{{ data.confirm }}</pre>
+    <mat-form-field>
+        <input matInput cdkFocusInitial [(ngModel)]="userConfirm" name="userConfirm" id="userConfirm"/>
+    </mat-form-field>
+</div>
+<div mat-dialog-actions>
+    <button mat-button [disabled]="!(userConfirm === data.confirm)" [mat-dialog-close]="userConfirm">{{ 'common.delete' | translate }}</button>
+    <button mat-button (click)="cancel()">{{ 'common.cancel' | translate }}</button>
+</div>

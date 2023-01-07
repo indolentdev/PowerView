@@ -72,7 +72,7 @@ export class SettingsService {
   }
 
   public deleteDisconnectRule(label: string, obisCode: string): Observable<any> {
-    return this.dataService.delete(constLocal.disconnectrulesNames + "/" + label + "/" + obisCode)
+    return this.dataService.delete(constLocal.disconnectrulesNames + "/" + encodeURIComponent(label) + "/" + encodeURIComponent(obisCode))
     .pipe(catchError(error => {
       return throwError(this.convertToDeleteDisconnectRuleError(error));
     }));
@@ -95,7 +95,7 @@ export class SettingsService {
   public getDisconnectRuleOptions(): Observable<DisconnectRuleOptionSet> {
     return this.dataService.get<DisconnectRuleOptionSet>(constLocal.disconnectrulesOptions, undefined, new DisconnectRuleOptionSet);
   }
-//
+
   public getEmailRecipients(): Observable<EmailRecipientSet> {
     return this.dataService.get<EmailRecipientSet>(constLocal.emailRecipients, undefined, new EmailRecipientSet);
   }
@@ -124,7 +124,7 @@ export class SettingsService {
   }
 
   public deleteEmailRecipient(emailAddress: string): Observable<any> {
-    return this.dataService.delete(constLocal.emailRecipients + "/" + emailAddress)
+    return this.dataService.delete(constLocal.emailRecipients + "/" + encodeURIComponent(emailAddress))
     .pipe(catchError(error => {
       return throwError(this.convertToDeleteEmailRecipientError(error));
     }));
@@ -143,7 +143,7 @@ export class SettingsService {
   }
 
   public testEmailRecipient(emailAddress: string): Observable<any> {
-    return this.dataService.put(constLocal.emailRecipients + "/" + emailAddress + "/test")
+    return this.dataService.put(constLocal.emailRecipients + "/" + encodeURIComponent(emailAddress) + "/test")
     .pipe(catchError(error => {
       return throwError(this.convertToTestEmailRecipientError(error));
     }));

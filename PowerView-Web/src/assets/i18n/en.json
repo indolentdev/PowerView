@@ -32,6 +32,7 @@
   },
 
   "common": {
+    "cancel": "Cancel",
     "chooseColor": "Choose color",
     "chooseDate": "Choose date",
     "chooseDateFrom": "Choose from date (incl.)",
@@ -41,6 +42,7 @@
     "chooseLabels": "Choose labels",
     "chooseMonth": "Choose month",
     "chooseYear": "Choose year",
+    "delete": "Delete",
     "forExampleProfileGraph": "For example: To add a profile graph with series go to 'Settings' then 'ProfileGraphs'.",
     "noDataFound": "No data found",
     "placeholderLabel": "Label",
@@ -54,6 +56,7 @@
     "crudeDataAdd": "Add Crude Data",
     "crudeDataByDate": "Crude Data By Date",
     "crudeDataCounts": "Showing {{count}} of {{total}} entries",
+    "crudeDataDelete": "Delete Crude Data",
     "dayProfile": "Day Profile",
     "diffByDates": "Diff Between Dates",
     "emailRecipients": "Email Recipients",
@@ -160,6 +163,12 @@
         },
         "scaleUnitDescription": "E.g. Value:1234, Scale:2, Unit:Wh means 123.4 kWh. Or Value:12345, Scale:-3, Unit:m3 means 1.234 m3",
         "preselected": "Scale, Unit and DeviceID are preselected."
+      },
+      "list": {
+        "buttonActionDelete": "Delete",
+        "confirmActionDelete": "Crude value deleted. Day, month and year history has been removed and will be recalculated.",
+        "deleteMessage": "Deleting crude values is a permanent action. To confirm delete enter the label below.",
+        "errorActionDelete": "Delete crude value failed. "
       }
     },
     "export": {

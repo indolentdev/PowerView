@@ -16,6 +16,7 @@ const constLocal = {
   dataCrude: "data/crude",
   dataCrudeOnDate: "data/crude/by",
   dataCrudeMissingDays: "data/crude/missing-days",
+  dataCrudeValues: "data/crude/values",
 
   devicesManualregisters: "devices/manualregisters"
 };
@@ -60,8 +61,27 @@ export class CrudeDataService {
     }
   }
 
+  public deleteCrudeValue(label: string, timestamp: string, obisCode: string): Observable<any> {
+    return this.dataService.delete(`${constLocal.dataCrudeValues}/${encodeURIComponent(label)}/${encodeURIComponent(timestamp)}/${encodeURIComponent(obisCode)}`)
+      .pipe(catchError(error => {
+        return throwError(this.convertToDeleteCrudeValueError(error));
+      }));
+  }
+
+  private convertToDeleteCrudeValueError(error: any): DeleteCrudeValueError {
+    if (!(error instanceof HttpErrorResponse)) {
+      return DeleteCrudeValueError.UnspecifiedError;
+    }
+
+    var httpErrorResponse = error as HttpErrorResponse;
+    switch (httpErrorResponse.status) {
+      default:
+        return DeleteCrudeValueError.UnspecifiedError;
+    }
+  }
+
   public getCrudeValuesOnDate(label: string, timestamp: string): Observable<CrudeValue[]> {
-    return this.dataService.get<CrudeValue[]>(`${constLocal.dataCrudeOnDate}/${label}/${timestamp}`, null, []);
+    return this.dataService.get<CrudeValue[]>(`${constLocal.dataCrudeOnDate}/${encodeURIComponent(label)}/${encodeURIComponent(timestamp)}`, null, []);
   }
 
   public getDaysMissingCrudeValues(label: string): Observable<MissingDate[]> {
@@ -78,3 +98,6 @@ export enum AddCrudeValueError {
   RequestContentDuplicate = "RequestContentDuplicate"
 }
 
+export enum DeleteCrudeValueError {
+  UnspecifiedError = "UnspecifiedError"
+}

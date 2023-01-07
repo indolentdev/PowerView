@@ -23,6 +23,13 @@
         <th mat-header-cell *matHeaderCellDef>{{ 'columns.deviceId' | translate }}</th>
         <td mat-cell *matCellDef="let v">{{ v.deviceId }}</td>
     </ng-container>
+    <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>{{ 'columns.actions' | translate }}</th>
+        <td mat-cell *matCellDef="let v">
+        <button style="margin-left:3px;margin-right:3px" mat-raised-button type="button" (click)="deleteClick(v)">{{ 'forms.crudeData.list.buttonActionDelete' | translate }}</button>
+    </td>
+</ng-container>
+
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 </table>
