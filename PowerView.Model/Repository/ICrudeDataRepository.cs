@@ -7,6 +7,8 @@ namespace PowerView.Model.Repository
 
         ICollection<CrudeDataValue> GetCrudeDataBy(string label, DateTime timestamp);
 
+        void DeleteCrudeData(string label, DateTime timestamp, ObisCode obisCode);
+
         IList<MissingDate> GetMissingDays(string label);
     }
 }

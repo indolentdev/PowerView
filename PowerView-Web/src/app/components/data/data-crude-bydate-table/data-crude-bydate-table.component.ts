@@ -57,7 +57,7 @@ export class DataCrudeBydateTableComponent implements OnInit, OnChanges {
 
     const dialogConfig = new MatDialogConfig();
     dialogConfig.autoFocus = true;
-    dialogConfig.data = { title: 'headings.crudeDataDelete', message: 'forms.crudeData.list.deleteMessage', confirm: this.label };
+    dialogConfig.data = { title: 'headings.crudeDataDelete', message: 'forms.crudeData.list.deleteMessage', placeholderConfirm: 'forms.crudeData.list.placeholderDelete', confirm: this.label };
 
     const dialogRef = this.dialog.open(ConfirmComponent, dialogConfig);
 

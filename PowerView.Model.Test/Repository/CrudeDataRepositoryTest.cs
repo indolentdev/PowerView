@@ -51,8 +51,10 @@ namespace PowerView.Model.Test.Repository
 
             var target = CreateTarget();
 
-            // Act & Assert
+            // Act
             var values1 = target.GetCrudeData(labels.First(), dtB, 0, 1 );
+
+            // Assert
             Assert.That(values1.TotalCount, Is.EqualTo(5));
 
             Assert.That(values1.Result.Count, Is.EqualTo(1));
@@ -105,9 +107,10 @@ namespace PowerView.Model.Test.Repository
 
             var target = CreateTarget();
 
-            // Act & Assert
+            // Act
             var values = target.GetCrudeDataBy(labels.First(), dtB);
 
+            // Assert
             Assert.That(values.Count, Is.EqualTo(2));
             Assert.That(values.First().DateTime, Is.EqualTo(dtB));
             Assert.That(values.First().Scale, Is.EqualTo(1));
@@ -118,6 +121,78 @@ namespace PowerView.Model.Test.Repository
             Assert.That(values.First().Value, Is.EqualTo(201));
             Assert.That(values.Last().ObisCode, Is.EqualTo(new ObisCode(new byte[] { 112, 112, 112, 112, 112, 112 })));
             Assert.That(values.Last().Value, Is.EqualTo(202));
+        }
+
+        [Test]
+        [TestCase(null, "2022-10-18T13:21:10Z", typeof(ArgumentNullException))]
+        [TestCase("Label", "2022-10-18T13:21:10", typeof(ArgumentOutOfRangeException))]
+        public void DeleteCrudeDataThrows(string label, string dateTimeString, Type exceptionType)
+        {
+            // Arrange
+            var dateTime = DateTime.Parse(dateTimeString, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
+            var target = CreateTarget();
+
+            // Act & Asssert
+            Assert.That(() => target.DeleteCrudeData(label, dateTime, new ObisCode()), Throws.TypeOf(exceptionType));
+        }
+
+        [Test]
+        public void DeleteCrudeDataAbsent()
+        {
+            // Arrange
+            var dtA = new DateTime(2017, 2, 27, 12, 0, 0, DateTimeKind.Utc);
+            (var labels, var deviceIds) = DbContext.Insert(new Db.LiveReading { LabelId = 1, DeviceId = 10, Timestamp = dtA },
+                new Db.LiveRegister { ObisId = 111, Value = 101, Scale = 1, Unit = 1 });
+
+            var target = CreateTarget();
+
+            // Act
+            target.DeleteCrudeData("does not exist", dtA, new ObisCode());
+
+            // Assert
+            var registerCount = DbContext.QueryTransaction<long>("SELECT Count(*) FROM LiveRegister;");
+            Assert.That(registerCount, Is.EqualTo(new [] { 1 }));
+        }
+
+        [Test]
+        public void DeleteCrudeData()
+        {
+            // Arrange
+            var obis = DbContext.InsertObisCodes((111, "1.1.1.1.1.1"), (112, "1.1.2.1.1.2"));
+            var dtA = new DateTime(2017, 2, 27, 12, 0, 0, DateTimeKind.Utc);
+            (var labels, var deviceIds) = DbContext.Insert(new Db.LiveReading { LabelId = 1, DeviceId = 10, Timestamp = dtA },
+                new Db.LiveRegister { ObisId = obis.First().Id, Value = 101, Scale = 1, Unit = 1 }, new Db.LiveRegister { ObisId = obis.Last().Id, Value = 102, Scale = 1, Unit = 1 });
+
+            var target = CreateTarget();
+
+            // Act
+            target.DeleteCrudeData(labels.First(), dtA, obis.First().ObisCode);
+
+            // Assert
+            var registerCount = DbContext.QueryTransaction<long>("SELECT Count(*) FROM LiveRegister;");
+            Assert.That(registerCount, Is.EqualTo(new[] { 1 }));
+        }
+
+        [Test]
+        public void DeleteCrudeDataLastRegisterValue()
+        {
+            // Arrange
+            var obis = DbContext.InsertObisCodes((111, "1.1.1.1.1.1"), (112, "1.1.2.1.1.2"));
+            var dtA = new DateTime(2017, 2, 27, 12, 0, 0, DateTimeKind.Utc);
+            (var labels, var deviceIds) = DbContext.Insert(new Db.LiveReading { LabelId = 1, DeviceId = 10, Timestamp = dtA },
+                new Db.LiveRegister { ObisId = obis.First().Id, Value = 101, Scale = 1, Unit = 1 });
+
+            var target = CreateTarget();
+
+            // Act
+            target.DeleteCrudeData(labels.First(), dtA, obis.First().ObisCode);
+
+            // Assert
+            var registerCount = DbContext.QueryTransaction<long>("SELECT Count(*) FROM LiveRegister;");
+            Assert.That(registerCount, Is.EqualTo(new[] { 0 }));
+
+            var readingCount = DbContext.QueryTransaction<long>("SELECT Count(*) FROM LiveReading;");
+            Assert.That(readingCount, Is.EqualTo(new[] { 0 }));
         }
 
         [Test]

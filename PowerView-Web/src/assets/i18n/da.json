@@ -166,7 +166,8 @@
         "buttonActionDelete": "Slet",
         "confirmActionDelete": "Rå data slettet. Dag, måned og årshistorik er blevet fjernet og bliver genberegnet.",
         "deleteMessage": "Sletning af rå data er en permanent handling. For at bekræfte sletning indtast etiketten herunder.",
-        "errorActionDelete": "Slet rå data fejlede. "
+        "errorActionDelete": "Slet rå data fejlede. ",
+        "placeholderDelete": "Indtast for at bekræfte"
       }
     },
     "export": {

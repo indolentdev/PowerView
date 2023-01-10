@@ -168,7 +168,8 @@
         "buttonActionDelete": "Delete",
         "confirmActionDelete": "Crude value deleted. Day, month and year history has been removed and will be recalculated.",
         "deleteMessage": "Deleting crude values is a permanent action. To confirm delete enter the label below.",
-        "errorActionDelete": "Delete crude value failed. "
+        "errorActionDelete": "Delete crude value failed. ",
+        "placeholderDelete" : "Enter to confirm"
       }
     },
     "export": {

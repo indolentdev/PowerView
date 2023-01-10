@@ -21,11 +21,13 @@ public class DataCrudeControllerTest
     private HttpClient httpClient;
 
     private Mock<ICrudeDataRepository> crudeDataRepository;
+    private Mock<IReadingHistoryRepository> readingHistoryRepository;
 
     [SetUp]
     public void Setup()
     {
         crudeDataRepository = new Mock<ICrudeDataRepository>();
+        readingHistoryRepository = new Mock<IReadingHistoryRepository>();
 
         application = new WebApplicationFactory<TestProgram>()
             .WithWebHostBuilder(builder =>
@@ -33,6 +35,7 @@ public class DataCrudeControllerTest
                 builder.ConfigureServices((ctx, sc) =>
                 {
                     sc.AddSingleton(crudeDataRepository.Object);
+                    sc.AddSingleton(readingHistoryRepository.Object);
                 });
             });
 
@@ -268,6 +271,139 @@ public class DataCrudeControllerTest
         Assert.That(actual.scale, Is.EqualTo(expected.Scale));
         Assert.That(actual.unit, Is.EqualTo(UnitMapper.Map(expected.Unit)));
         Assert.That(actual.deviceId, Is.EqualTo(expected.DeviceId));
+    }
+
+    [Test]
+    public async Task DeleteCrudeDataLabelAbsent()
+    {
+        // Arrange
+
+        // Act
+        var response = await httpClient.DeleteAsync($"api/data/crude/values");
+
+        // Assert
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+        crudeDataRepository.Verify(cdr => cdr.DeleteCrudeData(It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<ObisCode>()), Times.Never);
+        readingHistoryRepository.Verify(rhr => rhr.ClearDayMonthYearHistory(), Times.Never);
+    }
+
+    [Test]
+    public async Task DeleteCrudeDataLabelEmpty()
+    {
+        // Arrange
+        var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
+
+        // Act
+        var response = await httpClient.DeleteAsync($"api/data/crude/values//{today.ToString("o")}/1.2.3.4.5.6");
+
+        // Assert
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+        crudeDataRepository.Verify(cdr => cdr.DeleteCrudeData(It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<ObisCode>()), Times.Never);
+        readingHistoryRepository.Verify(rhr => rhr.ClearDayMonthYearHistory(), Times.Never);
+    }
+
+    [Test]
+    public async Task DeleteCrudeDataTimestampAbsent()
+    {
+        // Arrange
+        var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
+
+        // Act
+        var response = await httpClient.DeleteAsync($"api/data/crude/values/lbl/");
+
+        // Assert
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+        crudeDataRepository.Verify(cdr => cdr.DeleteCrudeData(It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<ObisCode>()), Times.Never);
+        readingHistoryRepository.Verify(rhr => rhr.ClearDayMonthYearHistory(), Times.Never);
+    }
+
+    [Test]
+    public async Task DeleteCrudeDataTimestampBadFormat()
+    {
+        // Arrange
+
+        // Act
+        var response = await httpClient.DeleteAsync($"api/data/crude/values/lbl/bad/1.2.3.4.5.6");
+
+        // Assert
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+        crudeDataRepository.Verify(cdr => cdr.DeleteCrudeData(It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<ObisCode>()), Times.Never);
+        readingHistoryRepository.Verify(rhr => rhr.ClearDayMonthYearHistory(), Times.Never);
+    }
+
+    [Test]
+    public async Task DeleteCrudeDataTimestampNotUtc()
+    {
+        // Arrange
+        var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
+        var local = DateTime.SpecifyKind(today, DateTimeKind.Unspecified);
+
+        // Act
+        var response = await httpClient.DeleteAsync($"api/data/crude/values/lbl/{local.ToString("o")}/1.2.3.4.5.6");
+
+        // Assert
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+        crudeDataRepository.Verify(cdr => cdr.DeleteCrudeData(It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<ObisCode>()), Times.Never);
+        readingHistoryRepository.Verify(rhr => rhr.ClearDayMonthYearHistory(), Times.Never);
+    }
+
+    [Test]
+    public async Task DeleteCrudeDataObisCodeAbsent()
+    {
+        // Arrange
+        var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
+
+        // Act
+        var response = await httpClient.DeleteAsync($"api/data/crude/values/lbl/{today.ToString("o")}/");
+
+        // Assert
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+        crudeDataRepository.Verify(cdr => cdr.DeleteCrudeData(It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<ObisCode>()), Times.Never);
+        readingHistoryRepository.Verify(rhr => rhr.ClearDayMonthYearHistory(), Times.Never);
+    }
+
+    [Test]
+    public async Task DeleteCrudeDataObisCodeBadFormat()
+    {
+        // Arrange
+        var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
+
+        // Act
+        var response = await httpClient.DeleteAsync($"api/data/crude/values/lbl/{today.ToString("o")}/1.2.bad.4.5.6");
+
+        // Assert
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+        crudeDataRepository.Verify(cdr => cdr.DeleteCrudeData(It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<ObisCode>()), Times.Never);
+        readingHistoryRepository.Verify(rhr => rhr.ClearDayMonthYearHistory(), Times.Never);
+    }
+
+    [Test]
+    public async Task DeleteCrudeDataCallsRepository()
+    {
+        // Arrange
+        var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
+
+        // Act
+        var response = await httpClient.DeleteAsync($"api/data/crude/values/lbl/{today.ToString("o")}/1.2.3.4.5.6");
+
+        // Assert
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
+        crudeDataRepository.Verify(cdr => cdr.DeleteCrudeData(It.Is<string>(p => p == "lbl"), 
+          It.Is<DateTime>(p => p == today && p.Kind == today.Kind), It.Is<ObisCode>(p => p == (ObisCode)"1.2.3.4.5.6") ));
+        readingHistoryRepository.Verify(rhr => rhr.ClearDayMonthYearHistory());
+    }
+
+    [Test]
+    public async Task DeleteCrudeData()
+    {
+        // Arrange
+        var baseTime = new DateTime(2022, 10, 18, 19, 39, 12, DateTimeKind.Utc);
+
+        // Act
+        var response = await httpClient.DeleteAsync($"api/data/crude/values/lbl/{baseTime.ToString("o")}/1.2.3.4.5.6");
+
+        // Assert
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
     }
 
     [Test]

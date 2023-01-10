@@ -86,6 +86,24 @@ WHERE lbl.LabelName = @Label AND rea.Timestamp = @Timestamp;";
             return crudeDataValues;
         }
 
+        public void DeleteCrudeData(string label, DateTime timestamp, ObisCode obisCode)
+        {
+            if (label == null) throw new ArgumentNullException(nameof(label));
+            if (timestamp.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException(nameof(timestamp), $"Must be UTC. Was:{timestamp.Kind}");
+
+            var sql = @"
+CREATE TEMP TABLE DeleteCrudeData AS 
+SELECT rea.Id FROM LiveReading rea JOIN Label lbl ON rea.LabelId = lbl.Id
+WHERE rea.Timestamp = @Timestamp AND lbl.LabelName = @Label;
+
+DELETE FROM LiveRegister WHERE ReadingID IN (SELECT Id FROM DeleteCrudeData) AND ObisId IN (SELECT o.Id FROM Obis o WHERE o.ObisCode = @ObisCode);
+
+DELETE FROM LiveReading WHERE Id IN (SELECT Id FROM DeleteCrudeData) AND (1-EXISTS(SELECT 1 FROM LiveRegister reg JOIN DeleteCrudeData d ON reg.ReadingId = d.Id));
+DROP TABLE DeleteCrudeData;";
+
+            DbContext.ExecuteTransaction(sql, new { Label = label, Timestamp = (UnixTime)timestamp, ObisCode = (long)obisCode });
+        }
+
         public IList<MissingDate> GetMissingDays(string label)
         {
             if (label == null) throw new ArgumentNullException(nameof(label));

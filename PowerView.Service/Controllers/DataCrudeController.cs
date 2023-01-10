@@ -14,11 +14,13 @@ public class CrudeDataController : ControllerBase
 {
     private readonly ILogger logger;
     private readonly ICrudeDataRepository crudeDataRepository;
+    private readonly IReadingHistoryRepository readingHistoryRepository;
 
-    public CrudeDataController(ILogger<ExportController> logger, ICrudeDataRepository crudeDataRepository)
+    public CrudeDataController(ILogger<ExportController> logger, ICrudeDataRepository crudeDataRepository, IReadingHistoryRepository readingHistoryRepository)
     {
         this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         this.crudeDataRepository = crudeDataRepository ?? throw new ArgumentNullException(nameof(crudeDataRepository));
+        this.readingHistoryRepository = readingHistoryRepository ?? throw new ArgumentNullException(nameof(readingHistoryRepository));
     }
 
     [HttpGet("")]
@@ -61,6 +63,20 @@ public class CrudeDataController : ControllerBase
         }).ToList();
 
         return Ok(r);
+    }
+
+    [HttpDelete("values/{label}/{timestamp}/{obisCode}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public ActionResult Delete(
+        [BindRequired, FromRoute, MinLength(1)] string label,
+        [BindRequired, FromRoute, UtcDateTime] DateTime timestamp,
+        [BindRequired, FromRoute, ObisCode] string obisCode
+        )
+    {
+        crudeDataRepository.DeleteCrudeData(label, timestamp, obisCode);
+        readingHistoryRepository.ClearDayMonthYearHistory();
+
+        return NoContent();
     }
 
     [HttpGet("missing-days")]
