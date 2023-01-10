@@ -13,7 +13,7 @@ Primary deployment on a Raspberry Pi running Raspberry PI OS.
 ## Built With
 * [angular](https://angular.io/) - Web framework for running the frontend
 * [.net](https://dotnet.microsoft.com/en-us/download/) - .NET for running the backend
-* [sqlite](https://www.sqlite.org/index.html/) - Databae for storing readings
+* [sqlite](https://www.sqlite.org/index.html/) - Database for storing readings
 * [ubuntu](https://www.ubuntu.com/) - Development box
 * [vscode](https://code.visualstudio.com/) - Development environment
 
