@@ -23,6 +23,12 @@
         <th mat-header-cell *matHeaderCellDef>{{ 'columns.deviceId' | translate }}</th>
         <td mat-cell *matCellDef="let v">{{ v.deviceId }}</td>
     </ng-container>
+    <ng-container matColumnDef="tags">
+        <th mat-header-cell *matHeaderCellDef>{{ 'columns.tags' | translate }}</th>
+        <td mat-cell *matCellDef="let v">
+            <span *ngFor="let tag of v.tags; let lastTag=last;">{{ 'forms.crudeData.tags.' + tag | translate }}<span *ngIf="!lastTag">, </span></span>
+        </td>
+    </ng-container>
     <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef>{{ 'columns.actions' | translate }}</th>
         <td mat-cell *matCellDef="let v">

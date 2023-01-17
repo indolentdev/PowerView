@@ -174,7 +174,8 @@ export class DataCrudeAddComponent implements OnInit {
       scale: formGroupValue.register.scale,
       unit: formGroupValue.register.unit,
       deviceId: formGroupValue.register.deviceId,
-      value: formGroupValue.value
+      value: formGroupValue.value,
+      tags: ["Manual"]
     };
     this.log.debug("Adding crude value", crudeValue);
 

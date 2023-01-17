@@ -33,9 +33,10 @@ namespace PowerView.Model.Test
             const short scale = 2;
             const Unit unit = Unit.CubicMetre;
             const string deviceId = "123";
+            const RegisterValueTag tags = RegisterValueTag.Manual;
 
             // Act
-            var target = new CrudeDataValue(dt, oc, val, scale, unit, deviceId);
+            var target = new CrudeDataValue(dt, oc, val, scale, unit, deviceId, tags);
 
             // Assert
             Assert.That(target.DateTime, Is.EqualTo(dt));
@@ -44,6 +45,7 @@ namespace PowerView.Model.Test
             Assert.That(target.Scale, Is.EqualTo(scale));
             Assert.That(target.Unit, Is.EqualTo(unit));
             Assert.That(target.DeviceId, Is.EqualTo(deviceId));
+            Assert.That(target.Tag, Is.EqualTo(tags));
         }
 
     }

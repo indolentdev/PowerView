@@ -13,7 +13,8 @@ export let crudeDataOnDate = [
       "value": 1235,
       "scale": -3,
       "unit": "m3",
-      "deviceId": "12345678"
+      "deviceId": "12345678",
+      "tags": [ "Manual" ]
    }
 ]
 ;

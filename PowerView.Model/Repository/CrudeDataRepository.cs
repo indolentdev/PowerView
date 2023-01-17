@@ -24,8 +24,13 @@ namespace PowerView.Model.Repository
             int totalCount;
 
             var sql = @"
-SELECT rea.Timestamp,o.ObisCode,reg.Value,reg.Scale,reg.Unit,dev.DeviceName AS DeviceId 
-FROM LiveReading AS rea JOIN Label AS lbl ON rea.LabelId=lbl.Id JOIN Device AS dev ON rea.DeviceId=dev.Id JOIN LiveRegister AS reg ON rea.Id=reg.ReadingId JOIN Obis o ON reg.ObisId=o.Id
+SELECT rea.Timestamp,o.ObisCode,reg.Value,reg.Scale,reg.Unit,dev.DeviceName AS DeviceId,regTag.Tags
+FROM LiveReading AS rea 
+JOIN Label AS lbl ON rea.LabelId=lbl.Id 
+JOIN Device AS dev ON rea.DeviceId=dev.Id 
+JOIN LiveRegister AS reg ON rea.Id=reg.ReadingId 
+JOIN Obis o ON reg.ObisId=o.Id
+LEFT OUTER JOIN LiveRegisterTag AS regTag ON reg.ReadingId=regTag.ReadingId AND reg.ObisId=regTag.ObisId
 WHERE lbl.LabelName = @Label AND rea.Timestamp >= @From
 ORDER BY rea.Timestamp ASC, o.ObisCode ASC
 LIMIT @Take OFFSET @Skip;";
@@ -51,7 +56,7 @@ WHERE lbl.LabelName = @Label AND rea.Timestamp >= @From;";
             }
 
             var crudeDataValues = resultSet
-                .Select(x => new CrudeDataValue(x.Timestamp, x.ObisCode, x.Value, x.Scale, (Unit)x.Unit, x.DeviceId))
+                .Select(x => new CrudeDataValue(x.Timestamp, x.ObisCode, x.Value, x.Scale, (Unit)x.Unit, x.DeviceId, x.Tags != null ? (RegisterValueTag)x.Tags : RegisterValueTag.None))
                 .ToList();
 
             return new WithCount<ICollection<CrudeDataValue>>(totalCount, crudeDataValues);            
@@ -65,6 +70,7 @@ WHERE lbl.LabelName = @Label AND rea.Timestamp >= @From;";
             public short Scale { get; set; }
             public byte Unit { get; set; }
             public string DeviceId { get; set; }
+            public byte? Tags { get; set; }
         }
 
         public ICollection<CrudeDataValue> GetCrudeDataBy(string label, DateTime timestamp)
@@ -73,14 +79,19 @@ WHERE lbl.LabelName = @Label AND rea.Timestamp >= @From;";
             if (timestamp.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException(nameof(timestamp), $"Must be UTC. Was:{timestamp.Kind}");
 
             var sql = @"
-SELECT rea.Timestamp,o.ObisCode,reg.Value,reg.Scale,reg.Unit,dev.DeviceName AS DeviceId 
-FROM LiveReading AS rea JOIN Label AS lbl ON rea.LabelId=lbl.Id JOIN Device AS dev ON rea.DeviceId=dev.Id JOIN LiveRegister AS reg ON rea.Id=reg.ReadingId JOIN Obis o ON reg.ObisId=o.Id
+SELECT rea.Timestamp,o.ObisCode,reg.Value,reg.Scale,reg.Unit,dev.DeviceName AS DeviceId,regTag.Tags
+FROM LiveReading AS rea 
+JOIN Label AS lbl ON rea.LabelId=lbl.Id 
+JOIN Device AS dev ON rea.DeviceId=dev.Id 
+JOIN LiveRegister AS reg ON rea.Id=reg.ReadingId 
+JOIN Obis o ON reg.ObisId=o.Id
+LEFT OUTER JOIN LiveRegisterTag AS regTag ON reg.ReadingId=regTag.ReadingId AND reg.ObisId=regTag.ObisId
 WHERE lbl.LabelName = @Label AND rea.Timestamp = @Timestamp;";
 
             var resultSet = DbContext.QueryTransaction<RowLocal>(sql, new { Label = label, Timestamp = (UnixTime)timestamp });
 
             var crudeDataValues = resultSet
-                .Select(x => new CrudeDataValue(x.Timestamp, x.ObisCode, x.Value, x.Scale, (Unit)x.Unit, x.DeviceId))
+                .Select(x => new CrudeDataValue(x.Timestamp, x.ObisCode, x.Value, x.Scale, (Unit)x.Unit, x.DeviceId, x.Tags != null ? (RegisterValueTag)x.Tags : RegisterValueTag.None))
                 .ToList();
 
             return crudeDataValues;
@@ -95,6 +106,8 @@ WHERE lbl.LabelName = @Label AND rea.Timestamp = @Timestamp;";
 CREATE TEMP TABLE DeleteCrudeData AS 
 SELECT rea.Id FROM LiveReading rea JOIN Label lbl ON rea.LabelId = lbl.Id
 WHERE rea.Timestamp = @Timestamp AND lbl.LabelName = @Label;
+
+DELETE FROM LiveRegisterTag WHERE ReadingID IN (SELECT Id FROM DeleteCrudeData) AND ObisId IN (SELECT o.Id FROM Obis o WHERE o.ObisCode = @ObisCode);
 
 DELETE FROM LiveRegister WHERE ReadingID IN (SELECT Id FROM DeleteCrudeData) AND ObisId IN (SELECT o.Id FROM Obis o WHERE o.ObisCode = @ObisCode);
 

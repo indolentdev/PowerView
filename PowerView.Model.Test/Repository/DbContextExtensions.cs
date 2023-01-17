@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using PowerView.Model.Repository;
+using PowerView.Model.Test.Repository;
 
 namespace PowerView.Model.Test.Repository
 {
@@ -20,12 +21,30 @@ namespace PowerView.Model.Test.Repository
   where TReading : class, IDbReading
   where TRegister : class, IDbRegister
         {
+            return dbContext.Insert<TReading, TRegister, Db.LiveRegisterTag>(reading, registers, null);
+        }
+
+        internal static (IList<string> Labels, IList<string> DeviceIds) Insert<TReading, TRegister, TRegisterTag>(this DbContext dbContext, TReading reading, TRegister[] registers, TRegisterTag[] registerTags = null)
+  where TReading : class, IDbReading
+  where TRegister : class, IDbRegister
+  where TRegisterTag: class, IDbRegisterTag
+        {
             var labelsAndDeviceIds = dbContext.InsertReadings(reading);
             foreach (var register in registers)
             {
                 register.ReadingId = reading.Id;
             }
             dbContext.InsertRegisters(registers);
+
+            if (registerTags != null)
+            {
+                foreach (var registerTag in registerTags)
+                {
+                    registerTag.ReadingId = reading.Id;
+                }
+                dbContext.InsertRegisterTags(registerTags);
+            }
+
             return labelsAndDeviceIds;
         }
 
@@ -91,6 +110,21 @@ namespace PowerView.Model.Test.Repository
             }
 
             return obisCodes.Select(x => x.ObisCode).ToList();
+        }
+
+        internal static void InsertRegisterTags(this DbContext dbContext, params IDbRegisterTag[] dbRegisterTags)
+        {
+            if (dbRegisterTags.Length == 0) return;
+
+            var sql = "INSERT INTO {0} (ReadingId,ObisId,Tags) VALUES (@ReadingId,@ObisId,@Tags);";
+
+            var dbRegisterGroups = dbRegisterTags.GroupBy(x => x.GetType().Name);
+            foreach (var group in dbRegisterGroups)
+            {
+                var tableName = group.Key;
+                var groupSql = string.Format(CultureInfo.InvariantCulture, sql, tableName);
+                dbContext.ExecuteTransaction(groupSql, group);
+            }
         }
 
         private static List<(byte Id, ObisCode ObisCode)> InsertObisCodes(DbContext dbContext, IDbRegister[] dbRegisters)

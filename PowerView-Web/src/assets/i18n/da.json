@@ -133,6 +133,7 @@
     "serie": "Serie",
     "series": "Serier",
     "status": "Status",
+    "tags": "Mærkater",
     "timestamp": "Tidspunkt",
     "title": "Titel",
     "to": "Til",
@@ -168,6 +169,9 @@
         "deleteMessage": "Sletning af rå data er en permanent handling. For at bekræfte sletning indtast etiketten herunder.",
         "errorActionDelete": "Slet rå data fejlede. ",
         "placeholderDelete": "Indtast for at bekræfte"
+      },
+      "tags": {
+        "Manual": "Manuel"
       }
     },
     "export": {

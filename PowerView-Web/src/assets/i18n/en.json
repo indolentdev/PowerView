@@ -133,6 +133,7 @@
     "serie": "Series",
     "series": "Series",
     "status": "Status",
+    "tags": "Tags",
     "timestamp": "Timestamp",
     "title": "Title",
     "to": "To",
@@ -170,6 +171,9 @@
         "deleteMessage": "Deleting crude values is a permanent action. To confirm delete enter the label below.",
         "errorActionDelete": "Delete crude value failed. ",
         "placeholderDelete" : "Enter to confirm"
+      },
+      "tags": {
+        "Manual": "Manual"
       }
     },
     "export": {

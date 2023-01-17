@@ -37,7 +37,8 @@ namespace PowerView.Model.Test.Repository
 
             var dtB = dtA.AddSeconds(44);
             DbContext.Insert(new Db.LiveReading { LabelId = 1, DeviceId = 10, Timestamp = dtB }, 
-                new Db.LiveRegister { ObisId = 111, Value = 201, Scale = 1, Unit = 1 }, new Db.LiveRegister { ObisId = 112, Value = 202, Scale = 1, Unit = 1 });
+                new [] { new Db.LiveRegister { ObisId = 111, Value = 201, Scale = 1, Unit = 1 }, new Db.LiveRegister { ObisId = 112, Value = 202, Scale = 1, Unit = 1 } },
+                new [] { new Db.LiveRegisterTag { ObisId = 111, Tags = 1 } });
             DbContext.Insert(new Db.LiveReading { LabelId = 99, DeviceId = 99, Timestamp = dtB },
                 new Db.LiveRegister { ObisId = 99, Value = 99, Scale = 1, Unit = 1 });
 
@@ -64,14 +65,17 @@ namespace PowerView.Model.Test.Repository
             Assert.That(values1.Result.First().Scale, Is.EqualTo(1));
             Assert.That(values1.Result.First().Unit, Is.EqualTo(Unit.WattHour));
             Assert.That(values1.Result.First().DeviceId, Is.EqualTo(deviceIds.First()));
+            Assert.That(values1.Result.First().Tag, Is.EqualTo(RegisterValueTag.Manual));
 
             var values2 = target.GetCrudeData(labels.First(), dtB, 1, 2);
             Assert.That(values2.TotalCount, Is.EqualTo(5));
             Assert.That(values2.Result.Count, Is.EqualTo(2));
             Assert.That(values2.Result.First().ObisCode, Is.EqualTo(new ObisCode(new byte[] { 112, 112, 112, 112, 112, 112 })));
             Assert.That(values2.Result.First().Value, Is.EqualTo(202));
+            Assert.That(values2.Result.First().Tag, Is.EqualTo(RegisterValueTag.None));
             Assert.That(values2.Result.Last().ObisCode, Is.EqualTo(new ObisCode(new byte[] { 111, 111, 111, 111, 111, 111 })));
             Assert.That(values2.Result.Last().Value, Is.EqualTo(301));
+            Assert.That(values2.Result.Last().Tag, Is.EqualTo(RegisterValueTag.None));
         }
 
         [Test]
@@ -97,7 +101,8 @@ namespace PowerView.Model.Test.Repository
 
             var dtB = dtA.AddSeconds(44);
             DbContext.Insert(new Db.LiveReading { LabelId = 1, DeviceId = 10, Timestamp = dtB },
-                new Db.LiveRegister { ObisId = 111, Value = 201, Scale = 1, Unit = 1 }, new Db.LiveRegister { ObisId = 112, Value = 202, Scale = 1, Unit = 1 });
+                new [] { new Db.LiveRegister { ObisId = 111, Value = 201, Scale = 1, Unit = 1 }, new Db.LiveRegister { ObisId = 112, Value = 202, Scale = 1, Unit = 1 } },
+                new [] { new Db.LiveRegisterTag { ObisId = 111, Tags = 1 } });
             DbContext.Insert(new Db.LiveReading { LabelId = 99, DeviceId = 99, Timestamp = dtB },
                 new Db.LiveRegister { ObisId = 99, Value = 99, Scale = 1, Unit = 1 });
 
@@ -119,8 +124,10 @@ namespace PowerView.Model.Test.Repository
 
             Assert.That(values.First().ObisCode, Is.EqualTo(new ObisCode(new byte[] { 111, 111, 111, 111, 111, 111 })));
             Assert.That(values.First().Value, Is.EqualTo(201));
+            Assert.That(values.First().Tag, Is.EqualTo(RegisterValueTag.Manual));
             Assert.That(values.Last().ObisCode, Is.EqualTo(new ObisCode(new byte[] { 112, 112, 112, 112, 112, 112 })));
             Assert.That(values.Last().Value, Is.EqualTo(202));
+            Assert.That(values.Last().Tag, Is.EqualTo(RegisterValueTag.None));
         }
 
         [Test]
@@ -193,6 +200,27 @@ namespace PowerView.Model.Test.Repository
 
             var readingCount = DbContext.QueryTransaction<long>("SELECT Count(*) FROM LiveReading;");
             Assert.That(readingCount, Is.EqualTo(new[] { 0 }));
+        }
+
+        [Test]
+        public void DeleteCrudeDataHavingTags()
+        {
+            // Arrange
+            var obis = DbContext.InsertObisCodes((111, "1.1.1.1.1.1"), (112, "1.1.2.1.1.2"));
+            var dtA = new DateTime(2017, 2, 27, 12, 0, 0, DateTimeKind.Utc);
+            (var labels, var deviceIds) = DbContext.Insert(new Db.LiveReading { LabelId = 1, DeviceId = 10, Timestamp = dtA },
+                new [] { new Db.LiveRegister { ObisId = obis.First().Id, Value = 101, Scale = 1, Unit = 1 }, new Db.LiveRegister { ObisId = obis.Last().Id, Value = 102, Scale = 1, Unit = 1 } },
+                new [] { new Db.LiveRegisterTag { ObisId = obis.First().Id, Tags = 1 }, new Db.LiveRegisterTag { ObisId = obis.Last().Id, Tags = 1 } }
+                );
+
+            var target = CreateTarget();
+
+            // Act
+            target.DeleteCrudeData(labels.First(), dtA, obis.First().ObisCode);
+
+            // Assert
+            var registerCount = DbContext.QueryTransaction<long>("SELECT Count(*) FROM LiveRegisterTag;");
+            Assert.That(registerCount, Is.EqualTo(new[] { 1 }));
         }
 
         [Test]

@@ -11,7 +11,7 @@ import { CrudeValue } from '../../../model/crudeValue';
 })
 export class DataCrudeTableComponent implements OnInit, OnChanges {
 
-  displayedColumns = ['timestamp', 'register', 'value', 'scale', 'unit', 'deviceId'];
+  displayedColumns = ['timestamp', 'register', 'value', 'scale', 'unit', 'deviceId', 'tags'];
   dataSource: MatTableDataSource<any>;
 
   @Input('crudeValues') crudeValues: CrudeValue[];

@@ -4,7 +4,7 @@ namespace PowerView.Model
     public class CrudeDataValue
     {
 
-        public CrudeDataValue(DateTime dateTime, ObisCode obisCode, int value, short scale, Unit unit, string deviceId)
+        public CrudeDataValue(DateTime dateTime, ObisCode obisCode, int value, short scale, Unit unit, string deviceId, RegisterValueTag tag = RegisterValueTag.None)
         {
             if (dateTime.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("dateTime", "Must be UTC");
             if (string.IsNullOrEmpty(deviceId)) throw new ArgumentNullException("deviceId");
@@ -15,6 +15,7 @@ namespace PowerView.Model
             Scale = scale;
             Unit = unit;
             DeviceId = deviceId;
+            Tag = tag;
         }
 
         public DateTime DateTime { get; private set; }
@@ -23,5 +24,6 @@ namespace PowerView.Model
         public short Scale { get; private set; }
         public Unit Unit { get; private set; }
         public string DeviceId { get; private set; }
+        public RegisterValueTag Tag { get; private set; }
     }
 }
