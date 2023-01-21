@@ -6,7 +6,7 @@ import { NGXLogger } from 'ngx-logger';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { LabelsService } from 'src/app/services/labels.service';
 import { AddCrudeValueError, CrudeDataService } from 'src/app/services/crude-data.service';
-import { ObisService } from 'src/app/services/obis.service';
+import { ObisTranslateService } from 'src/app/services/obis-translate.service';
 import { MissingDate } from 'src/app/model/missingDate';
 import { CrudeValue } from 'src/app/model/crudeValue';
 
@@ -39,7 +39,7 @@ export class DataCrudeAddComponent implements OnInit {
   @ViewChild('form', { static: true }) form;
   @ViewChild('formDirective') private formDirective: NgForm;
 
-  constructor(private log: NGXLogger, private labelsService: LabelsService, private crudeDataService: CrudeDataService, private obisService: ObisService, private translateService: TranslateService, private snackBar: MatSnackBar) { }
+  constructor(private log: NGXLogger, private labelsService: LabelsService, private crudeDataService: CrudeDataService, private obisService: ObisTranslateService, private translateService: TranslateService, private snackBar: MatSnackBar) { }
 
   ngOnInit(): void {
     this.formGroup = new UntypedFormGroup({

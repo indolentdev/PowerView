@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, Output, OnChanges, SimpleChanges, EventEmitter } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { NGXLogger } from 'ngx-logger';
-import { ObisService } from '../../../services/obis.service';
+import { ObisTranslateService } from '../../../services/obis-translate.service';
 import { CrudeValue } from '../../../model/crudeValue';
 
 @Component({
@@ -19,7 +19,7 @@ export class DataCrudeTableComponent implements OnInit, OnChanges {
 
   @Output('deleteCrudeValue') deleteAction: EventEmitter<CrudeValue> = new EventEmitter();
 
-  constructor(private log: NGXLogger, private obisService: ObisService) {
+  constructor(private log: NGXLogger, private obisService: ObisTranslateService) {
     let empty = [];
     this.dataSource = new MatTableDataSource<any>(empty);
   }

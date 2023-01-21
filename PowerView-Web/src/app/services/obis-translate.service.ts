@@ -5,7 +5,7 @@ import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 @Injectable({
   providedIn: 'root'
 })
-export class ObisService {
+export class ObisTranslateService {
 
   constructor(private log: NGXLogger, private translateService: TranslateService) { 
   }

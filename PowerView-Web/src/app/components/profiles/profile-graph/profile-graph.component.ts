@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, Inject, Input, LOCALE_ID } from '@angular
 import { formatNumber } from '@angular/common';
 import { NGXLogger } from 'ngx-logger';
 import { TranslateService } from '@ngx-translate/core';
-import { ObisService } from '../../../services/obis.service';
+import { ObisTranslateService } from '../../../services/obis-translate.service';
 import * as Highcharts from 'highcharts';
 import { Profile } from '../../../model/profile';
 import { ProfileSerie } from '../../../model/profileSerie';
@@ -25,7 +25,7 @@ export class ProfileGraphComponent implements OnInit {
   @Input('profileGraph') profileGraph: Profile;
   @Input('timeFormat') timeFormat: string;
 
-  constructor(private log: NGXLogger, @Inject(LOCALE_ID) private locale: string, private obisService: ObisService, private translateService: TranslateService) {
+  constructor(private log: NGXLogger, @Inject(LOCALE_ID) private locale: string, private obisService: ObisTranslateService, private translateService: TranslateService) {
   }
 
   ngOnInit() {

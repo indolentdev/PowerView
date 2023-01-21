@@ -2,7 +2,7 @@ import { Component, OnInit,ViewChild, Input, Output, OnChanges, SimpleChanges, E
 import { MatSort, MatSortable } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { NGXLogger } from 'ngx-logger';
-import { ObisService } from '../../../services/obis.service';
+import { ObisTranslateService } from '../../../services/obis-translate.service';
 import { DisconnectRuleSet } from '../../../model/disconnectRuleSet';
 import { DisconnectRule } from '../../../model/disconnectRule';
 
@@ -21,7 +21,7 @@ export class SettingsRelayControlsTableComponent implements OnInit, OnChanges {
 
   @Output('deleteDisconnectRule') deleteAction: EventEmitter<DisconnectRule> = new EventEmitter();
 
-  constructor(private log: NGXLogger, private obisService: ObisService) {
+  constructor(private log: NGXLogger, private obisService: ObisTranslateService) {
   }
 
   ngOnInit() {

@@ -2,7 +2,7 @@ import { Component, OnInit,ViewChild, Input, OnChanges, SimpleChanges } from '@a
 import { MatSort, MatSortable } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { NGXLogger } from 'ngx-logger';
-import { ObisService } from '../../../services/obis.service';
+import { ObisTranslateService } from '../../../services/obis-translate.service';
 import { DiffValueSet } from '../../../model/diffValueSet';
 
 @Component({
@@ -18,7 +18,7 @@ export class DiffTableComponent implements OnInit, OnChanges {
 
   @Input('diffValueSet') diffValueSet: DiffValueSet;
 
-  constructor(private log: NGXLogger, private obisService: ObisService) {
+  constructor(private log: NGXLogger, private obisService: ObisTranslateService) {
   }
 
   ngOnInit() {

@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, Input, OnChanges, SimpleChanges } from '@
 import { MatSort, MatSortable } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { NGXLogger } from 'ngx-logger';
-import { ObisService } from '../../../services/obis.service';
+import { ObisTranslateService } from '../../../services/obis-translate.service';
 import { ProfileTotalValue } from '../../../model/profileTotalValue';
 
 @Component({
@@ -18,7 +18,7 @@ export class ProfileTotalTableComponent implements OnInit, OnChanges {
 
   @Input('profileTotalValues') profileTotalValues: ProfileTotalValue[];
 
-  constructor(private log: NGXLogger, private obisService: ObisService) {
+  constructor(private log: NGXLogger, private obisService: ObisTranslateService) {
   }
   
   ngOnInit() {

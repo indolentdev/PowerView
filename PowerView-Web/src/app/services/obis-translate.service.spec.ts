@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { ObisService } from './obis.service';
+import { ObisTranslateService } from './obis-translate.service';
 
 import { NGXLogger } from 'ngx-logger';
 import { TranslateService } from '@ngx-translate/core';
@@ -20,13 +20,13 @@ describe('ObisService', () => {
   }));
 
   it('should be created', () => {
-    const service: ObisService = TestBed.inject(ObisService);
+    const service: ObisTranslateService = TestBed.inject(ObisTranslateService);
     expect(service).toBeTruthy();
   });
 
   it('AddRegisterProperty returns input items', () => {
     // Arrange
-    const service: ObisService = TestBed.inject(ObisService);
+    const service: ObisTranslateService = TestBed.inject(ObisTranslateService);
     var obj = { hep: "Woop" };
     var array = [obj];
 
@@ -40,7 +40,7 @@ describe('ObisService', () => {
 
   it('AddRegisterProperty should do nothing when obisCode is absent', () => {
     // Arrange
-    const service: ObisService = TestBed.inject(ObisService);
+    const service: ObisTranslateService = TestBed.inject(ObisTranslateService);
     var obj = { hep: "Woop" };
     var array = [obj];
 
@@ -55,7 +55,7 @@ describe('ObisService', () => {
   it('AddRegisgterProperty should call TranslateService', () => {
     // Arrange
     when(translateService.get(anyString())).thenReturn(of("Habbada"));
-    const service: ObisService = TestBed.inject(ObisService);
+    const service: ObisTranslateService = TestBed.inject(ObisTranslateService);
     var obj = { hep: "Woop", obisCode: "theObis" };
     var array = [obj];
 
@@ -70,7 +70,7 @@ describe('ObisService', () => {
   it('AddRegisterProperty should add serie property', () => {
     // Arrange
     when(translateService.get(anyString())).thenReturn(of("Habbada"));
-    const service: ObisService = TestBed.inject(ObisService);
+    const service: ObisTranslateService = TestBed.inject(ObisTranslateService);
     var obj = { hep: "Woop", obisCode: "theObis" };
     var array = [obj];
 
@@ -86,7 +86,7 @@ describe('ObisService', () => {
   it('AddRegisterProperty customizable property names', () => {
     // Arrange
     when(translateService.get(anyString())).thenReturn(of("Habbada"));
-    const service: ObisService = TestBed.inject(ObisService);
+    const service: ObisTranslateService = TestBed.inject(ObisTranslateService);
     var obj = { hep: "Woop", oc: "theObis" };
     var array = [obj];
 
@@ -101,7 +101,7 @@ describe('ObisService', () => {
 
   it('AddSerieProperty returns input items', () => {
     // Arrange
-    const service: ObisService = TestBed.inject(ObisService);
+    const service: ObisTranslateService = TestBed.inject(ObisTranslateService);
     var obj = { label: "Woop" };
     var array = [ obj ];
 
@@ -115,7 +115,7 @@ describe('ObisService', () => {
 
   it('AddSerieProperty should do nothing when only label exists', () => {
     // Arrange
-    const service: ObisService = TestBed.inject(ObisService);
+    const service: ObisTranslateService = TestBed.inject(ObisTranslateService);
     var obj = { label: "Woop" };
     var array = [ obj ];
 
@@ -129,7 +129,7 @@ describe('ObisService', () => {
 
   it('AddSerieProperty should do nothing when only obisCode exists', () => {
     // Arrange
-    const service: ObisService = TestBed.inject(ObisService);
+    const service: ObisTranslateService = TestBed.inject(ObisTranslateService);
     var obj = { obisCode: "Woop" };
     var array = [ obj ];
 
@@ -144,7 +144,7 @@ describe('ObisService', () => {
   it('AddSerieProperty should call TranslateService', () => {
     // Arrange
     when(translateService.get(anyString())).thenReturn(of("Habbada"));
-    const service: ObisService = TestBed.inject(ObisService);
+    const service: ObisTranslateService = TestBed.inject(ObisTranslateService);
     var obj = { label: "Woop", obisCode: "theObis" };
     var array = [ obj ];
 
@@ -159,7 +159,7 @@ describe('ObisService', () => {
   it('AddSerieProperty should add serie property', () => {
     // Arrange
     when(translateService.get(anyString())).thenReturn(of("Habbada"));
-    const service: ObisService = TestBed.inject(ObisService);
+    const service: ObisTranslateService = TestBed.inject(ObisTranslateService);
     var obj = { label: "Woop", obisCode: "theObis" };
     var array = [ obj ];
 
@@ -175,7 +175,7 @@ describe('ObisService', () => {
   it('AddSerieProperty customizable property names', () => {
     // Arrange
     when(translateService.get(anyString())).thenReturn(of("Habbada"));
-    const service: ObisService = TestBed.inject(ObisService);
+    const service: ObisTranslateService = TestBed.inject(ObisTranslateService);
     var obj = { lbl: "Woop", oc: "theObis" };
     var array = [ obj ];
 

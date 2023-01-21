@@ -1,7 +1,7 @@
 import { Component, OnInit,ViewChild, Input, Output, OnChanges, SimpleChanges, EventEmitter } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { NGXLogger } from 'ngx-logger';
-import { ObisService } from '../../../services/obis.service';
+import { ObisTranslateService } from '../../../services/obis-translate.service';
 import { ProfileGraph } from '../../../model/profileGraph';
 
 @Component({
@@ -19,7 +19,7 @@ export class SettingsProfileGraphsTableComponent implements OnInit, OnChanges {
   @Output('deleteProfileGraph') deleteAction: EventEmitter<ProfileGraph> = new EventEmitter();
   @Output('swapProfileGraphs') swapAction: EventEmitter<ProfileGraph[]> = new EventEmitter();
 
-  constructor(private log: NGXLogger, private obisService: ObisService) { 
+  constructor(private log: NGXLogger, private obisService: ObisTranslateService) { 
   }
 
   ngOnInit() {

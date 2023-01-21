@@ -2,7 +2,7 @@ import { Component, OnInit,ViewChild, Input, Output, OnChanges, SimpleChanges, E
 import { MatSort, MatSortable } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { NGXLogger } from 'ngx-logger';
-import { ObisService } from '../../../services/obis.service';
+import { ObisTranslateService } from '../../../services/obis-translate.service';
 import { EmailRecipientSet } from '../../../model/emailRecipientSet';
 import { EmailRecipient } from '../../../model/emailRecipient';
 
@@ -22,7 +22,7 @@ export class SettingsRecipientsTableComponent implements OnInit, OnChanges {
   @Output('deleteEmailRecipient') deleteAction: EventEmitter<EmailRecipient> = new EventEmitter();
   @Output('testEmailRecipient') testAction: EventEmitter<EmailRecipient> = new EventEmitter();
 
-  constructor(private log: NGXLogger, private obisService: ObisService) { 
+  constructor(private log: NGXLogger, private obisService: ObisTranslateService) { 
   }
 
   ngOnInit() {

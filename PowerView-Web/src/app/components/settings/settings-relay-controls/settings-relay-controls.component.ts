@@ -4,7 +4,7 @@ import { ErrorStateMatcher } from '@angular/material/core';
 import { MatSnackBar, MatSnackBarRef, SimpleSnackBar } from '@angular/material/snack-bar';
 import { NGXLogger } from 'ngx-logger';
 import { TranslateService } from '@ngx-translate/core';
-import { ObisService } from '../../../services/obis.service';
+import { ObisTranslateService } from '../../../services/obis-translate.service';
 import { SettingsService, AddDisconnectRuleError } from '../../../services/settings.service';
 import { DisconnectRule } from '../../../model/disconnectRule';
 import { DisconnectRuleSet } from '../../../model/disconnectRuleSet';
@@ -41,7 +41,7 @@ export class SettingsRelayControlsComponent implements OnInit {
   errorMatcher = new CrossFieldErrorMatcher();
   @ViewChild('form', { static: true }) form;
 
-  constructor(private log: NGXLogger, private settingsService: SettingsService, private snackBar: MatSnackBar, private obisService: ObisService, private translateService: TranslateService) {
+  constructor(private log: NGXLogger, private settingsService: SettingsService, private snackBar: MatSnackBar, private obisService: ObisTranslateService, private translateService: TranslateService) {
   }
 
   ngOnInit() {

@@ -14,7 +14,7 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { NGXLogger } from 'ngx-logger';
 import { of } from 'rxjs';
-import { ObisService } from '../../../services/obis.service';
+import { ObisTranslateService } from '../../../services/obis-translate.service';
 
 import { mock, instance, when, verify } from 'ts-mockito';
 
@@ -25,7 +25,7 @@ describe('SettingsMqttComponent', () => {
   let fixture: ComponentFixture<SettingsMqttComponent>;
 
   let log = mock(NGXLogger);    
-  let obisService = mock(ObisService);
+  let obisService = mock(ObisTranslateService);
   let snackBar = mock(MatSnackBar);
 
   beforeEach(waitForAsync(() => {
@@ -52,7 +52,7 @@ describe('SettingsMqttComponent', () => {
       ],
       providers: [
         {provide: NGXLogger, useValue: instance(log)},
-        {provide: ObisService, useValue: instance(obisService)},
+        {provide: ObisTranslateService, useValue: instance(obisService)},
         {provide: MatSnackBar, useValue: instance(snackBar)}
       ]
     })

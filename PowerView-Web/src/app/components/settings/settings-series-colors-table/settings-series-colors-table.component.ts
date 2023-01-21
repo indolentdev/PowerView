@@ -2,7 +2,7 @@ import { Component, OnInit,ViewChild, Input, OnChanges, SimpleChanges } from '@a
 import { MatSort, MatSortable } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { NGXLogger } from 'ngx-logger';
-import { ObisService } from '../../../services/obis.service';
+import { ObisTranslateService } from '../../../services/obis-translate.service';
 import { SerieColorSet } from '../../../model/serieColorSet';
 
 @Component({
@@ -18,7 +18,7 @@ export class SettingsSeriesColorsTableComponent implements OnInit, OnChanges {
 
   @Input('serieColorSet') serieColorSet: SerieColorSet;
 
-  constructor(private log: NGXLogger, private obisService: ObisService) {
+  constructor(private log: NGXLogger, private obisService: ObisTranslateService) {
   }
 
   ngOnInit() {

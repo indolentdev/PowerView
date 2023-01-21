@@ -18,7 +18,7 @@ import { NGXLogger } from 'ngx-logger';
 import { of } from 'rxjs';
 import { LabelsService } from '../../../services/labels.service';
 import { CrudeDataService } from 'src/app/services/crude-data.service';
-import { ObisService } from 'src/app/services/obis.service';
+import { ObisTranslateService } from 'src/app/services/obis-translate.service';
 import { TranslateService } from '@ngx-translate/core';
 
 import { mock, instance, when, verify, anyString } from 'ts-mockito';
@@ -34,7 +34,7 @@ describe('DataCrudeAddComponent', () => {
   let log = mock(NGXLogger);
   let labelsService = mock(LabelsService);
   let crudeDataService = mock(CrudeDataService);
-  let obisService = mock(ObisService);
+  let obisService = mock(ObisTranslateService);
   let snackBar = mock(MatSnackBar);
 
   beforeEach(async () => {
@@ -65,7 +65,7 @@ describe('DataCrudeAddComponent', () => {
         { provide: NGXLogger, useValue: instance(log) },
         { provide: LabelsService, useValue: instance(labelsService) },
         { provide: CrudeDataService, useValue: instance(crudeDataService)},
-        { provide: ObisService, useValue: instance(obisService) },
+        { provide: ObisTranslateService, useValue: instance(obisService) },
         { provide: MatSnackBar, useValue: instance(snackBar) }
       ]
     })
