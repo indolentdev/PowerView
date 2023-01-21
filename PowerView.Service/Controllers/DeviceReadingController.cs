@@ -61,11 +61,11 @@ public class DeviceReadingController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public ActionResult PostManualRegisterValue(
-        [BindRequired, FromBody] PostCrudeValueDto crudeValue
+        [BindRequired, FromBody] LabelRegisterValueDto labelRegisterValue
     )
     {
-        var reading = new Reading(crudeValue.Label, crudeValue.DeviceId, crudeValue.Timestamp.Value,
-          new[] { new RegisterValue(crudeValue.ObisCode, crudeValue.Value.Value, crudeValue.Scale.Value, UnitMapper.Map(crudeValue.Unit), RegisterValueTag.Manual) });
+        var reading = new Reading(labelRegisterValue.Label, labelRegisterValue.DeviceId, labelRegisterValue.Timestamp.Value,
+          new[] { new RegisterValue(labelRegisterValue.ObisCode, labelRegisterValue.Value.Value, labelRegisterValue.Scale.Value, UnitMapper.Map(labelRegisterValue.Unit), RegisterValueTag.Manual) });
 
         try
         {

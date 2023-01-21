@@ -4,7 +4,7 @@ using PowerView.Model;
 
 namespace PowerView.Service.Dtos
 {
-    public class PostCrudeValueDto
+    public class LabelRegisterValueDto
     {
         [Required]
         [MinLength(1)]

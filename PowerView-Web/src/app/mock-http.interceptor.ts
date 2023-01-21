@@ -11,6 +11,7 @@ import { labelsBackend } from './mock-backends/labels.backend';
 import { crudeDataBackend } from './mock-backends/crudeData.backend';
 import { exportBackend } from './mock-backends/export.backend';
 import { settingsBackend } from './mock-backends/settings.backend';
+import { obisBackend } from './mock-backends/obis.backend';
 
 @Injectable({
     providedIn: 'root'
@@ -33,6 +34,7 @@ export class MockHttpInterceptor implements HttpInterceptor {
       crudeDataBackend(url, method, request) ||
       exportBackend(url, method, request) ||
       settingsBackend(url, method, request) ||
+      obisBackend(url, method, request) ||
       next.handle(request); // fallback in case url isn't caught
     }
 }

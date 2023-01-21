@@ -19,7 +19,7 @@ namespace PowerView.Service.Test.Dto
             // Arrange
 
             // Act & Assert
-            Assert.That(() => JsonSerializer.Deserialize<PostCrudeValueDto>(json), Throws.TypeOf<JsonException>(), message);
+            Assert.That(() => JsonSerializer.Deserialize<LabelRegisterValueDto>(json), Throws.TypeOf<JsonException>(), message);
         }
 
         [Test]
@@ -41,7 +41,7 @@ namespace PowerView.Service.Test.Dto
         public void DeserializeDisconnectRuleDtoInvalidThrowsValidationException(string json, string message)
         {
             // Arrange
-            var dto = JsonSerializer.Deserialize<PostCrudeValueDto>(json);
+            var dto = JsonSerializer.Deserialize<LabelRegisterValueDto>(json);
 
             // Act & Assert
             Assert.That(() => Validator.ValidateObject(dto, new ValidationContext(dto), true), Throws.TypeOf<ValidationException>(), message);
@@ -54,7 +54,7 @@ namespace PowerView.Service.Test.Dto
             const string json = "{\"Label\":\"lbl\",\"Timestamp\":\"2022-11-02T20:34:11Z\",\"ObisCode\":\"1.2.3.4.5.6\",\"Value\":1500,\"Scale\":-1,\"Unit\":\"W\",\"DeviceId\":\"DID\"}";
 
             // Act
-            var dto = JsonSerializer.Deserialize<PostCrudeValueDto>(json);
+            var dto = JsonSerializer.Deserialize<LabelRegisterValueDto>(json);
             Validator.ValidateObject(dto, new ValidationContext(dto), true);
 
             // Assert

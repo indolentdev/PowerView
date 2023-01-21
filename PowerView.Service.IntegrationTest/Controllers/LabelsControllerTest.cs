@@ -10,7 +10,8 @@ using PowerView.Model.Repository;
 
 namespace PowerView.Service.IntegrationTest;
 
-public class LabelsTest
+[TestFixture]
+public class LabelsControllerTest
 {
     private WebApplicationFactory<TestProgram> application;
     private HttpClient httpClient;

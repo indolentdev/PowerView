@@ -149,6 +149,53 @@ namespace PowerView.Model.Test.Repository
             AssertLiveReading(readingA);
         }
 
+        [Test]
+        public void GetObisCodesThrows()
+        {
+            // Arrange
+            var target = CreateTarget();
+
+            // Act & Assert
+            Assert.That(() => target.GetObisCodes(null, DateTime.UtcNow), Throws.ArgumentNullException);
+            Assert.That(() => target.GetObisCodes("lbl", DateTime.Now), Throws.TypeOf<ArgumentOutOfRangeException>());
+        }
+
+        [Test]
+        public void GetObisCodesEmpty()
+        {
+            // Arrange
+            var target = CreateTarget();
+
+            // Act
+            var obisCodes = target.GetObisCodes("theLabel", DateTime.UtcNow);
+
+            // Assert
+            Assert.That(obisCodes, Is.Empty);
+        }
+
+        [Test]
+        public void GetObisCodes()
+        {
+            // Arrange
+            var utcNow = DateTime.UtcNow;
+            var dt = new DateTime(utcNow.Year, utcNow.Month, utcNow.Day, utcNow.Hour, utcNow.Minute, utcNow.Second, DateTimeKind.Utc);
+            (var labels, var deviceIds) = DbContext.Insert(new Db.LiveReading { LabelId = 1, DeviceId = 10, Timestamp = dt.AddMinutes(-1) },
+                new[] { new Db.LiveRegister { ObisId = 110, Value = 101, Scale = 1, Unit = 1 }, new Db.LiveRegister { ObisId = 112, Value = 102, Scale = 1, Unit = 1 } });
+            DbContext.Insert(new Db.LiveReading { LabelId = 1, DeviceId = 10, Timestamp = dt },
+                new[] { new Db.LiveRegister { ObisId = 111, Value = 201, Scale = 1, Unit = 1 }, new Db.LiveRegister { ObisId = 112, Value = 202, Scale = 1, Unit = 1 } });
+            DbContext.Insert(new Db.LiveReading { LabelId = 2, DeviceId = 20, Timestamp = dt },
+                new[] { new Db.LiveRegister { ObisId = 111, Value = 301, Scale = 1, Unit = 1 }, new Db.LiveRegister { ObisId = 113, Value = 302, Scale = 1, Unit = 1 } });
+            DbContext.Insert(new Db.LiveReading { LabelId = 1, DeviceId = 10, Timestamp = dt.AddMinutes(5) },
+                 new[] { new Db.LiveRegister { ObisId = 111, Value = 212, Scale = 1, Unit = 1 }, new Db.LiveRegister { ObisId = 114, Value = 212, Scale = 1, Unit = 1 } });
+            var target = CreateTarget();
+
+            // Act
+            var obisCodes = target.GetObisCodes(labels.First(), dt);
+
+            // Assert
+            Assert.That(obisCodes, Is.EqualTo(new [] { (ObisCode)"111.111.111.111.111.111", (ObisCode)"114.114.114.114.114.114", (ObisCode)"112.112.112.112.112.112" }));
+        }
+
         private LiveReadingRepository CreateTarget()
         {
             return new LiveReadingRepository(new NullLogger<LiveReadingRepository>(), DbContext);

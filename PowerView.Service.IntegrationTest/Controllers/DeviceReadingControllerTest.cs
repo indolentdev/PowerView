@@ -245,9 +245,9 @@ public class DeviceReadingControllerTest
         };
     }
 
-    private static PostCrudeValueDto GetPostCrudeValueDto()
+    private static LabelRegisterValueDto GetPostCrudeValueDto()
     {
-        return new PostCrudeValueDto
+        return new LabelRegisterValueDto
         {
             Label = "TheLabel",
             Timestamp = DateTime.UtcNow,

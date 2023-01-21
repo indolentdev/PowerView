@@ -152,5 +152,28 @@ namespace PowerView.Model.Repository
                 .ToList();
         }
 
+        public IList<ObisCode> GetObisCodes(string label, DateTime cutoff)
+        {
+            if (label == null) throw new ArgumentNullException(nameof(label));
+            if (cutoff.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException(nameof(cutoff), $"Must be UTC. Was:{cutoff.Kind}");
+
+            var sql = @"
+WITH distinctObis AS 
+(
+  SELECT DISTINCT reg.ObisId
+  FROM Label lbl
+  JOIN LiveReading rea ON rea.LabelId=lbl.Id
+  JOIN LiveRegister reg ON rea.Id=reg.ReadingId
+  WHERE lbl.LabelName=@Label AND rea.Timestamp >= @Cutoff
+)
+SELECT o.ObisCode
+FROM distinctObis
+JOIN Obis o ON o.Id=distinctObis.ObisId;";
+
+            UnixTime cutoffUnixTime = cutoff;
+            var obisCodes = DbContext.QueryTransaction<long>(sql, new { Label = label, Cutoff = cutoffUnixTime.ToUnixTimeSeconds() });
+            return obisCodes.Select(x => (ObisCode)x).ToList();
+        }
+
     }
 }
