@@ -13,12 +13,12 @@ namespace PowerView.Model.Repository
             this.locationContext = locationContext ?? throw new ArgumentNullException(nameof(locationContext));
         }
 
-        public WithCount<ICollection<CrudeDataValue>> GetCrudeData(string label, DateTime from, int skip = 0, int take = 3000)
+        public WithCount<ICollection<CrudeDataValue>> GetCrudeData(string label, DateTime from, int skip = 0, int take = 10000)
         {
             if (label == null) throw new ArgumentNullException(nameof(label));
             if (from.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException(nameof(from), $"Must be UTC. Was:{from.Kind}");
             if (skip < 0) throw new ArgumentOutOfRangeException(nameof(skip), $"Must be zero or greater. Was:{skip}");
-            if (take < 1 || take > 10000) throw new ArgumentOutOfRangeException(nameof(take), $"Must be between 1 and 10000. Was:{take}");
+            if (take < 1 || take > 25000) throw new ArgumentOutOfRangeException(nameof(take), $"Must be between 1 and 10000. Was:{take}");
 
             IEnumerable<RowLocal> resultSet;
             int totalCount;
@@ -73,7 +73,7 @@ WHERE lbl.LabelName = @Label AND rea.Timestamp >= @From;";
             public byte? Tags { get; set; }
         }
 
-        public ICollection<CrudeDataValue> GetCrudeDataBy(string label, DateTime timestamp)
+        public CrudeDataValue GetCrudeDataBy(string label, DateTime timestamp, ObisCode obisCode)
         {
             if (label == null) throw new ArgumentNullException(nameof(label));
             if (timestamp.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException(nameof(timestamp), $"Must be UTC. Was:{timestamp.Kind}");
@@ -86,15 +86,15 @@ JOIN Device AS dev ON rea.DeviceId=dev.Id
 JOIN LiveRegister AS reg ON rea.Id=reg.ReadingId 
 JOIN Obis o ON reg.ObisId=o.Id
 LEFT OUTER JOIN LiveRegisterTag AS regTag ON reg.ReadingId=regTag.ReadingId AND reg.ObisId=regTag.ObisId
-WHERE lbl.LabelName = @Label AND rea.Timestamp = @Timestamp;";
+WHERE lbl.LabelName = @Label AND rea.Timestamp = @Timestamp AND o.ObisCode = @ObisCode;";
 
-            var resultSet = DbContext.QueryTransaction<RowLocal>(sql, new { Label = label, Timestamp = (UnixTime)timestamp });
+            var resultSet = DbContext.QueryTransaction<RowLocal>(sql, new { Label = label, Timestamp = (UnixTime)timestamp, ObisCode = (long)obisCode });
 
             var crudeDataValues = resultSet
                 .Select(x => new CrudeDataValue(x.Timestamp, x.ObisCode, x.Value, x.Scale, (Unit)x.Unit, x.DeviceId, x.Tags != null ? (RegisterValueTag)x.Tags : RegisterValueTag.None))
                 .ToList();
 
-            return crudeDataValues;
+            return crudeDataValues.FirstOrDefault();
         }
 
         public void DeleteCrudeData(string label, DateTime timestamp, ObisCode obisCode)
@@ -117,11 +117,11 @@ DROP TABLE DeleteCrudeData;";
             DbContext.ExecuteTransaction(sql, new { Label = label, Timestamp = (UnixTime)timestamp, ObisCode = (long)obisCode });
         }
 
-        public IList<MissingDate> GetMissingDays(string label)
+        public IList<MissingDate> GetMissingDays(string label, ObisCode obisCode)
         {
             if (label == null) throw new ArgumentNullException(nameof(label));
 
-            var readingInfo = GetReadingInfo(label);
+            var readingInfo = GetReadingInfo(label, obisCode);
             var dayReadingInfo = readingInfo
               .Select(x => new { LocalDateTime = locationContext.ConvertTimeFromUtc(x.Timestamp), ReadingInfo = x })
               .GroupBy(x => DateOnly.FromDateTime(x.LocalDateTime))
@@ -173,12 +173,12 @@ DROP TABLE DeleteCrudeData;";
             public ReadingInfo() : this(0, string.Empty, new UnixTime(0)) {}
         }
 
-        private IEnumerable<ReadingInfo> GetReadingInfo(string label)
+        private IEnumerable<ReadingInfo> GetReadingInfo(string label, ObisCode obisCode)
         {
             IEnumerable<ReadingInfo> rows = Array.Empty<ReadingInfo>();
 
             long lastId = 0;
-            var limit = 250000;
+            var limit = 200000;
             var read = true;
             while (read)
             {
@@ -186,10 +186,12 @@ DROP TABLE DeleteCrudeData;";
 SELECT rea.Id, DeviceId, rea.Timestamp
 FROM LiveReading rea
 JOIN Label l on l.Id = rea.LabelId
-WHERE l.LabelName = @label AND rea.Id > @lastId
+JOIN LiveRegister reg on rea.Id = reg.ReadingId
+join Obis o on reg.ObisId = o.Id
+WHERE l.LabelName = @label AND rea.Id > @lastId AND o.ObisCode = @obisCode
 ORDER BY rea.Id
 LIMIT @limit";
-                var page = DbContext.QueryTransaction<ReadingInfo>(sql, new { label, lastId, limit });
+                var page = DbContext.QueryTransaction<ReadingInfo>(sql, new { label, lastId, limit, obisCode = (long)obisCode });
                 rows = rows.Concat(page);
                 lastId = page[page.Count - 1].Id;
 

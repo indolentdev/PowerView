@@ -14,7 +14,7 @@ import { CrudeValue } from '../model/crudeValue';
 
 const constLocal = {
   dataCrude: "data/crude",
-  dataCrudeOnDate: "data/crude/by",
+  dataCrudeBy: "data/crude/by",
   dataCrudeMissingDays: "data/crude/missing-days",
   dataCrudeValues: "data/crude/values",
 
@@ -80,16 +80,16 @@ export class CrudeDataService {
     }
   }
 
-  public getCrudeValuesOnDate(label: string, timestamp: string): Observable<CrudeValue[]> {
-    return this.dataService.get<CrudeValue[]>(`${constLocal.dataCrudeOnDate}/${encodeURIComponent(label)}/${encodeURIComponent(timestamp)}`, null, []);
+  public getCrudeValuesOnDate(label: string, timestamp: string, obisCode: string): Observable<CrudeValue> {
+    return this.dataService.get<CrudeValue>(`${constLocal.dataCrudeBy}/${encodeURIComponent(label)}/${encodeURIComponent(timestamp)}/${encodeURIComponent(obisCode)}`, null, null);
   }
 
-  public getDaysMissingCrudeValues(label: string): Observable<MissingDate[]> {
+  public getDaysMissingCrudeValues(label: string, obisCode: string): Observable<MissingDate[]> {
     var params = new HttpParams()
-      .set("label", label);
+      .set("label", label)
+      .set("obisCode", obisCode);
     return this.dataService.get<MissingDate[]>(constLocal.dataCrudeMissingDays, params, []);
   }
-
 }
 
 export enum AddCrudeValueError {

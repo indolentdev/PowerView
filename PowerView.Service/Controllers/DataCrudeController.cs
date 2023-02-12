@@ -43,24 +43,30 @@ public class CrudeDataController : ControllerBase
         return Ok(r);
     }
 
-    [HttpGet("by/{label}/{timestamp}")]
+    [HttpGet("by/{label}/{timestamp}/{obisCode}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public ActionResult GetBy(
         [BindRequired, FromRoute, MinLength(1)] string label,
-        [BindRequired, FromRoute, UtcDateTime] DateTime timestamp
+        [BindRequired, FromRoute, UtcDateTime] DateTime timestamp,
+        [BindRequired, FromRoute, ObisCode] string obisCode
         )
     {
-        var crudeData = crudeDataRepository.GetCrudeDataBy(label, timestamp);
+        var crudeData = crudeDataRepository.GetCrudeDataBy(label, timestamp, obisCode);
 
-        var r = crudeData.Select(x => new
+        if (crudeData == null)
         {
-            Timestamp = x.DateTime,
-            ObisCode = x.ObisCode.ToString(),
-            x.Value,
-            x.Scale,
-            Unit = UnitMapper.Map(x.Unit),
-            x.DeviceId
-        }).ToList();
+            return NoContent();
+        }
+
+        var r = new
+        {
+            Timestamp = crudeData.DateTime,
+            ObisCode = crudeData.ObisCode.ToString(),
+            crudeData.Value,
+            crudeData.Scale,
+            Unit = UnitMapper.Map(crudeData.Unit),
+            crudeData.DeviceId
+        };
 
         return Ok(r);
     }
@@ -82,10 +88,11 @@ public class CrudeDataController : ControllerBase
     [HttpGet("missing-days")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public ActionResult GetMissingDays(
-        [BindRequired, FromQuery, MinLength(1)] string label
+        [BindRequired, FromQuery, MinLength(1)] string label,
+        [BindRequired, FromQuery, ObisCode] string obisCode
         )
     {
-        var missingDates = crudeDataRepository.GetMissingDays(label);
+        var missingDates = crudeDataRepository.GetMissingDays(label, obisCode);
 
         var r = missingDates
           .Select(x => new { x.Timestamp, x.PreviousTimestamp, x.NextTimestamp })

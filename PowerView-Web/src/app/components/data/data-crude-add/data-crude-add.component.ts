@@ -3,8 +3,8 @@ import { UntypedFormControl, AbstractControl, UntypedFormGroup, Validators, Form
 import { MatSnackBar, MatSnackBarRef, SimpleSnackBar } from '@angular/material/snack-bar';
 import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
-import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { LabelsService } from 'src/app/services/labels.service';
+import { ObisService } from 'src/app/services/obis.service';
 import { AddCrudeValueError, CrudeDataService } from 'src/app/services/crude-data.service';
 import { ObisTranslateService } from 'src/app/services/obis-translate.service';
 import { MissingDate } from 'src/app/model/missingDate';
@@ -22,30 +22,30 @@ export class DataCrudeAddComponent implements OnInit {
   private snackBarRef: MatSnackBarRef<SimpleSnackBar>;
 
   labels: string[];
+  registers: any[];
   missingDays: MissingDate[];
-  previousCrudeValues: any[];
-  nextCrudeValues: CrudeValue[];
-
+  previousCrudeValue: any;
+  nextCrudeValue: any;
   crudeValues: CrudeValue[];
-
-  selectedLabel: string;
-  selectedMissingDate: MissingDate;
-  selectedRegister: CrudeValue;
 
   minValue: number;
   maxValue: number;
+
+  selectedLabel: string;
+  selectedRegister: string;
+  selectedMissingDate: MissingDate;
 
   formGroup: UntypedFormGroup;
   @ViewChild('form', { static: true }) form;
   @ViewChild('formDirective') private formDirective: NgForm;
 
-  constructor(private log: NGXLogger, private labelsService: LabelsService, private crudeDataService: CrudeDataService, private obisService: ObisTranslateService, private translateService: TranslateService, private snackBar: MatSnackBar) { }
+  constructor(private log: NGXLogger, private labelsService: LabelsService, private obisService: ObisService, private crudeDataService: CrudeDataService, private obisTranslateService: ObisTranslateService, private translateService: TranslateService, private snackBar: MatSnackBar) { }
 
   ngOnInit(): void {
     this.formGroup = new UntypedFormGroup({
       label: new UntypedFormControl('', [Validators.required]),
-      date: new UntypedFormControl({ value: '', disabled: true }, [Validators.required]),
       register: new UntypedFormControl({ value: '', disabled: true }, [Validators.required]),
+      date: new UntypedFormControl({ value: '', disabled: true }, [Validators.required]),
       value: new UntypedFormControl({ value: '', disabled: true }, [Validators.required]),
     });
 
@@ -67,25 +67,45 @@ export class DataCrudeAddComponent implements OnInit {
       this.labelOnChange(selectedLabel);
     });
 
-    this.formGroup.get('date').valueChanges.subscribe(selectedMissingDate => {
-      this.missingDayeOnChange(selectedMissingDate);
-    });
-
     this.formGroup.get('register').valueChanges.subscribe(selectedRegister => {
       this.registerOnChange(selectedRegister);
+    });
+
+    this.formGroup.get('date').valueChanges.subscribe(selectedMissingDate => {
+      this.missingDayOnChange(selectedMissingDate);
     });
   }
 
   private labelOnChange(selectedLabel: string) {
     this.selectedLabel = selectedLabel;
 
-    this.getControl("date").reset();
-
     if (this.selectedLabel == undefined || this.selectedLabel == null) return;
 
+    this.getControl("register").reset();
+    this.getControl("date").reset();
     this.crudeValues = [];
 
-    this.crudeDataService.getDaysMissingCrudeValues(selectedLabel).subscribe(x => {
+    this.obisService.getObisCodes(this.selectedLabel).subscribe(x => {
+      let obisCodes = x.obisCodes.map(oc => ({ obisCode: oc }));
+      this.registers = this.obisTranslateService.AddRegisterProperty(obisCodes).sort((a, b) => a.register > b.register ? 1 : -1);
+
+      if (this.registers.length > 0) {
+        this.getControl("register").enable();
+      }
+    });    
+  }
+
+  private registerOnChange(selectedRegister) {
+    if (selectedRegister == null) return;
+
+    this.selectedRegister = selectedRegister.obisCode;
+
+    if (this.selectedRegister == undefined || this.selectedRegister == null) return;
+
+    this.getControl("date").reset();
+    this.crudeValues = [];
+
+    this.crudeDataService.getDaysMissingCrudeValues(this.selectedLabel, this.selectedRegister).subscribe(x => {
       this.missingDays = x.sort(function (obj1, obj2) {
         if (obj1.timestamp === obj2.timestamp) {
           return 0;
@@ -94,64 +114,51 @@ export class DataCrudeAddComponent implements OnInit {
           return obj1.timestamp < obj2.timestamp ? -1 : 1;
         }
       });
-
+    
       if (this.missingDays.length > 0) {
         this.getControl("date").enable();
       }
     });
   }
 
-  private missingDayeOnChange(selectedMissingDate: MissingDate) {
+
+  private missingDayOnChange(selectedMissingDate: MissingDate) {
+    if (selectedMissingDate == null) return;
+    
     this.selectedMissingDate = selectedMissingDate;
 
-    this.getControl("register").reset();
-
-    if (this.selectedLabel == null || selectedMissingDate == null) return;
+    if (this.selectedMissingDate == undefined || selectedMissingDate == null) return;
 
     this.crudeValues = [];
 
-    this.crudeDataService.getCrudeValuesOnDate(this.selectedLabel, this.selectedMissingDate.previousTimestamp).subscribe(x => {
-      this.previousCrudeValues = this.obisService.AddRegisterProperty(x).sort((a, b) => a.register > b.register ? 1 : -1);
+    this.crudeDataService.getCrudeValuesOnDate(this.selectedLabel, this.selectedMissingDate.previousTimestamp, this.selectedRegister).subscribe(prevCrudeValue => {
+      let previousCrudeValueArray= [];
+      previousCrudeValueArray.push(prevCrudeValue);
+      this.previousCrudeValue = this.obisTranslateService.AddRegisterProperty(previousCrudeValueArray)[0];
 
-      if (this.previousCrudeValues.length > 0) {
-        this.getControl("register").enable();
-      }
-    });
-  }
+      this.crudeDataService.getCrudeValuesOnDate(this.selectedLabel, this.selectedMissingDate.nextTimestamp, this.selectedRegister).subscribe(nextCrudeValue => {
+        let nextCrudeValueArray = [];
+        nextCrudeValueArray.push(nextCrudeValue);
+        this.nextCrudeValue = this.obisTranslateService.AddRegisterProperty(nextCrudeValueArray)[0];
 
-  private registerOnChange(selectedRegister: CrudeValue) {
-    this.selectedRegister = selectedRegister;
-
-    this.getControl("value").reset();
-
-    if (this.selectedMissingDate == null || this.selectedRegister == null) return;
-
-    this.crudeValues = [];
-
-    this.crudeDataService.getCrudeValuesOnDate(this.selectedLabel, this.selectedMissingDate.nextTimestamp).subscribe(x => {
-      this.nextCrudeValues = x;
-
-      if (this.nextCrudeValues.length > 0) {
         let contextList = [];
-        contextList.push(this.selectedRegister);
-        var nextRegister = this.nextCrudeValues.find(e => e.obisCode === this.selectedRegister.obisCode);
-        contextList.push(nextRegister);
+        contextList.push(this.previousCrudeValue);
+        contextList.push(this.nextCrudeValue);
         this.crudeValues = contextList;
 
-        if (this.crudeValues.length === 2) {
-          this.minValue = this.selectedRegister.value;
-          this.maxValue = nextRegister.value;
+        this.minValue = this.previousCrudeValue.value;
+        this.maxValue = this.nextCrudeValue.value;
 
-          var valueControl = this.getControl("value");
-          
-          valueControl.clearValidators();
-          valueControl.addValidators([Validators.required, Validators.min(this.minValue), Validators.max(this.maxValue)]);
+        var valueControl = this.getControl("value");
 
-          valueControl.enable();
-        }
-      }
+        valueControl.clearValidators();
+        valueControl.addValidators([Validators.required, Validators.min(this.minValue), Validators.max(this.maxValue)]);
+
+        valueControl.enable();
+      });
     });
   }
+
 
   public getControl(controlName: string): AbstractControl {
     return this.formGroup.controls[controlName];
@@ -171,9 +178,9 @@ export class DataCrudeAddComponent implements OnInit {
     let crudeValue: CrudeValue = {
       timestamp: formGroupValue.date.timestamp,
       obisCode: formGroupValue.register.obisCode,
-      scale: formGroupValue.register.scale,
-      unit: formGroupValue.register.unit,
-      deviceId: formGroupValue.register.deviceId,
+      scale: this.previousCrudeValue.scale,
+      unit: this.previousCrudeValue.unit,
+      deviceId: this.previousCrudeValue.deviceId,
       value: formGroupValue.value,
       tags: ["Manual"]
     };
@@ -184,7 +191,15 @@ export class DataCrudeAddComponent implements OnInit {
       this.translateService.get('forms.crudeData.add.confirmAdd').subscribe(message => {
         this.getControl("value").clearValidators();
         this.formDirective.resetForm();
+        this.selectedLabel = null;
+        this.selectedRegister = null;
+        this.selectedMissingDate = null;
+        this.registers = [];
+        this.missingDays = [];
+        this.previousCrudeValue = null;
+        this.nextCrudeValue = null;
         this.crudeValues = [];
+
         this.snackBarRef = this.snackBar.open(message, undefined, { duration: 9000 });
       });
     }, err => {

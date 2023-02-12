@@ -7,7 +7,7 @@ export function obisBackend(url: string, method: string, request: HttpRequest<an
         return new Observable(resp => {
             resp.next(new HttpResponse({
                 status: 200,
-                body: { obisCodes: ["8.0.1.4.0.255", "6.0.1.1.0.255", "8.0.1.1.0.255"] }
+                body: { obisCodes: ["1.0.1.8.0.255", "6.0.1.0.0.255", "8.0.1.0.0.255"] }
             }));
             resp.complete();
         });

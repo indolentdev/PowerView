@@ -16,7 +16,7 @@ namespace PowerView.Model.Test.Repository
         [TestCase("Label", "2022-10-18T13:21:10", 0, 1, typeof(ArgumentOutOfRangeException))]
         [TestCase("Label", "2022-10-18T13:21:10Z", -1, 1, typeof(ArgumentOutOfRangeException))]
         [TestCase("Label", "2022-10-18T13:21:10Z", 0, 0, typeof(ArgumentOutOfRangeException))]
-        [TestCase("Label", "2022-10-18T13:21:10Z", 0, 10001, typeof(ArgumentOutOfRangeException))]
+        [TestCase("Label", "2022-10-18T13:21:10Z", 0, 25001, typeof(ArgumentOutOfRangeException))]
         public void GetCrudeDataThrows(string label, string dateTimeString, int skip, int take, Type exceptionType)
         {
             // Arrange
@@ -88,7 +88,20 @@ namespace PowerView.Model.Test.Repository
             var target = CreateTarget();
 
             // Act & Asssert
-            Assert.That(() => target.GetCrudeDataBy(label, dateTime), Throws.TypeOf(exceptionType));
+            Assert.That(() => target.GetCrudeDataBy(label, dateTime, ObisCode.ColdWaterFlow1), Throws.TypeOf(exceptionType));
+        }
+
+        [Test]
+        public void GetCrudeDataByAbsent()
+        {
+            // Arrange
+            var target = CreateTarget();
+
+            // Act
+            var crudeValue = target.GetCrudeDataBy("label", DateTime.UtcNow, ObisCode.ColdWaterFlow1);
+
+            // Asssert
+            Assert.That(crudeValue, Is.Null);
         }
 
         [Test]
@@ -96,38 +109,27 @@ namespace PowerView.Model.Test.Repository
         {
             // Arrange
             var dtA = new DateTime(2017, 2, 27, 12, 0, 0, DateTimeKind.Utc);
-            (var labels, var deviceIds) = DbContext.Insert(new Db.LiveReading { LabelId = 1, DeviceId = 10, Timestamp = dtA },
-                new Db.LiveRegister { ObisId = 111, Value = 101, Scale = 1, Unit = 1 });
+            var reading = new Db.LiveReading { LabelId = 1, DeviceId = 10, Timestamp = dtA };
+            (var labels, var deviceIds) = DbContext.InsertReadings(reading);
+            var obisCodes = DbContext.InsertRegisters(new Db.LiveRegister { ReadingId = reading.Id, ObisId = 111, Value = 101, Scale = 1, Unit = 1 });
+            DbContext.InsertRegisterTags(new[] { new Db.LiveRegisterTag { ReadingId = reading.Id, ObisId = 111, Tags = 1 } });
 
             var dtB = dtA.AddSeconds(44);
             DbContext.Insert(new Db.LiveReading { LabelId = 1, DeviceId = 10, Timestamp = dtB },
-                new [] { new Db.LiveRegister { ObisId = 111, Value = 201, Scale = 1, Unit = 1 }, new Db.LiveRegister { ObisId = 112, Value = 202, Scale = 1, Unit = 1 } },
-                new [] { new Db.LiveRegisterTag { ObisId = 111, Tags = 1 } });
-            DbContext.Insert(new Db.LiveReading { LabelId = 99, DeviceId = 99, Timestamp = dtB },
-                new Db.LiveRegister { ObisId = 99, Value = 99, Scale = 1, Unit = 1 });
-
-            var dtC = dtB.AddSeconds(28);
-            DbContext.Insert(new Db.LiveReading { LabelId = 1, DeviceId = 10, Timestamp = dtC },
-                new Db.LiveRegister { ObisId = 111, Value = 301, Scale = 1, Unit = 1 });
-
+                new [] { new Db.LiveRegister { ObisId = 111, Value = 201, Scale = 1, Unit = 1 }, new Db.LiveRegister { ObisId = 112, Value = 202, Scale = 1, Unit = 1 } });
             var target = CreateTarget();
 
             // Act
-            var values = target.GetCrudeDataBy(labels.First(), dtB);
+            var value = target.GetCrudeDataBy(labels.First(), dtA, obisCodes.First());
 
             // Assert
-            Assert.That(values.Count, Is.EqualTo(2));
-            Assert.That(values.First().DateTime, Is.EqualTo(dtB));
-            Assert.That(values.First().Scale, Is.EqualTo(1));
-            Assert.That(values.First().Unit, Is.EqualTo(Unit.WattHour));
-            Assert.That(values.First().DeviceId, Is.EqualTo(deviceIds.First()));
-
-            Assert.That(values.First().ObisCode, Is.EqualTo(new ObisCode(new byte[] { 111, 111, 111, 111, 111, 111 })));
-            Assert.That(values.First().Value, Is.EqualTo(201));
-            Assert.That(values.First().Tag, Is.EqualTo(RegisterValueTag.Manual));
-            Assert.That(values.Last().ObisCode, Is.EqualTo(new ObisCode(new byte[] { 112, 112, 112, 112, 112, 112 })));
-            Assert.That(values.Last().Value, Is.EqualTo(202));
-            Assert.That(values.Last().Tag, Is.EqualTo(RegisterValueTag.None));
+            Assert.That(value.DateTime, Is.EqualTo(dtA));
+            Assert.That(value.Scale, Is.EqualTo(1));
+            Assert.That(value.Unit, Is.EqualTo(Unit.WattHour));
+            Assert.That(value.DeviceId, Is.EqualTo(deviceIds.First()));
+            Assert.That(value.ObisCode, Is.EqualTo(obisCodes.First()));
+            Assert.That(value.Value, Is.EqualTo(101));
+            Assert.That(value.Tag, Is.EqualTo(RegisterValueTag.Manual));
         }
 
         [Test]
@@ -230,13 +232,14 @@ namespace PowerView.Model.Test.Repository
             var target = CreateTarget();
 
             // Act & Asssert
-            Assert.That(() => target.GetMissingDays(null), Throws.TypeOf<ArgumentNullException>());
+            Assert.That(() => target.GetMissingDays(null, ObisCode.ColdWaterFlow1), Throws.TypeOf<ArgumentNullException>());
         }
 
         [Test]
         public void GetMissingDays()
         {
             // Arrange
+            ObisCode obisCode = "111.111.111.111.111.111";
             var dtA = new DateTime(2017, 2, 17, 8, 0, 0, DateTimeKind.Utc);
             (var labels, var deviceIds) = DbContext.Insert(new Db.LiveReading { LabelId = 1, DeviceId = 10, Timestamp = dtA },
                 new Db.LiveRegister { ObisId = 111, Value = 101, Scale = 1, Unit = 1 });
@@ -255,7 +258,7 @@ namespace PowerView.Model.Test.Repository
             var target = CreateTarget();
 
             // Act
-            var missingDays = target.GetMissingDays(labels.First());
+            var missingDays = target.GetMissingDays(labels.First(), obisCode);
 
             // Assert
             Assert.That(missingDays.Count, Is.EqualTo(3));
@@ -268,6 +271,7 @@ namespace PowerView.Model.Test.Repository
         public void GetMissingDaysOneReading()
         {
             // Arrange
+            ObisCode obisCode = "111.111.111.111.111.111";
             var dtA = new DateTime(2017, 2, 17, 8, 0, 0, DateTimeKind.Utc);
             (var labels, var deviceIds) = DbContext.Insert(new Db.LiveReading { LabelId = 1, DeviceId = 10, Timestamp = dtA },
                 new Db.LiveRegister { ObisId = 111, Value = 101, Scale = 1, Unit = 1 });
@@ -275,7 +279,7 @@ namespace PowerView.Model.Test.Repository
             var target = CreateTarget();
 
             // Act
-            var missingDays = target.GetMissingDays(labels.First());
+            var missingDays = target.GetMissingDays(labels.First(), obisCode);
 
             // Assert
             Assert.That(missingDays, Is.Empty);
@@ -285,6 +289,7 @@ namespace PowerView.Model.Test.Repository
         public void GetMissingDaysTwoReadingsSameDay()
         {
             // Arrange
+            ObisCode obisCode = "111.111.111.111.111.111";
             var dtA = new DateTime(2017, 2, 17, 8, 0, 0, DateTimeKind.Utc);
             (var labels, var deviceIds) = DbContext.Insert(new Db.LiveReading { LabelId = 1, DeviceId = 10, Timestamp = dtA },
                 new Db.LiveRegister { ObisId = 111, Value = 101, Scale = 1, Unit = 1 });
@@ -296,7 +301,7 @@ namespace PowerView.Model.Test.Repository
             var target = CreateTarget();
 
             // Act
-            var missingDays = target.GetMissingDays(labels.First());
+            var missingDays = target.GetMissingDays(labels.First(), obisCode);
 
             // Assert
             Assert.That(missingDays, Is.Empty);
@@ -306,6 +311,7 @@ namespace PowerView.Model.Test.Repository
         public void GetMissingDaysTworReadingsDifferentDeviceIds()
         {
             // Arrange
+            ObisCode obisCode = "111.111.111.111.111.111";
             var dtA = new DateTime(2017, 2, 17, 8, 0, 0, DateTimeKind.Utc);
             (var labels, var deviceIds) = DbContext.Insert(new Db.LiveReading { LabelId = 1, DeviceId = 10, Timestamp = dtA },
                 new Db.LiveRegister { ObisId = 111, Value = 101, Scale = 1, Unit = 1 });
@@ -317,7 +323,7 @@ namespace PowerView.Model.Test.Repository
             var target = CreateTarget();
 
             // Act
-            var missingDays = target.GetMissingDays(labels.First());
+            var missingDays = target.GetMissingDays(labels.First(), obisCode);
 
             // Assert
             Assert.That(missingDays, Is.Empty);

@@ -18,13 +18,13 @@ export function crudeDataBackend(url: string, method: string, request: HttpReque
     }
 
     if (url.indexOf('data/crude/by/') > -1 && method === "GET") {
-        let crudeDataOnDateCopy = [{ ...crudeDataOnDate[0] }, { ...crudeDataOnDate[1] } ];
-        crudeDataOnDateCopy[0].value = Math.round((new Date().getTime() / 10) % 1000000);
-        crudeDataOnDateCopy[1].value = crudeDataOnDateCopy[0].value % 100000;
+//        let crudeDataOnDateCopy = [{ ...crudeDataOnDate[0] }, { ...crudeDataOnDate[1] } ];
+//        crudeDataOnDateCopy[0].value = Math.round((new Date().getTime() / 10) % 1000000);
+//        crudeDataOnDateCopy[1].value = crudeDataOnDateCopy[0].value % 100000;
         return new Observable(resp => {
             resp.next(new HttpResponse({
                 status: 200,
-                body: crudeDataOnDateCopy
+                body: crudeDataOnDate
             }));
             resp.complete();
         });

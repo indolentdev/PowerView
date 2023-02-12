@@ -5,8 +5,7 @@
         <form #form="ngForm" [formGroup]="formGroup" (ngSubmit)="submitForm(formGroup.value)" #formDirective="ngForm">
 
             <mat-form-field style="width:13em">
-                <mat-select placeholder="{{ 'common.placeholderLabel' | translate }}" formControlName="label" id="label"
-                    required>
+                <mat-select placeholder="{{ 'common.placeholderLabel' | translate }}" formControlName="label" id="label" required>
                     <mat-option *ngFor="let opt of labels" [value]="opt">
                         {{ opt }}
                     </mat-option>
@@ -18,27 +17,27 @@
             <br />
 
             <mat-form-field style="width:13em">
-                <mat-select placeholder="{{ 'forms.crudeData.add.placeholderDate' | translate }}"
-                    formControlName="date" id="date" required>
-                    <mat-option *ngFor="let opt of missingDays" [value]="opt">
-                        {{ opt.timestamp | date:'medium' }}
+                <mat-select placeholder="{{ 'forms.crudeData.add.placeholderName' | translate }}" formControlName="register" id="register" required>
+                    <mat-option *ngFor="let opt of registers" [value]="opt">
+                        {{ opt.register }}
                     </mat-option>
                 </mat-select>
-                <mat-hint align="end">{{ 'forms.crudeData.add.hintDate' | translate }}</mat-hint>
-                <mat-error *ngIf="hasError('date', 'required')">{{ 'forms.crudeData.add.valErrors.required' | translate }}</mat-error>
+                <mat-hint align="end">{{ 'forms.crudeData.add.hintName' | translate }}</mat-hint>
+                <mat-error *ngIf="hasError('register', 'required')">{{ 'forms.crudeData.add.valErrors.required' | translate }}
+                </mat-error>
             </mat-form-field>
 
             <br />
 
             <mat-form-field style="width:13em">
-                <mat-select placeholder="{{ 'forms.crudeData.add.placeholderName' | translate }}"
-                    formControlName="register" id="register" required>
-                    <mat-option *ngFor="let opt of previousCrudeValues" [value]="opt">
-                        {{ opt.register }}
+                <mat-select placeholder="{{ 'forms.crudeData.add.placeholderDate' | translate }}" formControlName="date" id="date" required>
+                    <mat-option *ngFor="let opt of missingDays" [value]="opt">
+                        {{ opt.timestamp | date:'medium' }}
                     </mat-option>
                 </mat-select>
-                <mat-hint align="end">{{ 'forms.crudeData.add.hintName' | translate }}</mat-hint>
-                <mat-error *ngIf="hasError('register', 'required')">{{ 'forms.crudeData.add.valErrors.required' | translate }}</mat-error>
+                <mat-hint align="end">{{ 'forms.crudeData.add.hintDate' | translate }}</mat-hint>
+                <mat-error *ngIf="hasError('date', 'required')">{{ 'forms.crudeData.add.valErrors.required' | translate }}
+                </mat-error>
             </mat-form-field>
 
             <br />
