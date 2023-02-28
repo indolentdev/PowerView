@@ -71,22 +71,6 @@ namespace PowerView.Model.Repository
         .ToList();
     }
 
-    public string ProvideInstallationId()
-    {
-      const string name = "InstallationId";
-      var idString = Get(name);
-      if (!string.IsNullOrEmpty(idString))
-      {
-        return idString;
-      }
-
-      var id = Guid.NewGuid();
-      idString = id.ToString("B", System.Globalization.CultureInfo.InvariantCulture);
-      Upsert(name, idString);
-
-      return idString;
-    }
-
     public MqttConfig GetMqttConfig()
     {
       return new MqttConfig(Find("MQTT_"));

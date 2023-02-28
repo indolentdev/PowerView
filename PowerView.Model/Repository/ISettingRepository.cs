@@ -12,8 +12,6 @@ namespace PowerView.Model.Repository
 
     IList<KeyValuePair<string, string>> Find(string startsWith);
 
-    string ProvideInstallationId();
-
     MqttConfig GetMqttConfig();
 
     void UpsertMqttConfig(MqttConfig mqttConfig);

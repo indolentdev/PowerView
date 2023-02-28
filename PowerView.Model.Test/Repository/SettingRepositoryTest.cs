@@ -154,33 +154,6 @@ namespace PowerView.Model.Test.Repository
         }
 
         [Test]
-        public void ProvideInstallationId()
-        {
-            // Arrange
-            var target = CreateTarget();
-
-            // Act
-            var id = target.ProvideInstallationId();
-
-            // Assert
-            Assert.That(id, Is.Not.EqualTo(Guid.Empty));
-        }
-
-        [Test]
-        public void ProvideInstallationIdSuccessive()
-        {
-            // Arrange
-            var target = CreateTarget();
-            var id = target.ProvideInstallationId();
-
-            // Act
-            var id2 = target.ProvideInstallationId();
-
-            // Assert
-            Assert.That(id2, Is.EqualTo(id));
-        }
-
-        [Test]
         public void GetMqttConfig()
         {
             // Arrange
