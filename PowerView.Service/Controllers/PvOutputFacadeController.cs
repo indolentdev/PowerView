@@ -45,8 +45,8 @@ public class PvOutputFacadeController : ControllerBase
         ControllerContext.HttpContext.Features.Get<IHttpBodyControlFeature>().AllowSynchronousIO = true;
         Request.EnableBuffering();
 
-        var forwardRequest = CreateForwardRequest(Request, options.PvOutputAddStatusUrl);
-        HttpResponseMessage forwardResponse;
+        using var forwardRequest = CreateForwardRequest(Request, options.PvOutputAddStatusUrl);
+        HttpResponseMessage forwardResponse = null;
         try
         {
             using var httpClient = httpClientFactory.CreateClient(nameof(PvOutputFacadeController));
@@ -56,6 +56,7 @@ public class PvOutputFacadeController : ControllerBase
         {
             logger.LogInformation(e, $"Experienced timeout forwarding request to PVOutput. Request:{MaskHeaders(forwardRequest)}");
 
+            forwardResponse?.Dispose();
             Response.StatusCode = 504;
             return new EmptyResult();
         }
@@ -63,6 +64,7 @@ public class PvOutputFacadeController : ControllerBase
         {
             logger.LogInformation(e, $"Experienced error forwarding request to PVOutput. Request:{MaskHeaders(forwardRequest)}");
 
+            forwardResponse?.Dispose();
             Response.StatusCode = 500;
             return new EmptyResult();
         }

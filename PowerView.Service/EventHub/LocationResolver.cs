@@ -75,16 +75,21 @@ namespace PowerView.Service.EventHub
         {
             LocationDto dto;
 
-            var request = new HttpRequestMessage(HttpMethod.Get, uri);
+            using var request = new HttpRequestMessage(HttpMethod.Get, uri);
             
             using var httpClient = httpClientFactory.CreateClient(nameof(LocationResolver));
             httpClient.Timeout = TimeSpan.FromSeconds(10);
 
             try
             {
-                var response = httpClient.Send(request, HttpCompletionOption.ResponseContentRead);
+                using var response = httpClient.Send(request, HttpCompletionOption.ResponseContentRead);
                 response.EnsureSuccessStatusCode();
                 dto = response.Content.ReadFromJsonAsync<LocationDto>().GetAwaiter().GetResult();
+            }
+            catch (TaskCanceledException e)
+            {
+                logger.LogInformation(e, $"Location resolve failed. Timeout. Request error. {request}");
+                return null;
             }
             catch (HttpRequestException e)
             {

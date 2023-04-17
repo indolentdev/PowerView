@@ -2,6 +2,7 @@
 using System.Net.Http;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 using Moq;
@@ -33,6 +34,21 @@ namespace PowerView.Service.Test.EventHub
             Assert.That(() => new LocationResolver(null, httpClientFactory.Object, settingRepository.Object), Throws.ArgumentNullException);
             Assert.That(() => new LocationResolver(logger, null, settingRepository.Object), Throws.TypeOf<ArgumentNullException>());
             Assert.That(() => new LocationResolver(logger, httpClientFactory.Object, null), Throws.TypeOf<ArgumentNullException>());
+        }
+
+        [Test]
+        public void ResolveToDatabaseHttpTimeout()
+        {
+            // Arrange
+            var httpMessageHandler = SetupHttpClientFactory();
+            httpMessageHandler.Setup(x => x(It.IsAny<HttpRequestMessage>(), It.IsAny<CancellationToken>())).Throws(new TaskCanceledException());
+            var target = CreateTarget();
+
+            // Act
+            target.ResolveToDatabase();
+
+            // Assert
+            settingRepository.Verify(x => x.Upsert(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
         }
 
         [Test]
