@@ -2,6 +2,7 @@ PowerView version 1.x.y - Xxx 2023
 - Improved user flow for adding crude metering data
 - Ability to delete crude metering data
 - Show tags for crude metering data. E.g. manually entered.
+- Minor stability improvements.
 
 PowerView version 1.0.0 - December 2022
 - Added view of crude metering data and ability to manually create crude metering data
