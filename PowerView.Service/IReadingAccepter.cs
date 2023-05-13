@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using PowerView.Model;
 
-namespace PowerView.Service.Controllers;
+namespace PowerView.Service;
 
 public interface IReadingAccepter
 {

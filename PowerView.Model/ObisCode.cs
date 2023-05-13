@@ -21,6 +21,9 @@ namespace PowerView.Model
     /// Average value which is the converted "actual" average actual between two adjencent series values, calculated from the corresponding cumulative value.
     /// I.e. the energy between two time points converted to an average power. Or the volume between two time points converted to average flow.
     /// Applies utility specific B code: 67
+    /// 
+    /// Income or expense amount for one kWh in a specific time period. Income/expense amounts are excl. VAT or other charges.
+    /// Applies utility specific B code: 68
     /// </summary>
     public struct ObisCode : IEnumerable<byte>, IEquatable<ObisCode>
     {
@@ -42,6 +45,7 @@ namespace PowerView.Model
         public static readonly ObisCode ElectrActualPowerP23L1 = "1.0.22.7.0.255";
         public static readonly ObisCode ElectrActualPowerP23L2 = "1.0.42.7.0.255";
         public static readonly ObisCode ElectrActualPowerP23L3 = "1.0.62.7.0.255";
+        public static readonly ObisCode ElectrActiveEnergyKwhIncomeExpense = "1.68.25.67.0.255"; // 68=income/expense amount per kWh, 25=(active) energy import/export, 67=From timestamp and 60 mins.
 
         private static readonly Regex isElectricityImport = new Regex(@"^1\.[0-9]{1,3}\.[246]?1\.[7-8]{1}\.0\.255$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Compiled);
         private static readonly Regex isElectricityExport = new Regex(@"^1\.[0-9]{1,3}\.[246]?2\.[7-8]{1}\.0\.255$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Compiled);

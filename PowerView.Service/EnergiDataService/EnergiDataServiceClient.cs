@@ -42,7 +42,8 @@ public class EnergiDataServiceClient : IEnergiDataServiceClient
         var periodEnd = (start + timeSpan).ToString(format, CultureInfo.InvariantCulture);
         var filter = "{\"PriceArea\":[\"%PriceArea%\"]}".Replace("%PriceArea%", priceArea);
         const string timezone = "UTC";
-        var url = UrlHelper.EncodeUrlParameters(options.BaseUrl, $"elspotprices?start={periodStart}&end={periodEnd}&filter={filter}&timezone={timezone}");
+        const string sort = "HourUTC";
+        var url = UrlHelper.EncodeUrlParameters(options.BaseUrl, $"elspotprices?start={periodStart}&end={periodEnd}&filter={filter}&timezone={timezone}&sort={sort}");
         using (var httpClient = httpClientFactory.CreateClient())
         {
             using var request = new HttpRequestMessage(HttpMethod.Get, url);

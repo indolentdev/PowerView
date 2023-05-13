@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 
-namespace PowerView.Model.Repository
+namespace PowerView.Model.Repository;
+
+public interface ISettingRepository
 {
-  public interface ISettingRepository
-  {
     void Upsert(string name, string value);
 
     void Upsert(ICollection<KeyValuePair<string, string>> items);
@@ -20,5 +20,8 @@ namespace PowerView.Model.Repository
 
     void UpsertSmtpConfig(SmtpConfig smtpConfig);
 
-  }
+    EnergiDataServiceImportConfig GetEnergiDataServiceImportConfig();
+
+    void UpsertEnergiDataServiceImportConfig(EnergiDataServiceImportConfig edsiConfig);
+
 }

@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using Moq;
-using PowerView.Service.Controllers;
 using PowerView.Service.EventHub;
 using PowerView.Model;
 using PowerView.Model.Repository;
 
-namespace PowerView.Service.Test.Controllers;
+namespace PowerView.Service.Test;
 
 [TestFixture]
 public class ReadingAccepterTest
@@ -25,14 +25,16 @@ public class ReadingAccepterTest
     }
 
     [Test]
-    public void Accept()
+    [TestCase("1.0.1.8.0.255")]
+    [TestCase("1.68.25.67.0.255")]
+    public void Accept(string obisCode)
     {
         // Arrange
         var liveReadingRepository = new Mock<ILiveReadingRepository>();
         var hub = new Mock<IHub>();
         var target = new ReadingAccepter(liveReadingRepository.Object, hub.Object);
         var liveReadings = new[] { new Reading("lbl", "sn1", DateTime.UtcNow,
-                                                  new [] { new RegisterValue(ObisCode.ElectrActiveEnergyA14, 1, 0, Unit.WattHour)}) };
+                                                  new [] { new RegisterValue(obisCode, 1, 0, Unit.WattHour)}) };
 
         // Act
         target.Accept(liveReadings);
@@ -62,5 +64,27 @@ public class ReadingAccepterTest
         liveReadingRepository.Verify(lrr => lrr.Add(It.Is<IList<Reading>>(p => p.Count == 0)));
         hub.Verify(h => h.Signal(It.Is<IList<Reading>>(p => p.Count == 0)));
     }
+
+    [Test]
+    public void AcceptReadingContainsSomeOkAndSomeNotOk()
+    {
+        // Arrange
+        var liveReadingRepository = new Mock<ILiveReadingRepository>();
+        var hub = new Mock<IHub>();
+        var target = new ReadingAccepter(liveReadingRepository.Object, hub.Object);
+        var liveReadings = new[] { new Reading("lbl", "sn1", DateTime.UtcNow,
+                                                  new [] { 
+                                                    new RegisterValue(ObisCode.ElectrActiveEnergyA14, 1, 0, Unit.WattHour),
+                                                    new RegisterValue(ObisCode.ElectrActiveEnergyA14Delta, 1, 0, Unit.WattHour) 
+                                                  }) };
+
+        // Act
+        target.Accept(liveReadings);
+
+        // Assert
+        liveReadingRepository.Verify(lrr => lrr.Add(It.Is<IList<Reading>>(p => p.Count == 1 && p.First().GetRegisterValues().Count == 1 && p.First().GetRegisterValues().First().ObisCode == ObisCode.ElectrActiveEnergyA14 )));
+        hub.Verify(h => h.Signal(It.Is<IList<Reading>>(p => p.Count == 1 && p.First().GetRegisterValues().Count == 1 && p.First().GetRegisterValues().First().ObisCode == ObisCode.ElectrActiveEnergyA14)));
+    }
+
 
 }

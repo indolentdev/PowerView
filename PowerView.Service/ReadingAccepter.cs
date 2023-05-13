@@ -2,7 +2,7 @@
 using PowerView.Model.Repository;
 using PowerView.Service.EventHub;
 
-namespace PowerView.Service.Controllers;
+namespace PowerView.Service;
 
 public class ReadingAccepter : IReadingAccepter
 {
@@ -19,7 +19,7 @@ public class ReadingAccepter : IReadingAccepter
     {
         var liveReadingsAdd = liveReadings;
 
-        var liveReadingsOk = liveReadings.Where(x => x.GetRegisterValues().Any(RegisterValueOk));
+        var liveReadingsOk = liveReadings.Where(x => x.GetRegisterValues().All(RegisterValueOk));
         var liveReadingsToFilter = liveReadings.Except(liveReadingsOk).ToList();
 
         var liveReadingsFiltered = new List<Reading>();
@@ -44,7 +44,7 @@ public class ReadingAccepter : IReadingAccepter
 
     private bool RegisterValueOk(RegisterValue rv)
     {
-        return !rv.ObisCode.IsUtilitySpecific;
+        return rv.ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpense || !rv.ObisCode.IsUtilitySpecific;
     }
 
 }
