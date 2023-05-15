@@ -367,6 +367,63 @@ public class SettingRepositoryTest : DbTestFixtureWithSchema
         Assert.That(edsiConfig.Currency, Is.EqualTo(Unit.Dkk));
     }
 
+    [Test]
+    public void GetEnergiDataServiceImportPositionAbsent()
+    {
+        // Arrange
+        var target = CreateTarget();
+
+        // Act
+        var pos = target.GetEnergiDataServiceImportPosition();
+
+        // Assert
+        Assert.That(pos, Is.Null);
+    }
+
+    [Test]
+    public void GetEnergiDataServiceImportPositionEmpty()
+    {
+        // Arrange
+        InsertSettings(new Db.Setting { Name = "EnergiDataServiceImportPosition", Value = "" });
+        var target = CreateTarget();
+
+        // Act
+        var pos = target.GetEnergiDataServiceImportPosition();
+
+        // Assert
+        Assert.That(pos, Is.Null);
+    }
+
+    [Test]
+    public void GetEnergiDataServiceImportPosition()
+    {
+        // Arrange
+        var dateTime = new DateTime(2023, 5, 13, 22, 00, 00, DateTimeKind.Utc);
+        InsertSettings(new Db.Setting { Name = "EnergiDataServiceImportPosition", Value = dateTime.ToString("o") });
+        var target = CreateTarget();
+
+        // Act
+        var pos = target.GetEnergiDataServiceImportPosition();
+
+        // Assert
+        Assert.That(pos, Is.EqualTo(dateTime));
+        Assert.That(pos.Value.Kind, Is.EqualTo(dateTime.Kind));
+    }
+
+    [Test]
+    public void UpsertEnergiDataServiceImportPosition()
+    {
+        // Arrange
+        var dateTime = new DateTime(2023, 5, 13, 22, 00, 00, DateTimeKind.Utc);
+        var target = CreateTarget();
+
+        // Act
+        target.UpsertEnergiDataServiceImportPosition(dateTime);
+
+        // Assert
+        AssertExists("EnergiDataServiceImportPosition", dateTime.ToString("o"));
+    }
+
     private SettingRepository CreateTarget()
     {
         return new SettingRepository(DbContext);

@@ -24,4 +24,8 @@ public interface ISettingRepository
 
     void UpsertEnergiDataServiceImportConfig(EnergiDataServiceImportConfig edsiConfig);
 
+    DateTime? GetEnergiDataServiceImportPosition();
+
+    void UpsertEnergiDataServiceImportPosition(DateTime position);
+
 }

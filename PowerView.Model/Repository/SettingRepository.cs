@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Microsoft.Data.Sqlite;
 using Dapper;
@@ -25,32 +26,7 @@ internal class SettingRepository : RepositoryBase, ISettingRepository
         if (items == null) throw new ArgumentNullException(nameof(items));
         if (items.Any(x => string.IsNullOrEmpty(x.Key) || string.IsNullOrEmpty(x.Value))) throw new ArgumentNullException(nameof(items));
 
-        using var transaction = DbContext.BeginTransaction();
-        try
-        {
-            foreach (var item in items)
-            {
-                var setting = DbContext.Connection.QueryFirstOrDefault<Db.Setting>(
-                  "SELECT Id, Name, Value FROM Setting WHERE Name = @Name;", new { Name = item.Key }, transaction);
-                if (setting != null)
-                {
-                    DbContext.Connection.Execute(
-                      "UPDATE Setting SET Value = @Value WHERE Id = @Id AND Name = @Name;", new { item.Value, setting.Id, setting.Name }, transaction);
-                }
-                else
-                {
-                    setting = new Db.Setting { Name = item.Key, Value = item.Value };
-                    DbContext.Connection.Execute(
-                      "INSERT INTO Setting (Name, Value) VALUES (@Name, @Value);", setting, transaction);
-                }
-            }
-            transaction.Commit();
-        }
-        catch (SqliteException e)
-        {
-            transaction.Rollback();
-            throw DataStoreExceptionFactory.Create(e);
-        }
+        DbContext.ExecuteTransaction("INSERT INTO Setting (Name, Value) VALUES (@Key, @Value) ON CONFLICT (Name) DO UPDATE SET Value = excluded.Value;", items);
     }
 
     public string Get(string name)
@@ -104,6 +80,22 @@ internal class SettingRepository : RepositoryBase, ISettingRepository
         if (edsiConfig == null) throw new ArgumentNullException(nameof(edsiConfig));
 
         Upsert(edsiConfig.GetSettings());
+    }
+
+    private const string edsiPositionName = "EnergiDataServiceImportPosition";
+    public DateTime? GetEnergiDataServiceImportPosition()
+    {
+        var positionString = Get(edsiPositionName);
+
+        if (string.IsNullOrEmpty(positionString)) return null;
+
+        return DateTime.Parse(positionString, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
+    }
+
+    public void UpsertEnergiDataServiceImportPosition(DateTime position)
+    {
+        var positionString = position.ToString("o");
+        Upsert(edsiPositionName, positionString);
     }
 
 }
