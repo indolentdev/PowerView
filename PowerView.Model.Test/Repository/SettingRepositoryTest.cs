@@ -299,45 +299,45 @@ public class SettingRepositoryTest : DbTestFixtureWithSchema
     }
 
     [Test]
-    public void UpsertEnergiDataServiceImportConfigThrows()
+    public void UpsertEnergiDataServiceImporterConfigThrows()
     {
         // Arrange
         var target = CreateTarget();
 
         // Act & Assert
-        Assert.That(() => target.UpsertEnergiDataServiceImportConfig(null), Throws.ArgumentNullException);
+        Assert.That(() => target.UpsertEnergiDataServiceImporterConfig(null), Throws.ArgumentNullException);
     }
 
     [Test]
-    public void UpsertEnergiDataServiceImportConfigInsert()
+    public void UpsertEnergiDataServiceImporterConfigInsert()
     {
         // Arrange
-        var edsiConfig = new EnergiDataServiceImportConfig(true, TimeSpan.FromHours(1), "DK2", "Main", Unit.Dkk);
+        var edsiConfig = new EnergiDataServiceImporterConfig(true, TimeSpan.FromHours(1), "DK2", "Main", Unit.Dkk);
         var target = CreateTarget();
 
         // Act
-        target.UpsertEnergiDataServiceImportConfig(edsiConfig);
+        target.UpsertEnergiDataServiceImporterConfig(edsiConfig);
 
         // Assert
-        AssertEnergiDataServiceImportConfig(true, TimeSpan.FromHours(1), "DK2", "Main", Unit.Dkk);
+        AssertEnergiDataServiceImporterConfig(true, TimeSpan.FromHours(1), "DK2", "Main", Unit.Dkk);
     }
 
     [Test]
-    public void UpsertEnergiDataServiceImportConfigUpdate()
+    public void UpsertEnergiDataServiceImporterConfigUpdate()
     {
         // Arrange
         var target = CreateTarget();
-        target.UpsertEnergiDataServiceImportConfig(new EnergiDataServiceImportConfig(false, TimeSpan.FromHours(3), "DK1", "other", Unit.Eur));
-        var edsiConfig = new EnergiDataServiceImportConfig(true, TimeSpan.FromHours(1), "DK2", "Main", Unit.Dkk);
+        target.UpsertEnergiDataServiceImporterConfig(new EnergiDataServiceImporterConfig(false, TimeSpan.FromHours(3), "DK1", "other", Unit.Eur));
+        var edsiConfig = new EnergiDataServiceImporterConfig(true, TimeSpan.FromHours(1), "DK2", "Main", Unit.Dkk);
 
         // Act
-        target.UpsertEnergiDataServiceImportConfig(edsiConfig);
+        target.UpsertEnergiDataServiceImporterConfig(edsiConfig);
 
         // Assert
-        AssertEnergiDataServiceImportConfig(true, TimeSpan.FromHours(1), "DK2", "Main", Unit.Dkk);
+        AssertEnergiDataServiceImporterConfig(true, TimeSpan.FromHours(1), "DK2", "Main", Unit.Dkk);
     }
 
-    private void AssertEnergiDataServiceImportConfig(bool importEnabled, TimeSpan timeSpan, string priceArea, string label, Unit currency)
+    private void AssertEnergiDataServiceImporterConfig(bool importEnabled, TimeSpan timeSpan, string priceArea, string label, Unit currency)
     {
         var entsoeSettings = DbContext.QueryTransaction<Db.Setting>("SELECT * FROM Setting WHERE Name like @edsi;", new { edsi = "EDSI_%" });
         Assert.That(entsoeSettings.Count, Is.EqualTo(5));
@@ -350,14 +350,14 @@ public class SettingRepositoryTest : DbTestFixtureWithSchema
     }
 
     [Test]
-    public void GetEnergiDataServiceImportConfig()
+    public void GetEnergiDataServiceImporterConfig()
     {
         // Arrange
         var target = CreateTarget();
-        target.UpsertEnergiDataServiceImportConfig(new EnergiDataServiceImportConfig(true, TimeSpan.FromHours(1), "DK2", "Main", Unit.Dkk));
+        target.UpsertEnergiDataServiceImporterConfig(new EnergiDataServiceImporterConfig(true, TimeSpan.FromHours(1), "DK2", "Main", Unit.Dkk));
 
         // Act
-        var edsiConfig = target.GetEnergiDataServiceImportConfig();
+        var edsiConfig = target.GetEnergiDataServiceImporterConfig();
 
         // Assert
         Assert.That(edsiConfig.ImportEnabled, Is.EqualTo(true));
@@ -368,34 +368,34 @@ public class SettingRepositoryTest : DbTestFixtureWithSchema
     }
 
     [Test]
-    public void GetEnergiDataServiceImportPositionAbsent()
+    public void GetEnergiDataServiceImporterPositionAbsent()
     {
         // Arrange
         var target = CreateTarget();
 
         // Act
-        var pos = target.GetEnergiDataServiceImportPosition();
+        var pos = target.GetEnergiDataServiceImporterPosition();
 
         // Assert
         Assert.That(pos, Is.Null);
     }
 
     [Test]
-    public void GetEnergiDataServiceImportPositionEmpty()
+    public void GetEnergiDataServiceImporterPositionEmpty()
     {
         // Arrange
         InsertSettings(new Db.Setting { Name = "EnergiDataServiceImportPosition", Value = "" });
         var target = CreateTarget();
 
         // Act
-        var pos = target.GetEnergiDataServiceImportPosition();
+        var pos = target.GetEnergiDataServiceImporterPosition();
 
         // Assert
         Assert.That(pos, Is.Null);
     }
 
     [Test]
-    public void GetEnergiDataServiceImportPosition()
+    public void GetEnergiDataServiceImporterPosition()
     {
         // Arrange
         var dateTime = new DateTime(2023, 5, 13, 22, 00, 00, DateTimeKind.Utc);
@@ -403,7 +403,7 @@ public class SettingRepositoryTest : DbTestFixtureWithSchema
         var target = CreateTarget();
 
         // Act
-        var pos = target.GetEnergiDataServiceImportPosition();
+        var pos = target.GetEnergiDataServiceImporterPosition();
 
         // Assert
         Assert.That(pos, Is.EqualTo(dateTime));
@@ -411,14 +411,14 @@ public class SettingRepositoryTest : DbTestFixtureWithSchema
     }
 
     [Test]
-    public void UpsertEnergiDataServiceImportPosition()
+    public void UpsertEnergiDataServiceImporterPosition()
     {
         // Arrange
         var dateTime = new DateTime(2023, 5, 13, 22, 00, 00, DateTimeKind.Utc);
         var target = CreateTarget();
 
         // Act
-        target.UpsertEnergiDataServiceImportPosition(dateTime);
+        target.UpsertEnergiDataServiceImporterPosition(dateTime);
 
         // Assert
         AssertExists("EnergiDataServiceImportPosition", dateTime.ToString("o"));

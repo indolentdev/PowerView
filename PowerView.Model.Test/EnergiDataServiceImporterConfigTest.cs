@@ -6,7 +6,7 @@ using NUnit.Framework;
 namespace PowerView.Model.Test
 {
     [TestFixture]
-    public class EnergiDataServiceImportConfigTest
+    public class EnergiDataServiceImporterConfigTest
     {
         [Test]
         public void ConstructorThrows()
@@ -19,14 +19,14 @@ namespace PowerView.Model.Test
             const Unit currency = Unit.Dkk;
 
             // Act & Asssert
-            Assert.That(() => new EnergiDataServiceImportConfig(importEnabled, TimeSpan.Zero, priceArea, label, currency), Throws.TypeOf<DomainConstraintException>().And.Message.Contains("timeSpan"));
-            Assert.That(() => new EnergiDataServiceImportConfig(importEnabled, TimeSpan.FromHours(25), priceArea, label, currency), Throws.TypeOf<DomainConstraintException>().And.Message.Contains("timeSpan"));
-            Assert.That(() => new EnergiDataServiceImportConfig(importEnabled, timeSpan, null, label, currency), Throws.TypeOf<DomainConstraintException>().And.Message.Contains("priceArea"));
-            Assert.That(() => new EnergiDataServiceImportConfig(importEnabled, timeSpan, string.Empty, label, currency), Throws.TypeOf<DomainConstraintException>().And.Message.Contains("priceArea"));
-            Assert.That(() => new EnergiDataServiceImportConfig(importEnabled, timeSpan, priceArea, null, currency), Throws.TypeOf<DomainConstraintException>().And.Message.Contains("label"));
-            Assert.That(() => new EnergiDataServiceImportConfig(importEnabled, timeSpan, priceArea, string.Empty, currency), Throws.TypeOf<DomainConstraintException>().And.Message.Contains("label"));
-            Assert.That(() => new EnergiDataServiceImportConfig(importEnabled, timeSpan, priceArea, label, Unit.Watt), Throws.TypeOf<DomainConstraintException>().And.Message.Contains("currency"));
-            Assert.That(() => new EnergiDataServiceImportConfig(importEnabled, timeSpan, priceArea, label, (Unit)89), Throws.TypeOf<DomainConstraintException>().And.Message.Contains("currency"));
+            Assert.That(() => new EnergiDataServiceImporterConfig(importEnabled, TimeSpan.Zero, priceArea, label, currency), Throws.TypeOf<DomainConstraintException>().And.Message.Contains("timeSpan"));
+            Assert.That(() => new EnergiDataServiceImporterConfig(importEnabled, TimeSpan.FromHours(25), priceArea, label, currency), Throws.TypeOf<DomainConstraintException>().And.Message.Contains("timeSpan"));
+            Assert.That(() => new EnergiDataServiceImporterConfig(importEnabled, timeSpan, null, label, currency), Throws.TypeOf<DomainConstraintException>().And.Message.Contains("priceArea"));
+            Assert.That(() => new EnergiDataServiceImporterConfig(importEnabled, timeSpan, string.Empty, label, currency), Throws.TypeOf<DomainConstraintException>().And.Message.Contains("priceArea"));
+            Assert.That(() => new EnergiDataServiceImporterConfig(importEnabled, timeSpan, priceArea, null, currency), Throws.TypeOf<DomainConstraintException>().And.Message.Contains("label"));
+            Assert.That(() => new EnergiDataServiceImporterConfig(importEnabled, timeSpan, priceArea, string.Empty, currency), Throws.TypeOf<DomainConstraintException>().And.Message.Contains("label"));
+            Assert.That(() => new EnergiDataServiceImporterConfig(importEnabled, timeSpan, priceArea, label, Unit.Watt), Throws.TypeOf<DomainConstraintException>().And.Message.Contains("currency"));
+            Assert.That(() => new EnergiDataServiceImporterConfig(importEnabled, timeSpan, priceArea, label, (Unit)89), Throws.TypeOf<DomainConstraintException>().And.Message.Contains("currency"));
         }
 
         [Test]
@@ -35,7 +35,7 @@ namespace PowerView.Model.Test
             // Arrange
 
             // Act
-            var target = new EnergiDataServiceImportConfig(true, TimeSpan.FromDays(1), "DK1", "main", Unit.Dkk);
+            var target = new EnergiDataServiceImporterConfig(true, TimeSpan.FromDays(1), "DK1", "main", Unit.Dkk);
 
             // Assert
             Assert.That(target.ImportEnabled, Is.EqualTo(true));
@@ -59,20 +59,20 @@ namespace PowerView.Model.Test
             };
 
             // Act & Assert
-            Assert.That(() => new EnergiDataServiceImportConfig(null), Throws.ArgumentNullException);
-            Assert.That(() => new EnergiDataServiceImportConfig(
+            Assert.That(() => new EnergiDataServiceImporterConfig(null), Throws.ArgumentNullException);
+            Assert.That(() => new EnergiDataServiceImporterConfig(
               settings.Except(new[] { new KeyValuePair<string, string>("EDSI_ImportEnabled", "true") }).ToList()),
               Throws.TypeOf<DomainConstraintException>().And.Message.Contains("ImportEnabled"));
-            Assert.That(() => new EnergiDataServiceImportConfig(
+            Assert.That(() => new EnergiDataServiceImporterConfig(
               settings.Except(new[] { new KeyValuePair<string, string>("EDSI_TimeSpan", "1.00:00:00") }).ToList()),
               Throws.TypeOf<DomainConstraintException>().And.Message.Contains("TimeSpan"));
-            Assert.That(() => new EnergiDataServiceImportConfig(
+            Assert.That(() => new EnergiDataServiceImporterConfig(
               settings.Except(new[] { new KeyValuePair<string, string>("EDSI_PriceArea", "DK1") }).ToList()),
               Throws.TypeOf<DomainConstraintException>().And.Message.Contains("PriceArea"));
-            Assert.That(() => new EnergiDataServiceImportConfig(
+            Assert.That(() => new EnergiDataServiceImporterConfig(
               settings.Except(new[] { new KeyValuePair<string, string>("EDSI_Label", "main") }).ToList()),
               Throws.TypeOf<DomainConstraintException>().And.Message.Contains("Label"));
-            Assert.That(() => new EnergiDataServiceImportConfig(
+            Assert.That(() => new EnergiDataServiceImporterConfig(
               settings.Except(new[] { new KeyValuePair<string, string>("EDSI_Currency", "Dkk") }).ToList()),
               Throws.TypeOf<DomainConstraintException>().And.Message.Contains("Currency"));
         }
@@ -81,7 +81,7 @@ namespace PowerView.Model.Test
         public void GetSettings()
         {
             // Arrange
-            var target = new EnergiDataServiceImportConfig(true, TimeSpan.FromDays(1), "DK1", "main", Unit.Dkk);
+            var target = new EnergiDataServiceImporterConfig(true, TimeSpan.FromDays(1), "DK1", "main", Unit.Dkk);
 
             // Act
             var settings = target.GetSettings();
@@ -99,11 +99,11 @@ namespace PowerView.Model.Test
         public void GetSettingsConstructorSettings()
         {
             // Arrange
-            var target = new EnergiDataServiceImportConfig(false, TimeSpan.FromHours(1), "DK2", "main", Unit.Eur);
+            var target = new EnergiDataServiceImporterConfig(false, TimeSpan.FromHours(1), "DK2", "main", Unit.Eur);
 
             // Act
             var settings = target.GetSettings();
-            var target2 = new EnergiDataServiceImportConfig(settings);
+            var target2 = new EnergiDataServiceImporterConfig(settings);
 
             // Assert
             Assert.That(target2.ImportEnabled, Is.EqualTo(target.ImportEnabled));
@@ -117,7 +117,7 @@ namespace PowerView.Model.Test
         public void ToStringTest()
         {
             // Arrange
-            var target = new EnergiDataServiceImportConfig(false, TimeSpan.FromHours(1), "DK2", "main", Unit.Eur);
+            var target = new EnergiDataServiceImporterConfig(false, TimeSpan.FromHours(1), "DK2", "main", Unit.Eur);
 
             // Act
             var s = target.ToString();

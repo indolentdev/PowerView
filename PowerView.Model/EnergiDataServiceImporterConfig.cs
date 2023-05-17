@@ -2,7 +2,7 @@
 
 namespace PowerView.Model
 {
-    public class EnergiDataServiceImportConfig
+    public class EnergiDataServiceImporterConfig
     {
         internal const string SettingPrefix = "EDSI_";
         private const string EdsiImportEnabled = SettingPrefix + "ImportEnabled";
@@ -11,7 +11,7 @@ namespace PowerView.Model
         private const string EdsiLabel = SettingPrefix + "Label";
         private const string EdsiCurrency = SettingPrefix + "Currency";
 
-        public EnergiDataServiceImportConfig(bool importEnabled, TimeSpan timeSpan, string priceArea, string label, Unit currency)
+        public EnergiDataServiceImporterConfig(bool importEnabled, TimeSpan timeSpan, string priceArea, string label, Unit currency)
         {
             if (timeSpan <= TimeSpan.Zero || timeSpan > TimeSpan.FromDays(1)) throw new DomainConstraintException("timeSpan must be lager than zero and below 1 day");
             if (string.IsNullOrEmpty(priceArea)) throw new DomainConstraintException("priceArea is required");
@@ -25,7 +25,7 @@ namespace PowerView.Model
             Currency = currency;
         }
 
-        internal EnergiDataServiceImportConfig(ICollection<KeyValuePair<string, string>> entsoeSettings)
+        internal EnergiDataServiceImporterConfig(ICollection<KeyValuePair<string, string>> entsoeSettings)
         {
             if (entsoeSettings == null) throw new ArgumentNullException(nameof(entsoeSettings));
 

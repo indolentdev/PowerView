@@ -2,5 +2,5 @@ namespace PowerView.Service.EventHub;
 
 public interface IEnergiDataServiceImporter
 {
-    Task Import();
+    Task Import(DateTime timestamp);
 }

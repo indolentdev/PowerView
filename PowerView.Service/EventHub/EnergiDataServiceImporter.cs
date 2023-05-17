@@ -26,12 +26,14 @@ namespace PowerView.Service.EventHub
             this.readingAccepter = readingAccepter ?? throw new ArgumentNullException(nameof(readingAccepter));
         }
 
-        public async Task Import()
+        public async Task Import(DateTime timestamp)
         {
-            EnergiDataServiceImportConfig config;
+            if (timestamp.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException(nameof(timestamp), "Must be UTC");
+
+            EnergiDataServiceImporterConfig config;
             try
             {
-                config = settingRepository.GetEnergiDataServiceImportConfig();
+                config = settingRepository.GetEnergiDataServiceImporterConfig();
             }
             catch (DomainConstraintException e)
             {
@@ -45,11 +47,12 @@ namespace PowerView.Service.EventHub
                 return;
             }
 
-            var start = settingRepository.GetEnergiDataServiceImportPosition();
+            var start = settingRepository.GetEnergiDataServiceImporterPosition();
             if (start == null) 
             {
                 logger.LogDebug($"EnergiDataService import starting from today");
-                start = locationContext.ConvertTimeToUtc(DateTime.Today);
+                var dateLocal = locationContext.ConvertTimeFromUtc(timestamp);
+                start = dateLocal.Date.ToUniversalTime();
             }
 
             IList<KwhAmount> kwhAmounts;
@@ -67,8 +70,23 @@ namespace PowerView.Service.EventHub
 
             if (kwhAmounts.Count == 0) return;
 
-            readingAccepter.Accept(ToReadings(kwhAmounts, config.Label, "EnergiDataService", config.Currency));
-            settingRepository.UpsertEnergiDataServiceImportPosition(kwhAmounts.Select(x => x.Start).Max());
+            var amountReadings = ToReadings(kwhAmounts, config.Label, "EnergiDataService", config.Currency);
+            try
+            {
+                readingAccepter.Accept(amountReadings);
+            }
+            catch (DataStoreBusyException e)
+            {
+                var msg = $"Unable to add imported readings for label:{config.Label}. Data store busy. Going to retry on next trigger.";
+                Exception ex = null;
+                if (logger.IsEnabled(LogLevel.Debug))
+                {
+                    ex = e;
+                }
+                logger.LogInformation(ex, msg);
+                return;
+            }
+            settingRepository.UpsertEnergiDataServiceImporterPosition(kwhAmounts.Select(x => x.Start).Max());
         }
 
         private IList<Reading> ToReadings(IList<KwhAmount> kwhAmounts, string label, string deviceId, Unit currency)

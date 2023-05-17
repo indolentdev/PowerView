@@ -70,12 +70,12 @@ internal class SettingRepository : RepositoryBase, ISettingRepository
         Upsert(smtpConfig.GetSettings());
     }
 
-    public EnergiDataServiceImportConfig GetEnergiDataServiceImportConfig()
+    public EnergiDataServiceImporterConfig GetEnergiDataServiceImporterConfig()
     {
-        return new EnergiDataServiceImportConfig(Find(EnergiDataServiceImportConfig.SettingPrefix));
+        return new EnergiDataServiceImporterConfig(Find(EnergiDataServiceImporterConfig.SettingPrefix));
     }
 
-    public void UpsertEnergiDataServiceImportConfig(EnergiDataServiceImportConfig edsiConfig)
+    public void UpsertEnergiDataServiceImporterConfig(EnergiDataServiceImporterConfig edsiConfig)
     {
         if (edsiConfig == null) throw new ArgumentNullException(nameof(edsiConfig));
 
@@ -83,7 +83,7 @@ internal class SettingRepository : RepositoryBase, ISettingRepository
     }
 
     private const string edsiPositionName = "EnergiDataServiceImportPosition";
-    public DateTime? GetEnergiDataServiceImportPosition()
+    public DateTime? GetEnergiDataServiceImporterPosition()
     {
         var positionString = Get(edsiPositionName);
 
@@ -92,7 +92,7 @@ internal class SettingRepository : RepositoryBase, ISettingRepository
         return DateTime.Parse(positionString, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
     }
 
-    public void UpsertEnergiDataServiceImportPosition(DateTime position)
+    public void UpsertEnergiDataServiceImporterPosition(DateTime position)
     {
         var positionString = position.ToString("o");
         Upsert(edsiPositionName, positionString);

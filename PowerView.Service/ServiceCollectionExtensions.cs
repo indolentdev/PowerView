@@ -44,6 +44,7 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddTransient<IMqttMapper, MqttMapper>();
         serviceCollection.AddTransient<IDisconnectControlFactory, DisconnectControlFactory>();
         serviceCollection.AddTransient<IHealthCheck, HealthCheck>();
+        serviceCollection.AddTransient<IEnergiDataServiceImport, EnergiDataServiceImport>();
         serviceCollection.AddTransient<IEnergiDataServiceImporter, EnergiDataServiceImporter>();
 
         // Mailer
