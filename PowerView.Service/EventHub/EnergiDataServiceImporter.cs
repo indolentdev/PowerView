@@ -86,7 +86,7 @@ namespace PowerView.Service.EventHub
                 logger.LogInformation(ex, msg);
                 return;
             }
-            settingRepository.UpsertEnergiDataServiceImporterPosition(kwhAmounts.Select(x => x.Start).Max());
+            settingRepository.UpsertEnergiDataServiceImporterPosition(kwhAmounts.Select(x => x.Start).Max().AddHours(1));
         }
 
         private IList<Reading> ToReadings(IList<KwhAmount> kwhAmounts, string label, string deviceId, Unit currency)

@@ -26,7 +26,6 @@ public class ReadingAccepterTest
 
     [Test]
     [TestCase("1.0.1.8.0.255")]
-    [TestCase("1.68.25.67.0.255")]
     public void Accept(string obisCode)
     {
         // Arrange
@@ -48,6 +47,7 @@ public class ReadingAccepterTest
     [TestCase("1.65.1.8.0.255")] // Delta
     [TestCase("1.66.1.8.0.255")] // Period
     [TestCase("1.67.2.7.0.255")] // Average
+    [TestCase("1.68.25.67.0.255")] // Electricity Income/expense amount
     public void AcceptFiltersUtilitySpecificObisCodes(string obisCode)
     {
         // Arrange

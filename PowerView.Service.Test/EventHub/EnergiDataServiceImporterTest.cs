@@ -178,7 +178,7 @@ public class EnergiDataServiceImporterTest
           p.Last().GetRegisterValues().Count == 1 && p.Last().GetRegisterValues().First().Value == 15 && p.Last().GetRegisterValues().First().Scale == 0 &&
           p.Last().GetRegisterValues().Last().Unit == Unit.Dkk && p.Last().GetRegisterValues().First().ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpense &&
           p.Last().GetRegisterValues().Last().Tag == RegisterValueTag.Import )));
-        settingRepository.Verify(x => x.UpsertEnergiDataServiceImporterPosition(It.Is<DateTime>(p => p == dateTime2 && p.Kind == dateTime2.Kind)));
+        settingRepository.Verify(x => x.UpsertEnergiDataServiceImporterPosition(It.Is<DateTime>(p => p == dateTime2.AddHours(1) && p.Kind == dateTime2.Kind)));
     }
 
     [Test]
@@ -207,7 +207,7 @@ public class EnergiDataServiceImporterTest
           p.Last().GetRegisterValues().Count == 1 && p.Last().GetRegisterValues().First().Value == 16 && p.Last().GetRegisterValues().First().Scale == 0 &&
           p.Last().GetRegisterValues().Last().Unit == Unit.Eur && p.Last().GetRegisterValues().First().ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpense &&
           p.Last().GetRegisterValues().Last().Tag == RegisterValueTag.Import)));
-        settingRepository.Verify(x => x.UpsertEnergiDataServiceImporterPosition(It.Is<DateTime>(p => p == dateTime2 && p.Kind == dateTime2.Kind)));
+        settingRepository.Verify(x => x.UpsertEnergiDataServiceImporterPosition(It.Is<DateTime>(p => p == dateTime2.AddHours(1) && p.Kind == dateTime2.Kind)));
     }
 
     [Test]

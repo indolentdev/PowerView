@@ -44,7 +44,7 @@ public class ReadingAccepter : IReadingAccepter
 
     private bool RegisterValueOk(RegisterValue rv)
     {
-        return rv.ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpense || !rv.ObisCode.IsUtilitySpecific;
+        return !rv.ObisCode.IsUtilitySpecific;
     }
 
 }
