@@ -41,7 +41,7 @@ namespace PowerView.Service.EventHub
 
             var baseAtTimezone = locationContext.ConvertTimeFromUtc(baseDateTime);
             lastRunAtTimezone = new DateTime(baseAtTimezone.Year, baseAtTimezone.Month, baseAtTimezone.Day, 0, 0, 0, 0).Add(timeOfDayAtTimezone);
-            logger.LogDebug("Interval trigger Setup. Last run date time:{0}. Interval:{1}", baseDateTime.ToString("O"), interval);
+            logger.LogDebug("Interval trigger Setup. Last run date time:{0}. Interval:{1}", lastRunAtTimezone.Value.ToString("O"), interval);
         }
 
         public bool IsTriggerTime(DateTime dateTime)
