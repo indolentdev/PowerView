@@ -66,7 +66,7 @@ namespace PowerView.Service.EventHub
 
             var dateTimeAtTimezone = locationContext.ConvertTimeFromUtc(dateTime);
 
-            while (lastRunAtTimezone.Value < dateTimeAtTimezone)
+            while ((lastRunAtTimezone.Value + interval) < dateTimeAtTimezone)
             {
                 lastRunAtTimezone += interval;
             }
