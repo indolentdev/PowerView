@@ -372,7 +372,8 @@
       "VolumeElement": "Volume Entry",
       "Flow": "Flow",
       "Temperature": "Temperature",
-      "RelativeHumidity": "Relative Humidity"
+      "RelativeHumidity": "Relative Humidity",
+      "CurrencyAmount": "Amount"
     }
   },
 
@@ -395,6 +396,7 @@
     "1.0.22.7.0.255": "Produced Power L1", 
     "1.0.42.7.0.255": "Produced Power L2", 
     "1.0.62.7.0.255": "Produced Power L3", 
+    "1.68.25.67.0.255": "El. Hourly Amount",
     "15.0.223.0.0.255": "Temperature", 
     "15.0.223.0.2.255": "Relative Humidity", 
     "8.0.1.0.0.255": "Volume Total", 
@@ -450,6 +452,7 @@
         "1.66.2.8.0.255": { "measureKind": "Period difference", "description": "Exported/produced electric energy for the period of the series. All phases.", "typicalUnits": "Watt Hour (kWh, MWh)", "hint": "" }, 
         "1.65.16.8.0.255": { "measureKind": "Net entry difference", "description": "Net imported/consumed electric energy for an entry in the series. All phases.", "typicalUnits": "Watt Hour (kWh, MWh)", "hint": "For correct values use a series interval matching your billing period. E.g. for hourly billing use 60 min interval." },
         "1.65.26.8.0.255": { "measureKind": "Net entry difference", "description": "Net exported/produced electric energy for an entry in the series. All phases.", "typicalUnits": "Watt Hour (kWh, MWh)", "hint": "For correct values use a series interval matching your billing period. E.g. for hourly billing use 60 min interval." },
+        "1.68.25.67.0.255": { "measureKind": "Hour Period", "description": "Electricity income/expense amount per kWh within a specific clock hour. Excludes VAT or other charges.", "typicalUnits": "Currency (DKK, EUR)", "hint": "Is available only with 60 min interval." },
 
         "8.0.2.0.0.255": { "measureKind": "Current", "description": "Imported/consumed water flow", "typicalUnits": "Litre/Hour (l/h)", "hint": "" }, 
         "8.0.1.0.0.255": { "measureKind": "Cumulative", "description": "Imported/consumed water volume", "typicalUnits": "Cubic Metre (m3)", "hint": "" }, 
@@ -483,8 +486,9 @@
         "entryAverage": { "title": "Entry average", "associatedTo": "Label", "description": "Calculated from two values in the Cumulative series. The difference between a value and its previous value in the series is converted to the average rate value for the duration.", "hint": "" },
         "entryDifference": { "title": "Entry difference", "associatedTo": "Label", "description": "Calculated from two values in the Cumulative series. Is the difference between a value and its previous value in the series. When the previous Cumulative value is from a different device or a wrap has happened between the two values the calculation tries to account for the actual difference.", "hint": "" },
         "periodDifference": { "title": "Period difference", "associatedTo": "Label", "description": "Calculated from two values in the Cumulative series. Is the difference between the base value and a later value. When the base Cumulative value is from a different device or a wrap has happened between the two values the calculation tries to account for the actual difference.", "hint": "" },
-        "netEntryDifference": { "title": "Net entry difference", "associatedTo": "Label", "description": "Calculated from two values in the Entry difference series. Is the positive difference between the corresponding import/consumed entry difference value and export/produced entry difference value.", "hint": "" }
-      }
+        "netEntryDifference": { "title": "Net entry difference", "associatedTo": "Label", "description": "Calculated from two values in the Entry difference series. Is the positive difference between the corresponding import/consumed entry difference value and export/produced entry difference value.", "hint": "" },
+         "hourlyPeriod": { "title": "Hour Period", "associatedTo": "Label", "description": "Hourly period value applicable for a specific start timestamp and 60 min. Typicaly aligned with hours on the clock.", "hint": "" }
+     }
     }
 
   }  

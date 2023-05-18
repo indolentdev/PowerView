@@ -54,6 +54,8 @@ app.Services.GetRequiredService<IDbSetup>().SetupDatabase();
 app.Services.GetRequiredService<ILocationSetup>().SetupLocation();
 app.Services.GetRequiredService<ITestDataSetup>().SetupTestData(); // Will only run conditionally..
 
+app.Services.GetService<PowerView.Service.EventHub.IHub>(); // Init the hub at startup
+
 // Launch the app
 var serviceOptions = app.Services.GetRequiredService<IOptions<ServiceOptions>>();
 app.Run(serviceOptions.Value.BaseUrl);

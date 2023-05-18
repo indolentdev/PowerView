@@ -370,7 +370,8 @@
       "VolumeElement": "Volume Punkt",
       "Flow": "Gennemstrømning",
       "Temperature": "Temperatur",
-      "RelativeHumidity": "Relativ Luftfugtighed"
+      "RelativeHumidity": "Relativ Luftfugtighed",
+      "CurrencyAmount": "Beløb"
     }
   },
 
@@ -393,6 +394,7 @@
     "1.0.22.7.0.255": "Produceret Effekt L1", 
     "1.0.42.7.0.255": "Produceret Effekt L2", 
     "1.0.62.7.0.255": "Produceret Effekt L3", 
+    "1.68.25.67.0.255": "El Spotpris",
     "15.0.223.0.0.255": "Temperatur", 
     "15.0.223.0.2.255": "Relativ Luftfugtighed", 
     "8.0.1.0.0.255": "Volume Total", 
@@ -448,6 +450,7 @@
         "1.66.2.8.0.255": { "measureKind": "Periode forskel", "description": "Eksporteret/produceret elektrisk energi for seriens periode. Alle faser.", "typicalUnits": "Watt-time (kWh, MWh)", "hint": "" }, 
         "1.65.16.8.0.255": { "measureKind": "Netto punkt forskel", "description": "Netto importeret/forbrugt elektrisk energi for et punkt i serien. Alle faser.", "typicalUnits": "Watt-time (kWh, MWh)", "hint": "For korrekte værdier benyt med et serie interval der modsvarer afregningsperioden. F.eks. ved timeafregning benyt 60 min interval." },
         "1.65.26.8.0.255": { "measureKind": "Netto punkt forskel", "description": "Netto eksporteret/produceret elektrisk energi for et punkt i serien. Alle faser.", "typicalUnits": "Watt-time (kWh, MWh)", "hint": "For korrekte værdier benyt med et serie interval der modsvarer afregningsperioden. F.eks. ved timeafregning benyt 60 min interval." },
+        "1.68.25.67.0.255": { "measureKind": "Time Periode", "description": "El spot prisen for én kWh for en specifik klokketime. Uden moms og afgifter.", "typicalUnits": "Møntfod (DKK, EUR)", "hint": "Er kun tilgængelig med 60 min interval." },
 
         "8.0.2.0.0.255": { "measureKind": "Aktuel", "description": "Importeret/forbrugt vand gennemstrømning", "typicalUnits": "Liter/Time (l/h)", "hint": "" }, 
         "8.0.1.0.0.255": { "measureKind": "Kumulativ", "description": "Importeret/forbrugt vand volume", "typicalUnits": "Kubikmeter (m3)", "hint": "" }, 
@@ -481,7 +484,8 @@
         "entryAverage": { "title": "Punkt gennemsnit", "associatedTo": "Etiket", "description": "Beregnet fra to værdier i Kumulativ serien. Forskellen mellem en værdi og dens forrige værdi i serien konverteres til gennemsnitlig rate for varigheden.", "hint": "" },
         "entryDifference": { "title": "Punkt forskel", "associatedTo": "Etiket", "description": "Beregnet fra to værdier i Kumulativ serien. Er forskellen mellem en værdi og dens forrige værdi i serien. Når den forrige Kumulative værdi er fra en anden enhed eller værdien er rullet rundt mellem de to værdier forsøger beregningen at udregne den faktiske forskel.", "hint": "" },
         "periodDifference": { "title": "Periode forskel", "associatedTo": "Etiket", "description": "Beregnet fra to værdier i Kumulativ serien. Er forskellen mellem base værdien og en senere værdi i serien. Når base Kumulativ værdien er fra en anden enhed eller værdien er rullet rundt mellem de to værdier forsøger beregningen at udregne den faktiske forskel.", "hint": "" },
-        "netEntryDifference": { "title": "Netto punkt forskel", "associatedTo": "Etiket", "description": "Beregnet fra to værdier i Punkt forskel serien. Er den positive forskel mellem importeret/forbrugt Punkt forskel værdien og eksporteret/produceret Punkt forskel værdien.", "hint": "" }
+        "netEntryDifference": { "title": "Netto punkt forskel", "associatedTo": "Etiket", "description": "Beregnet fra to værdier i Punkt forskel serien. Er den positive forskel mellem importeret/forbrugt Punkt værdien og eksporteret/produceret Punkt værdien.", "hint": "" },
+        "hourlyPeriod": { "title": "Time Periode", "associatedTo": "Etiket", "description": "Time periode værdi gældende fra et start tidspunkt og 60 min frem. Flugter typisk med hele klokketimer.", "hint": "" }
       }
     }
     

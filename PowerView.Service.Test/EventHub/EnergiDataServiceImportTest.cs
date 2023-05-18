@@ -38,7 +38,7 @@ namespace PowerView.Service.Test.EventHub
             var target = CreateTarget();
 
             // Assert
-            intervalTrigger.Verify(it => it.Setup(TimeSpan.FromMinutes(2), TimeSpan.FromHours(1)));
+            intervalTrigger.Verify(it => it.Setup(TimeSpan.FromMinutes(0), TimeSpan.FromHours(1)));
         }
 
         [Test]
