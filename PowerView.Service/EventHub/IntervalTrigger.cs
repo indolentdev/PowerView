@@ -50,7 +50,6 @@ namespace PowerView.Service.EventHub
             if (lastRunAtTimezone == null) throw new InvalidOperationException("Setup first");
 
             var dateTimeAtTimezone = locationContext.ConvertTimeFromUtc(dateTime);
-            logger.LogDebug("Is interval trigger time. Date time:{0}", dateTimeAtTimezone.ToString("O"));
             if (dateTimeAtTimezone < lastRunAtTimezone.Value + interval)
             {
                 return false;
