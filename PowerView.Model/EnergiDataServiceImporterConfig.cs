@@ -13,7 +13,7 @@ namespace PowerView.Model
 
         public EnergiDataServiceImporterConfig(bool importEnabled, TimeSpan timeSpan, string priceArea, string label, Unit currency)
         {
-            if (timeSpan <= TimeSpan.Zero || timeSpan > TimeSpan.FromDays(1)) throw new DomainConstraintException("timeSpan must be lager than zero and below 1 day");
+            if (timeSpan <= TimeSpan.Zero || timeSpan > TimeSpan.FromDays(7)) throw new DomainConstraintException("timeSpan must be lager than zero and below 1 day");
             if (string.IsNullOrEmpty(priceArea)) throw new DomainConstraintException("priceArea is required");
             if (string.IsNullOrEmpty(label)) throw new DomainConstraintException("label is required");
             if (currency != Unit.Dkk && currency != Unit.Eur) throw new DomainConstraintException("currency must be Dkk or Eur");

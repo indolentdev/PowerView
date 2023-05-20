@@ -20,7 +20,7 @@ namespace PowerView.Model.Test
 
             // Act & Asssert
             Assert.That(() => new EnergiDataServiceImporterConfig(importEnabled, TimeSpan.Zero, priceArea, label, currency), Throws.TypeOf<DomainConstraintException>().And.Message.Contains("timeSpan"));
-            Assert.That(() => new EnergiDataServiceImporterConfig(importEnabled, TimeSpan.FromHours(25), priceArea, label, currency), Throws.TypeOf<DomainConstraintException>().And.Message.Contains("timeSpan"));
+            Assert.That(() => new EnergiDataServiceImporterConfig(importEnabled, TimeSpan.FromHours(24*7+1), priceArea, label, currency), Throws.TypeOf<DomainConstraintException>().And.Message.Contains("timeSpan"));
             Assert.That(() => new EnergiDataServiceImporterConfig(importEnabled, timeSpan, null, label, currency), Throws.TypeOf<DomainConstraintException>().And.Message.Contains("priceArea"));
             Assert.That(() => new EnergiDataServiceImporterConfig(importEnabled, timeSpan, string.Empty, label, currency), Throws.TypeOf<DomainConstraintException>().And.Message.Contains("priceArea"));
             Assert.That(() => new EnergiDataServiceImporterConfig(importEnabled, timeSpan, priceArea, null, currency), Throws.TypeOf<DomainConstraintException>().And.Message.Contains("label"));
