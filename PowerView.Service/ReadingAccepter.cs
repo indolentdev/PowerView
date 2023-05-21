@@ -39,12 +39,21 @@ public class ReadingAccepter : IReadingAccepter
         }
 
         liveReadingRepository.Add(liveReadingsAdd);
-        hub.Signal(liveReadingsAdd);
+
+        if (SignalHub(liveReadingsAdd))
+        {
+            hub.Signal(liveReadingsAdd);
+        }
     }
 
     private bool RegisterValueOk(RegisterValue rv)
     {
-        return !rv.ObisCode.IsUtilitySpecific;
+        return !rv.ObisCode.IsUtilitySpecific || rv.ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpense;
+    }
+
+    private bool SignalHub(IList<Reading> readings)
+    {
+        return !readings.SelectMany(x => x.GetRegisterValues()).Any(x => x.ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpense);
     }
 
 }

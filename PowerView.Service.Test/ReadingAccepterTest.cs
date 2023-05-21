@@ -44,10 +44,28 @@ public class ReadingAccepterTest
     }
 
     [Test]
+    [TestCase("1.68.25.67.0.255")] // Electricity Income/expense amount
+    public void AcceptButSkipHubSignal(string obisCode)
+    {
+        // Arrange
+        var liveReadingRepository = new Mock<ILiveReadingRepository>();
+        var hub = new Mock<IHub>();
+        var target = new ReadingAccepter(liveReadingRepository.Object, hub.Object);
+        var liveReadings = new[] { new Reading("lbl", "sn1", DateTime.UtcNow,
+                                                  new [] { new RegisterValue(obisCode, 1, 0, Unit.WattHour)}) };
+
+        // Act
+        target.Accept(liveReadings);
+
+        // Assert
+        liveReadingRepository.Verify(lrr => lrr.Add(liveReadings));
+        hub.Verify(h => h.Signal(It.IsAny<IList<Reading>>()), Times.Never);
+    }
+
+    [Test]
     [TestCase("1.65.1.8.0.255")] // Delta
     [TestCase("1.66.1.8.0.255")] // Period
     [TestCase("1.67.2.7.0.255")] // Average
-    [TestCase("1.68.25.67.0.255")] // Electricity Income/expense amount
     public void AcceptFiltersUtilitySpecificObisCodes(string obisCode)
     {
         // Arrange
