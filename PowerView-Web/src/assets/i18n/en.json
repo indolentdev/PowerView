@@ -173,7 +173,8 @@
         "placeholderDelete" : "Enter to confirm"
       },
       "tags": {
-        "Manual": "Manual"
+        "Manual": "Manual",
+        "Import": "Import"
       }
     },
     "export": {

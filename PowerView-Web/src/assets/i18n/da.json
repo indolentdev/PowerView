@@ -171,7 +171,8 @@
         "placeholderDelete": "Indtast for at bekræfte"
       },
       "tags": {
-        "Manual": "Manuel"
+        "Manual": "Manuel",
+        "Impport": "Importeret"
       }
     },
     "export": {

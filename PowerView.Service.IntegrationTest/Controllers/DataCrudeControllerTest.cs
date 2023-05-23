@@ -11,6 +11,7 @@ using Moq;
 using NUnit.Framework;
 using PowerView.Model;
 using PowerView.Model.Repository;
+using PowerView.Service.Controllers;
 using PowerView.Service.Mappers;
 
 namespace PowerView.Service.IntegrationTest;
@@ -140,8 +141,8 @@ public class DataCrudeControllerTest
         // Arrange
         var baseTime = new DateTime(2022, 10, 18, 19, 39, 12, DateTimeKind.Utc);
         var value1 = new CrudeDataValue(baseTime, ObisCode.ElectrActiveEnergyA14, 123, 1, Unit.WattHour, "SN1");
-        var value2 = new CrudeDataValue(baseTime, ObisCode.ElectrActiveEnergyA23, 321, 1, Unit.WattHour, "SN1");
-        var value3 = new CrudeDataValue(baseTime.AddHours(1), ObisCode.ElectrActiveEnergyA14, 456, 1, Unit.WattHour, "SN1");
+        var value2 = new CrudeDataValue(baseTime, ObisCode.ElectrActiveEnergyA23, 321, 1, Unit.WattHour, "SN1", RegisterValueTag.Manual);
+        var value3 = new CrudeDataValue(baseTime.AddHours(1), ObisCode.ElectrActiveEnergyA14, 456, 1, Unit.WattHour, "SN1", RegisterValueTag.Import);
         SetupCrudeDataRepositoryGetCrudeData(44, value1, value2, value3);
 
         // Act
@@ -290,7 +291,7 @@ public class DataCrudeControllerTest
     {
         // Arrange
         var baseTime = new DateTime(2022, 10, 18, 19, 39, 12, DateTimeKind.Utc);
-        var value = new CrudeDataValue(baseTime, ObisCode.ElectrActiveEnergyA14, 123, 1, Unit.WattHour, "SN1");
+        var value = new CrudeDataValue(baseTime, ObisCode.ElectrActiveEnergyA14, 123, 1, Unit.WattHour, "SN1", RegisterValueTag.Manual);
         SetupCrudeDataRepositoryGetCrudeDataBy(value);
 
         // Act
@@ -311,6 +312,7 @@ public class DataCrudeControllerTest
         Assert.That(actual.scale, Is.EqualTo(expected.Scale));
         Assert.That(actual.unit, Is.EqualTo(UnitMapper.Map(expected.Unit)));
         Assert.That(actual.deviceId, Is.EqualTo(expected.DeviceId));
+        Assert.That(actual.tags, Is.EqualTo(CrudeDataController.GetFlags(expected.Tag).Select(x => x.ToString()).ToList()));
     }
 
     [Test]
@@ -575,6 +577,7 @@ public class DataCrudeControllerTest
         public short scale { get; set; }
         public string unit { get; set; }
         public string deviceId { get; set; }
+        public string[] tags { get; set; }
     }
 
     internal class TestMissingDateDto

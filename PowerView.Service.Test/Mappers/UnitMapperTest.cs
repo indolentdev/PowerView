@@ -58,6 +58,8 @@ namespace PowerView.Service.Test.Mappers
           new object[] { "J", Unit.Joule },
           new object[] { "J/h", Unit.JoulePrHour },
           new object[] { "%", Unit.Percentage },
+          new object[] { "EUR", Unit.Eur },
+          new object[] { "DKK", Unit.Dkk },
 
           new object[] { "", Unit.NoUnit },
         };

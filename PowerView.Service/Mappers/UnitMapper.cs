@@ -24,6 +24,10 @@ namespace PowerView.Service.Mappers
                     return "J/h";
                 case Unit.Percentage:
                     return "%";
+                case Unit.Eur:
+                    return "EUR";
+                case Unit.Dkk:
+                    return "DKK";
                 case Unit.NoUnit:
                     return string.Empty;
                 default:
@@ -53,6 +57,10 @@ namespace PowerView.Service.Mappers
                     return Unit.JoulePrHour;
                 case "%":
                     return Unit.Percentage;
+                case "EUR":
+                    return Unit.Eur;
+                case "DKK":
+                    return Unit.Dkk;
                 case "":
                     return Unit.NoUnit;
 

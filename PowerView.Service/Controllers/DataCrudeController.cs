@@ -1,8 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using PowerView.Model;
 using PowerView.Model.Repository;
 using PowerView.Service.Mappers;
 
@@ -35,9 +38,7 @@ public class CrudeDataController : ControllerBase
         var r = new {
             Label = label,
             TotalCount = crudeData.TotalCount,
-            Values = crudeData.Result.Select(x => new { 
-                Timestamp = x.DateTime, ObisCode = x.ObisCode.ToString(), x.Value, x.Scale, Unit = UnitMapper.Map(x.Unit), x.DeviceId
-             }).ToList()
+            Values = crudeData.Result.Select(MapCrudeValue).ToList()
         };
 
         return Ok(r);
@@ -58,17 +59,31 @@ public class CrudeDataController : ControllerBase
             return NoContent();
         }
 
-        var r = new
+        var r = MapCrudeValue(crudeData);
+
+        return Ok(r);
+    }
+
+    private static object MapCrudeValue(CrudeDataValue crudeData)
+    {
+        return new
         {
             Timestamp = crudeData.DateTime,
             ObisCode = crudeData.ObisCode.ToString(),
             crudeData.Value,
             crudeData.Scale,
             Unit = UnitMapper.Map(crudeData.Unit),
-            crudeData.DeviceId
+            crudeData.DeviceId,
+            Tags = GetFlags(crudeData.Tag).Select(x => x.ToString()).ToList()
         };
+    }
 
-        return Ok(r);
+    internal static IEnumerable<RegisterValueTag> GetFlags(RegisterValueTag input)
+    {
+        foreach (var value in Enum.GetValues<RegisterValueTag>()) 
+        {
+            if (input.HasFlag(value)) yield return value;
+        }            
     }
 
     [HttpDelete("values/{label}/{timestamp}/{obisCode}")]
