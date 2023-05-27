@@ -2,15 +2,10 @@ using System;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using NUnit.Framework;
-using PowerView.Service.EventHub;
 using PowerView.Service.EnergiDataService;
-using PowerView.Model;
-using PowerView.Model.Repository;
 using System.Net.Http;
-using Microsoft.Extensions.Http;
 
 namespace PowerView.Service.Test.EnergiDataService;
 
@@ -65,7 +60,7 @@ public class EnergiDataServiceClientTest
         var dateTime = new DateTime(2023, 04, 18, 22, 13, 22, DateTimeKind.Utc);
         var timeSpan = TimeSpan.FromHours(3);
         const string priceArea = "DK9";
-        var handler = SetupHttpClientFactory("{\"records\":[]}");
+        var (handler, _) = SetupHttpClientFactory("{\"records\":[]}");
 
         var target = CreateTarget();
 
@@ -96,6 +91,24 @@ public class EnergiDataServiceClientTest
 
         // Assert
         Assert.That(amounts, Is.Empty);
+    }
+
+    [Test]
+    public async Task GetElectricityAmountsRequestTimeout()
+    {
+        // Arrange
+        var dateTime = new DateTime(2023, 04, 18, 22, 13, 22, DateTimeKind.Utc);
+        var timeSpan = TimeSpan.FromHours(3);
+        const string priceArea = "DK9";
+        var (handler, httpClient) = SetupHttpClientFactory("{\"records\":[]}");
+
+        var target = CreateTarget();
+
+        // Act
+        var amounts = await target.GetElectricityAmounts(dateTime, timeSpan, priceArea);
+
+        // Assert
+        Assert.That(httpClient.Timeout, Is.EqualTo(options.RequestTimeout));
     }
 
     [Test]
@@ -151,57 +164,36 @@ public class EnergiDataServiceClientTest
         Assert.ThrowsAsync<EnergiDataServiceClientException>(() => target.GetElectricityAmounts(dateTime, timeSpan, priceArea));
     }
 
-    private Mock<Func<HttpRequestMessage, CancellationToken, HttpResponseMessage>> SetupHttpClientFactory(string responseContent)
+    private (Mock<Func<HttpRequestMessage, CancellationToken, HttpResponseMessage>> Handler, HttpClient HttpClient) SetupHttpClientFactory(string responseContent)
     {
-        var httpMessageHandler = SetupHttpClientFactory();
+        var (httpMessageHandler, httpClient) = SetupHttpClientFactory();
         httpMessageHandler.Setup(x => x(It.IsAny<HttpRequestMessage>(), It.IsAny<CancellationToken>()))
             .Returns(new HttpResponseMessage(System.Net.HttpStatusCode.OK) 
               { Content = new StringContent(responseContent, Encoding.UTF8, "application/json") } );
 
-        return httpMessageHandler;
+        return (httpMessageHandler, httpClient);
     }
 
-    private Mock<Func<HttpRequestMessage, CancellationToken, HttpResponseMessage>> SetupHttpClientFactory(Exception exception)
+    private (Mock<Func<HttpRequestMessage, CancellationToken, HttpResponseMessage>> Handler, HttpClient HttpClient) SetupHttpClientFactory(Exception exception)
     {
-        var httpMessageHandler = SetupHttpClientFactory();
+        var (httpMessageHandler, httpClient) = SetupHttpClientFactory();
         httpMessageHandler.Setup(x => x(It.IsAny<HttpRequestMessage>(), It.IsAny<CancellationToken>()))
             .Throws(exception);
 
-        return httpMessageHandler;
+        return (httpMessageHandler, httpClient);
     }
 
-    private Mock<Func<HttpRequestMessage, CancellationToken, HttpResponseMessage>> SetupHttpClientFactory()
+    private (Mock<Func<HttpRequestMessage, CancellationToken, HttpResponseMessage>> Handler, HttpClient HttpClient) SetupHttpClientFactory()
     {
         var func = new Mock<Func<HttpRequestMessage, CancellationToken, HttpResponseMessage>>();
         var stub = new HttpMessageHandlerStub(func.Object);
         var httpClient = new HttpClient(stub);
         httpClientFactory.Setup(x => x.CreateClient(It.IsAny<string>())).Returns(httpClient);
-        return func;
+        return (func, httpClient);
     }
 
     private EnergiDataServiceClient CreateTarget()
     {
         return new EnergiDataServiceClient(options, httpClientFactory.Object);
     }
-
-
-    [Test]
-    public async Task T()
-    {
-        // Arrange
-        var httpClientFactory = new Mock<IHttpClientFactory>();
-        var httpClient = new HttpClient();
-        httpClientFactory.Setup(x => x.CreateClient(It.IsAny<string>())).Returns(httpClient);
-
-        var target = new EnergiDataServiceClient(new EnergiDataServiceClientOptions(), httpClientFactory.Object);
-
-        var start = new DateTime(2023, 02, 27, 23, 00, 0, DateTimeKind.Utc);
-        var timeSpan = TimeSpan.FromDays(1);
-
-        // Act
-        var x = await target.GetElectricityAmounts(start, timeSpan, "DK1");
-
-        // Assert
-    }
-
 }

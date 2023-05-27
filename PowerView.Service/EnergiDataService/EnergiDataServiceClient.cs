@@ -46,6 +46,7 @@ public class EnergiDataServiceClient : IEnergiDataServiceClient
         var url = UrlHelper.EncodeUrlParameters(options.BaseUrl, $"elspotprices?start={periodStart}&end={periodEnd}&filter={filter}&timezone={timezone}&sort={sort}");
         using (var httpClient = httpClientFactory.CreateClient())
         {
+            httpClient.Timeout = options.RequestTimeout;
             using var request = new HttpRequestMessage(HttpMethod.Get, url);
             try
             {
@@ -81,7 +82,7 @@ public class EnergiDataServiceClient : IEnergiDataServiceClient
         }
         catch (ValidationException e)
         {
-            throw new EnergiDataServiceClientException($"Energi Data Service response validation failed.", e);
+            throw new EnergiDataServiceClientException("Energi Data Service response validation failed.", e);
         }
     }
 

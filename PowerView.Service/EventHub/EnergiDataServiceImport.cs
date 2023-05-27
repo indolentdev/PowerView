@@ -19,7 +19,7 @@ namespace PowerView.Service.EventHub
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.intervalTrigger = intervalTrigger ?? throw new ArgumentNullException(nameof(intervalTrigger));
 
-            this.intervalTrigger.Setup(new TimeSpan(0, 0, 0), TimeSpan.FromHours(1));
+            this.intervalTrigger.Setup(new TimeSpan(0, 4, 0), TimeSpan.FromHours(1));
         }
 
         public async Task Import(IServiceScope serviceScope, DateTime dateTime)

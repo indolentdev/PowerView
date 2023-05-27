@@ -7,5 +7,6 @@ public class EnergiDataServiceClientOptions : IOptions<EnergiDataServiceClientOp
 {
     public Uri BaseUrl { get; set; } = new Uri("https://api.energidataservice.dk/dataset/");
 
+    public TimeSpan RequestTimeout { get; set; } = TimeSpan.FromSeconds(240);
     EnergiDataServiceClientOptions IOptions<EnergiDataServiceClientOptions>.Value => this;
 }
