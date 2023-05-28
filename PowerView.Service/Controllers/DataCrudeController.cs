@@ -82,6 +82,8 @@ public class CrudeDataController : ControllerBase
     {
         foreach (var value in Enum.GetValues<RegisterValueTag>()) 
         {
+            if (value == RegisterValueTag.None) continue;
+            
             if (input.HasFlag(value)) yield return value;
         }            
     }

@@ -23,12 +23,22 @@ describe('ScalerPipe', () => {
 
   it('0.1', () => {
     const pipe = new ScalerPipe();
-    expect(pipe.transform(-1)).toBe((0.1).toString());
+    expect(pipe.transform(-1)).toBe(("0.1"));
   });
 
   it('0.001', () => {
     const pipe = new ScalerPipe();
-    expect(pipe.transform(-3)).toBe((0.001).toString());
+    expect(pipe.transform(-3)).toBe(("0.001"));
+  });
+
+  it('0.00001', () => {
+    const pipe = new ScalerPipe();
+    expect(pipe.transform(-5)).toBe(("0.00001"));
+  });
+
+  it('0.0000001', () => {
+    const pipe = new ScalerPipe();
+    expect(pipe.transform(-7)).toBe(("0.0000001"));
   });
 
 });

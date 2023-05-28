@@ -397,7 +397,7 @@
     "1.0.22.7.0.255": "Produced Power L1", 
     "1.0.42.7.0.255": "Produced Power L2", 
     "1.0.62.7.0.255": "Produced Power L3", 
-    "1.68.25.67.0.255": "El. Hourly Amount",
+    "1.68.25.67.0.255": "Hour Amount Per kWh",
     "15.0.223.0.0.255": "Temperature", 
     "15.0.223.0.2.255": "Relative Humidity", 
     "8.0.1.0.0.255": "Volume Total", 
