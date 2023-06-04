@@ -89,8 +89,8 @@ namespace PowerView.Model.Repository
                 var details = new System.Text.StringBuilder();
                 foreach (var item in ignoredReadingsAndRegisters)
                 {
-                    details.AppendLine(string.Empty).Append("Label:").Append(item.Reading.Label).Append("Timestamp:")
-                      .Append(item.Reading.Timestamp.ToString("o")).Append("ObisCodes:").Append(string.Join(", ", item.DbRegisters.Select(x => obisIds.FirstOrDefault(o => o.Value == x.ObisId).Key)));
+                    details.AppendLine(string.Empty).Append("Label:").Append(item.Reading.Label).Append(", Timestamp:")
+                      .Append(item.Reading.Timestamp.ToString("o")).Append(", ObisCodes:").Append(string.Join(", ", item.DbRegisters.Select(x => obisIds.FirstOrDefault(o => o.Value == x.ObisId).Key)));
                 }
                 logger.LogInformation($"{ignoredRegisters.Count} register(s) and associated tag(s) were ignored during insert to database due to duplicate constraints.{details.ToString()}");
             }
