@@ -231,7 +231,7 @@ export class ProfileGraphComponent implements OnInit {
       this.getYAxis("tempHiddenYAxis"),
       this.getYAxis("rh", "RelativeHumidity", 0, true),
       this.getYAxis("dcOutputStatusHiddenYAxis"),
-      this.getYAxis("currencyAmount", "CurrencyAmount", 0, true),
+      this.getYAxis("currencyAmount", "CurrencyAmount", -2, true),
     ];
   }
 
