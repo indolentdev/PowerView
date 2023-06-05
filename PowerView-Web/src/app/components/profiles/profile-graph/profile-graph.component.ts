@@ -219,19 +219,19 @@ export class ProfileGraphComponent implements OnInit {
 
     return [ 
       this.getYAxis("energyPeriod", "Energy", 0, true),
-      this.getYAxis("energyDelta", "EnergyElement"),
-      this.getYAxis("power", "Power"),
+      this.getYAxis("energyDelta", "EnergyElement", 0),
+      this.getYAxis("power", "Power", 0),
       this.getYAxis("volumePeriod", "Volume", 0, true),
-      this.getYAxis("volumePeriodHiddenYAxis"),
-      this.getYAxis("volumeDelta", "VolumeElement"),
-      this.getYAxis("volumeDeltaHiddenYAxis"),
-      this.getYAxis("flow", "Flow"),
-      this.getYAxis("flowHiddenYAxis"),
-      this.getYAxis("temp", "Temperature"),
-      this.getYAxis("tempHiddenYAxis"),
+      this.getYAxis("volumePeriodHiddenYAxis", undefined, 0),
+      this.getYAxis("volumeDelta", "VolumeElement", 0),
+      this.getYAxis("volumeDeltaHiddenYAxis", undefined, 0),
+      this.getYAxis("flow", "Flow", 0),
+      this.getYAxis("flowHiddenYAxis", undefined, 0),
+      this.getYAxis("temp", "Temperature", 0),
+      this.getYAxis("tempHiddenYAxis", undefined, 0),
       this.getYAxis("rh", "RelativeHumidity", 0, true),
-      this.getYAxis("dcOutputStatusHiddenYAxis"),
-      this.getYAxis("currencyAmount", "CurrencyAmount", -2, true),
+      this.getYAxis("dcOutputStatusHiddenYAxis", undefined, 0),
+      this.getYAxis("currencyAmount", "CurrencyAmount", undefined, true),
     ];
   }
 
@@ -250,7 +250,7 @@ export class ProfileGraphComponent implements OnInit {
         }, 
         style: {color: "black"}
       },
-      min: min == undefined ? 0 : min
+      min: min
     };
     if (opposite != undefined)
     {
