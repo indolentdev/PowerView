@@ -24,4 +24,4 @@ This product is licensed under the GNU Affero General Public License v3.0 Licens
 
 ## Official Releases
 PowerView application versions are available [here](https://www.dropbox.com/sh/kik4ncx4rsmmv20/AABjbPvDpnJMyX2xBysPRobYa?dl=0).
-The freind-applications PowerLog is available [here](https://www.dropbox.com/sh/bnrjivdk1gm9cdl/AADmlwEvNu-19c0Gu7fjvtmOa?dl=0) and Sung is available here [here](https://www.dropbox.com/sh/e3fykme1czq5r1g/AACRj9n2wWPmbDiWQBW6gC6La).
+The freind-applications PowerLog is available [here](https://www.dropbox.com/sh/bnrjivdk1gm9cdl/AADmlwEvNu-19c0Gu7fjvtmOa?dl=0) and SunLog is available here [here](https://www.dropbox.com/sh/e3fykme1czq5r1g/AACRj9n2wWPmbDiWQBW6gC6La).
