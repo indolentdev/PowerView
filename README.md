@@ -4,7 +4,7 @@ Primary deployment on a Raspberry Pi running Raspberry PI OS.
 
 
 ## Getting Started
-* Download the latest official release from [here](https://www.dropbox.com/sh/kik4ncx4rsmmv20/AABjbPvDpnJMyX2xBysPRobYa?dl=0)
+* Download the latest official release
 * Unzip the downloaded file
 * Go to the unzipped folder and view Doc/StartHere.html in you favorite browser.
 * Follow the instructions
@@ -20,3 +20,8 @@ Primary deployment on a Raspberry Pi running Raspberry PI OS.
 
 ## License
 This product is licensed under the GNU Affero General Public License v3.0 License - see the [LICENSE](LICENSE) file for details
+
+
+## Official Releases
+PowerView application versions are available [here](https://www.dropbox.com/sh/kik4ncx4rsmmv20/AABjbPvDpnJMyX2xBysPRobYa?dl=0).
+The freind-applications PowerLog is available [here](https://www.dropbox.com/sh/bnrjivdk1gm9cdl/AADmlwEvNu-19c0Gu7fjvtmOa?dl=0) and Sung is available here [here](https://www.dropbox.com/sh/e3fykme1czq5r1g/AACRj9n2wWPmbDiWQBW6gC6La).
