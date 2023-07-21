@@ -66,9 +66,9 @@ namespace PowerView.Service.EventHub
                 return;
             }
 
-            logger.LogDebug($"Fetched {kwhAmounts.Count} values from Energi Data Service");
-
             if (kwhAmounts.Count == 0) return;
+
+            logger.LogDebug($"Fetched {kwhAmounts.Count} values from Energi Data Service");
 
             var amountReadings = ToReadings(kwhAmounts, config.Label, "EnergiDataService", config.Currency);
             try
