@@ -43,14 +43,14 @@ namespace PowerView.Service.EventHub
 
             if (!config.ImportEnabled)
             {
-                logger.LogDebug($"EnergiDataService import disabled");
+                logger.LogTrace($"EnergiDataService import disabled");
                 return;
             }
 
             var start = settingRepository.GetEnergiDataServiceImporterPosition();
             if (start == null) 
             {
-                logger.LogDebug($"EnergiDataService import starting from today");
+                logger.LogInformation($"EnergiDataService import data starting date is today");
                 var dateLocal = locationContext.ConvertTimeFromUtc(timestamp);
                 start = dateLocal.Date.ToUniversalTime();
             }

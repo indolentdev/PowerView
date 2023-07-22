@@ -32,7 +32,7 @@ namespace PowerView.Service.EventHub
             }
 
             var importer = serviceScope.ServiceProvider.GetRequiredService<IEnergiDataServiceImporter>();
-            logger.LogDebug("Performing import from energi data service");
+            logger.LogTrace("Performing import from energi data service");
             await importer.Import(dateTime);
             intervalTrigger.Advance(dateTime);
         }

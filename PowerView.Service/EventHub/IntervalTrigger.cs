@@ -69,7 +69,7 @@ namespace PowerView.Service.EventHub
             {
                 lastRunAtTimezone += interval;
             }
-            logger.LogDebug("Interval trigger advanced. Last run date time:{0}", lastRunAtTimezone.Value.ToString("O"));
+            logger.LogTrace("Interval trigger advanced. Last run date time:{0}", lastRunAtTimezone.Value.ToString("O"));
         }
 
     }
