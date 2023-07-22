@@ -38,6 +38,7 @@ public class DeviceReadingController : ControllerBase
 
         try
         {
+            logger.LogTrace($"Received {liveReadings.Sum(x => x.GetRegisterValues().Count)} values through device readings api");
             readingAccepter.Accept(liveReadings);
         }
         catch (DataStoreBusyException e)
@@ -69,6 +70,7 @@ public class DeviceReadingController : ControllerBase
 
         try
         {
+            logger.LogTrace($"Received {reading.GetRegisterValues().Count} values through manual readings api");
             readingAccepter.Accept(new [] { reading });
             readingHistoryRepository.ClearDayMonthYearHistory();
         }

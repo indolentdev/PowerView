@@ -68,11 +68,10 @@ namespace PowerView.Service.EventHub
 
             if (kwhAmounts.Count == 0) return;
 
-            logger.LogDebug($"Fetched {kwhAmounts.Count} values from Energi Data Service");
-
             var amountReadings = ToReadings(kwhAmounts, config.Label, "EnergiDataService", config.Currency);
             try
             {
+                logger.LogDebug($"Fetched {amountReadings.Sum(x => x.GetRegisterValues().Count)} values from Energi Data Service");
                 readingAccepter.Accept(amountReadings);
             }
             catch (DataStoreBusyException e)

@@ -200,6 +200,7 @@ public class PvOutputFacadeController : ControllerBase
         {
             return;
         }
+        logger.LogTrace($"Received {liveReading.GetRegisterValues().Count} values through pv output facade api");
         readingAccepter.Accept(new Reading[] { liveReading });
     }
 
