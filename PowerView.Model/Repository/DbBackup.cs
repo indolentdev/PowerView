@@ -62,9 +62,7 @@ namespace PowerView.Model.Repository
 
         private void BackupAsNeeded(bool force, string dbPath, string dbFile, DirectoryInfo backupPath)
         {
-            var backupFilesAscending = backupPath.GetFiles("*" + dbFile, SearchOption.TopDirectoryOnly).OrderBy(f => f.Name).ToArray();
-
-            if (force || !backupFilesAscending.Any() || DateTime.Now - GetMostRecentBackup(backupFilesAscending.Last().Name) > bckOptions.Value.MinimumInterval)
+            if (force || TimeForBackup(dbFile, backupPath))
             {
                 logger.LogInformation($"Backing up database to {backupPath.FullName}");
                 var dt = DateTime.Now;
@@ -90,9 +88,26 @@ namespace PowerView.Model.Repository
             }
         }
 
-        private static DateTime GetMostRecentBackup(string backupFileName)
+        private bool TimeForBackup(string dbFile, DirectoryInfo backupPath)
         {
-            return DateTime.ParseExact(backupFileName.Substring(0, 8), "yyyyMMdd", CultureInfo.InvariantCulture);
+            var backupFiles = backupPath.GetFiles("*" + dbFile, SearchOption.TopDirectoryOnly).ToArray();
+
+            var managedBackupFiles = backupFiles
+                .Select(x =>
+                {
+                    var managedBackup = TryGetDateTimeFromFileName(x.Name, out var dateTime);
+                    return new { FileInfo = x, ManagedBackup = managedBackup, DateTime = dateTime };
+                })
+                .Where(x => x.ManagedBackup)
+                .OrderBy(x => x.DateTime)
+                .ToList();
+
+            return !managedBackupFiles.Any() || DateTime.Now - managedBackupFiles.Last().DateTime > bckOptions.Value.MinimumInterval;
+        }
+
+        private static bool TryGetDateTimeFromFileName(string backupFileName, out DateTime dateTime)
+        {
+            return DateTime.TryParseExact(backupFileName.Substring(0, 8), "yyyyMMdd", CultureInfo.InvariantCulture, DateTimeStyles.None, out dateTime);
         }
 
         private void RemoveObsoleteBackup(string dbFile, DirectoryInfo backupPath)

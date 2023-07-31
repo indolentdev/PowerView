@@ -111,6 +111,20 @@ namespace PowerView.Model.Test.Repository
         }
 
         [Test]
+        public void IgnoreCustomFile()
+        {
+            // Arrange
+            CreateFile("Custom-file");
+            var target = CreateTarget();
+
+            // Act
+            target.BackupDatabaseAsNeeded(false);
+
+            // Assert
+            Assert.That(new DirectoryInfo(backupPath).GetFiles().Length, Is.EqualTo(3));
+        }
+
+        [Test]
         public void MaximumBackupCount()
         {
             // Arrange
@@ -154,8 +168,13 @@ namespace PowerView.Model.Test.Repository
         {
             var dateTime = DateTime.Now - TimeSpan.FromDays(daysAgo);
             var backupTime = dateTime.ToString("yyyyMMdd", CultureInfo.InvariantCulture);
-            File.WriteAllText(Path.Combine(backupPath, backupTime + "_" + Path.GetFileName(DbName)), string.Empty);
-            File.WriteAllText(Path.Combine(backupPath, backupTime + "_" + Path.GetFileName(DbName) + "-journal"), string.Empty);
+            CreateFile(backupTime + "_" + Path.GetFileName(DbName));
+            CreateFile(backupTime + "_" + Path.GetFileName(DbName) + "-journal");
+        }
+
+        private void CreateFile(string fileName)
+        {
+            File.WriteAllText(Path.Combine(backupPath, fileName), string.Empty);
         }
     }
 }
