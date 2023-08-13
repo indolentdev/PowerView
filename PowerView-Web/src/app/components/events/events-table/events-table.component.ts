@@ -1,7 +1,7 @@
 import { Component, OnInit,ViewChild, Inject, Input, OnChanges, SimpleChanges, LOCALE_ID } from '@angular/core';
 import { formatDate } from '@angular/common';
 import { MatSort, MatSortable } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
 import { EventSet } from '../../../model/eventSet';

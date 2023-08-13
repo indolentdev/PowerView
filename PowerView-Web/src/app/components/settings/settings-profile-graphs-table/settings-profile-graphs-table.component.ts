@@ -1,5 +1,5 @@
 import { Component, OnInit,ViewChild, Input, Output, OnChanges, SimpleChanges, EventEmitter } from '@angular/core';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { NGXLogger } from 'ngx-logger';
 import { ObisTranslateService } from '../../../services/obis-translate.service';
 import { ProfileGraph } from '../../../model/profileGraph';
