@@ -1,7 +1,7 @@
 <div class="divCenterOuter">
     <form #form="ngForm" [formGroup]="formGroup" (ngSubmit)="submitForm(formGroup.value)">
   
-      <mat-form-field style="width:13em">
+      <mat-form-field style="width:19em">
         <mat-select placeholder="{{ 'common.placeholderLabels' | translate }}" formControlName="labels" id="labels" multiple required (selectionChange)="labelsChangeEvent($event)">
           <mat-select-trigger>
             <span *ngIf="formGroup.controls['labels'].value?.length === 1" class="example-additional-selection">
@@ -20,7 +20,7 @@
     
       <br/>
   
-      <mat-form-field style="width:13em">
+      <mat-form-field style="width:19em">
         <input matInput [min]="minDateFrom" [max]="maxDateFrom" [matDatepicker]="dpFrom" placeholder="{{ 'common.chooseDateFrom' | translate }}" 
           (dateChange)="fromDateChangeEvent($event)" formControlName="fromDate" required />
         <mat-datepicker-toggle matSuffix [for]="dpFrom"></mat-datepicker-toggle>
@@ -29,7 +29,7 @@
   
       <br/>
   
-      <mat-form-field style="width:13em">
+      <mat-form-field style="width:19em">
         <input matInput [min]="minDateTo" [max]="maxDateTo" [matDatepicker]="dpTo" placeholder="{{ 'common.chooseDateTo' | translate }}" 
           (dateChange)="toDateChangeEvent($event)" formControlName="toDate" required />
         <mat-datepicker-toggle matSuffix [for]="dpTo"></mat-datepicker-toggle>
@@ -38,7 +38,7 @@
   
       <br/>
 
-      <mat-form-field style="width:13em">
+      <mat-form-field style="width:19em">
         <mat-select placeholder="{{ 'forms.export.placeholderDecimalSeparator' | translate }}" formControlName="decimalSeparator" id="decimalSeparator" required (selectionChange)="decimalSeparatorChangeEvent($event)">
           <mat-option *ngFor="let opt of decimalSeparators" [value]="opt.name">
             {{ 'forms.export.decimalSeparators.' + opt.name | translate }}

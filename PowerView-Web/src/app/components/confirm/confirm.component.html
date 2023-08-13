@@ -2,7 +2,7 @@
 <div mat-dialog-content>
     <p>{{ data.message | translate }}</p>
     <pre>{{ data.confirm }}</pre>
-    <mat-form-field style="width:17em">
+    <mat-form-field style="width:19em">
         <input matInput cdkFocusInitial placeholder="{{ data.placeholderConfirm | translate }}" [(ngModel)]="userConfirm" name="userConfirm" id="userConfirm"/>
     </mat-form-field>
 </div>

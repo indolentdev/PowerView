@@ -16,7 +16,7 @@
 <div class="divCenterOuter">
   <form #form="ngForm" [formGroup]="formGroup" (ngSubmit)="submitForm(formGroup.value)">
 
-    <mat-form-field style="width:17em">
+    <mat-form-field style="width:19em">
       <mat-select (selectionChange)="optionSelected($event)" placeholder="{{ 'forms.settings.relayControls.placeholderRelayName' | translate }}" formControlName="relayName" id="relayName" required>
         <mat-option *ngFor="let opt of disconnectControlOptions" [value]="{ nameLabel:opt.label, nameObisCode:opt.obisCode }">
           {{ opt.serie }}
@@ -28,7 +28,7 @@
 
     <br/>
 
-    <mat-form-field style="width:17em">
+    <mat-form-field style="width:19em">
       <mat-select (selectionChange)="optionSelected($event)" placeholder="{{ 'forms.settings.relayControls.placeholderSerieName' | translate }}" formControlName="serieName" id="serieName" required>
         <mat-option *ngFor="let opt of evaluationSerieOptions" [value]="{ evaluationLabel:opt.label, evaluationObisCode:opt.obisCode, unit:opt.unit }">
           {{ opt.serie }}
@@ -40,7 +40,7 @@
 
     <br/>
 
-    <mat-form-field style="width:17em">
+    <mat-form-field style="width:19em">
       <mat-select (selectionChange)="optionSelected($event)" placeholder="{{ 'forms.settings.relayControls.placeholderDuration' | translate }}" formControlName="durationMinutes" id="durationMinutes" required>
         <mat-option *ngFor="let opt of durationMinuteOptions" [value]="opt">
           {{ opt }} {{ 'forms.settings.relayControls.minutes' | translate }}
@@ -52,7 +52,7 @@
 
     <br/>
 
-    <mat-form-field style="width:17em">
+    <mat-form-field style="width:19em">
       <input matInput type="number" (change)="inputChanged($event)" (keyup)="inputChanged($event)" placeholder="{{ 'forms.settings.relayControls.placeholderDisconnectToConnectValue' | translate }}" formControlName="disconnectToConnectValue" id="disconnectToConnectValue" required>
       <mat-hint align="end">{{ 'forms.settings.relayControls.hintDisconnectToConnectValue' | translate }}</mat-hint>
       <mat-error *ngIf="hasError('disconnectToConnectValue', 'required')">{{ 'forms.settings.relayControls.valErrors.required' | translate }}</mat-error>
@@ -62,7 +62,7 @@
 
     <br/>
 
-    <mat-form-field style="width:17em">
+    <mat-form-field style="width:19em">
       <input matInput type="number" [errorStateMatcher]="errorMatcher" (change)="inputChanged($event)" (keyup)="inputChanged($event)" placeholder="{{ 'forms.settings.relayControls.placeholderConnectToDisconnectValue' | translate }}" formControlName="connectToDisconnectValue" id="connectToDisconnectValue" required>
       <mat-hint align="end">{{ 'forms.settings.relayControls.hintConnectToDisconnectValue' | translate }}</mat-hint>
       <mat-error *ngIf="hasError('connectToDisconnectValue', 'required')">{{ 'forms.settings.relayControls.valErrors.required' | translate }}</mat-error>

@@ -15,7 +15,7 @@
 
 <div class="divCenterOuter">
   <form #form="ngForm" [formGroup]="formGroup" (ngSubmit)="submitForm(formGroup.value)">
-    <mat-form-field style="width:17em">
+    <mat-form-field style="width:19em">
       <input matInput type="text" placeholder="{{ 'forms.settings.emailRecipients.placeholderName' | translate }}" formControlName="name" id="name" required>
       <mat-hint align="end">{{ 'forms.settings.emailRecipients.hintName' | translate }}</mat-hint>
       <mat-error *ngIf="hasError('name', 'required')">{{ 'forms.settings.emailRecipients.valErrors.required' | translate }}</mat-error>
@@ -25,7 +25,7 @@
 
     <br/>
 
-    <mat-form-field style="width:17em">
+    <mat-form-field style="width:19em">
         <input matInput type="text" placeholder="{{ 'forms.settings.emailRecipients.placeholderEmail' | translate }}" formControlName="emailAddress" id="emailAddress" required>
         <mat-hint align="end">{{ 'forms.settings.emailRecipients.hintEmail' | translate }}</mat-hint>
         <mat-error *ngIf="hasError('emailAddress', 'required')">{{ 'forms.settings.emailRecipients.valErrors.required' | translate }}</mat-error>

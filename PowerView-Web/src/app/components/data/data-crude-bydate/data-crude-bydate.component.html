@@ -2,7 +2,7 @@
 
 <div class="divCenterOuter">
     <div class="divCenterInner">
-        <mat-form-field style="width:13em">
+        <mat-form-field style="width:19em">
             <mat-select placeholder="{{ 'common.placeholderLabel' | translate }}" id="label"
                 required (selectionChange)="labelChangeEvent($event)" [formControl]="fcLabel">
                 <mat-option *ngFor="let opt of labels" [value]="opt">
@@ -14,7 +14,7 @@
 
         <br />
 
-        <mat-form-field style="width:13em">
+        <mat-form-field style="width:19em">
             <input matInput [min]="minDate" [max]="maxDate" [matDatepicker]="dp"
                 placeholder="{{ 'common.chooseDateFrom' | translate }}" required (dateChange)="dateChangeEvent($event)"
                 [formControl]="fcDate" />

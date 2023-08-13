@@ -4,7 +4,7 @@
     <div class="divCenterInner">
         <form #form="ngForm" [formGroup]="formGroup" (ngSubmit)="submitForm(formGroup.value)" #formDirective="ngForm">
 
-            <mat-form-field style="width:13em">
+            <mat-form-field style="width:19em">
                 <mat-select placeholder="{{ 'common.placeholderLabel' | translate }}" formControlName="label" id="label" required>
                     <mat-option *ngFor="let opt of labels" [value]="opt">
                         {{ opt }}
@@ -16,7 +16,7 @@
 
             <br />
 
-            <mat-form-field style="width:13em">
+            <mat-form-field style="width:19em">
                 <mat-select placeholder="{{ 'forms.crudeData.add.placeholderName' | translate }}" formControlName="register" id="register" required>
                     <mat-option *ngFor="let opt of registers" [value]="opt">
                         {{ opt.register }}
@@ -29,7 +29,7 @@
 
             <br />
 
-            <mat-form-field style="width:13em">
+            <mat-form-field style="width:19em">
                 <mat-select placeholder="{{ 'forms.crudeData.add.placeholderDate' | translate }}" formControlName="date" id="date" required>
                     <mat-option *ngFor="let opt of missingDays" [value]="opt">
                         {{ opt.timestamp | date:'medium' }}
@@ -57,7 +57,7 @@
 
             <br />
             
-            <mat-form-field style="width:13em">
+            <mat-form-field style="width:19em">
                 <input matInput type="number" min="minValue" max="maxValue"
                     onkeypress="return event.charCode >= 48 && event.charCode <= 57"
                     placeholder="{{ 'forms.crudeData.add.placeholderValue' | translate }}"

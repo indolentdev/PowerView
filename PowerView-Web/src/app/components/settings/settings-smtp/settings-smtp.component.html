@@ -10,7 +10,7 @@
 
 <div class="divCenterOuter">
   <form [formGroup]="formGroup" (ngSubmit)="submitForm(formGroup.value)">
-    <mat-form-field style="width:17em">
+    <mat-form-field style="width:19em">
       <input matInput type="text" placeholder="{{ 'forms.settings.smtp.placeholderServer' | translate }}" formControlName="server" id="server" required>
       <mat-hint align="end">{{ 'forms.settings.smtp.hintServer' | translate }}</mat-hint>
       <mat-error *ngIf="hasError('server', 'required')">{{ 'forms.settings.smtp.valErrors.required' | translate }}</mat-error>
@@ -21,7 +21,7 @@
     <br/>
     <br/>
 
-    <mat-form-field style="width:17em">
+    <mat-form-field style="width:19em">
       <input matInput type="number" placeholder="{{ 'forms.settings.smtp.placeholderPort' | translate }}" formControlName="port" id="port" required>
       <mat-hint align="end">{{ 'forms.settings.smtp.hintPort' | translate }}</mat-hint>
       <mat-error *ngIf="hasError('port', 'required')">{{ 'forms.settings.smtp.valErrors.required' | translate }}</mat-error>
@@ -32,7 +32,7 @@
     <br/>
     <br/>
 
-    <mat-form-field style="width:17em">
+    <mat-form-field style="width:19em">
       <input matInput type="text" placeholder="{{ 'forms.settings.smtp.placeholderUser' | translate }}" formControlName="user" id="user" required>
       <mat-hint align="end">{{ 'forms.settings.smtp.hintUser' | translate }}</mat-hint>
       <mat-error *ngIf="hasError('user', 'required')">{{ 'forms.settings.smtp.valErrors.required' | translate }}</mat-error>
@@ -43,7 +43,7 @@
     <br/>
     <br/>
 
-    <mat-form-field style="width:17em">
+    <mat-form-field style="width:19em">
       <input matInput type="password" placeholder="{{ 'forms.settings.smtp.placeholderPassword' | translate }}" formControlName="auth" id="auth" required>
       <mat-hint align="end">{{ 'forms.settings.smtp.hintPassword' | translate }}</mat-hint>
       <mat-error *ngIf="hasError('auth', 'required')">{{ 'forms.settings.smtp.valErrors.required' | translate }}</mat-error>
@@ -54,7 +54,7 @@
     <br/>
     <br/>
 
-    <mat-form-field style="width:17em">
+    <mat-form-field style="width:19em">
       <input matInput type="text" placeholder="{{ 'forms.settings.smtp.placeholderEmail' | translate }}" formControlName="email" id="email" required>
       <mat-hint align="end">{{ 'forms.settings.smtp.hintEmail' | translate }}</mat-hint>
       <mat-error *ngIf="hasError('email', 'required')">{{ 'forms.settings.smtp.valErrors.required' | translate }}</mat-error>

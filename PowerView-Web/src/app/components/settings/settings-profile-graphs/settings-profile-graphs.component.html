@@ -10,7 +10,7 @@
 
 <div class="divCenterOuter">
   <form #form="ngForm" [formGroup]="formGroup" (ngSubmit)="submitForm(formGroup.value)">
-    <mat-form-field style="width:17em">
+    <mat-form-field style="width:19em">
       <mat-select placeholder="{{ 'forms.settings.profileGraphs.placeholderPeriod' | translate }}" formControlName="period" id="period" required>
         <mat-option *ngFor="let opt of profileGraphPeriods" [value]="opt">
           {{ 'forms.settings.profileGraphs.periods.' + opt | translate }}
@@ -22,7 +22,7 @@
 
     <br/>
 
-    <mat-form-field style="width:17em">
+    <mat-form-field style="width:19em">
       <input matInput type="text" placeholder="{{ 'forms.settings.profileGraphs.placeholderPage' | translate }}" formControlName="page" id="page">
       <mat-hint align="end">{{ 'forms.settings.profileGraphs.hintPage' | translate }}</mat-hint>
       <mat-error *ngIf="hasError('page', 'maxlength')">{{ 'forms.settings.profileGraphs.valErrors.maxLength_25' | translate }}</mat-error>
@@ -30,7 +30,7 @@
 
     <br/>
 
-    <mat-form-field style="width:17em">
+    <mat-form-field style="width:19em">
       <input matInput type="text" placeholder="{{ 'forms.settings.profileGraphs.placeholderTitle' | translate }}" formControlName="title" id="title" required>
       <mat-hint align="end">{{ 'forms.settings.profileGraphs.hintTitle' | translate }}</mat-hint>
       <mat-error *ngIf="hasError('title', 'required')">{{ 'forms.settings.profileGraphs.valErrors.required' | translate }}</mat-error>
@@ -40,7 +40,7 @@
 
     <br/>
 
-    <mat-form-field style="width:17em">
+    <mat-form-field style="width:19em">
       <mat-select placeholder="{{ 'forms.settings.profileGraphs.placeholderInterval' | translate }}" formControlName="interval" id="interval" required>
         <mat-option *ngFor="let opt of profileGraphIntervals" [value]="opt.value">
           {{ opt.intervalValue }} {{ 'forms.settings.profileGraphs.' + opt.intervalUnit | translate }}
@@ -52,7 +52,7 @@
 
     <br/>
 
-    <mat-form-field style="width:17em">
+    <mat-form-field style="width:19em">
       <mat-select placeholder="{{ 'forms.settings.profileGraphs.placeholderSeries' | translate }}" formControlName="series" id="series" multiple required>
         <mat-select-trigger>
           <span *ngIf="formGroup.controls['series'].value?.length === 1" class="example-additional-selection">

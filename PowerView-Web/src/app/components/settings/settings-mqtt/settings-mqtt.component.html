@@ -5,7 +5,7 @@
 <div class="divCenterOuter">
   <form [formGroup]="formGroup" (ngSubmit)="submitForm(formGroup.value)">
 
-    <mat-form-field style="width:17em">
+    <mat-form-field style="width:19em">
       <input matInput type="text" placeholder="{{ 'forms.settings.mqtt.placeholderServer' | translate }}" formControlName="server" id="server" required>
       <mat-hint align="end">{{ 'forms.settings.mqtt.hintServer' | translate }}</mat-hint>
       <mat-error *ngIf="hasError('server', 'required')">{{ 'forms.settings.mqtt.valErrors.required' | translate }}</mat-error>
@@ -14,7 +14,7 @@
     </mat-form-field>
     <br/>
     <br/>
-    <mat-form-field style="width:17em">
+    <mat-form-field style="width:19em">
       <input matInput type="number" placeholder="{{ 'forms.settings.mqtt.placeholderPort' | translate }}" formControlName="port" id="port" required>
       <mat-hint align="end">{{ 'forms.settings.mqtt.hintPort' | translate }}</mat-hint>
       <mat-error *ngIf="hasError('port', 'required')">{{ 'forms.settings.mqtt.valErrors.required' | translate }}</mat-error>
@@ -28,7 +28,7 @@
     <br/>
     <br/>
 
-    <mat-form-field style="width:17em">
+    <mat-form-field style="width:19em">
       <input matInput type="text" placeholder="{{ 'forms.settings.mqtt.placeholderClientId' | translate }}" formControlName="clientId" id="clientId" required>
       <mat-hint align="end">{{ 'forms.settings.mqtt.hintClientId' | translate }}</mat-hint>
       <mat-error *ngIf="hasError('clientId', 'required')">{{ 'forms.settings.mqtt.valErrors.required' | translate }}</mat-error>

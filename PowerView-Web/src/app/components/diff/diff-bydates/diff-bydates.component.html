@@ -4,14 +4,14 @@
 
 <div class="divCenterOuter">
   <div class="divCenterInner">
-    <mat-form-field style="width:13em">
+    <mat-form-field style="width:19em">
       <input matInput [min]="minDateFrom" [max]="maxDateFrom" [matDatepicker]="dpFrom" placeholder="{{ 'common.chooseDateFrom' | translate }}" 
         (dateChange)="fromDateChangeEvent($event)" [formControl]="fcFromDate" required />
       <mat-datepicker-toggle matSuffix [for]="dpFrom"></mat-datepicker-toggle>
       <mat-datepicker #dpFrom startView="month"></mat-datepicker>
     </mat-form-field>
     <br/>
-    <mat-form-field style="width:13em">
+    <mat-form-field style="width:19em">
       <input matInput [min]="minDateTo" [max]="maxDateTo" [matDatepicker]="dpTo" placeholder="{{ 'common.chooseDateTo' | translate }}" 
         (dateChange)="toDateChangeEvent($event)" [formControl]="fcToDate" required />
       <mat-datepicker-toggle matSuffix [for]="dpTo"></mat-datepicker-toggle>
