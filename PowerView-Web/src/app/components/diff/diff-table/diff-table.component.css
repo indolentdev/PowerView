@@ -1,17 +1,17 @@
-th.mat-header-cell {
+th.mat-mdc-header-cell {
     font-size: 14px;
     font-weight: 500;
 }
 
-tr.mat-footer-row,tr.mat-row {
+tr.mat-mdc-footer-row,tr.mat-mdc-row {
     height:2em;
 }
 
-td.mat-cell,td.mat-footer-cell,th.mat-header-cell {
+td.mat-mdc-cell,td.mat-mdc-footer-cell,th.mat-mdc-header-cell {
     padding-left:7px;
     padding-right:7px;
 }
 
-.mat-cell.mat-column-value,.mat-header-cell.mat-column-value  {
+.mat-mdc-cell.mat-column-value,.mat-mdc-header-cell.mat-column-value  {
     text-align: right;
 }
