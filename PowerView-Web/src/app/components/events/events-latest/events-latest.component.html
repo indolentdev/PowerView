@@ -6,7 +6,11 @@
   <h3>{{ 'common.noDataFound' | translate }}</h3>  
 </div>
 
-<div *ngIf="eventSet !== undefined && eventSet.items.length > 0">
-  <br/>
-  <app-events-table [eventSet]="eventSet"></app-events-table>
+<div class="divCenterOuter">
+  <div class="divCenterInner">
+    <div *ngIf="eventSet !== undefined && eventSet.items.length > 0">
+      <br/>
+      <app-events-table [eventSet]="eventSet"></app-events-table>
+    </div>
+  </div>
 </div>

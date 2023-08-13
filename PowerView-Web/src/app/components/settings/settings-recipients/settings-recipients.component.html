@@ -37,11 +37,20 @@
 
     <button mat-raised-button style="margin:5px;" type="submit" [disabled]="!formGroup.valid">{{ 'forms.settings.emailRecipients.buttonAdd' | translate }}</button>
   </form>
+
 </div>
 
-<br/>
-<br/>
+  <br />
+  <br />
+  
+<div class="divCenterOuter">
+  <div class="divCenterInner">
 
-<div *ngIf="emailRecipientSet !== undefined && emailRecipientSet.items.length > 0">
-  <app-settings-recipients-table [emailRecipientSet]="emailRecipientSet" (deleteEmailRecipient)="deleteEmailRecipient($event)" (testEmailRecipient)="testEmailRecipient($event)"></app-settings-recipients-table>
+    <div *ngIf="emailRecipientSet !== undefined && emailRecipientSet.items.length > 0">
+      <app-settings-recipients-table [emailRecipientSet]="emailRecipientSet"
+        (deleteEmailRecipient)="deleteEmailRecipient($event)" (testEmailRecipient)="testEmailRecipient($event)">
+      </app-settings-recipients-table>
+    </div>
+
+  </div>
 </div>

@@ -21,7 +21,7 @@
             <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
             <mat-datepicker #dp startView="month"></mat-datepicker>
         </mat-form-field>
+
+        <app-data-crude-bydate-table [label]="fcLabel.value" [from]="fcDate.value"></app-data-crude-bydate-table>
     </div>
 </div>
-
-<app-data-crude-bydate-table [label]="fcLabel.value" [from]="fcDate.value"></app-data-crude-bydate-table>

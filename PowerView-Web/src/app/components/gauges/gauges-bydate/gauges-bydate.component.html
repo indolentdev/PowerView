@@ -10,17 +10,18 @@
       <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
       <mat-datepicker #dp startView="month"></mat-datepicker>
     </mat-form-field>
+
+    <div *ngIf="gaugeValueGroupSet !== undefined && gaugeValueGroupSet.groups.length == 0">
+        <h3>{{ 'common.noDataFound' | translate }}</h3>
+    </div>
+
+    <div *ngIf="gaugeValueGroupSet !== undefined && gaugeValueGroupSet.groups.length > 0">
+      <div *ngFor="let group of gaugeValueGroupSet.groups">
+        <app-gauges-table [gaugeValueGroup]="group"></app-gauges-table>
+        <br />
+        <br />
+      </div>
+    </div>
+
   </div>
-</div>
-
-<div *ngIf="gaugeValueGroupSet !== undefined && gaugeValueGroupSet.groups.length == 0">
-  <h3>{{ 'common.noDataFound' | translate }}</h3>  
-</div>
-
-<div *ngIf="gaugeValueGroupSet !== undefined && gaugeValueGroupSet.groups.length > 0">
-<div *ngFor="let group of gaugeValueGroupSet.groups">
-  <app-gauges-table [gaugeValueGroup]="group"></app-gauges-table>    
-  <br/>
-  <br/>
-</div>
 </div>

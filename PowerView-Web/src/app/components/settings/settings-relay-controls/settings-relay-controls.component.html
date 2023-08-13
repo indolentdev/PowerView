@@ -79,11 +79,19 @@
 
     {{ helpText }}
   </form>
+
 </div>
 
-<br/>
-<br/>
+  <br />
+  <br />
 
-<div *ngIf="disconnectRuleSet !== undefined && disconnectRuleSet.items.length > 0">
-  <app-settings-relay-controls-table [disconnectRuleSet]="disconnectRuleSet" (deleteDisconnectRule)="deleteDisconnectRule($event)"></app-settings-relay-controls-table>
+<div class="divCenterOuter">
+  <div class="divCenterInner">
+
+    <div *ngIf="disconnectRuleSet !== undefined && disconnectRuleSet.items.length > 0">
+      <app-settings-relay-controls-table [disconnectRuleSet]="disconnectRuleSet"
+        (deleteDisconnectRule)="deleteDisconnectRule($event)"></app-settings-relay-controls-table>
+    </div>
+
+  </div>
 </div>

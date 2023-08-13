@@ -80,9 +80,13 @@
 <br/>
 <br/>
 
-<div *ngIf="profileGraphGroups !== undefined">
-  <app-settings-profile-graphs-table *ngFor="let profileGraphGroup of profileGraphGroups"
-    [profileGraphs]="profileGraphGroup" (editProfileGraph)="editProfileGraph($event)"
-    (deleteProfileGraph)="deleteProfileGraph($event)"
-    (swapProfileGraphs)="swapProfileGraphs($event)"></app-settings-profile-graphs-table>
+<div class="divCenterOuter">
+  <div class="divCenterInner">
+    <div *ngIf="profileGraphGroups !== undefined">
+      <app-settings-profile-graphs-table *ngFor="let profileGraphGroup of profileGraphGroups"
+        [profileGraphs]="profileGraphGroup" (editProfileGraph)="editProfileGraph($event)"
+        (deleteProfileGraph)="deleteProfileGraph($event)"
+        (swapProfileGraphs)="swapProfileGraphs($event)"></app-settings-profile-graphs-table>
+    </div>
+  </div>
 </div>
