@@ -46,7 +46,7 @@ describe('AppComponent', () => {
             deps: [HttpClient]
           }
         }),
-        RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' }),
+        RouterModule.forRoot(routes, {}),
         MatMenuModule,
         MatButtonModule,
         MatTableModule,
