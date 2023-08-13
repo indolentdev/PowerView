@@ -488,7 +488,7 @@
         "entryDifference": { "title": "Entry difference", "associatedTo": "Label", "description": "Calculated from two values in the Cumulative series. Is the difference between a value and its previous value in the series. When the previous Cumulative value is from a different device or a wrap has happened between the two values the calculation tries to account for the actual difference.", "hint": "" },
         "periodDifference": { "title": "Period difference", "associatedTo": "Label", "description": "Calculated from two values in the Cumulative series. Is the difference between the base value and a later value. When the base Cumulative value is from a different device or a wrap has happened between the two values the calculation tries to account for the actual difference.", "hint": "" },
         "netEntryDifference": { "title": "Net entry difference", "associatedTo": "Label", "description": "Calculated from two values in the Entry difference series. Is the positive difference between the corresponding import/consumed entry difference value and export/produced entry difference value.", "hint": "" },
-         "hourlyPeriod": { "title": "Hour Period", "associatedTo": "Label", "description": "Hourly period value applicable for a specific start timestamp and 60 min. Typicaly aligned with hours on the clock.", "hint": "" }
+        "hourlyPeriod": { "title": "Hour Period", "associatedTo": "Label", "description": "Hourly period value applicable for a specific start timestamp and 60 min. Typicaly aligned with hours on the clock.", "hint": "" }
      }
     }
 

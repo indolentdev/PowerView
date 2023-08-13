@@ -51,6 +51,8 @@ export class HelpSeriesDescriptionsTableComponent implements OnInit {
       "1.65.16.8.0.255",// Net entry difference imported/consumed el. energy
       "1.65.26.8.0.255",// Net entry difference exported/produced el. energy
 
+      "1.68.25.67.0.255",//Raw amount per kWh of electricity energy
+
       "6.0.8.0.0.255",  // Current imported/consumed hot water power
       "6.0.9.0.0.255",  // Current imported/consumed water flow
       "6.0.10.0.0.255", // Current imported/consumed water temperature inlet
