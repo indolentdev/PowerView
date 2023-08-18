@@ -1,6 +1,7 @@
 import { HttpRequest, HttpResponse, HttpEvent, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 
+import { settingsCostbreakdowns } from './settings-cost-breakdowns.json';
 import { settingsDisconnectrules } from './settings-disconnectrules.json';
 import { settingsDisconnectrulesOptions } from './settings-disconnectrules-options.json';
 import { settingsEmailRecipients } from './settings-email-recipients.json';
@@ -13,6 +14,38 @@ import { settingsSerieColors } from './settings-serie-colors.json';
 import { settingsSmtp } from './settings-smtp.json';
 
 export function settingsBackend(url: string, method: string, request: HttpRequest<any>): Observable<HttpEvent<any>> {
+
+    if (url.indexOf('settings/costbreakdowns') > -1 && method === "GET") {
+        return new Observable(resp => {
+            resp.next(new HttpResponse({
+                status: 200,
+                body: {
+                    costBreakdowns: settingsCostbreakdowns.costBreakdowns
+                }
+            }));
+            resp.complete();
+        });
+    }
+
+    if (url.indexOf('settings/costbreakdowns') > -1 && method === "POST") {
+//        return throwError(new HttpErrorResponse({status:400}));
+        return new Observable(resp => {
+            resp.next(new HttpResponse({
+                status: 204
+            }));
+            resp.complete();
+        });
+    }
+
+    if (url.indexOf('settings/costbreakdowns') > -1 && method === "DELETE") {
+//        return throwError(new HttpErrorResponse({status:400}));
+        return new Observable(resp => {
+            resp.next(new HttpResponse({
+                status: 204
+            }));
+            resp.complete();
+        });
+   }
 
     if (url.indexOf('settings/disconnectrules/options') > -1 && method === "GET") {
         return new Observable(resp => {

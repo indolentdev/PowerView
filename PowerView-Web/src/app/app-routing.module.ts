@@ -17,6 +17,7 @@ import { ExportDiffsHourlyComponent } from './components/export/export-diffs-hou
 import { ExportGaugesHourlyComponent } from './components/export/export-gauges-hourly/export-gauges-hourly.component';
 import { SettingsSeriesColorsComponent } from './components/settings/settings-series-colors/settings-series-colors.component';
 import { SettingsProfileGraphsComponent } from './components/settings/settings-profile-graphs/settings-profile-graphs.component';
+import { SettingsCostBreakdownComponent } from './components/settings/pricing/settings-cost-breakdown/settings-cost-breakdown.component';
 import { SettingsRecipientsComponent } from './components/settings/settings-recipients/settings-recipients.component';
 import { SettingsRelayControlsComponent } from './components/settings/settings-relay-controls/settings-relay-controls.component';
 import { SettingsSmtpComponent } from './components/settings/settings-smtp/settings-smtp.component';
@@ -40,6 +41,7 @@ const routes: Routes = [
   { path: 'export/gauges/hourly', component: ExportGaugesHourlyComponent },
   { path: 'settings/seriescolors', component: SettingsSeriesColorsComponent },
   { path: 'settings/profilegraphs', component: SettingsProfileGraphsComponent },
+  { path: 'settings/pricing/costbreakdown', component: SettingsCostBreakdownComponent },
   { path: 'settings/relaycontrols', component: SettingsRelayControlsComponent },
   { path: 'settings/email/recipients', component: SettingsRecipientsComponent },
   { path: 'settings/email/smtp', component: SettingsSmtpComponent },

@@ -2,6 +2,7 @@
   "menu": {
     "byDate": "By Date",
     "betweenDates": "Between Dates",
+    "costBreakdown": "Cost Breakdown",
     "crudeAdd": "Crude Add",
     "crudeByDate": "Crude By Date",
     "data": "Data",
@@ -15,6 +16,7 @@
     "hourly": "Hourly",
     "latest": "Latest",
     "mqtt": "MQTT",
+    "pricing": "Pricing",
     "profile": "Profile",
     "profileDay": "Day Profile",
     "profileGraphs": "Profile Graphs",
@@ -53,6 +55,9 @@
   },
 
   "headings": {
+    "costBreakdown": "Cost Breakdown",
+    "costBreakdownDelete": "Delete Cost Breakdown",
+    "costBreakdownInfo": "Define cost breakdown for fixed costs",
     "crudeDataAdd": "Add Crude Data",
     "crudeDataByDate": "Crude Data By Date",
     "crudeDataCounts": "Showing {{count}} of {{total}} entries",
@@ -109,6 +114,7 @@
     "actions": "Actions",
     "associatedTo": "Associated To",
     "color": "Color",
+    "costBreakdownEntries": "Entries",
     "description": "Description",
     "details": "Details",
     "detectTimestamp": "Detect Timestamp",
@@ -140,7 +146,8 @@
     "total": "Total",
     "typicalUnits": "Typical Units",
     "unit": "Unit",
-    "value": "Value"
+    "value": "Value",
+    "vat": "Vat Percentage"
   },
 
   "forms": {
@@ -239,6 +246,30 @@
           "minLength_1": "Minimum 1 character",
           "minLength_7": "Minimum 7 characters",
           "required": "Required"
+        }
+      },
+      "pricing": {
+        "costBreakdown": {
+          "buttonActionDelete": "Delete",
+          "buttonActionSelect": "Select",
+          "buttonAdd": "Add Cost Breakdown",
+          "confirmActionDelete": "Cost breakdown deleted.",
+          "confirmAdd": "Cost breakdown added.",
+          "deleteMessage": "Any series depending on this cost breakdown will cease to function. To confirm delete enter the title below.",
+          "errorActionDelete": "Delete cost breakdown failed. ",
+          "errorAdd": "Add cost breakdown failed. ",
+          "hintTitle": "For example: Electricity Import",
+          "hintVat": "Vat percentage. 0-100",
+          "placeholderDelete": "Enter to confirm",
+          "placeholderTitle": "Title",
+          "placeholderVat": "Vat",
+          "valErrors": {
+            "max": "Maximum value is {{ maxValue }}",
+            "maxLength_25": "Maximum 25 characters",
+            "min": "Minimum value is {{ minValue }}",
+            "minLength_1": "Minimum 1 characters",
+            "required": "Required"
+          }
         }
       },
       "profileGraphs": {

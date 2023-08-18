@@ -78,6 +78,8 @@ import { ScalerPipe } from './pipes/scaler.pipe';
 import { DataCrudeBydateTableComponent } from './components/data/data-crude-bydate-table/data-crude-bydate-table.component';
 import { DataCrudeAddComponent } from './components/data/data-crude-add/data-crude-add.component';
 import { ConfirmComponent } from './components/confirm/confirm.component';
+import { SettingsCostBreakdownComponent } from './components/settings/pricing/settings-cost-breakdown/settings-cost-breakdown.component';
+import { SettingsCostBreakdownTableComponent } from './components/settings/pricing/settings-cost-breakdown-table/settings-cost-breakdown-table.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -151,7 +153,9 @@ if (environment.useMockBackend == true) {
     ScalerPipe,
     DataCrudeBydateTableComponent,
     DataCrudeAddComponent,
-    ConfirmComponent
+    ConfirmComponent,
+    SettingsCostBreakdownComponent,
+    SettingsCostBreakdownTableComponent
   ],
   imports: [
     BrowserModule,

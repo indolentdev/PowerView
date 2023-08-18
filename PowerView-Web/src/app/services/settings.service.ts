@@ -4,6 +4,9 @@ import { Observable, of, throwError, EMPTY } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { HttpErrorResponse } from '@angular/common/http';
 
+import { CostBreakdownSet } from '../model/costBreakdownSet';
+import { CostBreakdown } from '../model/costBreakdown';
+import { CostBreakdownEntry } from '../model/costBreakdownEntry';
 import { DisconnectRule } from '../model/disconnectRule';
 import { DisconnectRuleSet } from '../model/disconnectRuleSet';
 import { DisconnectRuleOptionSet } from '../model/disconnectRuleOptionSet';
@@ -22,6 +25,7 @@ import * as moment from 'moment';
 import { HttpParams } from '@angular/common/http';
 
 const constLocal = {
+  costBreakdowns: "settings/costbreakdowns",
   disconnectrules: "settings/disconnectrules",
   disconnectrulesNames: "settings/disconnectrules/names",
   disconnectrulesOptions: "settings/disconnectrules/options",
@@ -41,9 +45,51 @@ const constLocal = {
 })
 export class SettingsService {
 
-  constructor(private dataService: DataService) { 
+  constructor(private dataService: DataService) {
   }
 
+  public getCostBreakdowns(): Observable<CostBreakdownSet> {
+    return this.dataService.get<CostBreakdownSet>(constLocal.costBreakdowns, undefined, new CostBreakdownSet);
+  }
+
+  public addCostBreakdown(costBreakdown: CostBreakdown): Observable<any> {
+    return this.dataService.post(constLocal.costBreakdowns, costBreakdown)
+      .pipe(catchError(error => {
+        return throwError(this.convertToAddCostBreakdownError(error));
+      }));
+  }
+
+  private convertToAddCostBreakdownError(error: any): AddCostBreakdownError {
+    if (!(error instanceof HttpErrorResponse)) {
+      return AddCostBreakdownError.UnspecifiedError;
+    }
+
+    var httpErrorResponse = error as HttpErrorResponse;
+    switch (httpErrorResponse.status) {
+      default:
+        return AddCostBreakdownError.UnspecifiedError;
+    }
+  }
+
+  public deleteCostBreakdown(title: string): Observable<any> {
+    return this.dataService.delete(constLocal.costBreakdowns + "/" + encodeURIComponent(title))
+      .pipe(catchError(error => {
+        return throwError(this.convertToDeleteCostBreakdownError(error));
+      }));
+  }
+
+  private convertToDeleteCostBreakdownError(error: any): DeleteCostBreakdownError {
+    if (!(error instanceof HttpErrorResponse)) {
+      return DeleteCostBreakdownError.UnspecifiedError;
+    }
+
+    var httpErrorResponse = error as HttpErrorResponse;
+    switch (httpErrorResponse.status) {
+      default:
+        return DeleteCostBreakdownError.UnspecifiedError;
+    }
+  }
+  
   public getDisconnectRules(): Observable<DisconnectRuleSet> {
     return this.dataService.get<DisconnectRuleSet>(constLocal.disconnectrules, undefined, new DisconnectRuleSet);
   }
@@ -349,6 +395,14 @@ export class SettingsService {
     }
   }
 
+}
+
+export enum AddCostBreakdownError {
+  UnspecifiedError = "UnspecifiedError"
+}
+
+export enum DeleteCostBreakdownError {
+  UnspecifiedError = "UnspecifiedError"
 }
 
 export enum AddDisconnectRuleError {

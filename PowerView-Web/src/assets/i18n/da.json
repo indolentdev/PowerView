@@ -2,6 +2,7 @@
   "menu": {
     "byDate": "Pr. Dato",
     "betweenDates": "Mellem Datoer",
+    "costBreakdown": "Omkostningsfordeling",
     "crudeAdd": "Rå Tilføj",
     "crudeByDate": "Rå Pr. Dato",
     "data": "Data",
@@ -15,6 +16,7 @@
     "hourly": "Time",
     "latest": "Seneste",
     "mqtt": "MQTT",
+    "pricing": "Priser",
     "profile": "Profil",
     "profileDay": "Dagsprofil",
     "profileGraphs": "Profil Grafer",
@@ -53,6 +55,9 @@
   },
 
   "headings": {
+    "costBreakdown": "Omkostningsfordeling",
+    "costBreakdownDelete": "Slet Omkostningsfordeling",
+    "costBreakdownInfo": "Tilpas omkostningsfordeling for faste satser",
     "crudeDataAdd": "Tilføj Rå Data",
     "crudeDataByDate": "Rå Data pr. Dato",
     "crudeDataCounts": "Viser {{count}} af {{total}} indgange",
@@ -109,6 +114,7 @@
     "actions": "Handlinger",
     "associatedTo": "Tilknytning",
     "color": "Farve",
+    "costBreakdownEntries": "Poster",
     "description": "Description",
     "details": "Detaljer",
     "detectTimestamp": "Opdagelsestidspunkt",
@@ -140,7 +146,8 @@
     "total": "Total",
     "typicalUnits": "Typiske Enheder",
     "unit": "Enhed",
-    "value": "Værdi"
+    "value": "Værdi",
+    "vat": "Moms Procentsats"
   },
 
   "forms": {
@@ -158,6 +165,8 @@
         "placeholderName": "Navn",
         "placeholderValue": "Værdi",
         "valErrors": {
+          "max": "Maks værdi er {{ maxValue }}",
+          "min": "Minimum værdi er {{ minValue }}",
           "required": "Påkrævet"
         },
         "scaleUnitDescription": "Betydning Værdi:1234, Skalering:2, Enhed:Wh er 123,4 kWh. Eller Værdi:1234, Skalering:-3, Enhed:m3 er 1,234 m3",
@@ -237,6 +246,30 @@
           "minLength_1": "Minimum 1 tegn",
           "minLength_7": "Minimum 7 tegn",
           "required": "Påkrævet"
+        }
+      },
+      "pricing": {
+        "costBreakdown": {
+          "buttonActionDelete": "Slet",
+          "buttonActionSelect": "Vælg",
+          "buttonAdd": "Tilføj Omkostningsfordeling",
+          "confirmActionDelete": "Omkostningsfordeling slettet.",
+          "confirmAdd": "Omkostningsfordeling tilføjet.",
+          "deleteMessage": "Evt. serier som afhænger af denne omkostningsfordeling stopper med at virke. For at bekræfte sletning indtast titlen herunder.",
+          "errorActionDelete": "Slet omkostningsfordeling fejlede. ",
+          "errorAdd": "Tilføj omkostningsfordeling fejlede. ",
+          "hintTitle": "For eksempel: Importeret Elektricitet",
+          "hintVat": "Moms procentsats. 0-100",
+          "placeholderDelete": "Indtast for at bekræfte",
+          "placeholderTitle": "Titel",
+          "placeholderVat": "Moms",
+          "valErrors": {
+            "max": "Maks værdi er {{ maxValue }}",
+            "maxLength_25": "Maksimum 25 tegn",
+            "min": "Minimum værdi er {{ minValue }}",
+            "minLength_1": "Minimum 1 tegn",
+            "required": "Påkrævet"
+          }
         }
       },
       "profileGraphs": {

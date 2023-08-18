@@ -1,0 +1,52 @@
+<div>
+    <h2>{{ 'headings.costBreakdown' | translate }}</h2>
+</div>
+
+<div class="divCenterOuter">
+    {{ 'headings.costBreakdownInfo' | translate }}
+</div>
+
+<br />
+
+<div class="divCenterOuter">
+  <form #form="ngForm" [formGroup]="formGroup" (ngSubmit)="submitForm(formGroup.value)">
+    <mat-form-field style="width:19em">
+      <input matInput type="text" placeholder="{{ 'forms.settings.pricing.costBreakdown.placeholderTitle' | translate }}" formControlName="title" id="title" required>
+      <mat-hint align="end">{{ 'forms.settings.pricing.costBreakdown.hintTitle' | translate }}</mat-hint>
+      <mat-error *ngIf="hasError('title', 'required')">{{ 'forms.settings.pricing.costBreakdown.valErrors.required' | translate }}</mat-error>
+      <mat-error *ngIf="hasError('title', 'minlength')">{{ 'forms.settings.pricing.costBreakdown.valErrors.minLength_1' | translate }}</mat-error>
+      <mat-error *ngIf="hasError('title', 'maxlength')">{{ 'forms.settings.pricing.costBreakdown.valErrors.maxLength_25' | translate }}</mat-error>
+    </mat-form-field>
+
+    <br/>
+
+    <mat-form-field style="width:19em">
+      <input matInput type="number" min="0" max="100"
+        onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+        placeholder="{{ 'forms.settings.pricing.costBreakdown.placeholderVat' | translate }}"
+        formControlName="vat" id="vat" required>
+      <mat-hint align="end">{{ 'forms.settings.pricing.costBreakdown.hintVat' | translate }}
+      </mat-hint>
+      <mat-error *ngIf="hasError('vat', 'required')">{{ 'forms.settings.pricing.costBreakdown.valErrors.required' | translate }}</mat-error>
+      <mat-error *ngIf="hasError('vat', 'min')">{{ 'forms.settings.pricing.costBreakdown.valErrors.min' | translate: ({minValue: minValue}) }}</mat-error>
+      <mat-error *ngIf="hasError('vat', 'max')">{{ 'forms.settings.pricing.costBreakdown.valErrors.max' | translate: ({maxValue: maxValue}) }}</mat-error>
+    </mat-form-field>
+
+    <br/>
+
+    <button mat-raised-button style="margin:5px;" type="submit" [disabled]="!formGroup.valid">{{ 'forms.settings.pricing.costBreakdown.buttonAdd' | translate }}</button>
+  </form>
+</div>
+
+<br/>
+<br />
+
+<div class="divCenterOuter">
+  <div class="divCenterInner">
+    <div *ngIf="costBreakdowns !== undefined">
+      <app-settings-cost-breakdown-table
+        [costBreakdowns]="costBreakdowns" (selectCostBreakdown)="selectCostBreakdown($event)" (deleteCostBreakdown)="deleteCostBreakdown($event)">
+      </app-settings-cost-breakdown-table>
+    </div>
+  </div>
+</div>
