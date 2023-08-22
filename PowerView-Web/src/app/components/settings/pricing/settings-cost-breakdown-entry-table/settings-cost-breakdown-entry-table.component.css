@@ -1,0 +1,17 @@
+th.mat-mdc-header-cell {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+td.mat-mdc-cell,
+td.mat-mdc-footer-cell,
+th.mat-mdc-header-cell {
+    padding-left: 7px;
+    padding-right: 7px;
+}
+
+/*
+.mat-cell.mat-column-value,.mat-header-cell.mat-column-value  {
+    text-align: right;
+}
+*/

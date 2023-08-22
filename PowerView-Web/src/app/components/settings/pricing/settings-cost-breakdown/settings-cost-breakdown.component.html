@@ -47,6 +47,20 @@
       <app-settings-cost-breakdown-table
         [costBreakdowns]="costBreakdowns" (selectCostBreakdown)="selectCostBreakdown($event)" (deleteCostBreakdown)="deleteCostBreakdown($event)">
       </app-settings-cost-breakdown-table>
+
+      <br/>
+      <br/>
     </div>
   </div>
 </div>
+
+<br />
+
+    <div *ngIf="selectedCostBreakdown !== undefined && selectedCostBreakdown != null">
+      <app-settings-cost-breakdown-entry [costBreakdownTitle]="selectedCostBreakdown.title"
+        (addedCostBreakdownEntry)="addedCostBreakdownEntry($event)">
+      </app-settings-cost-breakdown-entry>
+    
+      <br />
+      <br />
+    </div>

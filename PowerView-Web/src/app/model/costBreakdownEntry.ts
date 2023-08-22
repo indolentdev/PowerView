@@ -1,14 +1,14 @@
 export class CostBreakdownEntry {
-    from: string;
-    to: string;
+    fromDate: string;
+    toDate: string;
     name: string;
-    start: number;
-    end: number;
+    startTime: number;
+    endTime: number;
     amount: number;
     currency: string;
 
     constructor() {
-        this.start = 0;
-        this.end = 24;
+        this.startTime = 0;
+        this.endTime = 24;
     }
 }

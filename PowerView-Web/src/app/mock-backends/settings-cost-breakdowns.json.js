@@ -5,29 +5,38 @@ export let settingsCostbreakdowns = {
          "vat":25,
          "entries": [
             {
-               "from": "2016-12-31T23:00:00.0000000Z",
-               "to": "2017-12-31T23:00:00.0000000Z",
+               "fromDate": "2016-12-31T23:00:00.0000000Z",
+               "toDate": "2017-12-31T23:00:00.0000000Z",
                "name": "Tillæg",
-               "start": 0,
-               "end": 24,
+               "startTime": 0,
+               "endTime": 24,
                "amount": 0.123,
                "currency": "DKK"
-           },
+            },
             {
-               "from": "2016-12-31T23:00:00.0000000Z",
-               "to": "2017-12-31T23:00:00.0000000Z",
+               "fromDate": "2016-12-31T23:00:00.0000000Z",
+               "toDate": "2017-12-31T23:00:00.0000000Z",
+               "name": "Mere Tillæg",
+               "startTime": 0,
+               "endTime": 24,
+               "amount": 0.222,
+               "currency": "DKK"
+            },
+            {
+               "fromDate": "2016-12-31T23:00:00.0000000Z",
+               "toDate": "2017-12-31T23:00:00.0000000Z",
                "name": "Tariff Lav",
-               "start": 0,
-               "end": 17,
+               "startTime": 0,
+               "endTime": 17,
                "amount": 0.154,
                "currency": "DKK"
             },
             {
-               "from": "2016-12-31T23:00:00.0000000Z",
-               "to": "2017-12-31T23:00:00.0000000Z",
+               "fromDate": "2016-12-31T23:00:00.0000000Z",
+               "toDate": "2017-12-31T23:00:00.0000000Z",
                "name": "Tariff Høj",
-               "start": 17,
-               "end": 24,
+               "startTime": 17,
+               "endTime": 24,
                "amount": 0.543,
                "currency": "DKK"
             },
@@ -38,29 +47,29 @@ export let settingsCostbreakdowns = {
          "vat": 25,
          "entries": [
             {
-               "from": "2016-12-31T23:00:00.0000000Z",
-               "to": "2017-12-31T23:00:00.0000000Z",
+               "fromDate": "2016-12-31T23:00:00.0000000Z",
+               "toDate": "2017-12-31T23:00:00.0000000Z",
                "name": "Tillæg",
-               "start": 0,
-               "end": 24,
+               "startTime": 0,
+               "endTime": 24,
                "amount": 0.054,
                "currency": "DKK"
             },
             {
-               "from": "2016-12-31T23:00:00.0000000Z",
-               "to": "2017-12-31T23:00:00.0000000Z",
+               "fromDate": "2016-12-31T23:00:00.0000000Z",
+               "toDate": "2017-12-31T23:00:00.0000000Z",
                "name": "Tariff Lav",
-               "start": 0,
-               "end": 17,
+               "startTime": 0,
+               "endTime": 17,
                "amount": 0.122,
                "currency": "DKK"
             },
             {
-               "from": "2016-12-31T23:00:00.0000000Z",
-               "to": "2017-12-31T23:00:00.0000000Z",
+               "fromDate": "2016-12-31T23:00:00.0000000Z",
+               "toDate": "2017-12-31T23:00:00.0000000Z",
                "name": "Tariff Høj",
-               "start": 17,
-               "end": 24,
+               "startTime": 17,
+               "endTime": 24,
                "amount": 0.421,
                "currency": "DKK"
             },

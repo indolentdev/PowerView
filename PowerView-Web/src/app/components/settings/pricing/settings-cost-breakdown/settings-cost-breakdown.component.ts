@@ -7,6 +7,7 @@ import { NGXLogger } from 'ngx-logger';
 import { TranslateService } from '@ngx-translate/core';
 import { SettingsService, AddCostBreakdownError } from '../../../../services/settings.service';
 import { CostBreakdown } from '../../../../model/costBreakdown';
+import { CostBreakdownEntry } from '../../../../model/costBreakdownEntry';
 
 @Component({
   selector: 'app-settings-cost-breakdown',
@@ -144,6 +145,13 @@ export class SettingsCostBreakdownComponent {
 
     });
 
+  }
+
+  addedCostBreakdownEntry(event: any) {
+    let costBreakdownEntry: CostBreakdownEntry = event;
+
+
+    // TODO: Refresh stuff..
   }
 
   private dismissSnackBar(): void {

@@ -8,20 +8,21 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { NGXLogger } from 'ngx-logger';
 import { of } from 'rxjs';
+import { ObisTranslateService } from '../../../../services/obis-translate.service';
 
 import { mock, instance, when, verify } from 'ts-mockito';
 
-import { SettingsCostBreakdownTableComponent } from './settings-cost-breakdown-table.component';
+import { SettingsCostBreakdownEntryTableComponent } from './settings-cost-breakdown-entry-table.component';
 
-describe('SettingsCostBreakdownTableComponent', () => {
-  let component: SettingsCostBreakdownTableComponent;
-  let fixture: ComponentFixture<SettingsCostBreakdownTableComponent>;
+describe('SettingsCostBreakdownEntryTableComponent', () => {
+  let component: SettingsCostBreakdownEntryTableComponent;
+  let fixture: ComponentFixture<SettingsCostBreakdownEntryTableComponent>;
 
   let log = mock(NGXLogger);
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SettingsCostBreakdownTableComponent ],
+      declarations: [ SettingsCostBreakdownEntryTableComponent ],
       imports: [
         HttpClientTestingModule,
         TranslateModule.forRoot({
@@ -39,9 +40,9 @@ describe('SettingsCostBreakdownTableComponent', () => {
         { provide: NGXLogger, useValue: instance(log) }
       ]
     })
-    .compileComponents();
+      .compileComponents();
 
-    fixture = TestBed.createComponent(SettingsCostBreakdownTableComponent);
+    fixture = TestBed.createComponent(SettingsCostBreakdownEntryTableComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

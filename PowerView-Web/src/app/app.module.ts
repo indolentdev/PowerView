@@ -80,6 +80,8 @@ import { DataCrudeAddComponent } from './components/data/data-crude-add/data-cru
 import { ConfirmComponent } from './components/confirm/confirm.component';
 import { SettingsCostBreakdownComponent } from './components/settings/pricing/settings-cost-breakdown/settings-cost-breakdown.component';
 import { SettingsCostBreakdownTableComponent } from './components/settings/pricing/settings-cost-breakdown-table/settings-cost-breakdown-table.component';
+import { SettingsCostBreakdownEntryComponent } from './components/settings/pricing/settings-cost-breakdown-entry/settings-cost-breakdown-entry.component';
+import { SettingsCostBreakdownEntryTableComponent } from './components/settings/pricing/settings-cost-breakdown-entry-table/settings-cost-breakdown-entry-table.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -155,7 +157,9 @@ if (environment.useMockBackend == true) {
     DataCrudeAddComponent,
     ConfirmComponent,
     SettingsCostBreakdownComponent,
-    SettingsCostBreakdownTableComponent
+    SettingsCostBreakdownTableComponent,
+    SettingsCostBreakdownEntryComponent,
+    SettingsCostBreakdownEntryTableComponent
   ],
   imports: [
     BrowserModule,

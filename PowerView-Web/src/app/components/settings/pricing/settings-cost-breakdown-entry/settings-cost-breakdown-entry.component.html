@@ -1,0 +1,100 @@
+<div>
+    <h2>{{ costBreakdownTitle }} {{ 'headings.costBreakdownEntry' | translate }}</h2>
+</div>
+
+
+<div class="divCenterOuter">
+  <form #form="ngForm" [formGroup]="formGroup" (ngSubmit)="submitForm(formGroup.value)">
+    <mat-form-field style="width:19em">
+      <input matInput [min]="minDateFrom" [max]="maxDateFrom" [matDatepicker]="dpFrom"
+        placeholder="{{ 'common.chooseDateFrom' | translate }}" (dateChange)="fromDateChangeEvent($event)"
+        formControlName="fromDate" id="fromDate" required />
+      <mat-datepicker-toggle matSuffix [for]="dpFrom"></mat-datepicker-toggle>
+      <mat-datepicker #dpFrom startView="month"></mat-datepicker>
+      <mat-hint align="end">{{ 'forms.settings.pricing.costBreakdown.hintDateFrom' | translate }}</mat-hint>
+      <mat-error *ngIf="hasError('name', 'required')">{{ 'forms.settings.pricing.costBreakdown.valErrors.required' | translate }}</mat-error>
+    </mat-form-field>
+
+    <br />
+
+    <mat-form-field style="width:19em">
+      <input matInput [min]="minDateTo" [max]="maxDateTo" [matDatepicker]="dpTo"
+        placeholder="{{ 'common.chooseDateTo' | translate }}" (dateChange)="toDateChangeEvent($event)"
+        formControlName="toDate" id="toDate" required />
+      <mat-datepicker-toggle matSuffix [for]="dpTo"></mat-datepicker-toggle>
+      <mat-datepicker #dpTo startView="month"></mat-datepicker>
+      <mat-hint align="end">{{ 'forms.settings.pricing.costBreakdown.hintDateTo' | translate }}</mat-hint>
+      <mat-error *ngIf="hasError('name', 'required')">{{ 'forms.settings.pricing.costBreakdown.valErrors.required' | translate }}</mat-error>
+    </mat-form-field>
+
+    <br />
+
+    <mat-form-field style="width:19em">
+      <input matInput type="text" placeholder="{{ 'forms.settings.pricing.costBreakdown.placeholderName' | translate }}" formControlName="name" id="name" required>
+      <mat-hint align="end">{{ 'forms.settings.pricing.costBreakdown.hintName' | translate }}</mat-hint>
+      <mat-error *ngIf="hasError('name', 'required')">{{ 'forms.settings.pricing.costBreakdown.valErrors.required' | translate }}</mat-error>
+      <mat-error *ngIf="hasError('name', 'minlength')">{{ 'forms.settings.pricing.costBreakdown.valErrors.minLength_1' | translate }}</mat-error>
+      <mat-error *ngIf="hasError('name', 'maxlength')">{{ 'forms.settings.pricing.costBreakdown.valErrors.maxLength_25' | translate }}</mat-error>
+    </mat-form-field>
+
+    <br/>
+
+    <mat-form-field style="width:19em">
+      <input matInput type="number" min="0" max="22"
+        onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+        placeholder="{{ 'forms.settings.pricing.costBreakdown.placeholderStartTime' | translate }}"
+        formControlName="startTime" id="startTime" required>
+      <mat-hint align="end">{{ 'forms.settings.pricing.costBreakdown.hintStartTime' | translate }}
+      </mat-hint>
+      <mat-error *ngIf="hasError('startTime', 'required')">{{ 'forms.settings.pricing.costBreakdown.valErrors.required' | translate }}</mat-error>
+      <mat-error *ngIf="hasError('startTime', 'min')">{{ 'forms.settings.pricing.costBreakdown.valErrors.min' | translate: ({minValue: minStartTimeValue}) }}</mat-error>
+      <mat-error *ngIf="hasError('startTime', 'max')">{{ 'forms.settings.pricing.costBreakdown.valErrors.max' | translate: ({maxValue: maxStartTimeValue}) }}</mat-error>
+    </mat-form-field>
+
+    <br/>
+
+    <mat-form-field style="width:19em">
+      <input matInput type="number" min="1" max="23" onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+        placeholder="{{ 'forms.settings.pricing.costBreakdown.placeholderEndTime' | translate }}"
+        formControlName="endTime" id="endTime" required>
+      <mat-hint align="end">{{ 'forms.settings.pricing.costBreakdown.hintEndTime' | translate }}
+      </mat-hint>
+      <mat-error *ngIf="hasError('endTime', 'required')">{{ 'forms.settings.pricing.costBreakdown.valErrors.required' | translate }}</mat-error>
+      <mat-error *ngIf="hasError('endTime', 'min')">{{ 'forms.settings.pricing.costBreakdown.valErrors.min' | translate: ({minValue: minEndTimeValue}) }}</mat-error>
+      <mat-error *ngIf="hasError('endTime', 'max')">{{ 'forms.settings.pricing.costBreakdown.valErrors.max' | translate: ({maxValue: maxEndTimeValue}) }}</mat-error>
+    </mat-form-field>
+
+    <br/>
+
+    <mat-form-field style="width:19em">
+      <input matInput type="number" min="0" max="1000" 
+        onkeypress="return ((event.charCode >= 48 && event.charCode <= 57) || event.charCode == 44 || event.charCode == 46) && event.target.value.length < 8"
+        placeholder="{{ 'forms.settings.pricing.costBreakdown.placeholderAmount' | translate }}"
+        formControlName="amount" id="amount" required>
+      <mat-hint align="end">{{ 'forms.settings.pricing.costBreakdown.hintAmount' | translate }}</mat-hint>
+      <mat-error *ngIf="hasError('amount', 'required')">{{ 'forms.settings.pricing.costBreakdown.valErrors.required' | translate }}</mat-error>
+      <mat-error *ngIf="hasError('amount', 'min')">{{ 'forms.settings.pricing.costBreakdown.valErrors.min' | translate: ({minValue: minAmountValue}) }}</mat-error>
+      <mat-error *ngIf="hasError('amount', 'max')">{{ 'forms.settings.pricing.costBreakdown.valErrors.max' | translate: ({maxValue: maxAmountValue}) }}</mat-error>
+    </mat-form-field>
+
+    <br/>
+
+    <mat-form-field style="width:19em">
+      <mat-select placeholder="{{ 'common.chooseCurrency' | translate }}" 
+        formControlName="currency" id="currency" required>
+        <mat-option *ngFor="let opt of currencies" [value]="opt">
+          {{ opt }}
+        </mat-option>
+      </mat-select>
+      <mat-hint align="end">{{ 'forms.settings.pricing.costBreakdown.hintCurrency' | translate }}</mat-hint>
+      <mat-error *ngIf="hasError('currency', 'required')">{{ 'forms.settings.pricing.costBreakdown.valErrors.required' | translate }}</mat-error>
+    </mat-form-field>
+
+    <br />
+
+    <button mat-raised-button style="margin:5px;" type="submit" [disabled]="!formGroup.valid">{{ 'forms.settings.pricing.costBreakdown.buttonAddEntry' | translate }}</button>
+  </form>
+</div>
+
+<br/>
+<br />
