@@ -21,15 +21,26 @@
     <br/>
 
     <mat-form-field style="width:19em">
+      <mat-select placeholder="{{ 'common.chooseCurrency' | translate }}" formControlName="currency" id="currency" required>
+        <mat-option *ngFor="let opt of currencies" [value]="opt">
+          {{ opt }}
+        </mat-option>
+      </mat-select>
+      <mat-hint align="end">{{ 'forms.settings.pricing.costBreakdown.hintCurrency' | translate }}</mat-hint>
+      <mat-error *ngIf="hasError('currency', 'required')">{{ 'forms.settings.pricing.costBreakdown.valErrors.required' | translate }}</mat-error>
+    </mat-form-field>
+    
+    <br />
+
+    <mat-form-field style="width:19em">
       <input matInput type="number" min="0" max="100"
         onkeypress="return event.charCode >= 48 && event.charCode <= 57"
         placeholder="{{ 'forms.settings.pricing.costBreakdown.placeholderVat' | translate }}"
         formControlName="vat" id="vat" required>
-      <mat-hint align="end">{{ 'forms.settings.pricing.costBreakdown.hintVat' | translate }}
-      </mat-hint>
+      <mat-hint align="end">{{ 'forms.settings.pricing.costBreakdown.hintVat' | translate }}</mat-hint>
       <mat-error *ngIf="hasError('vat', 'required')">{{ 'forms.settings.pricing.costBreakdown.valErrors.required' | translate }}</mat-error>
-      <mat-error *ngIf="hasError('vat', 'min')">{{ 'forms.settings.pricing.costBreakdown.valErrors.min' | translate: ({minValue: minValue}) }}</mat-error>
-      <mat-error *ngIf="hasError('vat', 'max')">{{ 'forms.settings.pricing.costBreakdown.valErrors.max' | translate: ({maxValue: maxValue}) }}</mat-error>
+      <mat-error *ngIf="hasError('vat', 'min')">{{ 'forms.settings.pricing.costBreakdown.valErrors.min' | translate: ({minValue: 0}) }}</mat-error>
+      <mat-error *ngIf="hasError('vat', 'max')">{{ 'forms.settings.pricing.costBreakdown.valErrors.max' | translate: ({maxValue: 100}) }}</mat-error>
     </mat-form-field>
 
     <br/>
@@ -39,7 +50,7 @@
 </div>
 
 <br/>
-<br />
+<br/>
 
 <div class="divCenterOuter">
   <div class="divCenterInner">
@@ -57,7 +68,7 @@
 <br />
 
     <div *ngIf="selectedCostBreakdown !== undefined && selectedCostBreakdown != null">
-      <app-settings-cost-breakdown-entry [costBreakdownTitle]="selectedCostBreakdown.title"
+      <app-settings-cost-breakdown-entry [costBreakdownTitle]="selectedCostBreakdown.title" [costBreakdownCurrency]="selectedCostBreakdown.currency"
         (addedCostBreakdownEntry)="addedCostBreakdownEntry($event)">
       </app-settings-cost-breakdown-entry>
     

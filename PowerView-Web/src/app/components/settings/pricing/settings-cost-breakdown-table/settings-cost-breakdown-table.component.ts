@@ -9,7 +9,7 @@ import { CostBreakdown } from '../../../../model/costBreakdown';
   styleUrls: ['./settings-cost-breakdown-table.component.css']
 })
 export class SettingsCostBreakdownTableComponent {
-  displayedColumns = ['title', 'vat', 'entries', 'actions'];
+  displayedColumns = ['title', 'currency', 'vat', 'entries', 'actions'];
   dataSource: MatTableDataSource<any>;
 
   @Input('costBreakdowns') costBreakdowns: CostBreakdown[];

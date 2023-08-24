@@ -20,6 +20,8 @@ export class SettingsCostBreakdownComponent {
   formGroup: UntypedFormGroup;
   @ViewChild('form', { static: true }) form;
 
+  currencies = ['DKK', 'EUR']; // TODO: Get these from the server..
+
   costBreakdowns: CostBreakdown[];
   selectedCostBreakdown: CostBreakdown;
   selectedCostBreakdownTitle: string;
@@ -32,7 +34,8 @@ export class SettingsCostBreakdownComponent {
 
     this.formGroup = new UntypedFormGroup({
       title: new UntypedFormControl('', [Validators.required, Validators.minLength(1), Validators.maxLength(25)]),
-      vat: new UntypedFormControl('', [Validators.required]),
+      currency: new UntypedFormControl('', [Validators.required]),
+      vat: new UntypedFormControl('', [Validators.required, Validators.min(0), Validators.max(100)]),
     });
 
     this.getCostBreakdowns();

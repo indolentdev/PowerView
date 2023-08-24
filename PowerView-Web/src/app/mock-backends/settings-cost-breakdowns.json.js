@@ -1,7 +1,8 @@
 export let settingsCostbreakdowns = {
    "costBreakdowns":[
       {
-         "title":"Dinel OK",
+         "title": "Dinel OK",
+         "currency": "DKK",
          "vat":25,
          "entries": [
             {
@@ -10,8 +11,7 @@ export let settingsCostbreakdowns = {
                "name": "Tillæg",
                "startTime": 0,
                "endTime": 24,
-               "amount": 0.123,
-               "currency": "DKK"
+               "amount": 0.123
             },
             {
                "fromDate": "2016-12-31T23:00:00.0000000Z",
@@ -19,8 +19,7 @@ export let settingsCostbreakdowns = {
                "name": "Mere Tillæg",
                "startTime": 0,
                "endTime": 24,
-               "amount": 0.222,
-               "currency": "DKK"
+               "amount": 0.222
             },
             {
                "fromDate": "2016-12-31T23:00:00.0000000Z",
@@ -28,8 +27,7 @@ export let settingsCostbreakdowns = {
                "name": "Tariff Lav",
                "startTime": 0,
                "endTime": 17,
-               "amount": 0.154,
-               "currency": "DKK"
+               "amount": 0.154
             },
             {
                "fromDate": "2016-12-31T23:00:00.0000000Z",
@@ -37,13 +35,13 @@ export let settingsCostbreakdowns = {
                "name": "Tariff Høj",
                "startTime": 17,
                "endTime": 24,
-               "amount": 0.543,
-               "currency": "DKK"
+               "amount": 0.543
             },
          ]
       },
       {
          "title": "Dinel Vindstød",
+         "currency": "DKK",
          "vat": 25,
          "entries": [
             {
@@ -52,8 +50,7 @@ export let settingsCostbreakdowns = {
                "name": "Tillæg",
                "startTime": 0,
                "endTime": 24,
-               "amount": 0.054,
-               "currency": "DKK"
+               "amount": 0.054
             },
             {
                "fromDate": "2016-12-31T23:00:00.0000000Z",
@@ -61,8 +58,7 @@ export let settingsCostbreakdowns = {
                "name": "Tariff Lav",
                "startTime": 0,
                "endTime": 17,
-               "amount": 0.122,
-               "currency": "DKK"
+               "amount": 0.122
             },
             {
                "fromDate": "2016-12-31T23:00:00.0000000Z",
@@ -70,8 +66,7 @@ export let settingsCostbreakdowns = {
                "name": "Tariff Høj",
                "startTime": 17,
                "endTime": 24,
-               "amount": 0.421,
-               "currency": "DKK"
+               "amount": 0.421
             },
          ]
       }

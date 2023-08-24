@@ -10,7 +10,7 @@ import { CostBreakdownEntry } from '../../../../model/costBreakdownEntry';
   styleUrls: ['./settings-cost-breakdown-entry-table.component.css']
 })
 export class SettingsCostBreakdownEntryTableComponent {
-  displayedColumns = ['fromDate', 'toDate', 'name', 'startTime', 'endTime', 'amount', 'currency', 'actions'];
+  displayedColumns = ['fromDate', 'toDate', 'name', 'startTime', 'endTime', 'amount', 'actions'];
   dataSource: MatTableDataSource<any>;
 
   @Input('costBreakdown') costBreakdown: CostBreakdown;
