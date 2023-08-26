@@ -65,13 +65,29 @@
   </div>
 </div>
 
-<br />
-
+<div class="divCenterOuter">
+  <div class="divCenterInner">
     <div *ngIf="selectedCostBreakdown !== undefined && selectedCostBreakdown != null">
       <app-settings-cost-breakdown-entry [costBreakdownTitle]="selectedCostBreakdown.title" [costBreakdownCurrency]="selectedCostBreakdown.currency"
-        (addedCostBreakdownEntry)="addedCostBreakdownEntry($event)">
+        [clear]="entryClear" (addedCostBreakdownEntry)="addedCostBreakdownEntry($event)">
       </app-settings-cost-breakdown-entry>
     
       <br />
+    </div>
+  </div>
+</div>
+
+<div class="divCenterOuter">
+  <div class="divCenterInner">
+    <div *ngIf="selectedCostBreakdown !== undefined && selectedCostBreakdown != null">
+      <app-settings-cost-breakdown-entry-table [costBreakdownEntries]="selectedCostBreakdown.entries"
+        (deleteCostBreakdownEntry)="deleteCostBreakdownEntry($event)">
+      </app-settings-cost-breakdown-entry-table>
+    
       <br />
     </div>
+  </div>
+</div>
+
+
+

@@ -66,6 +66,10 @@ export class SettingsService {
 
     var httpErrorResponse = error as HttpErrorResponse;
     switch (httpErrorResponse.status) {
+      case 400:
+        return AddCostBreakdownError.RequestContentIncomplete;
+      case 409:
+        return AddCostBreakdownError.RequestContentDuplicate;
       default:
         return AddCostBreakdownError.UnspecifiedError;
     }
@@ -89,7 +93,30 @@ export class SettingsService {
         return DeleteCostBreakdownError.UnspecifiedError;
     }
   }
-  
+
+  public addCostBreakdownEntry(costBreakdownTitle: string, costBreakdownEntry: CostBreakdownEntry): Observable<any> {
+    return this.dataService.post(constLocal.costBreakdowns + "/" + encodeURIComponent(costBreakdownTitle) + "/entries", costBreakdownEntry)
+      .pipe(catchError(error => {
+        return throwError(this.convertToAddCostBreakdownEntryError(error));
+      }));
+  }
+
+  private convertToAddCostBreakdownEntryError(error: any): AddCostBreakdownEntryError {
+    if (!(error instanceof HttpErrorResponse)) {
+      return AddCostBreakdownEntryError.UnspecifiedError;
+    }
+
+    var httpErrorResponse = error as HttpErrorResponse;
+    switch (httpErrorResponse.status) {
+      case 400:
+        return AddCostBreakdownEntryError.RequestContentIncomplete;
+      case 409:
+        return AddCostBreakdownEntryError.RequestContentDuplicate;
+      default:
+        return AddCostBreakdownEntryError.UnspecifiedError;
+    }
+  }
+
   public getDisconnectRules(): Observable<DisconnectRuleSet> {
     return this.dataService.get<DisconnectRuleSet>(constLocal.disconnectrules, undefined, new DisconnectRuleSet);
   }
@@ -398,11 +425,19 @@ export class SettingsService {
 }
 
 export enum AddCostBreakdownError {
-  UnspecifiedError = "UnspecifiedError"
+  UnspecifiedError = "UnspecifiedError",
+  RequestContentIncomplete = "RequestContentIncomplete",
+  RequestContentDuplicate = "RequestContentDuplicate"
 }
 
 export enum DeleteCostBreakdownError {
   UnspecifiedError = "UnspecifiedError"
+}
+
+export enum AddCostBreakdownEntryError {
+  UnspecifiedError = "UnspecifiedError",
+  RequestContentIncomplete = "RequestContentIncomplete",
+  RequestContentDuplicate = "RequestContentDuplicate"
 }
 
 export enum AddDisconnectRuleError {

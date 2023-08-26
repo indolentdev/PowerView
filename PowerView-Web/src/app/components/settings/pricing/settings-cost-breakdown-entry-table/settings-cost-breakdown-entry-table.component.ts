@@ -13,9 +13,9 @@ export class SettingsCostBreakdownEntryTableComponent {
   displayedColumns = ['fromDate', 'toDate', 'name', 'startTime', 'endTime', 'amount', 'actions'];
   dataSource: MatTableDataSource<any>;
 
-  @Input('costBreakdown') costBreakdown: CostBreakdown;
+  @Input('costBreakdownEntries') costBreakdownEntries: CostBreakdownEntry[];
 
-  @Output('deleteCostBreakdown') deleteAction: EventEmitter<CostBreakdownEntry> = new EventEmitter();
+  @Output('deleteCostBreakdownEntry') deleteAction: EventEmitter<CostBreakdownEntry> = new EventEmitter();
 
   constructor(private log: NGXLogger) {
   }
@@ -28,16 +28,16 @@ export class SettingsCostBreakdownEntryTableComponent {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['costBreakdown']) {
-      this.costBreakdown = changes['costBreakdown'].currentValue;
+    if (changes['costBreakdownEntries']) {
+      this.costBreakdownEntries = changes['costBreakdownEntries'].currentValue;
       this.refresh();
     }
   }
 
   private refresh(): void {
-    if (this.dataSource != null && this.costBreakdown != null) {
+    if (this.dataSource != null && this.costBreakdownEntries != null) {
 
-      this.dataSource.data = this.costBreakdown.entries;
+      this.dataSource.data = this.costBreakdownEntries;
     }
   }
 

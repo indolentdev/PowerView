@@ -10,7 +10,7 @@ export let settingsCostbreakdowns = {
                "toDate": "2017-12-31T23:00:00.0000000Z",
                "name": "Tillæg",
                "startTime": 0,
-               "endTime": 24,
+               "endTime": 23,
                "amount": 0.123
             },
             {
@@ -18,7 +18,7 @@ export let settingsCostbreakdowns = {
                "toDate": "2017-12-31T23:00:00.0000000Z",
                "name": "Mere Tillæg",
                "startTime": 0,
-               "endTime": 24,
+               "endTime": 23,
                "amount": 0.222
             },
             {
@@ -34,14 +34,14 @@ export let settingsCostbreakdowns = {
                "toDate": "2017-12-31T23:00:00.0000000Z",
                "name": "Tariff Høj",
                "startTime": 17,
-               "endTime": 24,
+               "endTime": 23,
                "amount": 0.543
             },
          ]
       },
       {
          "title": "Dinel Vindstød",
-         "currency": "DKK",
+         "currency": "EUR",
          "vat": 25,
          "entries": [
             {
@@ -49,7 +49,7 @@ export let settingsCostbreakdowns = {
                "toDate": "2017-12-31T23:00:00.0000000Z",
                "name": "Tillæg",
                "startTime": 0,
-               "endTime": 24,
+               "endTime": 23,
                "amount": 0.054
             },
             {
@@ -65,7 +65,7 @@ export let settingsCostbreakdowns = {
                "toDate": "2017-12-31T23:00:00.0000000Z",
                "name": "Tariff Høj",
                "startTime": 17,
-               "endTime": 24,
+               "endTime": 23,
                "amount": 0.421
             },
          ]

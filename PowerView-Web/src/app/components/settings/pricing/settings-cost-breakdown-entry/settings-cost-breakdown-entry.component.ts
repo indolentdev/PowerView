@@ -25,6 +25,7 @@ export class SettingsCostBreakdownEntryComponent {
 
   @Input('costBreakdownTitle') costBreakdownTitle: string;
   @Input('costBreakdownCurrency') costBreakdownCurrency: string;
+  @Input('clear') clear: string;
 
   @Output('addedCostBreakdownEntry') addAction: EventEmitter<CostBreakdownEntry> = new EventEmitter();
 
@@ -108,7 +109,6 @@ export class SettingsCostBreakdownEntryComponent {
     this.formGroup.controls["startTime"].setValidators(this.getStartTimeValidators());
   };
 
-
   public hasError(controlName: string, errorName: string) {
     return this.formGroup.controls[controlName].hasError(errorName);
   }
@@ -122,29 +122,8 @@ export class SettingsCostBreakdownEntryComponent {
 
     let costBreakdownEntry: CostBreakdownEntry = formGroupValue;
     this.log.debug("Adding cost breakdown entry", costBreakdownEntry);
-/*
-    this.settingsService.addCostBreakdown(costBreakdown).subscribe(_ => {
-      this.log.debug("Add ok");
-      this.translateService.get('forms.settings.pricing.costBreakdown.confirmAdd').subscribe(message => {
-        this.snackBarRef = this.snackBar.open(message, undefined, { duration: 4000 });
-        this.resetForm();
-      });
-    }, err => {
-      this.log.debug("Add failed", err);
-      var translateIds = ['forms.settings.pricing.costBreakdown.errorAdd'];
-      var addCostBreakdownError = err as AddCostBreakdownError;
-      //      if (addCostBreakdownError === AddCostBreakdownError.??) {
-      //        translateIds.push('forms.settings.pricing.costBreakdown.errorAdjustFields');
-      //      }
-      this.translateService.get(translateIds).subscribe(messages => {
-        var message = "";
-        for (var key in messages) {
-          message += messages[key];
-        }
-        this.snackBarRef = this.snackBar.open(message, undefined, { duration: 9000 });
-      });
-    });
-*/    
+
+    this.addAction.emit(costBreakdownEntry);
   }
 
   resetForm() {
