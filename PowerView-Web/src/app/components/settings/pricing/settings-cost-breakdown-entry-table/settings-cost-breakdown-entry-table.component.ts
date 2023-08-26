@@ -15,6 +15,7 @@ export class SettingsCostBreakdownEntryTableComponent {
 
   @Input('costBreakdownEntries') costBreakdownEntries: CostBreakdownEntry[];
 
+  @Output('editCostBreakdownEntry') editAction: EventEmitter<CostBreakdownEntry> = new EventEmitter();
   @Output('deleteCostBreakdownEntry') deleteAction: EventEmitter<CostBreakdownEntry> = new EventEmitter();
 
   constructor(private log: NGXLogger) {
@@ -47,6 +48,14 @@ export class SettingsCostBreakdownEntryTableComponent {
     }
     this.log.debug("Delete clicked", item);
     this.deleteAction.emit(item);
+  }
+
+  editClick(item: any) {
+    if (item == null) {
+      return;
+    }
+    this.log.debug("Edit clicked", item);
+    this.editAction.emit(item);
   }
 
 }

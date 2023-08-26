@@ -25,9 +25,12 @@ export class SettingsCostBreakdownEntryComponent {
 
   @Input('costBreakdownTitle') costBreakdownTitle: string;
   @Input('costBreakdownCurrency') costBreakdownCurrency: string;
+  @Input('createMode') createMode: boolean;
   @Input('clear') clear: string;
+  @Input('editEntry') editEntry: CostBreakdownEntry;
 
-  @Output('addedCostBreakdownEntry') addAction: EventEmitter<CostBreakdownEntry> = new EventEmitter();
+  @Output('addCostBreakdownEntry') addAction: EventEmitter<CostBreakdownEntry> = new EventEmitter();
+  @Output('updateCostBreakdownEntry') updateAction: EventEmitter<CostBreakdownEntry> = new EventEmitter();
 
   minDateFrom = moment("2010-01-01T00:00:00Z");
   maxDateFrom = moment("2050-01-01T00:00:00Z");
@@ -64,34 +67,78 @@ export class SettingsCostBreakdownEntryComponent {
   ngOnChanges(changes: SimpleChanges) {
     if (this.formGroup != null) {
       this.resetForm();
-    }       
+    }
+
+    if (changes["editEntry"]) {
+      let changesEditEntry = changes["editEntry"].currentValue;
+      if (changesEditEntry != null) {
+        this.setForm(changesEditEntry);
+      }
+    }
   }
 
-  fromDateChangeEvent(event: MatDatepickerInputEvent<Moment>) {
-    if (event == null) return;
-    if (event.value == null) return;
+  setForm(entry: any) {
+    let costBreakDownEntry: CostBreakdownEntry = entry;
 
-    this.minDateTo = moment(event.value.toISOString()).add(1, 'days');
+    if (costBreakDownEntry == null || costBreakDownEntry == undefined) {
+      this.log.info("Skipping edit cost breakdown entry. Cost breakdown entry unspecified", entry);
+      return;
+    }
+
+    this.dismissSnackBar();
+
+    this.log.debug("Editing cost break down entry");
+
+    let fromDateControl = this.formGroup.get('fromDate');
+    fromDateControl.setValue(moment(costBreakDownEntry.fromDate));
+    this.fromDateChangeEvent();
+
+    let toDateControl = this.formGroup.get('toDate');
+    toDateControl.setValue(moment(costBreakDownEntry.toDate));
+    this.toDateChangeEvent();
+
+    let nameControl = this.formGroup.get('name');
+    nameControl.setValue(costBreakDownEntry.name);
+
+    let startTimeControl = this.formGroup.get('startTime');
+    startTimeControl.setValue(costBreakDownEntry.startTime);
+    this.onStartTimeChange();
+
+    let endTimeControl = this.formGroup.get('endTime');
+    endTimeControl.setValue(costBreakDownEntry.endTime);
+    this.onEndTimeChange();
+
+    let amountControl = this.formGroup.get('amount');
+    amountControl.setValue(costBreakDownEntry.amount);
+
+//  TODO: Capture the update from identifier.    
+//    this.updateProfileGraphId = { period: profileGraph.period, page: profileGraph.page, title: profileGraph.title };
+
+  }
+
+  fromDateChangeEvent() {
+    let value = this.formGroup.controls["fromDate"].value;
+
+    this.minDateTo = moment(value.toISOString()).add(1, 'days');
 
     let ctl = this.formGroup.controls["toDate"];
-    if (ctl.value != undefined && ctl.value != null && ctl.value != '' && ctl.value <= event.value) {
-      ctl.setValue(moment(event.value.toISOString()).add(1, 'days'));
+    if (ctl.value != undefined && ctl.value != null && ctl.value != '' && ctl.value <= value) {
+      ctl.setValue(moment(value.toISOString()).add(1, 'days'));
     }
   }
 
-  toDateChangeEvent(event: MatDatepickerInputEvent<Moment>) {
-    if (event == null) return;
-    if (event.value == null) return;
+  toDateChangeEvent() {
+    let value = this.formGroup.controls["toDate"].value;
 
-    this.maxDateFrom = moment(event.value.toISOString()).subtract(1, 'days');
+    this.maxDateFrom = moment(value.toISOString()).subtract(1, 'days');
 
     let ctl = this.formGroup.controls["fromDate"];
-    if (ctl.value != undefined && ctl.value != null && ctl.value != '' && ctl.value >= event.value) {
-      ctl.setValue( moment(event.value.toISOString()).subtract(1, 'days') ); 
+    if (ctl.value != undefined && ctl.value != null && ctl.value != '' && ctl.value >= value) {
+      ctl.setValue( moment(value.toISOString()).subtract(1, 'days') ); 
     }
   }
 
-  onStartTimeChange(event: any) {
+  onStartTimeChange() {
     let value = this.formGroup.controls["startTime"].value;
 
     if (value == null) value = 1;
@@ -100,7 +147,7 @@ export class SettingsCostBreakdownEntryComponent {
     this.formGroup.controls["endTime"].setValidators(this.getEndTimeValidators());
   };
 
-  onEndTimeChange(event: any) {
+  onEndTimeChange() {
     let value = this.formGroup.controls["endTime"].value;
 
     if (value == null) value = 22;
@@ -117,13 +164,32 @@ export class SettingsCostBreakdownEntryComponent {
     if (!this.formGroup.valid) {
       return;
     }
+    if (!this.createMode) {
+      return;
+    }
 
     this.dismissSnackBar();
 
     let costBreakdownEntry: CostBreakdownEntry = formGroupValue;
-    this.log.debug("Adding cost breakdown entry", costBreakdownEntry);
+    this.log.debug("Adding cost breakdown entry (before emit)", costBreakdownEntry);
 
     this.addAction.emit(costBreakdownEntry);
+  }
+
+  updateClick() {
+    if (!this.formGroup.valid) {
+      return;
+    }
+    if (this.createMode) {
+      return;
+    }
+
+    this.dismissSnackBar();
+
+    let costBreakdownEntry: CostBreakdownEntry = this.formGroup.value;
+    this.log.debug("Updating cost breakdown entry (before emit)", costBreakdownEntry);
+
+    this.updateAction.emit(costBreakdownEntry);
   }
 
   resetForm() {

@@ -259,9 +259,11 @@
       "pricing": {
         "costBreakdown": {
           "buttonActionDelete": "Delete",
+          "buttonActionEdit": "Edit",
           "buttonActionSelect": "Select",
           "buttonAdd": "Add Cost Breakdown",
           "buttonAddEntry": "Add Entry",
+          "buttonUpdateEntry": "Update Entry",
           "confirmActionDelete": "Cost breakdown deleted.",
           "confirmAdd": "Cost breakdown added.",
           "confirmAddEntry": "Cost breakdown entry added.",

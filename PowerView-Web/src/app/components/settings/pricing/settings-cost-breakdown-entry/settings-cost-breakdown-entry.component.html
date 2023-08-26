@@ -7,7 +7,7 @@
   <form #form="ngForm" [formGroup]="formGroup" (ngSubmit)="submitForm(formGroup.value)">
     <mat-form-field style="width:19em">
       <input matInput [min]="minDateFrom" [max]="maxDateFrom" [matDatepicker]="dpFrom"
-        placeholder="{{ 'common.chooseDateFrom' | translate }}" (dateChange)="fromDateChangeEvent($event)"
+        placeholder="{{ 'common.chooseDateFrom' | translate }}" (dateChange)="fromDateChangeEvent()"
         formControlName="fromDate" id="fromDate" required />
       <mat-datepicker-toggle matSuffix [for]="dpFrom"></mat-datepicker-toggle>
       <mat-datepicker #dpFrom startView="month"></mat-datepicker>
@@ -19,7 +19,7 @@
 
     <mat-form-field style="width:19em">
       <input matInput [min]="minDateTo" [max]="maxDateTo" [matDatepicker]="dpTo"
-        placeholder="{{ 'common.chooseDateTo' | translate }}" (dateChange)="toDateChangeEvent($event)"
+        placeholder="{{ 'common.chooseDateTo' | translate }}" (dateChange)="toDateChangeEvent()"
         formControlName="toDate" id="toDate" required />
       <mat-datepicker-toggle matSuffix [for]="dpTo"></mat-datepicker-toggle>
       <mat-datepicker #dpTo startView="month"></mat-datepicker>
@@ -42,7 +42,7 @@
     <mat-form-field style="width:19em">
       <input matInput type="number" min="{{ startTimeMinValue }}" max="{{ startTimeMaxValue }}"
         onkeypress="return event.charCode >= 48 && event.charCode <= 57"
-        (change)="onStartTimeChange($event)"
+        (change)="onStartTimeChange()"
         placeholder="{{ 'forms.settings.pricing.costBreakdown.placeholderStartTime' | translate }}"
         formControlName="startTime" id="startTime" required>
       <mat-hint align="end">{{ 'forms.settings.pricing.costBreakdown.hintStartTime' | translate }}
@@ -57,7 +57,7 @@
     <mat-form-field style="width:19em">
       <input matInput type="number" min="{{ endTimeMinValue }}" max="{{ endTimeMaxValue }}" 
         onkeypress="return event.charCode >= 48 && event.charCode <= 57 && event.target.value.length < 3"
-        (change)="onEndTimeChange($event)"
+        (change)="onEndTimeChange()"
         placeholder="{{ 'forms.settings.pricing.costBreakdown.placeholderEndTime' | translate }}"
         formControlName="endTime" id="endTime" required>
       <mat-hint align="end">{{ 'forms.settings.pricing.costBreakdown.hintEndTime' | translate }}
@@ -83,7 +83,8 @@
 
     <br/>
 
-    <button mat-raised-button style="margin:5px;" type="submit" [disabled]="!formGroup.valid">{{ 'forms.settings.pricing.costBreakdown.buttonAddEntry' | translate }}</button>
+    <button *ngIf="createMode" mat-raised-button style="margin:5px;" type="submit" [disabled]="!formGroup.valid">{{ 'forms.settings.pricing.costBreakdown.buttonAddEntry' | translate }}</button>
+    <button *ngIf="!createMode" mat-raised-button style="margin:5px;" type="button" [disabled]="!formGroup.valid" (click)="updateClick()">{{ 'forms.settings.pricing.costBreakdown.buttonUpdateEntry' | translate }}</button>
   </form>
 </div>
 

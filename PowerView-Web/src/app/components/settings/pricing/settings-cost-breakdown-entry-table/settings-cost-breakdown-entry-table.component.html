@@ -26,6 +26,8 @@
     <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef>{{ 'columns.actions' | translate }}</th>
         <td mat-cell *matCellDef="let v">
+            <button style="margin-left:3px;margin-right:3px" mat-raised-button type="button" (click)="editClick(v)">{{
+                'forms.settings.pricing.costBreakdown.buttonActionEdit' | translate }}</button>
             <button style="margin-left:3px;margin-right:3px" mat-raised-button type="button" (click)="deleteClick(v)">{{
                 'forms.settings.pricing.costBreakdown.buttonActionDelete' | translate }}</button>
         </td>

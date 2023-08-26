@@ -27,11 +27,17 @@ export class SettingsCostBreakdownComponent {
   selectedCostBreakdownTitle: string;
   entryClear: string; // changing this will cause the entry-component to clear itself
 
+  entryCreateMode: boolean;
+  costBreakdownEntryEdit: CostBreakdownEntry;
+
   constructor(private log: NGXLogger, public dialog: MatDialog, private settingsService: SettingsService, private snackBar: MatSnackBar, private translateService: TranslateService) {    
   }
 
   ngOnInit() {
     this.costBreakdowns = [];
+
+    this.entryCreateMode = true;
+    this.costBreakdownEntryEdit = null;
 
     this.formGroup = new UntypedFormGroup({
       title: new UntypedFormControl('', [Validators.required, Validators.minLength(1), Validators.maxLength(25)]),
@@ -40,6 +46,15 @@ export class SettingsCostBreakdownComponent {
     });
 
     this.getCostBreakdowns();
+  }
+
+  resetForm() {
+    this.form.resetForm();
+    this.selectedCostBreakdown = null;
+    this.getCostBreakdowns();
+
+    this.entryCreateMode = true;
+    this.costBreakdownEntryEdit = null;
   }
 
   private getCostBreakdowns(): void {
@@ -96,12 +111,6 @@ export class SettingsCostBreakdownComponent {
     });
   }
   
-  resetForm() {
-    this.form.resetForm();
-    this.selectedCostBreakdown = null;
-    this.getCostBreakdowns();
-  }
-
   selectCostBreakdown(event: any) {
     let costBreakdown: CostBreakdown = event;
 
@@ -175,7 +184,7 @@ export class SettingsCostBreakdownComponent {
 
   }
 
-  addedCostBreakdownEntry(event: any) {
+  addCostBreakdownEntry(event: any) {
     let costBreakdownEntry: CostBreakdownEntry = event;
 
     this.dismissSnackBar();
@@ -211,15 +220,93 @@ export class SettingsCostBreakdownComponent {
     });
   }
 
+  updateCostBreakdownEntry(event: any) {
+    let costBreakdownEntry: CostBreakdownEntry = event;
+
+    this.dismissSnackBar();
+
+    this.log.debug("Updating cost breakdown entry", costBreakdownEntry);
+
+    if (this.selectedCostBreakdownTitle == null) {
+      this.log.debug("No selected cost breakdown. Skipping update entry.");
+      return;
+    }
+/*
+    this.settingsService.addCostBreakdownEntry(this.selectedCostBreakdownTitle, costBreakdownEntry).subscribe(_ => {
+      this.log.debug("Add ok");
+      this.translateService.get('forms.settings.pricing.costBreakdown.confirmAddEntry').subscribe(message => {
+        this.snackBarRef = this.snackBar.open(message, undefined, { duration: 4000 });
+        this.entryClear = crypto.randomUUID();
+        this.resetForm();
+      });
+    }, err => {
+      this.log.debug("Add failed", err);
+      var translateIds = ['forms.settings.pricing.costBreakdown.errorAddEntry'];
+      var addCostBreakdownEntryError = err as AddCostBreakdownEntryError;
+      if (addCostBreakdownEntryError === AddCostBreakdownEntryError.RequestContentIncomplete || addCostBreakdownEntryError === AddCostBreakdownEntryError.RequestContentDuplicate) {
+        translateIds.push('forms.settings.pricing.costBreakdown.errorAdjustEntryFields');
+      }
+      this.translateService.get(translateIds).subscribe(messages => {
+        var message = "";
+        for (var key in messages) {
+          message += messages[key];
+        }
+        this.snackBarRef = this.snackBar.open(message, undefined, { duration: 9000 });
+      });
+    });
+*/    
+  }
+
   deleteCostBreakdownEntry(event: any) {
     let costBreakdownEntry: CostBreakdownEntry = event;
 
     if (costBreakdownEntry == null || costBreakdownEntry == undefined) {
-      this.log.info("Skipping delete cost breakdown entry. Cost breakdown unspecified", event);
+      this.log.info("Skipping delete cost breakdown entry. Cost breakdown entry unspecified", event);
       return;
     }
 
     this.dismissSnackBar();
+/*
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.autoFocus = true;
+    dialogConfig.data = { title: 'headings.costBreakdownDelete', message: 'forms.settings.pricing.costBreakdown.deleteMessage', placeholderConfirm: 'forms.settings.pricing.costBreakdown.placeholderDelete', confirm: costBreakdown.title };
+
+    const dialogRef = this.dialog.open(ConfirmComponent, dialogConfig);
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (!(result == costBreakdown.title)) return;
+
+      this.log.debug("Deleting cost breakdown");
+
+      this.settingsService.deleteCostBreakdown(costBreakdown.title).subscribe(_ => {
+        this.log.debug("Delete ok");
+        this.translateService.get('forms.settings.pricing.costBreakdown.confirmActionDelete').subscribe(message => {
+          this.snackBarRef = this.snackBar.open(message, undefined, { duration: 4000 });
+          this.selectedCostBreakdownTitle = null;
+          this.resetForm();
+        });
+      }, err => {
+        this.log.debug("Delete failed", err);
+        this.translateService.get('forms.settings.pricing.costBreakdown.errorActionDelete').subscribe(message => {
+          this.snackBarRef = this.snackBar.open(message, undefined, { duration: 9000 });
+        });
+      });
+    });
+*/
+  }
+
+  editCostBreakdownEntry(event: any) {
+    let costBreakdownEntry: CostBreakdownEntry = event;
+
+    this.costBreakdownEntryEdit = costBreakdownEntry;
+    this.entryCreateMode = false;
+
+//    if (costBreakdownEntry == null || costBreakdownEntry == undefined) {
+//      this.log.info("Skipping delete cost breakdown entry. Cost breakdown entry unspecified", event);
+//      return;
+//    }
+
+//    this.dismissSnackBar();
 /*
     const dialogConfig = new MatDialogConfig();
     dialogConfig.autoFocus = true;

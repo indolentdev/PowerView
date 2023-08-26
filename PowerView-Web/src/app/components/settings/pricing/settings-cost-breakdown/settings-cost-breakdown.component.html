@@ -69,7 +69,8 @@
   <div class="divCenterInner">
     <div *ngIf="selectedCostBreakdown !== undefined && selectedCostBreakdown != null">
       <app-settings-cost-breakdown-entry [costBreakdownTitle]="selectedCostBreakdown.title" [costBreakdownCurrency]="selectedCostBreakdown.currency"
-        [clear]="entryClear" (addedCostBreakdownEntry)="addedCostBreakdownEntry($event)">
+        [createMode]="entryCreateMode" [editEntry]="costBreakdownEntryEdit" [clear]="entryClear" 
+        (addCostBreakdownEntry)="addCostBreakdownEntry($event)" (updateCostBreakdownEntry)="updateCostBreakdownEntry($event)">
       </app-settings-cost-breakdown-entry>
     
       <br />
@@ -81,7 +82,7 @@
   <div class="divCenterInner">
     <div *ngIf="selectedCostBreakdown !== undefined && selectedCostBreakdown != null">
       <app-settings-cost-breakdown-entry-table [costBreakdownEntries]="selectedCostBreakdown.entries"
-        (deleteCostBreakdownEntry)="deleteCostBreakdownEntry($event)">
+        (editCostBreakdownEntry)="editCostBreakdownEntry($event)" (deleteCostBreakdownEntry)="deleteCostBreakdownEntry($event)">
       </app-settings-cost-breakdown-entry-table>
     
       <br />

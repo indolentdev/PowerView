@@ -259,9 +259,11 @@
       "pricing": {
         "costBreakdown": {
           "buttonActionDelete": "Slet",
+          "buttonActionEdit": "Rediger",
           "buttonActionSelect": "Vælg",
           "buttonAdd": "Tilføj Omkostningsfordeling",
           "buttonAddEntry": "Tilføj Post",
+          "buttonUpdateEntry": "Opdater Post",
           "confirmActionDelete": "Omkostningsfordeling slettet.",
           "confirmAdd": "Omkostningsfordeling tilføjet.",
           "confirmAddEntry": "Omkostningsfordelingspost tilføjet.",
