@@ -48,7 +48,7 @@ export class SettingsCostBreakdownComponent {
     this.getCostBreakdowns();
   }
 
-  resetForm() {
+  reset() {
     this.form.resetForm();
     this.selectedCostBreakdown = null;
     this.getCostBreakdowns();
@@ -92,7 +92,7 @@ export class SettingsCostBreakdownComponent {
       this.translateService.get('forms.settings.pricing.costBreakdown.confirmAdd').subscribe(message => {
         this.snackBarRef = this.snackBar.open(message, undefined, { duration: 4000 });
         this.selectedCostBreakdownTitle = null;
-        this.resetForm();
+        this.reset();
       });
     }, err => {
       this.log.debug("Add failed", err);
@@ -172,7 +172,7 @@ export class SettingsCostBreakdownComponent {
         this.translateService.get('forms.settings.pricing.costBreakdown.confirmActionDelete').subscribe(message => {
           this.snackBarRef = this.snackBar.open(message, undefined, { duration: 4000 });
           this.selectedCostBreakdownTitle = null;
-          this.resetForm();
+          this.reset();
         });
       }, err => {
         this.log.debug("Delete failed", err);
@@ -201,7 +201,7 @@ export class SettingsCostBreakdownComponent {
       this.translateService.get('forms.settings.pricing.costBreakdown.confirmAddEntry').subscribe(message => {
         this.snackBarRef = this.snackBar.open(message, undefined, { duration: 4000 });
         this.entryClear = crypto.randomUUID();
-        this.resetForm();
+        this.reset();
       });
     }, err => {
       this.log.debug("Add failed", err);
@@ -265,34 +265,28 @@ export class SettingsCostBreakdownComponent {
       return;
     }
 
+    if (this.selectedCostBreakdown == null) {
+      this.log.info("Skipping delete cost breakdown entry. No selected cost breakdown");
+    }
+
     this.dismissSnackBar();
-/*
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.autoFocus = true;
-    dialogConfig.data = { title: 'headings.costBreakdownDelete', message: 'forms.settings.pricing.costBreakdown.deleteMessage', placeholderConfirm: 'forms.settings.pricing.costBreakdown.placeholderDelete', confirm: costBreakdown.title };
 
-    const dialogRef = this.dialog.open(ConfirmComponent, dialogConfig);
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (!(result == costBreakdown.title)) return;
+    this.log.debug("Deleting cost breakdown entry");
 
-      this.log.debug("Deleting cost breakdown");
-
-      this.settingsService.deleteCostBreakdown(costBreakdown.title).subscribe(_ => {
-        this.log.debug("Delete ok");
-        this.translateService.get('forms.settings.pricing.costBreakdown.confirmActionDelete').subscribe(message => {
-          this.snackBarRef = this.snackBar.open(message, undefined, { duration: 4000 });
-          this.selectedCostBreakdownTitle = null;
-          this.resetForm();
-        });
-      }, err => {
-        this.log.debug("Delete failed", err);
-        this.translateService.get('forms.settings.pricing.costBreakdown.errorActionDelete').subscribe(message => {
-          this.snackBarRef = this.snackBar.open(message, undefined, { duration: 9000 });
-        });
+    this.settingsService.deleteCostBreakdownEntry(this.selectedCostBreakdown.title, costBreakdownEntry.fromDate, costBreakdownEntry.toDate, costBreakdownEntry.name).subscribe(_ => {
+      this.log.debug("Delete ok");
+      this.translateService.get('forms.settings.pricing.costBreakdown.confirmActionDeleteEntry').subscribe(message => {
+        this.snackBarRef = this.snackBar.open(message, undefined, { duration: 4000 });
+        this.reset();
+      });
+    }, err => {
+      this.log.debug("Delete failed", err);
+      this.translateService.get('forms.settings.pricing.costBreakdown.errorActionDeleteEntry').subscribe(message => {
+        this.snackBarRef = this.snackBar.open(message, undefined, { duration: 9000 });
       });
     });
-*/
+
   }
 
   editCostBreakdownEntry(event: any) {
@@ -300,40 +294,6 @@ export class SettingsCostBreakdownComponent {
 
     this.costBreakdownEntryEdit = costBreakdownEntry;
     this.entryCreateMode = false;
-
-//    if (costBreakdownEntry == null || costBreakdownEntry == undefined) {
-//      this.log.info("Skipping delete cost breakdown entry. Cost breakdown entry unspecified", event);
-//      return;
-//    }
-
-//    this.dismissSnackBar();
-/*
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.autoFocus = true;
-    dialogConfig.data = { title: 'headings.costBreakdownDelete', message: 'forms.settings.pricing.costBreakdown.deleteMessage', placeholderConfirm: 'forms.settings.pricing.costBreakdown.placeholderDelete', confirm: costBreakdown.title };
-
-    const dialogRef = this.dialog.open(ConfirmComponent, dialogConfig);
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (!(result == costBreakdown.title)) return;
-
-      this.log.debug("Deleting cost breakdown");
-
-      this.settingsService.deleteCostBreakdown(costBreakdown.title).subscribe(_ => {
-        this.log.debug("Delete ok");
-        this.translateService.get('forms.settings.pricing.costBreakdown.confirmActionDelete').subscribe(message => {
-          this.snackBarRef = this.snackBar.open(message, undefined, { duration: 4000 });
-          this.selectedCostBreakdownTitle = null;
-          this.resetForm();
-        });
-      }, err => {
-        this.log.debug("Delete failed", err);
-        this.translateService.get('forms.settings.pricing.costBreakdown.errorActionDelete').subscribe(message => {
-          this.snackBarRef = this.snackBar.open(message, undefined, { duration: 9000 });
-        });
-      });
-    });
-*/
   }
 
   private dismissSnackBar(): void {

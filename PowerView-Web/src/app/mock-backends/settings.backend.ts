@@ -25,6 +25,16 @@ export function settingsBackend(url: string, method: string, request: HttpReques
         });
     }
 
+    if (url.indexOf('settings/costbreakdowns') > -1 && url.indexOf('entries') > -1 && method === "DELETE") {
+//        return throwError(new HttpErrorResponse({status:400}));
+        return new Observable(resp => {
+            resp.next(new HttpResponse({
+                status: 204
+            }));
+            resp.complete();
+        });
+    }
+
     if (url.indexOf('settings/costbreakdowns') > -1 && method === "GET") {
         return new Observable(resp => {
             resp.next(new HttpResponse({

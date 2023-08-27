@@ -117,6 +117,26 @@ export class SettingsService {
     }
   }
 
+  public deleteCostBreakdownEntry(title: string, fromDate: string, toDate: string, name: string): Observable<any> {
+    return this.dataService.delete(constLocal.costBreakdowns + "/" + encodeURIComponent(title) + "/entries/" +
+        encodeURIComponent(fromDate) + "/" + encodeURIComponent(toDate) + "/" + encodeURIComponent(name))
+      .pipe(catchError(error => {
+        return throwError(this.convertToDeleteCostBreakdownEntryError(error));
+      }));
+  }
+
+  private convertToDeleteCostBreakdownEntryError(error: any): DeleteCostBreakdownEntryError {
+    if (!(error instanceof HttpErrorResponse)) {
+      return DeleteCostBreakdownEntryError.UnspecifiedError;
+    }
+
+    var httpErrorResponse = error as HttpErrorResponse;
+    switch (httpErrorResponse.status) {
+      default:
+        return DeleteCostBreakdownEntryError.UnspecifiedError;
+    }
+  }
+
   public getDisconnectRules(): Observable<DisconnectRuleSet> {
     return this.dataService.get<DisconnectRuleSet>(constLocal.disconnectrules, undefined, new DisconnectRuleSet);
   }
@@ -438,6 +458,10 @@ export enum AddCostBreakdownEntryError {
   UnspecifiedError = "UnspecifiedError",
   RequestContentIncomplete = "RequestContentIncomplete",
   RequestContentDuplicate = "RequestContentDuplicate"
+}
+
+export enum DeleteCostBreakdownEntryError {
+  UnspecifiedError = "UnspecifiedError"
 }
 
 export enum AddDisconnectRuleError {
