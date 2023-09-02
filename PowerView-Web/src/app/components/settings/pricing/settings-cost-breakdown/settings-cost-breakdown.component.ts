@@ -5,7 +5,7 @@ import { ConfirmComponent } from '../../../confirm/confirm.component'
 import { MatSnackBar, MatSnackBarRef, SimpleSnackBar } from '@angular/material/snack-bar';
 import { NGXLogger } from 'ngx-logger';
 import { TranslateService } from '@ngx-translate/core';
-import { SettingsService, AddCostBreakdownError, AddCostBreakdownEntryError } from '../../../../services/settings.service';
+import { SettingsService, AddCostBreakdownError, AddCostBreakdownEntryError, UpdateCostBreakdownEntryError } from '../../../../services/settings.service';
 import { CostBreakdown } from '../../../../model/costBreakdown';
 import { CostBreakdownEntry } from '../../../../model/costBreakdownEntry';
 
@@ -225,25 +225,30 @@ export class SettingsCostBreakdownComponent {
 
     this.dismissSnackBar();
 
-    this.log.debug("Updating cost breakdown entry", costBreakdownEntry);
-
     if (this.selectedCostBreakdownTitle == null) {
       this.log.debug("No selected cost breakdown. Skipping update entry.");
       return;
     }
-/*
-    this.settingsService.addCostBreakdownEntry(this.selectedCostBreakdownTitle, costBreakdownEntry).subscribe(_ => {
-      this.log.debug("Add ok");
-      this.translateService.get('forms.settings.pricing.costBreakdown.confirmAddEntry').subscribe(message => {
+
+    if (this.costBreakdownEntryEdit == null) {
+      this.log.debug("No edit-selected cost breakdown entry. Skipping update entry.");
+      return;
+    }
+
+    this.log.debug("Updating cost breakdown entry", costBreakdownEntry);
+
+    this.settingsService.updateCostBreakdownEntry(this.selectedCostBreakdownTitle, this.costBreakdownEntryEdit.fromDate, this.costBreakdownEntryEdit.toDate, this.costBreakdownEntryEdit.name, costBreakdownEntry).subscribe(_ => {
+      this.log.debug("Update ok");
+      this.translateService.get('forms.settings.pricing.costBreakdown.confirmUpdateEntry').subscribe(message => {
         this.snackBarRef = this.snackBar.open(message, undefined, { duration: 4000 });
         this.entryClear = crypto.randomUUID();
-        this.resetForm();
+        this.reset();
       });
     }, err => {
-      this.log.debug("Add failed", err);
-      var translateIds = ['forms.settings.pricing.costBreakdown.errorAddEntry'];
-      var addCostBreakdownEntryError = err as AddCostBreakdownEntryError;
-      if (addCostBreakdownEntryError === AddCostBreakdownEntryError.RequestContentIncomplete || addCostBreakdownEntryError === AddCostBreakdownEntryError.RequestContentDuplicate) {
+      this.log.debug("Update failed", err);
+      var translateIds = ['forms.settings.pricing.costBreakdown.errorUpdateEntry'];
+      var updateCostBreakdownEntryError = err as UpdateCostBreakdownEntryError;
+      if (updateCostBreakdownEntryError === UpdateCostBreakdownEntryError.RequestContentIncomplete || updateCostBreakdownEntryError === UpdateCostBreakdownEntryError.RequestContentDuplicate) {
         translateIds.push('forms.settings.pricing.costBreakdown.errorAdjustEntryFields');
       }
       this.translateService.get(translateIds).subscribe(messages => {
@@ -254,7 +259,6 @@ export class SettingsCostBreakdownComponent {
         this.snackBarRef = this.snackBar.open(message, undefined, { duration: 9000 });
       });
     });
-*/    
   }
 
   deleteCostBreakdownEntry(event: any) {
@@ -270,7 +274,6 @@ export class SettingsCostBreakdownComponent {
     }
 
     this.dismissSnackBar();
-
 
     this.log.debug("Deleting cost breakdown entry");
 

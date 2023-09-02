@@ -117,6 +117,30 @@ export class SettingsService {
     }
   }
 
+  public updateCostBreakdownEntry(costBreakdownTitle: string, fromDate: string, toDate: string, name: string, costBreakdownEntry: CostBreakdownEntry): Observable<any> {
+    return this.dataService.put(constLocal.costBreakdowns + "/" + encodeURIComponent(costBreakdownTitle) + "/entries/" +
+        encodeURIComponent(fromDate) + "/" + encodeURIComponent(toDate) + "/" + encodeURIComponent(name), costBreakdownEntry)
+      .pipe(catchError(error => {
+        return throwError(this.convertToUpdateCostBreakdownEntryError(error));
+      }));
+  }
+
+  private convertToUpdateCostBreakdownEntryError(error: any): UpdateCostBreakdownEntryError {
+    if (!(error instanceof HttpErrorResponse)) {
+      return UpdateCostBreakdownEntryError.UnspecifiedError;
+    }
+
+    var httpErrorResponse = error as HttpErrorResponse;
+    switch (httpErrorResponse.status) {
+      case 400:
+        return UpdateCostBreakdownEntryError.RequestContentIncomplete;
+      case 409:
+        return UpdateCostBreakdownEntryError.RequestContentDuplicate;
+      default:
+        return UpdateCostBreakdownEntryError.UnspecifiedError;
+    }
+  }
+
   public deleteCostBreakdownEntry(title: string, fromDate: string, toDate: string, name: string): Observable<any> {
     return this.dataService.delete(constLocal.costBreakdowns + "/" + encodeURIComponent(title) + "/entries/" +
         encodeURIComponent(fromDate) + "/" + encodeURIComponent(toDate) + "/" + encodeURIComponent(name))
@@ -455,6 +479,12 @@ export enum DeleteCostBreakdownError {
 }
 
 export enum AddCostBreakdownEntryError {
+  UnspecifiedError = "UnspecifiedError",
+  RequestContentIncomplete = "RequestContentIncomplete",
+  RequestContentDuplicate = "RequestContentDuplicate"
+}
+
+export enum UpdateCostBreakdownEntryError {
   UnspecifiedError = "UnspecifiedError",
   RequestContentIncomplete = "RequestContentIncomplete",
   RequestContentDuplicate = "RequestContentDuplicate"

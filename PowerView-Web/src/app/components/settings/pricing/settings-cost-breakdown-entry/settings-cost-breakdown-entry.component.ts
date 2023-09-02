@@ -110,10 +110,6 @@ export class SettingsCostBreakdownEntryComponent {
 
     let amountControl = this.formGroup.get('amount');
     amountControl.setValue(costBreakDownEntry.amount);
-
-//  TODO: Capture the update from identifier.    
-//    this.updateProfileGraphId = { period: profileGraph.period, page: profileGraph.page, title: profileGraph.title };
-
   }
 
   fromDateChangeEvent() {
