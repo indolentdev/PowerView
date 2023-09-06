@@ -76,7 +76,21 @@ namespace PowerView.Model.Test.Repository
     }
 
     [Test]
-    public void CreateDataStoreUniqueConstraintException()
+    public void CreateDataStoreUniqueConstraintExceptionFromPrimaryKey()
+    {
+      // Arrange
+      var sqliteException = new SqliteException("stuff", 19, 1555);
+
+      // Act
+      var dse = DataStoreExceptionFactory.Create(sqliteException);
+
+      // Assert
+      Assert.That(dse.GetType(), Is.EqualTo(typeof(DataStoreUniqueConstraintException)));
+      Assert.That(dse.InnerException, Is.SameAs(sqliteException));
+    }
+
+    [Test]
+    public void CreateDataStoreUniqueConstraintExceptionFromIndex()
     {
       // Arrange
       var sqliteException = new SqliteException("stuff", 19, 2067);

@@ -60,7 +60,7 @@ namespace PowerView.Model.Repository
             return NoTransaction(() => connection.Query<TReturn>(sql, param, null, false, cmdTimeout).ToList());
         }
 
-        internal class OneToMany<TOne, TMany> where TOne : class, IDbEntity where TMany : class, IDbEntity
+        internal class OneToMany<TOne, TMany> where TOne : class, IDbEntity where TMany : class
         {
             public OneToMany(TOne parent)
             {
@@ -72,7 +72,7 @@ namespace PowerView.Model.Repository
             public IList<TMany> Children { get; }
         }
 
-        internal ICollection<OneToMany<TOne, TMany>> QueryOneToManyTransaction<TOne, TMany>(string sql, object param = null) where TOne : class, IDbEntity where TMany : class, IDbEntity
+        internal ICollection<OneToMany<TOne, TMany>> QueryOneToManyTransaction<TOne, TMany>(string sql, object param = null) where TOne : class, IDbEntity where TMany : class
         {
             Dictionary<long, OneToMany<TOne, TMany>> cache = new Dictionary<long, OneToMany<TOne, TMany>>();
             Func<TOne, TMany, OneToMany<TOne, TMany>> map = (parent, child) =>

@@ -1,0 +1,4 @@
+CREATE TABLE CostBreakdown (Id INTEGER PRIMARY KEY, Title NVARCHAR(255) NOT NULL, Currency INT NOT NULL, Vat INT NOT NULL);
+CREATE UNIQUE INDEX CostBreakdownIX ON CostBreakdown (Title);
+
+CREATE TABLE CostBreakdownEntry (CostBreakdownId INTEGER, FromDate DATETIME NOT NULL, ToDate DATETIME NOT NULL, Name NVARCHAR(255) NOT NULL, StartTime INT NOT NULL, EndTime INT NOT NULL, Amount REAL NOT NULL, PRIMARY KEY(CostBreakdownId, FromDate, ToDate, Name), FOREIGN KEY (CostBreakdownId) REFERENCES CostBreakdown(Id)) WITHOUT ROWID;

@@ -196,5 +196,24 @@ namespace PowerView.Model.Repository
             public byte Unit { get; set; }
         }
 
+        public class CostBreakdown : IDbEntity
+        {
+            public long Id { get; set; }
+            public string Title { get; set; }
+            public int Currency { get; set; }
+            public int Vat { get; set; }
+        }
+
+        public class CostBreakdownEntry
+        {
+            public long CostBreakdownId { get; set; }
+            public UnixTime FromDate { get; set; }
+            public UnixTime ToDate { get; set; }
+            public string Name { get; set; }
+            public int StartTime { get; set; }
+            public int EndTime { get; set; }
+            public double Amount { get; set; }
+        }
+
     }
 }
