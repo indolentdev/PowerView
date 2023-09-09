@@ -50,6 +50,7 @@ public class SettingsCostBreakdownsController : ControllerBase
                 })
                 .ToList()
         };
+        
         return Ok(r);
     }
 

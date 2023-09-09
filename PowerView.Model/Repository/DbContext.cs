@@ -72,7 +72,7 @@ namespace PowerView.Model.Repository
             public IList<TMany> Children { get; }
         }
 
-        internal ICollection<OneToMany<TOne, TMany>> QueryOneToManyTransaction<TOne, TMany>(string sql, object param = null) where TOne : class, IDbEntity where TMany : class
+        internal ICollection<OneToMany<TOne, TMany>> QueryOneToManyTransaction<TOne, TMany>(string sql, object param = null, string splitOn = "Id") where TOne : class, IDbEntity where TMany : class
         {
             Dictionary<long, OneToMany<TOne, TMany>> cache = new Dictionary<long, OneToMany<TOne, TMany>>();
             Func<TOne, TMany, OneToMany<TOne, TMany>> map = (parent, child) =>
@@ -81,13 +81,15 @@ namespace PowerView.Model.Repository
                 {
                     cache.Add(parent.Id, new OneToMany<TOne, TMany>(parent));
                 }
-
+                
                 var oneToMany = cache[parent.Id];
-                oneToMany.Children.Add(child);
+
+                if (child != null) oneToMany.Children.Add(child);
+                
                 return oneToMany;
             };
 
-            InTransaction(transaction => connection.Query(sql, map, param, transaction, true, "Id", CommandTimeout));
+            InTransaction(transaction => connection.Query(sql, map, param, transaction, true, splitOn, CommandTimeout));
 
             return cache.Values;
         }

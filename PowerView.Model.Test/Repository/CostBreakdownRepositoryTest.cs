@@ -19,7 +19,27 @@ namespace PowerView.Model.Test.Repository
     }
 
     [Test]
-    public void GetCostBreakdowns()
+    public void GetCostBreakdownsNoEntries()
+    {
+      // Arrange
+      var dateTime = new DateTime(2023, 9, 3, 15, 54, 28, DateTimeKind.Utc);
+      var costBreakdownDb1 = new Db.CostBreakdown { Title = "t1", Currency = (int)Unit.Eur, Vat = 10 };
+      InsertCostBreakdown(costBreakdownDb1);
+      var costBreakdownDb2 = new Db.CostBreakdown { Title = "t2", Currency = (int)Unit.Dkk, Vat = 25 };
+      InsertCostBreakdown(costBreakdownDb2);
+      var target = CreateTarget();
+
+      // Act
+      var costBreakdowns = target.GetCostBreakdowns();
+
+      // Assert
+      Assert.That(costBreakdowns.Count, Is.EqualTo(2));
+      AssertCostBreakdown(costBreakdownDb1, Array.Empty<Db.CostBreakdownEntry>(), costBreakdowns.First());
+      AssertCostBreakdown(costBreakdownDb2, Array.Empty<Db.CostBreakdownEntry>(), costBreakdowns.Last());
+    }
+
+    [Test]
+    public void GetCostBreakdownsWithEntries()
     {
       // Arrange
       var dateTime = new DateTime(2023, 9, 3, 15, 54, 28, DateTimeKind.Utc);
