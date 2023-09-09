@@ -22,9 +22,9 @@ echo Credentials OK
 # Make the build - i.e. compile and test
 echo Building and testing server and web application
 sh ./assemble.sh
-if [ $? -ne 0 ]
-then
-  echo assemble.sh returned $?
+retVal=$?
+if [ $retVal -ne 0 ]; then
+  echo assemble.sh returned $retVal
   exit 1
 fi
 
