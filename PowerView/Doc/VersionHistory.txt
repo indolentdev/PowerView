@@ -1,8 +1,9 @@
-PowerView version 1.x.y - Xxx 2023
+PowerView version 1.1.0 - Xxx 2023
 - Improved user flow for adding crude metering data
 - Ability to delete crude metering data
 - Show tags for crude metering data. E.g. manually entered.
-- Fixed a bug where PowerView start would fail if the DbBackup folder contained custom backup files.
+- Ability to define cost breakdowns for fixed expenses
+- Fixed a bug where PowerView start would fail if the DbBackup folder contained custom files.
 - Minor stability improvements.
 
 PowerView version 1.0.0 - December 2022
