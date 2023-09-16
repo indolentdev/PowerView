@@ -15,6 +15,7 @@ import { DataCrudeAddComponent } from './components/data/data-crude-add/data-cru
 import { DataCrudeByDateComponent } from './components/data/data-crude-bydate/data-crude-bydate.component';
 import { ExportDiffsHourlyComponent } from './components/export/export-diffs-hourly/export-diffs-hourly.component';
 import { ExportGaugesHourlyComponent } from './components/export/export-gauges-hourly/export-gauges-hourly.component';
+import { ExportCostBreakdownHourlyComponent } from './components/export/export-cost-breakdown-hourly/export-cost-breakdown-hourly.component';
 import { SettingsSeriesColorsComponent } from './components/settings/settings-series-colors/settings-series-colors.component';
 import { SettingsProfileGraphsComponent } from './components/settings/settings-profile-graphs/settings-profile-graphs.component';
 import { SettingsCostBreakdownComponent } from './components/settings/pricing/settings-cost-breakdown/settings-cost-breakdown.component';
@@ -39,6 +40,7 @@ const routes: Routes = [
   { path: 'data/crude/bydate', component: DataCrudeByDateComponent },
   { path: 'export/diffs/hourly', component: ExportDiffsHourlyComponent },
   { path: 'export/gauges/hourly', component: ExportGaugesHourlyComponent },
+  { path: 'export/costbreakdowns/hourly', component: ExportCostBreakdownHourlyComponent },
   { path: 'settings/seriescolors', component: SettingsSeriesColorsComponent },
   { path: 'settings/profilegraphs', component: SettingsProfileGraphsComponent },
   { path: 'settings/pricing/costbreakdown', component: SettingsCostBreakdownComponent },

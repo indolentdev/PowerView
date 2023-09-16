@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 
 import { exportDiffsHourly } from './exportDiffsHourly.json.js';
 import { exportGaugesHourly } from './exportGaugesHourly.json.js';
-import { exportHourly } from './exportHourly.json.js';
+import { exportCostBreakdownHourly } from './exportCostBreakdownHourly.json.js';
 
 export function exportBackend(url: string, method: string, request: HttpRequest<any>): Observable<HttpEvent<any>> {
 
@@ -37,14 +37,24 @@ export function exportBackend(url: string, method: string, request: HttpRequest<
         });            
     }
 
-    if (url.endsWith('export/hourly') && method === "GET") {
+    if (url.endsWith('export/costbreakdowntitles') && method === "GET") {
         return new Observable(resp => {
             resp.next(new HttpResponse({
                 status: 200,
-                body: exportHourly
+                body: ["vi", "vil", "ha", "winerbrød"]
             }));
             resp.complete();
-        });            
+        });
     }
+
+    if (url.endsWith('export/costbreakdown/hourly') && method === "GET") {
+        return new Observable(resp => {
+            resp.next(new HttpResponse({
+                status: 200,
+                body: exportCostBreakdownHourly
+            }));
+            resp.complete();
+        });
+    }   
 
 }

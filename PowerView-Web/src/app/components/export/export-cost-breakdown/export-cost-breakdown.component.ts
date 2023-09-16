@@ -1,63 +1,63 @@
-import { Component, OnInit,ViewChild, Input, Output, OnChanges, SimpleChanges, EventEmitter } from '@angular/core';
+import { Component, OnInit, ViewChild, Input, Output, OnChanges, SimpleChanges, EventEmitter } from '@angular/core';
 import { UntypedFormControl, AbstractControl, UntypedFormGroup, Validators, FormGroupDirective, NgForm } from '@angular/forms';
 import { Router, ActivatedRoute } from "@angular/router";
 import { NGXLogger } from 'ngx-logger';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { ExportService } from '../../../services/export.service';
-import { ExportSpec } from '../../../model/exportSpec';
+import { ExportTitleSpec } from '../../../model/exportTitleSpec';
 
 import { Moment } from 'moment'
 import * as moment from 'moment';
 
-const labelParam = "label";
+const titleParam = "title";
 const fromParam = "from";
 const toParam = "to";
 const decimalSeparatorParam = "decimalSeparator";
 
 @Component({
-  selector: 'app-export',
-  templateUrl: './export.component.html',
-  styleUrls: ['./export.component.css']
+  selector: 'app-export-cost-breakdown',
+  templateUrl: './export-cost-breakdown.component.html',
+  styleUrls: ['./export-cost-breakdown.component.css']
 })
-export class ExportComponent implements OnInit {
+export class ExportCostBreakdownComponent {
 
-  private absoluteMaxDateFrom = moment().subtract(2, 'days');
-  private absoluteMaxDateTo = moment().subtract(1, 'days');
+  private absoluteMaxDateFrom = moment().add(399, 'days');
+  private absoluteMaxDateTo = moment().add(400, 'days');
 
   minDateFrom = moment("2010-01-01T00:00:00Z");
   maxDateFrom = this.absoluteMaxDateFrom.clone();
   minDateTo = moment("2010-01-02T00:00:00Z");
   maxDateTo = this.absoluteMaxDateTo.clone();;
 
-  labels: string[];
+  titles: string[];
 
   decimalSeparators: any[];
 
   formGroup: UntypedFormGroup;
   @ViewChild('form', { static: true }) form;
 
-  @Output('export') exportAction: EventEmitter<ExportSpec> = new EventEmitter();
+  @Output('export') exportAction: EventEmitter<ExportTitleSpec> = new EventEmitter();
 
   constructor(private log: NGXLogger, private router: Router, private route: ActivatedRoute, private exportService: ExportService) {
   }
 
   ngOnInit() {
     this.formGroup = new UntypedFormGroup({
-      labels: new UntypedFormControl('', [Validators.required]),
+      title: new UntypedFormControl('', [Validators.required]),
       fromDate: new UntypedFormControl('', [Validators.required]),
       toDate: new UntypedFormControl('', [Validators.required]),
       decimalSeparator: new UntypedFormControl('', [Validators.required])
     });
 
-    this.getLabels();
-    this.decimalSeparators = [ { name: "locale", value: "locale" }, { name: "dot", value: "." }, { name: "comma", value: "," } ];
+    this.getTitles();
+    this.decimalSeparators = [{ name: "locale", value: "locale" }, { name: "dot", value: "." }, { name: "comma", value: "," }];
 
     this.setDecimalSeparator("locale");
 
     this.route.queryParamMap.subscribe(queryParams => {
-      let labelsSelectControl = this.getControl("labels");
-      let labels = queryParams.getAll(labelParam);
-      labelsSelectControl.setValue(labels);
+      let titleSelectControl = this.getControl("title");
+      let title = queryParams.get(titleParam);
+      titleSelectControl.setValue(title);
 
       let fromDateCtl = this.getControl("fromDate");
       const fromDateString = queryParams.get(fromParam);
@@ -73,11 +73,10 @@ export class ExportComponent implements OnInit {
     });
   }
 
-  private getLabels(): void {
-    if (this.labels == null)
-    {
-      this.exportService.getLabels().subscribe(x => { 
-        this.labels = x;
+  private getTitles(): void {
+    if (this.titles == null) {
+      this.exportService.getCostBreakdownTitles().subscribe(x => {
+        this.titles = x;
       });
     }
   }
@@ -88,8 +87,7 @@ export class ExportComponent implements OnInit {
 
   private fetchDecimalSeparator(name: string): any {
     var match = this.decimalSeparators.find(x => x.name === name);
-    if (match === undefined)
-    {
+    if (match === undefined) {
       match = this.fetchDecimalSeparator("locale");
     }
     return match;
@@ -101,8 +99,7 @@ export class ExportComponent implements OnInit {
 
   private parseDateSetFormControl(dateString: string, fcDate: AbstractControl): void {
     let parsedDate = moment(dateString);
-    if (parsedDate.isValid() && !parsedDate.isSame(fcDate.value))
-    {
+    if (parsedDate.isValid() && !parsedDate.isSame(fcDate.value)) {
       fcDate.setValue(parsedDate);
     }
   }
@@ -113,8 +110,7 @@ export class ExportComponent implements OnInit {
 
     this.minDateTo = moment(event.value.toISOString()).add(1, 'days');
     this.maxDateTo = moment(event.value.toISOString()).add(2, 'days').add(3, 'months');
-    if (this.maxDateTo > this.absoluteMaxDateTo)
-    {
+    if (this.maxDateTo > this.absoluteMaxDateTo) {
       this.maxDateTo = this.absoluteMaxDateTo.clone();
     }
 
@@ -125,9 +121,8 @@ export class ExportComponent implements OnInit {
     if (event == null) return;
     if (event.value == null) return;
 
-    this.maxDateFrom = moment(event.value.toISOString()).subtract(1, 'days'); 
-    if (this.maxDateFrom > this.absoluteMaxDateFrom)
-    {
+    this.maxDateFrom = moment(event.value.toISOString()).subtract(1, 'days');
+    if (this.maxDateFrom > this.absoluteMaxDateFrom) {
       this.maxDateFrom = this.absoluteMaxDateFrom.clone();
     }
     this.minDateFrom = moment(event.value.toISOString()).subtract(2, 'days').subtract(3, 'months');
@@ -135,11 +130,11 @@ export class ExportComponent implements OnInit {
     this.navigate({ to: event.value.toISOString() });
   }
 
-  labelsChangeEvent(event) {
+  titleChangeEvent(event) {
     if (event == null) return;
     if (event.value == null) return;
 
-    this.navigate({ label: event.value });
+    this.navigate({ title: event.value });
   }
 
   decimalSeparatorChangeEvent(event) {
@@ -171,15 +166,17 @@ export class ExportComponent implements OnInit {
 
     let decimalSeparatorValue = this.fetchDecimalSeparator(formGroupValue.decimalSeparator).value;
 
-    if (formGroupValue.labels != null && formGroupValue.labels.length > 0 &&
+    if (formGroupValue.title != null && 
       formGroupValue.fromDate != null && moment(formGroupValue.fromDate).isValid() &&
-      formGroupValue.toDate != null && moment(formGroupValue.toDate).isValid() ) {
-        let exportSpec =  { labels: formGroupValue.labels, 
-          decimalSeparator: decimalSeparatorValue,
-          from: moment(formGroupValue.fromDate), to: moment(formGroupValue.toDate) };
-        this.navigate({ labels: null, to: null, from: null });
-        this.form.resetForm();
-        this.exportAction.emit(exportSpec);
+      formGroupValue.toDate != null && moment(formGroupValue.toDate).isValid()) {
+      let exportSpec = {
+        title: formGroupValue.title,
+        decimalSeparator: decimalSeparatorValue,
+        from: moment(formGroupValue.fromDate), to: moment(formGroupValue.toDate)
+      };
+      this.navigate({ title: null, to: null, from: null });
+      this.form.resetForm();
+      this.exportAction.emit(exportSpec);
     }
   }
 

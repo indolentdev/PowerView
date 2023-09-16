@@ -1,8 +1,8 @@
-import { ExportDiffPeriod } from "./exportDiffPeriod";
+import { ExportPeriod } from "./exportPeriod";
 import { ExportSeriesDiff } from "./exportSeriesDiff";
 
 export class ExportSeriesDiffSet {
-    periods: ExportDiffPeriod[];
+    periods: ExportPeriod[];
     series: ExportSeriesDiff[];
 
     constructor() {
