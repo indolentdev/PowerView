@@ -3,6 +3,7 @@ PowerView version 1.1.0 - Xxx 2023
 - Ability to delete crude metering data
 - Show tags for crude metering data. E.g. manually entered.
 - Ability to define cost breakdowns for fixed expenses
+- Ability to export cost breakdowns for fixed expenses with hourly amounts
 - Fixed a bug where PowerView start would fail if the DbBackup folder contained custom files.
 - Minor stability improvements.
 

@@ -223,6 +223,21 @@ public class ExportCostBreakdownControllerTest
     }
 
     [Test]
+    public async Task GetHourlyCostBreakdownExportAbsent()
+    {
+        // Arrange
+        var today = new DateTime(2023, 9, 16, 22, 0, 0, DateTimeKind.Utc);
+        var from = today;
+        var to = from.AddHours(8);
+
+        // Act
+        var response = await httpClient.GetAsync($"api/export/costbreakdown/hourly?from={from.ToString("o")}&to={to.ToString("o")}&title=dummy");
+
+        // Assert
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
+    }
+
+    [Test]
     public async Task GetHourlyCostBreakdownExportOneEntry()
     {
         // Arrange
@@ -259,6 +274,57 @@ public class ExportCostBreakdownControllerTest
             new { From = (DateTime?)from.AddHours(6), To = (DateTime?)from.AddHours(7), Value = (double?)costBreakdownEntry.Amount },
             new { From = (DateTime?)from.AddHours(7), To = (DateTime?)from.AddHours(8), Value = (double?)costBreakdownEntry.Amount },
         }, json.entries[0]);
+    }
+
+    [Test]
+    public async Task GetHourlyCostBreakdownExportTwoEntries()
+    {
+        // Arrange
+        var today = new DateTime(2023, 9, 16, 22, 0, 0, DateTimeKind.Utc);
+        var from = today;
+        var to = from.AddHours(8);
+        var costBreakdownEntry1 = new CostBreakdownEntry(from.AddDays(-33), to.AddDays(33), "entry", 0, 23, 23.45);
+        var costBreakdownEntry2 = new CostBreakdownEntry(from.AddHours(-3), to.AddHours(-3), "entry", 0, 1, 12.34);
+        var costBreakdown = new CostBreakdown("Title1", Unit.Eur, 11, new[] { costBreakdownEntry1, costBreakdownEntry2 });
+        SetupCostBreakdownRepositoryGetCostBreakdown(costBreakdown);
+
+        // Act
+        var response = await httpClient.GetAsync($"api/export/costbreakdown/hourly?from={from.ToString("o")}&to={to.ToString("o")}&title=dummy");
+
+        // Assert
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        var json = await response.Content.ReadFromJsonAsync<ExportCostBreakdownRoot>();
+        AssertPeriods(new[] { new ExportPeriod(from, from.AddHours(1)), new ExportPeriod(from.AddHours(1), from.AddHours(2)),
+          new ExportPeriod(from.AddHours(2), from.AddHours(3)), new ExportPeriod(from.AddHours(3), from.AddHours(4)),
+          new ExportPeriod(from.AddHours(4), from.AddHours(5)), new ExportPeriod(from.AddHours(5), from.AddHours(6)),
+          new ExportPeriod(from.AddHours(6), from.AddHours(7)), new ExportPeriod(from.AddHours(7), from.AddHours(8)) }, json.periods);
+
+        Assert.That(json.title, Is.EqualTo(costBreakdown.Title));
+        Assert.That(json.currency, Is.EqualTo(costBreakdown.Currency.ToString().ToUpperInvariant()));
+        Assert.That(json.vat, Is.EqualTo(costBreakdown.Vat));
+        Assert.That(json.entries, Has.Length.EqualTo(2));
+        AssertExportCostBreakdownEntryValues(costBreakdownEntry1.Name, new dynamic[]
+        {
+            new { From = (DateTime?)from, To = (DateTime?)from.AddHours(1), Value = (double?)costBreakdownEntry1.Amount },
+            new { From = (DateTime?)from.AddHours(1), To = (DateTime?)from.AddHours(2), Value = (double?)costBreakdownEntry1.Amount },
+            new { From = (DateTime?)from.AddHours(2), To = (DateTime?)from.AddHours(3), Value = (double?)costBreakdownEntry1.Amount },
+            new { From = (DateTime?)from.AddHours(3), To = (DateTime?)from.AddHours(4), Value = (double?)costBreakdownEntry1.Amount },
+            new { From = (DateTime?)from.AddHours(4), To = (DateTime?)from.AddHours(5), Value = (double?)costBreakdownEntry1.Amount },
+            new { From = (DateTime?)from.AddHours(5), To = (DateTime?)from.AddHours(6), Value = (double?)costBreakdownEntry1.Amount },
+            new { From = (DateTime?)from.AddHours(6), To = (DateTime?)from.AddHours(7), Value = (double?)costBreakdownEntry1.Amount },
+            new { From = (DateTime?)from.AddHours(7), To = (DateTime?)from.AddHours(8), Value = (double?)costBreakdownEntry1.Amount },
+        }, json.entries[0]);
+        AssertExportCostBreakdownEntryValues(costBreakdownEntry2.Name, new dynamic[]
+        {
+            new { From = (DateTime?)from, To = (DateTime?)from.AddHours(1), Value = (double?)costBreakdownEntry2.Amount },
+            new { From = (DateTime?)from.AddHours(1), To = (DateTime?)from.AddHours(2), Value = (double?)costBreakdownEntry2.Amount },
+            new { From = (DateTime?)null, To = (DateTime?)null, Value = (double?)null },
+            new { From = (DateTime?)null, To = (DateTime?)null, Value = (double?)null },
+            new { From = (DateTime?)null, To = (DateTime?)null, Value = (double?)null },
+            new { From = (DateTime?)null, To = (DateTime?)null, Value = (double?)null },
+            new { From = (DateTime?)null, To = (DateTime?)null, Value = (double?)null },
+            new { From = (DateTime?)null, To = (DateTime?)null, Value = (double?)null },
+        }, json.entries[1]);
     }
 
     private void SetupCostBreakdownRepositoryGetTitles(params string[] titles)

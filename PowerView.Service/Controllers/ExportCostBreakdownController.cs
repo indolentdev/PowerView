@@ -37,6 +37,7 @@ public class ExportCostBreakdownController : ControllerBase
 
     [HttpGet("costbreakdown/hourly")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     public ActionResult GetHourlyCostBreakdownExport(
         [BindRequired, FromQuery, UtcDateTime] DateTime from, 
         [BindRequired, FromQuery, UtcDateTime] DateTime to, 
@@ -44,13 +45,10 @@ public class ExportCostBreakdownController : ControllerBase
     {
         if (from >= to) return BadRequest("to must be greater than from");
         
-        // TOOD: Check for max length?
-
         var costBreakdown = costBreakdownRepository.GetCostBreakdown(title);
-        // TODO NULL
+        if (costBreakdown == null) return NoContent();
 
         var periods = GetPeriods(from, to);
-
         var exportCostBreakdown = GetExportCostBreakdown(periods, costBreakdown.Entries);
 
         var r = new { Title = costBreakdown.Title, Currency = costBreakdown.Currency.ToString().ToUpperInvariant(), Vat = costBreakdown.Vat,
