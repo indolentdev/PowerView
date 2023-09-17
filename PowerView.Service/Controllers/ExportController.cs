@@ -49,6 +49,7 @@ public class ExportController : ControllerBase
         [BindRequired, FromQuery, UtcDateTime] DateTime to, 
         [BindRequired, FromQuery, MinLength(1)] string[] label)
     {
+        if (from >= to) return BadRequest("to must be greater than from");
         var labelSeriesSet = exportRepository.GetLiveCumulativeSeries(from, to, label);
         var intervalGroup = new IntervalGroup(locationContext.TimeZoneInfo, from, "60-minutes", labelSeriesSet);
         intervalGroup.Prepare();
@@ -61,7 +62,7 @@ public class ExportController : ControllerBase
           .Where(x => x.NormalizedValue.NormalizedStart != x.NormalizedValue.NormalizedEnd);
 
         var periods = falttened
-          .Select(x => new Period(x.NormalizedValue.NormalizedStart, x.NormalizedValue.NormalizedEnd))
+          .Select(x => new ExportPeriod(x.NormalizedValue.NormalizedStart, x.NormalizedValue.NormalizedEnd))
           .Distinct()
           .OrderBy(x => x)
           .ToList();
@@ -73,7 +74,7 @@ public class ExportController : ControllerBase
         return Ok(r);
     }
 
-    private static IList<object> GetExportDiffSeries(IList<Period> periods, IEnumerable<IGrouping<SeriesName, NormalizedDurationRegisterValue>> seriesGroups)
+    private static IList<object> GetExportDiffSeries(IList<ExportPeriod> periods, IEnumerable<IGrouping<SeriesName, NormalizedDurationRegisterValue>> seriesGroups)
     {
         var exportSeries = new List<object>(); // matches dto
 
@@ -82,7 +83,7 @@ public class ExportController : ControllerBase
             var seriesName = group.Key;
 
             var hourlyValues = periods
-              .GroupJoin(group, x => x, x => new Period(x.NormalizedStart, x.NormalizedEnd), (period, normalizedValues) => new { period, normalizedValues })
+              .GroupJoin(group, x => x, x => new ExportPeriod(x.NormalizedStart, x.NormalizedEnd), (period, normalizedValues) => new { period, normalizedValues })
               .SelectMany(x => x.normalizedValues.DefaultIfEmpty(), (joinItem, normalizedValue) => new { joinItem.period, normalizedValue })
               .OrderBy(x => x.period)
               .Select(x => x.normalizedValue)
@@ -121,63 +122,6 @@ public class ExportController : ControllerBase
         return exportSeries;
     }
 
-    internal class Period : IEquatable<Period>, IComparable<Period>
-    {
-        public Period(DateTime from, DateTime to)
-        {
-            From = from;
-            To = to;
-        }
-
-        public DateTime From { get; }
-        public DateTime To { get; }
-
-        public override string ToString()
-        {
-            return string.Format(CultureInfo.InvariantCulture, "Period [From:{0}, To:{1}]", From.ToString("o"), To.ToString("o"));
-        }
-
-        public int CompareTo(Period other)
-        {
-            if (From != other.From)
-            {
-                return From.CompareTo(other.From);
-            }
-            else
-            {
-                return To.CompareTo(other.To);
-            }
-        }
-
-        public override bool Equals(object obj)
-        {
-            return Equals(obj as Period);
-        }
-
-        public bool Equals(Period other)
-        {
-            return other != null && From == other.From && To == other.To;
-        }
-
-        public override int GetHashCode()
-        {
-            var hashCode = -1781160927;
-            hashCode = hashCode * -1521134295 + From.GetHashCode();
-            hashCode = hashCode * -1521134295 + To.GetHashCode();
-            return hashCode;
-        }
-
-        public static bool operator ==(Period period1, Period period2)
-        {
-            return EqualityComparer<Period>.Default.Equals(period1, period2);
-        }
-
-        public static bool operator !=(Period period1, Period period2)
-        {
-            return !(period1 == period2);
-        }
-    }
-
     [HttpGet("gauges/hourly")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public ActionResult GetHourlyGaugesExport(
@@ -185,6 +129,7 @@ public class ExportController : ControllerBase
         [BindRequired, FromQuery, UtcDateTime] DateTime to,
         [BindRequired, FromQuery, MinLength(1)] string[] label)
     {
+        if (from >= to) return BadRequest("to must be greater than from");
         var labelSeriesSet = exportRepository.GetLiveCumulativeSeries(from, to, label);
         var intervalGroup = new IntervalGroup(locationContext.TimeZoneInfo, from, "60-minutes", labelSeriesSet);
         intervalGroup.Prepare();

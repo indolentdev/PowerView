@@ -140,13 +140,41 @@ public class ExportControllerTest
     }
 
     [Test]
+    public async Task GetHourlyDiffExportFromEqualToTo()
+    {
+        // Arrange
+        var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
+
+        // Act
+        var response = await httpClient.GetAsync($"api/export/diffs/hourly?from={today.ToString("o")}&to={today.ToString("o")}&label=lbl1");
+
+        // Assert
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+        exportRepository.Verify(pr => pr.GetLiveCumulativeSeries(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<IList<string>>()), Times.Never);
+    }
+
+    [Test]
+    public async Task GetHourlyDiffExportFromGreaterThanTo()
+    {
+        // Arrange
+        var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
+
+        // Act
+        var response = await httpClient.GetAsync($"api/export/diffs/hourly?from={today.AddSeconds(1).ToString("o")}&to={today.ToString("o")}&label=lbl1");
+
+        // Assert
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+        exportRepository.Verify(pr => pr.GetLiveCumulativeSeries(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<IList<string>>()), Times.Never);
+    }
+
+    [Test]
     public async Task GetHourlyDiffExportLabelAbsent()
     {
         // Arrange
         var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
 
         // Act
-        var response = await httpClient.GetAsync($"api/export/diffs/hourly?from={today.ToString("o")}&to={today.ToString("o")}");
+        var response = await httpClient.GetAsync($"api/export/diffs/hourly?from={today.ToString("o")}&to={today.AddSeconds(1).ToString("o")}");
 
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
@@ -255,7 +283,7 @@ public class ExportControllerTest
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         var json = await response.Content.ReadFromJsonAsync<ExportDiffsRoot>();
-        AssertPeriods(new[] { new ExportController.Period(t1 - skew, t2 - skew), new ExportController.Period(t2 - skew, t3 - skew) }, json.periods);
+        AssertPeriods(new[] { new ExportPeriod(t1 - skew, t2 - skew), new ExportPeriod(t2 - skew, t3 - skew) }, json.periods);
 
         Assert.That(json.series, Has.Length.EqualTo(1));
         AssertExportDiffSeries(ls.Label, obisCode.ToDelta(), new dynamic[] 
@@ -304,7 +332,7 @@ public class ExportControllerTest
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         var json = await response.Content.ReadFromJsonAsync<ExportDiffsRoot>();
-        AssertPeriods(new[] { new ExportController.Period(t1 - skew, t2 - skew), new ExportController.Period(t2 - skew, t3 - skew) }, json.periods);
+        AssertPeriods(new[] { new ExportPeriod(t1 - skew, t2 - skew), new ExportPeriod(t2 - skew, t3 - skew) }, json.periods);
 
         Assert.That(json.series, Has.Length.EqualTo(4));
         AssertExportDiffSeries(ls1.Label, a14.ToDelta(), new dynamic[] 
@@ -357,7 +385,7 @@ public class ExportControllerTest
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         var json = await response.Content.ReadFromJsonAsync<ExportDiffsRoot>();
-        AssertPeriods(new[] { new ExportController.Period(t1 - skew, t2 - skew) }, json.periods);
+        AssertPeriods(new[] { new ExportPeriod(t1 - skew, t2 - skew) }, json.periods);
 
         Assert.That(json.series, Has.Length.EqualTo(2));
         AssertExportDiffSeries(ls1.Label, obisCode.ToDelta(), new dynamic[] 
@@ -396,7 +424,7 @@ public class ExportControllerTest
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         var json = await response.Content.ReadFromJsonAsync<ExportDiffsRoot>();
-        AssertPeriods(new[] { new ExportController.Period(t1 - skew, t2 - skew), new ExportController.Period(t2 - skew, t3 - skew) }, json.periods);
+        AssertPeriods(new[] { new ExportPeriod(t1 - skew, t2 - skew), new ExportPeriod(t2 - skew, t3 - skew) }, json.periods);
 
         Assert.That(json.series, Has.Length.EqualTo(1));
         AssertExportDiffSeries(ls.Label, obisCode.ToDelta(), new dynamic[] 
@@ -435,13 +463,41 @@ public class ExportControllerTest
     }
 
     [Test]
+    public async Task GetHourlyGaugesExportFromEqualToTo()
+    {
+        // Arrange
+        var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
+
+        // Act
+        var response = await httpClient.GetAsync($"api/export/gauges/hourly?from={today.ToString("o")}&to={today.ToString("o")}&label=lbl1");
+
+        // Assert
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+        exportRepository.Verify(pr => pr.GetLiveCumulativeSeries(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<IList<string>>()), Times.Never);
+    }
+
+    [Test]
+    public async Task GetHourlyDiffGaugesFromGreaterThanTo()
+    {
+        // Arrange
+        var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
+
+        // Act
+        var response = await httpClient.GetAsync($"api/export/gauges/hourly?from={today.AddSeconds(1).ToString("o")}&to={today.ToString("o")}&label=lbl1");
+
+        // Assert
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+        exportRepository.Verify(pr => pr.GetLiveCumulativeSeries(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<IList<string>>()), Times.Never);
+    }
+
+    [Test]
     public async Task GetHourlyGaugesExportLabelAbsent()
     {
         // Arrange
         var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
 
         // Act
-        var response = await httpClient.GetAsync($"api/export/gauges/hourly?from={today.ToString("o")}&to={today.ToString("o")}");
+        var response = await httpClient.GetAsync($"api/export/gauges/hourly?from={today.ToString("o")}&to={today.AddSeconds(1).ToString("o")}");
 
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
@@ -726,10 +782,10 @@ public class ExportControllerTest
         Assert.That(actual.Select(dt => DateTime.Parse(dt, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind)).ToArray(), Is.EqualTo(expected.ToArray()));
     }
 
-    private static void AssertPeriods(IEnumerable<ExportController.Period> expected, ExportDiffPeriod[] actual)
+    private static void AssertPeriods(IEnumerable<ExportPeriod> expected, ExportDiffPeriod[] actual)
     {
         Assert.That(
-            actual.Select(x => new ExportController.Period(
+            actual.Select(x => new ExportPeriod(
                 DateTime.Parse(x.from, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind), 
                 DateTime.Parse(x.to, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind)
             )).ToArray(), 

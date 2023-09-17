@@ -16,6 +16,27 @@ namespace PowerView.Model.Repository
     {
     }
 
+    public ICollection<string> GetCostBreakdownTitles()
+    {
+      const string sql = @"
+SELECT cb.Title 
+FROM CostBreakdown cb;";
+      return DbContext.QueryTransaction<string>(sql);
+    }
+
+    public CostBreakdown GetCostBreakdown(string title)
+    {
+      if (title == null) throw new ArgumentNullException(nameof(title));
+
+      const string sql = @"
+SELECT cb.Id, cb.Title, cb.Currency, cb.Vat, cbe.CostBreakdownId, cbe.FromDate, cbe.ToDate, cbe.Name, cbe.StartTime, cbe.EndTime, cbe.Amount 
+FROM CostBreakdown cb LEFT JOIN CostBreakdownEntry cbe ON cb.Id=cbe.CostBreakdownId
+ORDER BY cb.Id, cbe.FromDate, cbe.ToDate, cbe.Name;";
+      var queryResult = DbContext.QueryOneToManyTransaction<Db.CostBreakdown, Db.CostBreakdownEntry>(sql, splitOn: "CostBreakdownId");
+
+      return queryResult.Select(x => ToCostBreakdown(x.Parent, x.Children)).FirstOrDefault();
+    }
+
     public ICollection<CostBreakdown> GetCostBreakdowns()
     {
       const string sql = @"

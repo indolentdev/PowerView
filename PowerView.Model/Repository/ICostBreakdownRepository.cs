@@ -11,6 +11,10 @@ namespace PowerView.Model.Repository;
 
 public interface ICostBreakdownRepository
 {
+  ICollection<string> GetCostBreakdownTitles();
+
+  CostBreakdown GetCostBreakdown(string title);
+
   ICollection<CostBreakdown> GetCostBreakdowns();
 
   void AddCostBreakdown(CostBreakdown costBreakdown);

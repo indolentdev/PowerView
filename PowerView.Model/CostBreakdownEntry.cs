@@ -30,6 +30,20 @@ namespace PowerView.Model
     public int EndTime { get; private set; }
     public double Amount { get; private set; }
 
+    public bool AppliesToDates(DateTime from, DateTime to)
+    {
+      if (from.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException(nameof(from), $"Must be UTC. Was:{from.Kind}");
+      if (to.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException(nameof(to), $"Must be UTC. Was:{to.Kind}");
+
+      return from >= FromDate && to <= ToDate;
+    }
+
+    public bool AppliesToTime(TimeOnly time)
+    {
+      var hour = time.Hour;
+      return hour >= StartTime && hour <= EndTime;
+    }
+
     public override string ToString()
     {
       return string.Format(CultureInfo.InvariantCulture, "[CostBreakDownEntry: FromDate={0}, ToDate={1}, Name={2}, StartTime={3}, EndTime={4}, Amount={5}]", 

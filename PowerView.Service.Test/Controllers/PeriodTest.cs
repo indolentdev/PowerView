@@ -18,7 +18,7 @@ public class PeriodTest
         var to = DateTime.UtcNow.AddMinutes(63);
 
         // Act
-        var target = new ExportController.Period(from, to);
+        var target = new ExportPeriod(from, to);
 
         // Assert
         Assert.That(target.From, Is.EqualTo(from));
@@ -31,10 +31,10 @@ public class PeriodTest
         // Arrange
         var from = DateTime.Now;
         var to = DateTime.UtcNow.AddMinutes(63);
-        var t1 = new ExportController.Period(from, to);
-        var t2 = new ExportController.Period(from, to);
-        var t3 = new ExportController.Period(from.AddMilliseconds(1), to);
-        var t4 = new ExportController.Period(from, to.AddMilliseconds(1));
+        var t1 = new ExportPeriod(from, to);
+        var t2 = new ExportPeriod(from, to);
+        var t3 = new ExportPeriod(from.AddMilliseconds(1), to);
+        var t4 = new ExportPeriod(from, to.AddMilliseconds(1));
 
         // Act & Assert
         Assert.That(t1.Equals(t2), Is.True);
@@ -49,10 +49,10 @@ public class PeriodTest
         // Arrange
         var from = DateTime.Now;
         var to = DateTime.UtcNow.AddMinutes(63);
-        var t1 = new ExportController.Period(from, to);
-        var t2 = new ExportController.Period(from, to);
-        var t3 = new ExportController.Period(from.AddMilliseconds(1), to);
-        var t4 = new ExportController.Period(from, to.AddMilliseconds(1));
+        var t1 = new ExportPeriod(from, to);
+        var t2 = new ExportPeriod(from, to);
+        var t3 = new ExportPeriod(from.AddMilliseconds(1), to);
+        var t4 = new ExportPeriod(from, to.AddMilliseconds(1));
 
         // Act & Assert
         Assert.That(t1.GetHashCode(), Is.EqualTo(t2.GetHashCode()));
@@ -74,8 +74,8 @@ public class PeriodTest
         var t1To = DateTime.ParseExact(t1ToString, format, CultureInfo.InvariantCulture);
         var t2From = DateTime.ParseExact(t2FromString, format, CultureInfo.InvariantCulture);
         var t2To = DateTime.ParseExact(t2ToString, format, CultureInfo.InvariantCulture);
-        var t1 = new ExportController.Period(t1From, t1To);
-        var t2 = new ExportController.Period(t2From, t2To);
+        var t1 = new ExportPeriod(t1From, t1To);
+        var t2 = new ExportPeriod(t2From, t2To);
 
         // Act
         var compareValue = t1.CompareTo(t2);
@@ -90,8 +90,8 @@ public class PeriodTest
         // Arrange
         var from = DateTime.Now;
         var to = DateTime.UtcNow.AddMinutes(63);
-        var t1 = new ExportController.Period(from, to);
-        var t2 = new ExportController.Period(from.AddMilliseconds(1), to.AddMilliseconds(1));
+        var t1 = new ExportPeriod(from, to);
+        var t2 = new ExportPeriod(from.AddMilliseconds(1), to.AddMilliseconds(1));
         var list = new[] { t2, t1 };
 
         // Act
