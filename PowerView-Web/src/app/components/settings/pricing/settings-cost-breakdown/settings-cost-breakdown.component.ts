@@ -200,7 +200,7 @@ export class SettingsCostBreakdownComponent {
       this.log.debug("Add ok");
       this.translateService.get('forms.settings.pricing.costBreakdown.confirmAddEntry').subscribe(message => {
         this.snackBarRef = this.snackBar.open(message, undefined, { duration: 4000 });
-        this.entryClear = crypto.randomUUID();
+        this.entryClear = Math.random().toString(10);
         this.reset();
       });
     }, err => {
@@ -241,7 +241,7 @@ export class SettingsCostBreakdownComponent {
       this.log.debug("Update ok");
       this.translateService.get('forms.settings.pricing.costBreakdown.confirmUpdateEntry').subscribe(message => {
         this.snackBarRef = this.snackBar.open(message, undefined, { duration: 4000 });
-        this.entryClear = crypto.randomUUID();
+        this.entryClear = Math.random().toString(10);
         this.reset();
       });
     }, err => {
