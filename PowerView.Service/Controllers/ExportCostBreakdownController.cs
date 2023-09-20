@@ -49,6 +49,7 @@ public class ExportCostBreakdownController : ControllerBase
         if (costBreakdown == null) return NoContent();
 
         var periods = GetPeriods(from, to);
+        var costBreakdownEntries = costBreakdown.Entries.Where(e => e.IntersectsWith(from, to));
         var exportCostBreakdown = GetExportCostBreakdown(periods, costBreakdown.Entries);
 
         var r = new { Title = costBreakdown.Title, Currency = costBreakdown.Currency.ToString().ToUpperInvariant(), Vat = costBreakdown.Vat,
