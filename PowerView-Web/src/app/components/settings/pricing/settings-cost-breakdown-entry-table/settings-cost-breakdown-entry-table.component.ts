@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild, Input, Output, OnChanges, SimpleChanges, EventEmitter } from '@angular/core';
+import { MatSort, MatSortable } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { NGXLogger } from 'ngx-logger';
 import { CostBreakdown } from '../../../../model/costBreakdown';
@@ -13,6 +14,8 @@ export class SettingsCostBreakdownEntryTableComponent {
   displayedColumns = ['fromDate', 'toDate', 'name', 'startTime', 'endTime', 'amount', 'actions'];
   dataSource: MatTableDataSource<any>;
 
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
+
   @Input('costBreakdownEntries') costBreakdownEntries: CostBreakdownEntry[];
 
   @Output('editCostBreakdownEntry') editAction: EventEmitter<CostBreakdownEntry> = new EventEmitter();
@@ -25,7 +28,14 @@ export class SettingsCostBreakdownEntryTableComponent {
     let empty = [];
     this.dataSource = new MatTableDataSource<any>(empty);
 
+    this.sort.sort(<MatSortable>({ id: 'fromDate', start: 'asc' }));
+    this.sort.disableClear = true;
+
     this.refresh();
+  }
+
+  ngAfterViewInit() {
+    this.dataSource.sort = this.sort;
   }
 
   ngOnChanges(changes: SimpleChanges) {
