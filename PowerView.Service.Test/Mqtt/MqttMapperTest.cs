@@ -114,7 +114,7 @@ namespace PowerView.Service.Test.Mqtt
       var payload = string.Format(CultureInfo.InvariantCulture, payloadFormat, 
                                   "{", value * Math.Pow(10, factor), jsonUnit, dateTime.ToString("o"), "}");
 
-      Assert.That(System.Text.Encoding.UTF8.GetString(mqttMsqs[0].Payload), Is.EqualTo(payload));
+      Assert.That(System.Text.Encoding.UTF8.GetString(mqttMsqs[0].PayloadSegment), Is.EqualTo(payload));
     }
 
     [Test]
