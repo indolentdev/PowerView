@@ -14,6 +14,7 @@
     "gauges": "Tællerstande",
     "help": "Hjælp",
     "hourly": "Time",
+    "import": "Import",
     "latest": "Seneste",
     "mqtt": "MQTT",
     "pricing": "Priser",
@@ -35,6 +36,7 @@
   
   "common": {
     "cancel": "Annuller",
+    "chooseChannel": "Vælg kanal",
     "chooseColor": "Vælg farve",
     "chooseCostBreakdown": "Vælg omkostningsfordeling",
     "chooseCurrency": "Vælg møntfod",
@@ -92,6 +94,9 @@
         "Custom": ""
       }
     },
+    "import": "Import",
+    "imports": "Importer",
+    "importInfo": "Import af el time markedspriser ekskl. moms fra Energi Data Service",
     "measureKinds": "Målearter",
     "monthProfile": "Månedsprofil",
     "mqtt": "Konfigurer MQTT Integration",
@@ -120,6 +125,7 @@
     "actions": "Handlinger",
     "amount": "Beløb",
     "associatedTo": "Tilknytning",
+    "channel": "Kanal",
     "color": "Farve",
     "costBreakdownEntries": "Poster",
     "currency": "Møntfod",
@@ -129,6 +135,7 @@
     "deviceId": "Apparat ID",
     "difference": "Forskel",
     "email": "E-mail Adresse",
+    "enabled": "Aktiveret",
     "endTime": "Slut Time (inkl.)",
     "event": "Hændelse",
     "from": "Fra",
@@ -301,6 +308,32 @@
             "max": "Maks værdi er {{ maxValue }}",
             "maxLength_25": "Maksimum 25 tegn",
             "min": "Minimum værdi er {{ minValue }}",
+            "minLength_1": "Minimum 1 tegn",
+            "required": "Påkrævet"
+          }
+        },
+        "import": {
+          "buttonActionEnable": "Aktiver",
+          "buttonActionDelete": "Slet",
+          "buttonActionDisable": "Deaktiver",
+          "buttonAdd": "Tilføj Import",
+          "channels": {
+            "DK1": "{{ channel }} (vest)",
+            "DK2": "{{ channel }} (øst)"
+          },
+          "confirmAdd": "Import tilføjet.",
+          "confirmDelete": "Import slettet.",
+          "confirmUpdate": "Import opdateret.",
+          "errorAdd": "Tilføj import fejlede. ",
+          "errorAdjustEntryFields": "Tilpas etiket, dato eller øvrige felter.",
+          "errorDelete": "Slet import fejlede. ",
+          "errorUpdate": "Opdater import fejlede. ",
+          "hintChannel": "Pris kanal",
+          "hintCurrency": "Møntfod for pris kanal",
+          "hintDateFrom": "Gælder fra 00:00:00 den valgte dag",
+          "hintLabel": "Vælg en unik etiket til import serien",
+          "valErrors": {
+            "maxLength_25": "Maksimum 25 tegn",
             "minLength_1": "Minimum 1 tegn",
             "required": "Påkrævet"
           }

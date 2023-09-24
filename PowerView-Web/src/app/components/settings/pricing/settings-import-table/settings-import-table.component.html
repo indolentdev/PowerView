@@ -1,0 +1,42 @@
+<div>
+    <h2>{{ 'headings.imports' | translate }}</h2>
+</div>
+
+<table mat-table [dataSource]="dataSource" matSort class="center">
+    <ng-container matColumnDef="label">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'columns.label' | translate }}</th>
+        <td mat-cell *matCellDef="let v">{{ v.label }}</td>
+    </ng-container>
+    <ng-container matColumnDef="channel">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'columns.channel' | translate }}</th>
+        <td mat-cell *matCellDef="let v">{{ v.channel }}</td>
+    </ng-container>
+    <ng-container matColumnDef="currency">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'columns.currency' | translate }}</th>
+        <td mat-cell *matCellDef="let v">{{ v.currency }}</td>
+    </ng-container>
+    <ng-container matColumnDef="fromTimestamp">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'columns.fromDate' | translate }}</th>
+        <td mat-cell *matCellDef="let v">{{ v.fromTimestamp | date:'shortDate' }}</td>
+    </ng-container>
+    <ng-container matColumnDef="currentTimestamp">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'columns.status' | translate }}</th>
+        <td mat-cell *matCellDef="let v">{{ v.currentTimestamp | date:'short' }}</td>
+    </ng-container>
+    <ng-container matColumnDef="enabled">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'columns.enabled' | translate }}</th>
+        <td mat-cell *matCellDef="let v">
+            <mat-checkbox [checked]="v.enabled" [class.mat-checkbox-disabled]="false" disabled></mat-checkbox>
+        </td>
+    </ng-container>
+    <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>{{ 'columns.actions' | translate }}</th>
+        <td mat-cell *matCellDef="let v">
+            <button *ngIf="!v.enabled" style="margin-left:3px;margin-right:3px" mat-raised-button type="button" (click)="enableClick(v)">{{ 'forms.settings.pricing.import.buttonActionEnable' | translate }}</button>
+            <button *ngIf="v.enabled" style="margin-left:3px;margin-right:3px" mat-raised-button type="button" (click)="disableClick(v)">{{ 'forms.settings.pricing.import.buttonActionDisable' | translate }}</button>
+            <button style="margin-left:3px;margin-right:3px" mat-raised-button type="button" (click)="deleteClick(v)">{{ 'forms.settings.pricing.import.buttonActionDelete' | translate }}</button>
+        </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr style="white-space: pre-wrap;" mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+</table>

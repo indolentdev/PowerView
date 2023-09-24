@@ -1,0 +1,47 @@
+<div class="divCenterOuter">
+  <form #form="ngForm" [formGroup]="formGroup" (ngSubmit)="submitForm(formGroup.value)">
+    <mat-form-field style="width:19em">
+      <input matInput type="text" placeholder="{{ 'common.chooseLabel' | translate }}" formControlName="label" id="label" required>
+      <mat-hint align="end">{{ 'forms.settings.pricing.import.hintLabel' | translate }}</mat-hint>
+      <mat-error *ngIf="hasError('label', 'required')">{{ 'forms.settings.pricing.import.valErrors.required' | translate }}</mat-error>
+      <mat-error *ngIf="hasError('label', 'minlength')">{{ 'forms.settings.pricing.import.valErrors.minLength_1' | translate }}</mat-error>
+      <mat-error *ngIf="hasError('label', 'maxlength')">{{ 'forms.settings.pricing.import.valErrors.maxLength_25' | translate }}</mat-error>
+    </mat-form-field>
+
+    <br/>
+
+    <mat-form-field style="width:19em">
+      <mat-select placeholder="{{ 'common.chooseChannel' | translate }}" formControlName="channel" id="channel" required>
+        <mat-option *ngFor="let opt of channels" [value]="opt">{{ 'forms.settings.pricing.import.channels.' + opt | translate:{channel:opt} }}</mat-option>
+      </mat-select>
+      <mat-hint align="end">{{ 'forms.settings.pricing.import.hintChannel' | translate }}</mat-hint>
+      <mat-error *ngIf="hasError('channel', 'required')">{{ 'forms.settings.pricing.import.valErrors.required' | translate }}</mat-error>
+    </mat-form-field>
+
+    <br/>
+
+    <mat-form-field style="width:19em">
+      <mat-select placeholder="{{ 'common.chooseCurrency' | translate }}" formControlName="currency" id="currency" required>
+        <mat-option *ngFor="let opt of currencies" [value]="opt">{{ opt }}</mat-option>
+      </mat-select>
+      <mat-hint align="end">{{ 'forms.settings.pricing.import.hintCurrency' | translate }}</mat-hint>
+      <mat-error *ngIf="hasError('currency', 'required')">{{ 'forms.settings.pricing.import.valErrors.required' | translate }}</mat-error>
+    </mat-form-field>
+
+    <br />
+
+    <mat-form-field style="width:19em"> <!-- (dateChange)="fromDateChangeEvent()" -->
+      <input matInput [min]="minDateFrom" [max]="maxDateFrom" [matDatepicker]="dpFrom"
+        placeholder="{{ 'common.chooseDateFrom' | translate }}" 
+        formControlName="fromTimestamp" id="fromTimestamp" required />
+      <mat-datepicker-toggle matSuffix [for]="dpFrom"></mat-datepicker-toggle>
+      <mat-datepicker #dpFrom startView="month"></mat-datepicker>
+      <mat-hint align="end">{{ 'forms.settings.pricing.import.hintDateFrom' | translate }}</mat-hint>
+      <mat-error *ngIf="hasError('fromTimestamp', 'required')">{{ 'forms.settings.pricing.import.valErrors.required' | translate }}</mat-error>
+    </mat-form-field>
+
+    <br />
+
+    <button mat-raised-button style="margin:5px;" type="submit" [disabled]="!formGroup.valid">{{ 'forms.settings.pricing.import.buttonAdd' | translate }}</button>
+  </form>
+</div>

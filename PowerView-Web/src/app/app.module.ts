@@ -84,6 +84,9 @@ import { SettingsCostBreakdownEntryComponent } from './components/settings/prici
 import { SettingsCostBreakdownEntryTableComponent } from './components/settings/pricing/settings-cost-breakdown-entry-table/settings-cost-breakdown-entry-table.component';
 import { ExportCostBreakdownHourlyComponent } from './components/export/export-cost-breakdown-hourly/export-cost-breakdown-hourly.component';
 import { ExportCostBreakdownComponent } from './components/export/export-cost-breakdown/export-cost-breakdown.component';
+import { SettingsImportComponent } from './components/settings/pricing/settings-import/settings-import.component';
+import { SettingsImportTableComponent } from './components/settings/pricing/settings-import-table/settings-import-table.component';
+import { SettingsImportEnergiDataServiceComponent } from './components/settings/pricing/settings-import-energi-data-service/settings-import-energi-data-service.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -163,7 +166,10 @@ if (environment.useMockBackend == true) {
     SettingsCostBreakdownEntryComponent,
     SettingsCostBreakdownEntryTableComponent,
     ExportCostBreakdownHourlyComponent,
-    ExportCostBreakdownComponent
+    ExportCostBreakdownComponent,
+    SettingsImportComponent,
+    SettingsImportTableComponent,
+    SettingsImportEnergiDataServiceComponent
   ],
   imports: [
     BrowserModule,

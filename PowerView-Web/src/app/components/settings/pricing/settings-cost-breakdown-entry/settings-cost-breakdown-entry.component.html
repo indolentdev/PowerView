@@ -12,7 +12,7 @@
       <mat-datepicker-toggle matSuffix [for]="dpFrom"></mat-datepicker-toggle>
       <mat-datepicker #dpFrom startView="month"></mat-datepicker>
       <mat-hint align="end">{{ 'forms.settings.pricing.costBreakdown.hintDateFrom' | translate }}</mat-hint>
-      <mat-error *ngIf="hasError('name', 'required')">{{ 'forms.settings.pricing.costBreakdown.valErrors.required' | translate }}</mat-error>
+      <mat-error *ngIf="hasError('fromDate', 'required')">{{ 'forms.settings.pricing.costBreakdown.valErrors.required' | translate }}</mat-error>
     </mat-form-field>
 
     <br />
@@ -24,7 +24,7 @@
       <mat-datepicker-toggle matSuffix [for]="dpTo"></mat-datepicker-toggle>
       <mat-datepicker #dpTo startView="month"></mat-datepicker>
       <mat-hint align="end">{{ 'forms.settings.pricing.costBreakdown.hintDateTo' | translate }}</mat-hint>
-      <mat-error *ngIf="hasError('name', 'required')">{{ 'forms.settings.pricing.costBreakdown.valErrors.required' | translate }}</mat-error>
+      <mat-error *ngIf="hasError('toDate', 'required')">{{ 'forms.settings.pricing.costBreakdown.valErrors.required' | translate }}</mat-error>
     </mat-form-field>
 
     <br />

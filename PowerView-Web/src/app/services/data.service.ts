@@ -39,6 +39,14 @@ export class DataService {
     }));
   }
 
+  public patch(urlPath: string, content?: any, params?: HttpParams): Observable<any> {
+    return this.http.patch(this.getUrl(urlPath), content, this.getHttpOptions(httpHeadersWithContent, params))
+      .pipe(catchError(error => {
+        this.logError("patch", urlPath, error);
+        return throwError(error);
+      }));
+  }
+
   public delete(urlPath: string, params?: HttpParams): Observable<any> {
     return this.http.delete(this.getUrl(urlPath), this.getHttpOptions(httpHeaders, params) )
     .pipe(catchError(error => {

@@ -5,6 +5,7 @@ import { settingsCostbreakdowns } from './settings-cost-breakdowns.json';
 import { settingsDisconnectrules } from './settings-disconnectrules.json';
 import { settingsDisconnectrulesOptions } from './settings-disconnectrules-options.json';
 import { settingsEmailRecipients } from './settings-email-recipients.json';
+import { settingsImports } from './settings-imports.json';
 import { settingsApplication } from './settings-application.json';
 import { settingsMqtt } from './settings-mqtt.json';
 import { settingsProfilePageNames } from './settings-profile-page-names.json.js';
@@ -163,7 +164,49 @@ export function settingsBackend(url: string, method: string, request: HttpReques
             resp.complete();
         });
     }
-        
+
+    if (url.indexOf('settings/imports') > -1 && method === "GET") {
+        return new Observable(resp => {
+            resp.next(new HttpResponse({
+                status: 200,
+                body: {
+                    imports: settingsImports.imports
+                }
+            }));
+            resp.complete();
+        });
+    }
+
+    if (url.indexOf('settings/imports') > -1 && method === "POST") {
+//        return throwError(new HttpErrorResponse({status:409}));
+        return new Observable(resp => {
+            resp.next(new HttpResponse({
+                status: 204
+            }));
+            resp.complete();
+        });
+    }
+
+    if (url.indexOf('settings/imports') > -1 && method === "PATCH") {
+//        return throwError(new HttpErrorResponse({status:404}));
+        return new Observable(resp => {
+            resp.next(new HttpResponse({
+                status: 204
+            }));
+            resp.complete();
+        });
+    }
+
+    if (url.indexOf('settings/imports') > -1 && method === "DELETE") {
+//        return throwError(new HttpErrorResponse({status:400}));
+        return new Observable(resp => {
+            resp.next(new HttpResponse({
+                status: 204
+            }));
+            resp.complete();
+        });
+    }
+
     if (url.indexOf('settings/mqtt') > -1 && method === "GET") {
         return new Observable(resp => {
             resp.next(new HttpResponse({

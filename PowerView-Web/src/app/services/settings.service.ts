@@ -12,6 +12,9 @@ import { DisconnectRuleSet } from '../model/disconnectRuleSet';
 import { DisconnectRuleOptionSet } from '../model/disconnectRuleOptionSet';
 import { EmailRecipient } from '../model/emailRecipient';
 import { EmailRecipientSet } from '../model/emailRecipientSet';
+import { Import } from '../model/import';
+import { ImportCreate } from '../model/importCreate';
+import { ImportSet } from '../model/importSet';
 import { ApplicationProperties } from '../model/applicationProperties';
 import { MqttParams } from '../model/mqttParams';
 import { ProfileGraph } from '../model/profileGraph';
@@ -30,6 +33,7 @@ const constLocal = {
   disconnectrulesNames: "settings/disconnectrules/names",
   disconnectrulesOptions: "settings/disconnectrules/options",
   emailRecipients: "settings/emailrecipients",
+  imports: "settings/imports",
   application: "settings/application",
   mqtt: "settings/mqtt",
   mqttTest: "settings/mqtt/test",
@@ -286,6 +290,75 @@ export class SettingsService {
     }
   }
 
+  public getImports(): Observable<ImportSet> {
+    return this.dataService.get<ImportSet>(constLocal.imports, undefined, new ImportSet);
+  }
+
+  public addImport(importCreate: ImportCreate): Observable<any> {
+    return this.dataService.post(constLocal.imports, importCreate)
+      .pipe(catchError(error => {
+        return throwError(this.convertToAddImportError(error));
+      }));
+  }
+
+  private convertToAddImportError(error: any): AddImportError {
+    if (!(error instanceof HttpErrorResponse)) {
+      return AddImportError.UnspecifiedError;
+    }
+
+    var httpErrorResponse = error as HttpErrorResponse;
+    switch (httpErrorResponse.status) {
+      case 400:
+        return AddImportError.RequestContentIncomplete;
+      case 409:
+        return AddImportError.RequestContentDuplicate;
+      default:
+        return AddImportError.UnspecifiedError;
+    }
+  }
+
+  public toggleImport(label: string, enabled: boolean): Observable<any> {
+    return this.dataService.patch(constLocal.imports + "/" + encodeURIComponent(label), { enabled: enabled })
+      .pipe(catchError(error => {
+        return throwError(this.convertToToggleImportError(error));
+      }));
+  }
+
+  private convertToToggleImportError(error: any): ToggleImportError {
+    if (!(error instanceof HttpErrorResponse)) {
+      return ToggleImportError.UnspecifiedError;
+    }
+
+    var httpErrorResponse = error as HttpErrorResponse;
+    switch (httpErrorResponse.status) {
+      case 400:
+        return ToggleImportError.RequestContentIncomplete;
+      case 404:
+        return ToggleImportError.LabelNotFound;
+      default:
+        return ToggleImportError.UnspecifiedError;
+    }
+  }
+
+  public deleteImport(label: string): Observable<any> {
+    return this.dataService.delete(constLocal.imports + "/" + encodeURIComponent(label))
+      .pipe(catchError(error => {
+        return throwError(this.convertToDeleteImportError(error));
+      }));
+  }
+
+  private convertToDeleteImportError(error: any): DeleteImportError {
+    if (!(error instanceof HttpErrorResponse)) {
+      return DeleteImportError.UnspecifiedError;
+    }
+
+    var httpErrorResponse = error as HttpErrorResponse;
+    switch (httpErrorResponse.status) {
+      default:
+        return DeleteImportError.UnspecifiedError;
+    }
+  }
+
   public getProfileGraphs(): Observable<ProfileGraphSet> {
     return this.dataService.get<ProfileGraphSet>(constLocal.profileGraphs, undefined, new ProfileGraphSet);
   }
@@ -521,6 +594,22 @@ export enum TestEmailRecipientError {
   EmailTestFailed = "EmailTestFailed",
   EmailServerConnectionFailed = "EmailServerConnectionFailed",
   EmailServerAuthenticationFailed = "EmailServerAuthenticationFailed"
+}
+
+export enum AddImportError {
+  UnspecifiedError = "UnspecifiedError",
+  RequestContentIncomplete = "RequestContentIncomplete",
+  RequestContentDuplicate = "RequestContentDuplicate"
+}
+
+export enum ToggleImportError {
+  UnspecifiedError = "UnspecifiedError",
+  RequestContentIncomplete = "RequestContentIncomplete",
+  LabelNotFound = "LabelNotFound"
+}
+
+export enum DeleteImportError {
+  UnspecifiedError = "UnspecifiedError"
 }
 
 export enum AddProfileGraphError {

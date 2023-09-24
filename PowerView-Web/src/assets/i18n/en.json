@@ -14,6 +14,7 @@
     "gauges": "Gauges",
     "help": "Help",
     "hourly": "Hourly",
+    "import": "Import",
     "latest": "Latest",
     "mqtt": "MQTT",
     "pricing": "Pricing",
@@ -35,6 +36,7 @@
 
   "common": {
     "cancel": "Cancel",
+    "chooseChannel": "Choose channel",
     "chooseColor": "Choose color",
     "chooseCostBreakdown": "Choose cost breakdown",
     "chooseCurrency": "Choose currency",
@@ -92,6 +94,9 @@
         "Custom": ""
       }
     },
+    "import": "Import",
+    "imports": "Imports",
+    "importInfo": "Import of crude electricity hourly market prices excl. VAT from Energi Data Service",
     "measureKinds": "Measure Kinds",
     "monthProfile": "Month Profile",
     "mqtt": "Configure MQTT Integration",
@@ -120,6 +125,7 @@
     "actions": "Actions",
     "amount": "Amount",
     "associatedTo": "Associated To",
+    "channel": "Channel",
     "color": "Color",
     "costBreakdownEntries": "Entries",
     "currency": "Currency",
@@ -129,6 +135,7 @@
     "deviceId": "Device ID",
     "difference": "Difference",
     "email": "Email",
+    "enabled": "Enabled",
     "endTime": "End Hour (incl.)",
     "event": "Event",
     "from": "From",
@@ -301,6 +308,32 @@
             "max": "Maximum value is {{ maxValue }}",
             "maxLength_25": "Maximum 25 characters",
             "min": "Minimum value is {{ minValue }}",
+            "minLength_1": "Minimum 1 characters",
+            "required": "Required"
+          }
+        },
+        "import": {
+          "buttonActionEnable": "Enable",
+          "buttonActionDelete": "Delete",
+          "buttonActionDisable": "Disable",
+          "buttonAdd": "Add Import",
+          "channels": {
+            "DK1": "{{ channel }} (west)",
+            "DK2": "{{ channel }} (east)"
+          },
+          "confirmAdd": "Import added.",
+          "confirmDelete": "Import deleted.",
+          "confirmUpdate": "Import updated.",
+          "errorAdd": "Add import failed. ",
+          "errorAdjustEntryFields": "Adjust label, date or other values.",
+          "errorDelete": "Delete import failed. ",
+          "errorUpdate": "Update import failed. ",
+          "hintChannel": "Price channel",
+          "hintCurrency": "Price channel currency",
+          "hintDateFrom": "Effective from 00:00:00 the selected date",
+          "hintLabel": "Choose a unique label per import series",
+          "valErrors": {
+            "maxLength_25": "Maximum 25 characters",
             "minLength_1": "Minimum 1 characters",
             "required": "Required"
           }

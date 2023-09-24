@@ -1,0 +1,28 @@
+<div>
+    <h2>{{ 'headings.import' | translate }}</h2>
+</div>
+
+<div class="divCenterOuter">
+    {{ 'headings.importInfo' | translate }}
+</div>
+
+<br />
+
+<div class="divCenterOuter">
+    <div class="divCenterInner">
+        <app-settings-import-energi-data-service (addImport)="addImport($event)" [clear]="entryClear"></app-settings-import-energi-data-service>
+    </div>
+</div>
+
+<br />
+
+<div class="divCenterOuter">
+    <div class="divCenterInner">
+        <div *ngIf="imports !== undefined">
+            <app-settings-import-table [imports]="imports" (toggleImport)="toggleImport($event)" (deleteImport)="deleteImport($event)">
+            </app-settings-import-table>
+            <br />
+            <br />
+        </div>
+    </div>
+</div>

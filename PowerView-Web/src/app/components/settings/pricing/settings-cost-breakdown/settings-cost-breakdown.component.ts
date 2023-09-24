@@ -59,16 +59,7 @@ export class SettingsCostBreakdownComponent {
 
   private getCostBreakdowns(): void {
     this.settingsService.getCostBreakdowns().subscribe(x => {
-      var sorted = x.costBreakdowns.sort(function (obj1, obj2) {
-        if (obj1.title === obj2.title) {
-          return 0;
-        }
-        else {
-          return obj1.title < obj2.title ? -1 : 1;
-        }
-      });
-
-      this.costBreakdowns = sorted;
+      this.costBreakdowns = x.costBreakdowns;
       this.autoSelectCostBreakdown();
     });
   }
@@ -130,19 +121,6 @@ export class SettingsCostBreakdownComponent {
 
     let costBreakdown = this.costBreakdowns.find((x) => x.title == this.selectedCostBreakdownTitle);
 
-    // TODO: Sort entries
-/*    
-    var sortedEntries = costBreakdown.entries.sort(function (obj1, obj2) {
-      if (obj1.title === obj2.title) {
-        return 0;
-      }
-      else {
-        return obj1.title < obj2.title ? -1 : 1;
-      }
-    });
-
-    this.costBreakdowns = sorted;
-*/
     this.selectedCostBreakdown = costBreakdown;
   }
 
