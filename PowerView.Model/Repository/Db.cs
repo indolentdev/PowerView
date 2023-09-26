@@ -215,5 +215,16 @@ namespace PowerView.Model.Repository
             public double Amount { get; set; }
         }
 
+        public class Import : IDbEntity
+        {
+            public long Id { get; set; }
+            public string Label { get; set; }
+            public string Channel { get; set; }
+            public int Currency { get; set; }
+            public UnixTime FromTimestamp { get; set; }
+            public UnixTime? CurrentTimestamp { get; set; }
+            public bool Enabled { get; set; }
+        }
+
     }
 }
