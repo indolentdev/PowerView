@@ -12,7 +12,14 @@ namespace PowerView.Service.Mappers
         throw new ArgumentOutOfRangeException("timestamp", "Must be UTC kind");
       }
 
-      return timestamp.ToString("yyyy-MM-ddTHH:mmZ", CultureInfo.InvariantCulture);
+      return timestamp.ToString("yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture);
+    }
+
+    public static string Map(DateTime? timestamp)
+    {
+      if (timestamp == null) return null;
+
+      return Map(timestamp.Value);
     }
   }
 }

@@ -46,10 +46,10 @@ public class SettingsCostBreakdownsControllerTest
     }
     
     [Test]
-    public async Task GetProfileGraphs()
+    public async Task GetCostBreakdowns()
     {
         // Arrange
-        DateTime dateTime = DateTime.UtcNow;
+        DateTime dateTime = new DateTime(2023, 9, 27, 19, 0, 3, DateTimeKind.Utc);
         var costBreakdown1 = new CostBreakdown("Title1", Unit.Eur, 10, new [] { new CostBreakdownEntry(dateTime, dateTime.AddDays(1), "N1-1", 2, 21, 1.2345678), new CostBreakdownEntry(dateTime, dateTime.AddDays(1), "N1-2", 0, 23, 2.222222) });
         var costBreakdown2 = new CostBreakdown("Title2", Unit.Dkk, 25, new[] { new CostBreakdownEntry(dateTime, dateTime.AddDays(2), "N2-1", 3, 20, 2.345678) });
         costBreakdownRepository.Setup(cbr => cbr.GetCostBreakdowns()).Returns(new[] { costBreakdown1, costBreakdown2 });

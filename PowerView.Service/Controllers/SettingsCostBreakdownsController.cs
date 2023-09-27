@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using PowerView.Model;
 using PowerView.Model.Repository;
 using PowerView.Service.Dtos;
+using PowerView.Service.Mappers;
 
 namespace PowerView.Service.Controllers;
 
@@ -18,7 +19,7 @@ public class SettingsCostBreakdownsController : ControllerBase
     private readonly ILogger logger;
     private readonly ICostBreakdownRepository costBreakdownRepository;
 
-    public SettingsCostBreakdownsController(ILogger<SettingsCostBreakdownsController> logger, ICostBreakdownRepository costBreakdownRepository/*, ILocationContext locationContext*/)
+    public SettingsCostBreakdownsController(ILogger<SettingsCostBreakdownsController> logger, ICostBreakdownRepository costBreakdownRepository)
     {
         this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         this.costBreakdownRepository = costBreakdownRepository ?? throw new ArgumentNullException(nameof(costBreakdownRepository));
@@ -40,8 +41,8 @@ public class SettingsCostBreakdownsController : ControllerBase
                     Vat = cb.Vat,
                     Entries = cb.Entries.Select(cbe => new
                     {
-                        FromDate = cbe.FromDate.ToString("O"),
-                        ToDate = cbe.ToDate.ToString("O"),
+                        FromDate = DateTimeMapper.Map(cbe.FromDate),
+                        ToDate = DateTimeMapper.Map(cbe.ToDate),
                         Name = cbe.Name,
                         StartTime = cbe.StartTime,
                         EndTime = cbe.EndTime,

@@ -541,17 +541,17 @@ public class ProfileControllerTest
     private static string ToStringMinute(DateTime dt)
     {
         dt = new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, (dt.Minute / 5) * 5, 0, 0, dt.Kind);
-        return dt.ToString("yyyy-MM-ddTHH:mmZ", CultureInfo.InvariantCulture);
+        return dt.ToString("yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture);
     }
 
     private static string ToStringDay(DateTime dt)
     {
-        return dt.ToString("yyyy-MM-ddTHH:mmZ", CultureInfo.InvariantCulture);
+        return dt.ToString("yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture);
     }
 
     private static string ToStringMonth(DateTime dt)
     {
-        return dt.ToString("yyyy-MM-ddTHH:mmZ", CultureInfo.InvariantCulture);
+        return dt.ToString("yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture);
     }
 
     private static void AssertSerieSet(ViewModelProfileGraph expected, ViewModelProfileGraph actual)

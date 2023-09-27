@@ -70,7 +70,8 @@ public class ExportController : ControllerBase
         var seriesGroups = falttened.GroupBy(x => new SeriesName(x.Label, x.ObisCode), x => x.NormalizedValue);
         var exportSeries = GetExportDiffSeries(periods, seriesGroups);
 
-        var r = new { Periods = periods, Series = exportSeries };
+        var r = new { Periods = periods.Select(p => new { From = DateTimeMapper.Map(p.From), To = DateTimeMapper.Map(p.To) }).ToList(), 
+          Series = exportSeries };
         return Ok(r);
     }
 
@@ -99,8 +100,8 @@ public class ExportController : ControllerBase
                     {
                         return new
                         {
-                            From = (DateTime?)null,
-                            To = (DateTime?)null,
+                            From = DateTimeMapper.Map(null),
+                            To = DateTimeMapper.Map(null),
                             Value = (double?)null,
                             Unit = (string)null
                         };
@@ -109,8 +110,8 @@ public class ExportController : ControllerBase
                     var unit = x.UnitValue.Unit;
                     return new
                     {
-                        From = (DateTime?)x.Start,
-                        To = (DateTime?)x.End,
+                        From = DateTimeMapper.Map(x.Start),
+                        To = DateTimeMapper.Map(x.End),
                         Value = ValueAndUnitConverter.Convert(x.UnitValue.Value, unit),
                         Unit = ValueAndUnitConverter.Convert(unit)
                     };
@@ -148,7 +149,7 @@ public class ExportController : ControllerBase
         var seriesGroups = falttened.GroupBy(x => new SeriesName(x.Label, x.ObisCode), x => x.NormalizedValue);
         var exportSeries = GetExportGaugeSeries(hours, seriesGroups);
 
-        var r = new { Timestamps = hours, Series = exportSeries };
+        var r = new { Timestamps = hours.Select(DateTimeMapper.Map).ToList(), Series = exportSeries };
         return Ok(r);
     }
 
@@ -177,7 +178,7 @@ public class ExportController : ControllerBase
                     {
                         return new
                         {
-                            Timestamp = (DateTime?)null,
+                            Timestamp = DateTimeMapper.Map(null),
                             Value = (double?)null,
                             Unit = (string)null,
                             DeviceId = (string)null
@@ -187,7 +188,7 @@ public class ExportController : ControllerBase
                     var unit = x.TimeRegisterValue.UnitValue.Unit;
                     return new
                     {
-                        Timestamp = (DateTime?)x.TimeRegisterValue.Timestamp,
+                        Timestamp = DateTimeMapper.Map(x.TimeRegisterValue.Timestamp),
                         Value = ValueAndUnitConverter.Convert(x.TimeRegisterValue.UnitValue.Value, unit),
                         Unit = ValueAndUnitConverter.Convert(unit),
                         DeviceId = x.TimeRegisterValue.DeviceId

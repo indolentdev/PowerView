@@ -53,7 +53,8 @@ public class ExportCostBreakdownController : ControllerBase
         var exportCostBreakdown = GetExportCostBreakdown(periods, costBreakdownEntries);
 
         var r = new { Title = costBreakdown.Title, Currency = costBreakdown.Currency.ToString().ToUpperInvariant(), Vat = costBreakdown.Vat,
-          Periods = periods, Entries = exportCostBreakdown };
+          Periods = periods.Select(p => new { From = DateTimeMapper.Map(p.From), To = DateTimeMapper.Map(p.To) }).ToList(), 
+          Entries = exportCostBreakdown };
         return Ok(r);
     }
 
@@ -89,16 +90,16 @@ public class ExportCostBreakdownController : ControllerBase
                     {
                         return new
                         {
-                            From = (DateTime?)p.From,
-                            To = (DateTime?)p.To,
+                            From = DateTimeMapper.Map(p.From),
+                            To = DateTimeMapper.Map(p.To),
                             Value = (double?)entry.Amount,
                         };
                     }
 
                     return new
                     {
-                        From = (DateTime?)null,
-                        To = (DateTime?)null,
+                        From = DateTimeMapper.Map(null),
+                        To = DateTimeMapper.Map(null),
                         Value = (double?)null
                     };
                 }).ToList()
