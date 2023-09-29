@@ -40,6 +40,7 @@ namespace PowerView.Model
             serviceCollection.AddTransient<IExportRepository, ExportRepository>();
             serviceCollection.AddTransient<ICrudeDataRepository, CrudeDataRepository>();
             serviceCollection.AddTransient<ICostBreakdownRepository, CostBreakdownRepository>();
+            serviceCollection.AddTransient<IImportRepository, ImportRepository>();
 
             return serviceCollection;
         }

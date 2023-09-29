@@ -41,7 +41,7 @@ export class SettingsImportComponent {
     this.settingsService.addImport(importCreate).subscribe(_ => {
       this.log.debug("Add ok");
       this.translateService.get('forms.settings.pricing.import.confirmAdd').subscribe(message => {
-        this.snackBarRef = this.snackBar.open(message, undefined, { duration: 4000 });
+        this.snackBarRef = this.snackBar.open(message, undefined, { duration: 9000 });
         this.entryClear = Math.random().toString(10);
       });
     }, err => {

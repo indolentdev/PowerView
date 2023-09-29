@@ -32,7 +32,6 @@ public class SettingsCostBreakdownsControllerTest
                 builder.ConfigureServices((ctx, sc) =>
                 {
                     sc.AddSingleton(costBreakdownRepository.Object);
-//                    sc.AddSingleton(locationContext);
                 });
             });
 

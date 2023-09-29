@@ -321,7 +321,7 @@
             "DK1": "{{ channel }} (vest)",
             "DK2": "{{ channel }} (øst)"
           },
-          "confirmAdd": "Import tilføjet.",
+          "confirmAdd": "Import tilføjet. Importen kører løbende i baggrunden.",
           "confirmDelete": "Import slettet.",
           "confirmUpdate": "Import opdateret.",
           "errorAdd": "Tilføj import fejlede. ",

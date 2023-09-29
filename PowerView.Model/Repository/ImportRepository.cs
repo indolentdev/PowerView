@@ -9,7 +9,7 @@ using Dapper;
 
 namespace PowerView.Model.Repository
 {
-  internal class ImportRepository : RepositoryBase//, IImportRepository
+  internal class ImportRepository : RepositoryBase, IImportRepository
   {
     public ImportRepository(IDbContext dbContext)
       : base(dbContext)
