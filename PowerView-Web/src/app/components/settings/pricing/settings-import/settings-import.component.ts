@@ -43,6 +43,7 @@ export class SettingsImportComponent {
       this.translateService.get('forms.settings.pricing.import.confirmAdd').subscribe(message => {
         this.snackBarRef = this.snackBar.open(message, undefined, { duration: 9000 });
         this.entryClear = Math.random().toString(10);
+        this.getImports();
       });
     }, err => {
       this.log.debug("Add failed", err);
@@ -72,6 +73,7 @@ export class SettingsImportComponent {
       this.log.debug("Delete ok");
       this.translateService.get('forms.settings.pricing.import.confirmDelete').subscribe(message => {
         this.snackBarRef = this.snackBar.open(message, undefined, { duration: 4000 });
+        this.getImports();
       });
     }, err => {
       this.log.debug("Delete failed", err);
@@ -97,6 +99,7 @@ export class SettingsImportComponent {
       this.log.debug("Toggle ok");
       this.translateService.get('forms.settings.pricing.import.confirmUpdate').subscribe(message => {
         this.snackBarRef = this.snackBar.open(message, undefined, { duration: 4000 });
+        this.getImports();
       });
     }, err => {
       this.log.debug("Toggle failed", err);

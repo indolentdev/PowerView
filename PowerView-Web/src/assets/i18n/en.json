@@ -321,7 +321,7 @@
             "DK1": "{{ channel }} (west)",
             "DK2": "{{ channel }} (east)"
           },
-          "confirmAdd": "Import added. The import runs continuously in the backkround.",
+          "confirmAdd": "Import added. The import runs continuously in the background.",
           "confirmDelete": "Import deleted.",
           "confirmUpdate": "Import updated.",
           "errorAdd": "Add import failed. ",
