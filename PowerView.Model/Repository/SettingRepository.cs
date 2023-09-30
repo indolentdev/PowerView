@@ -70,32 +70,4 @@ internal class SettingRepository : RepositoryBase, ISettingRepository
         Upsert(smtpConfig.GetSettings());
     }
 
-    public EnergiDataServiceImporterConfig GetEnergiDataServiceImporterConfig()
-    {
-        return new EnergiDataServiceImporterConfig(Find(EnergiDataServiceImporterConfig.SettingPrefix));
-    }
-
-    public void UpsertEnergiDataServiceImporterConfig(EnergiDataServiceImporterConfig edsiConfig)
-    {
-        if (edsiConfig == null) throw new ArgumentNullException(nameof(edsiConfig));
-
-        Upsert(edsiConfig.GetSettings());
-    }
-
-    private const string edsiPositionName = "EnergiDataServiceImportPosition";
-    public DateTime? GetEnergiDataServiceImporterPosition()
-    {
-        var positionString = Get(edsiPositionName);
-
-        if (string.IsNullOrEmpty(positionString)) return null;
-
-        return DateTime.Parse(positionString, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
-    }
-
-    public void UpsertEnergiDataServiceImporterPosition(DateTime position)
-    {
-        var positionString = position.ToString("o");
-        Upsert(edsiPositionName, positionString);
-    }
-
 }

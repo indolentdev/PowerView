@@ -17,8 +17,7 @@ namespace PowerView.Service.Test.EventHub;
 public class EnergiDataServiceImporterTest
 {
     private ILogger<EnergiDataServiceImporter> logger;
-    private Mock<ISettingRepository> settingRepository;
-    private Mock<ILocationContext> locationContext;
+    private Mock<IImportRepository> importRepository;
     private Mock<IEnergiDataServiceClient> energiDataServiceClient;
     private Mock<IReadingAccepter> readingAccepter;
 
@@ -26,8 +25,7 @@ public class EnergiDataServiceImporterTest
     public void SetUp()
     {
         logger = new NullLogger<EnergiDataServiceImporter>();
-        settingRepository = new Mock<ISettingRepository>();
-        locationContext = new Mock<ILocationContext>();
+        importRepository = new Mock<IImportRepository>();
         energiDataServiceClient = new Mock<IEnergiDataServiceClient>();
         readingAccepter = new Mock<IReadingAccepter>();
     }
@@ -38,11 +36,10 @@ public class EnergiDataServiceImporterTest
         // Arrange
 
         // Act & Assert
-        Assert.That(() => new EnergiDataServiceImporter(null, settingRepository.Object, locationContext.Object, energiDataServiceClient.Object, readingAccepter.Object), Throws.ArgumentNullException);
-        Assert.That(() => new EnergiDataServiceImporter(logger, null, locationContext.Object, energiDataServiceClient.Object, readingAccepter.Object), Throws.ArgumentNullException);
-        Assert.That(() => new EnergiDataServiceImporter(logger, settingRepository.Object, null, energiDataServiceClient.Object, readingAccepter.Object), Throws.ArgumentNullException);
-        Assert.That(() => new EnergiDataServiceImporter(logger, settingRepository.Object, locationContext.Object, null, readingAccepter.Object), Throws.ArgumentNullException);
-        Assert.That(() => new EnergiDataServiceImporter(logger, settingRepository.Object, locationContext.Object, energiDataServiceClient.Object, null), Throws.ArgumentNullException);
+        Assert.That(() => new EnergiDataServiceImporter(null, importRepository.Object, energiDataServiceClient.Object, readingAccepter.Object), Throws.ArgumentNullException);
+        Assert.That(() => new EnergiDataServiceImporter(logger, null, energiDataServiceClient.Object, readingAccepter.Object), Throws.ArgumentNullException);
+        Assert.That(() => new EnergiDataServiceImporter(logger, importRepository.Object, null, readingAccepter.Object), Throws.ArgumentNullException);
+        Assert.That(() => new EnergiDataServiceImporter(logger, importRepository.Object, energiDataServiceClient.Object, null), Throws.ArgumentNullException);
     }
 
     [Test]
@@ -59,10 +56,10 @@ public class EnergiDataServiceImporterTest
     }
 
     [Test]
-    public async Task ImportConfigThrows()
+    public async Task ImportsAbsent()
     {
         // Arrange
-        settingRepository.Setup(x => x.GetEnergiDataServiceImporterConfig()).Throws(new DomainConstraintException("Drugs are baad. M'kay"));
+        SetupImportRepositoryGetImports();
 
         var target = CreateTarget();
 
@@ -71,14 +68,15 @@ public class EnergiDataServiceImporterTest
 
         // Assert
         readingAccepter.Verify(x => x.Accept(It.IsAny<IList<Reading>>()), Times.Never);
-        settingRepository.Verify(x => x.UpsertEnergiDataServiceImporterPosition(It.IsAny<DateTime>()), Times.Never);
+        importRepository.Verify(x => x.SetCurrentTimestamp(It.IsAny<string>(), It.IsAny<DateTime>()), Times.Never);
     }
 
     [Test]
-    public async Task ImportConfigDisabled()
+    public async Task ImportsDisabled()
     {
         // Arrange
-        SetUpSettingRepositoryGetEnergiDataServiceImportConfig(false);
+        var import = new Import("label", "channel", Unit.Eur, DateTime.UtcNow, null, false);
+        SetupImportRepositoryGetImports(import);
 
         var target = CreateTarget();
 
@@ -87,135 +85,192 @@ public class EnergiDataServiceImporterTest
 
         // Assert
         readingAccepter.Verify(x => x.Accept(It.IsAny<IList<Reading>>()), Times.Never);
-        settingRepository.Verify(x => x.UpsertEnergiDataServiceImporterPosition(It.IsAny<DateTime>()), Times.Never);
+        importRepository.Verify(x => x.SetCurrentTimestamp(It.IsAny<string>(), It.IsAny<DateTime>()), Times.Never);
     }
 
     [Test]
-    public async Task ImportNewStart()
+    public async Task ImportNewPosition()
     {
         // Arrange
-        var config = SetUpSettingRepositoryGetEnergiDataServiceImportConfig();
-        var startUtc = SetUpLocationContextConvertTimeFromUtc();
+        var dateTime = new DateTime(2023, 9, 28, 22, 0, 0, DateTimeKind.Utc);
+        var import = new Import("label", "channel", Unit.Eur, dateTime, null, true);
+        SetupImportRepositoryGetImports(import);
         SetUpEnergiDataServiceClientGetElectricityAmounts();
-        var dateTime = new DateTime(2023, 5, 17, 18, 55, 12, DateTimeKind.Utc);
         var target = CreateTarget();
 
         // Act
         await target.Import(dateTime);
 
         // Assert
-        locationContext.Verify(x => x.ConvertTimeFromUtc(dateTime));
-        var start = startUtc.Date.ToUniversalTime();
-        energiDataServiceClient.Verify(x => x.GetElectricityAmounts(It.Is<DateTime>(p => p == start && p.Kind == start.Kind),
-          It.Is<TimeSpan>(p => p == config.TimeSpan), It.Is<string>(p => p == config.PriceArea)));
-        readingAccepter.Verify(x => x.Accept(It.IsAny<IList<Reading>>()), Times.Never);
-        settingRepository.Verify(x => x.UpsertEnergiDataServiceImporterPosition(It.IsAny<DateTime>()), Times.Never);
+        energiDataServiceClient.Verify(x => x.GetElectricityAmounts(It.Is<DateTime>(p => p == dateTime && p.Kind == dateTime.Kind),
+          It.IsAny<TimeSpan>(), It.IsAny<string>()));
     }
 
     [Test]
-    public async Task ImportExistingStart()
+    public async Task ImportExistingPosition()
     {
         // Arrange
-        var config = SetUpSettingRepositoryGetEnergiDataServiceImportConfig();
-        var start = SetUpSettingRepositoryGetEnergiDataServiceImportPosition();
+        var dateTime = new DateTime(2023, 9, 28, 22, 0, 0, DateTimeKind.Utc);
+        var import = new Import("label", "channel", Unit.Eur, dateTime, dateTime.AddDays(1), true);
+        SetupImportRepositoryGetImports(import);
         SetUpEnergiDataServiceClientGetElectricityAmounts();
         var target = CreateTarget();
 
         // Act
-        await target.Import(DateTime.UtcNow);
+        await target.Import(dateTime);
 
         // Assert
-        locationContext.Verify(x => x.ConvertTimeFromUtc(It.IsAny<DateTime>()), Times.Never);
-        energiDataServiceClient.Verify(x => x.GetElectricityAmounts(It.Is<DateTime>(p => p == start && p.Kind == start.Kind),
-          It.Is<TimeSpan>(p => p == config.TimeSpan), It.Is<string>(p => p == config.PriceArea)));
-        readingAccepter.Verify(x => x.Accept(It.IsAny<IList<Reading>>()), Times.Never);
-        settingRepository.Verify(x => x.UpsertEnergiDataServiceImporterPosition(It.IsAny<DateTime>()), Times.Never);
+        energiDataServiceClient.Verify(x => x.GetElectricityAmounts(It.Is<DateTime>(p => p == dateTime.AddDays(1) && p.Kind == dateTime.Kind),
+          It.IsAny<TimeSpan>(), It.IsAny<string>()));
     }
+
+    [Test]
+    public async Task ImportLargeChunk()
+    {
+        // Arrange
+        var dateTime = new DateTime(2023, 9, 28, 22, 0, 0, DateTimeKind.Utc);
+        var import = new Import("label", "channel", Unit.Eur, dateTime, null, true);
+        SetupImportRepositoryGetImports(import);
+        SetUpEnergiDataServiceClientGetElectricityAmounts();
+        var target = CreateTarget();
+
+        // Act
+        await target.Import(dateTime.AddDays(4));
+
+        // Assert
+        energiDataServiceClient.Verify(x => x.GetElectricityAmounts(It.IsAny<DateTime>(),
+          It.Is<TimeSpan>(p => p == TimeSpan.FromDays(3)), It.IsAny<string>()));
+    }
+
+    [Test]
+    public async Task ImportSmallChunk()
+    {
+        // Arrange
+        var dateTime = new DateTime(2023, 9, 28, 22, 0, 0, DateTimeKind.Utc);
+        var import = new Import("label", "channel", Unit.Eur, dateTime, null, true);
+        SetupImportRepositoryGetImports(import);
+        SetUpEnergiDataServiceClientGetElectricityAmounts();
+        var target = CreateTarget();
+
+        // Act
+        await target.Import(dateTime.AddDays(2));
+
+        // Assert
+        energiDataServiceClient.Verify(x => x.GetElectricityAmounts(It.IsAny<DateTime>(),
+          It.Is<TimeSpan>(p => p == TimeSpan.FromHours(6)), It.IsAny<string>()));
+    }
+
+    [Test]
+    public async Task ImportChannel()
+    {
+        // Arrange
+        var dateTime = new DateTime(2023, 9, 28, 22, 0, 0, DateTimeKind.Utc);
+        var import = new Import("label", "channel", Unit.Eur, dateTime, null, true);
+        SetupImportRepositoryGetImports(import);
+        SetUpEnergiDataServiceClientGetElectricityAmounts();
+        var target = CreateTarget();
+
+        // Act
+        await target.Import(dateTime);
+
+        // Assert
+        energiDataServiceClient.Verify(x => x.GetElectricityAmounts(It.IsAny<DateTime>(),
+          It.IsAny<TimeSpan>(), It.Is<string>(p => p == import.Channel)));
+    }
+
 
     [Test]
     public async Task ImportEnergiDataServiceClientThrows()
     {
         // Arrange
-        var config = SetUpSettingRepositoryGetEnergiDataServiceImportConfig();
-        var start = SetUpSettingRepositoryGetEnergiDataServiceImportPosition();
+        var dateTime = new DateTime(2023, 9, 28, 22, 0, 0, DateTimeKind.Utc);
+        var import = new Import("label", "channel", Unit.Eur, dateTime, null, true);
+        SetupImportRepositoryGetImports(import);
         energiDataServiceClient.Setup(x => x.GetElectricityAmounts(It.IsAny<DateTime>(), It.IsAny<TimeSpan>(), It.IsAny<string>()))
           .Throws(new EnergiDataServiceClientException("Drugs are bad. M'Kay"));
         var target = CreateTarget();
 
         // Act
-        await target.Import(DateTime.UtcNow);
+        await target.Import(dateTime);
 
         // Assert
-        energiDataServiceClient.Verify(x => x.GetElectricityAmounts(It.Is<DateTime>(p => p == start && p.Kind == start.Kind),
-          It.Is<TimeSpan>(p => p == config.TimeSpan), It.Is<string>(p => p == config.PriceArea)));
+        energiDataServiceClient.Verify(x => x.GetElectricityAmounts(It.IsAny<DateTime>(),
+          It.IsAny<TimeSpan>(), It.IsAny<string>()));
         readingAccepter.Verify(x => x.Accept(It.IsAny<IList<Reading>>()), Times.Never);
-        settingRepository.Verify(x => x.UpsertEnergiDataServiceImporterPosition(It.IsAny<DateTime>()), Times.Never);
+        importRepository.Verify(x => x.SetCurrentTimestamp(It.IsAny<string>(), It.IsAny<DateTime>()), Times.Never);
     }
 
     [Test]
     public async Task ImportDkkAmounts()
     {
         // Arrange
-        var config = SetUpSettingRepositoryGetEnergiDataServiceImportConfig(currency: Unit.Dkk);
-        SetUpSettingRepositoryGetEnergiDataServiceImportPosition();
+        var dateTime = new DateTime(2023, 2, 28, 23, 0, 0, DateTimeKind.Utc);
+        var import = new Import("label", "channel", Unit.Dkk, dateTime, null, true);
+        SetupImportRepositoryGetImports(import);
+
         var dateTime1 = new DateTime(2023, 5, 15, 21, 29, 0, DateTimeKind.Utc);
         var dateTime2 = dateTime1.AddHours(1);
         SetUpEnergiDataServiceClientGetElectricityAmounts(
             new KwhAmount { Start = dateTime1, AmountDkk = 12 },
-            new KwhAmount { Start = dateTime2, AmountDkk = 15 } );
+            new KwhAmount { Start = dateTime2, AmountDkk = 15 });
         var target = CreateTarget();
 
         // Act
-        await target.Import(DateTime.UtcNow);
+        await target.Import(dateTime);
 
         // Assert
         readingAccepter.Verify(x => x.Accept(It.Is<IList<Reading>>(p => p.Count == 2 &&
-          p.First().Label == config.Label && p.First().DeviceId == "EnergiDataService" && p.First().Timestamp == dateTime1 && p.First().Timestamp.Kind == dateTime1.Kind &&
+          p.First().Label == import.Label && p.First().DeviceId == "EnergiDataService" && p.First().Timestamp == dateTime1 && p.First().Timestamp.Kind == dateTime1.Kind &&
           p.First().GetRegisterValues().Count == 1 && p.First().GetRegisterValues().First().Value == 12 && p.First().GetRegisterValues().First().Scale == 0 &&
           p.First().GetRegisterValues().First().Unit == Unit.Dkk && p.First().GetRegisterValues().First().ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpense &&
           p.First().GetRegisterValues().First().Tag == RegisterValueTag.Import &&
-          p.Last().Label == config.Label && p.Last().DeviceId == "EnergiDataService" && p.Last().Timestamp == dateTime2 && p.Last().Timestamp.Kind == dateTime2.Kind &&
+          p.Last().Label == import.Label && p.Last().DeviceId == "EnergiDataService" && p.Last().Timestamp == dateTime2 && p.Last().Timestamp.Kind == dateTime2.Kind &&
           p.Last().GetRegisterValues().Count == 1 && p.Last().GetRegisterValues().First().Value == 15 && p.Last().GetRegisterValues().First().Scale == 0 &&
           p.Last().GetRegisterValues().Last().Unit == Unit.Dkk && p.Last().GetRegisterValues().First().ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpense &&
-          p.Last().GetRegisterValues().Last().Tag == RegisterValueTag.Import )));
-        settingRepository.Verify(x => x.UpsertEnergiDataServiceImporterPosition(It.Is<DateTime>(p => p == dateTime2.AddHours(1) && p.Kind == dateTime2.Kind)));
+          p.Last().GetRegisterValues().Last().Tag == RegisterValueTag.Import)));
+
+        importRepository.Verify(x => x.SetCurrentTimestamp(It.Is<string>(p => p == import.Label), It.Is<DateTime>(p => p == dateTime2.AddHours(1) && p.Kind == dateTime2.Kind)));
     }
 
     [Test]
     public async Task ImportEurAmounts()
     {
         // Arrange
-        var config = SetUpSettingRepositoryGetEnergiDataServiceImportConfig(currency: Unit.Eur);
-        SetUpSettingRepositoryGetEnergiDataServiceImportPosition();
+        var dateTime = new DateTime(2023, 2, 28, 23, 0, 0, DateTimeKind.Utc);
+        var import = new Import("label", "channel", Unit.Eur, dateTime, null, true);
+        SetupImportRepositoryGetImports(import);
+
         var dateTime1 = new DateTime(2023, 5, 15, 21, 29, 0, DateTimeKind.Utc);
         var dateTime2 = dateTime1.AddHours(1);
         SetUpEnergiDataServiceClientGetElectricityAmounts(
-            new KwhAmount { Start = dateTime1, AmountEur = 13 },
-            new KwhAmount { Start = dateTime2, AmountEur = 16 });
+            new KwhAmount { Start = dateTime1, AmountEur = 12 },
+            new KwhAmount { Start = dateTime2, AmountEur = 15 });
         var target = CreateTarget();
 
         // Act
-        await target.Import(DateTime.UtcNow);
+        await target.Import(dateTime);
 
         // Assert
         readingAccepter.Verify(x => x.Accept(It.Is<IList<Reading>>(p => p.Count == 2 &&
-          p.First().Label == config.Label && p.First().DeviceId == "EnergiDataService" && p.First().Timestamp == dateTime1 && p.First().Timestamp.Kind == dateTime1.Kind &&
-          p.First().GetRegisterValues().Count == 1 && p.First().GetRegisterValues().First().Value == 13 && p.First().GetRegisterValues().First().Scale == 0 &&
+          p.First().Label == import.Label && p.First().DeviceId == "EnergiDataService" && p.First().Timestamp == dateTime1 && p.First().Timestamp.Kind == dateTime1.Kind &&
+          p.First().GetRegisterValues().Count == 1 && p.First().GetRegisterValues().First().Value == 12 && p.First().GetRegisterValues().First().Scale == 0 &&
           p.First().GetRegisterValues().First().Unit == Unit.Eur && p.First().GetRegisterValues().First().ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpense &&
           p.First().GetRegisterValues().First().Tag == RegisterValueTag.Import &&
-          p.Last().Label == config.Label && p.Last().DeviceId == "EnergiDataService" && p.Last().Timestamp == dateTime2 && p.Last().Timestamp.Kind == dateTime2.Kind &&
-          p.Last().GetRegisterValues().Count == 1 && p.Last().GetRegisterValues().First().Value == 16 && p.Last().GetRegisterValues().First().Scale == 0 &&
+          p.Last().Label == import.Label && p.Last().DeviceId == "EnergiDataService" && p.Last().Timestamp == dateTime2 && p.Last().Timestamp.Kind == dateTime2.Kind &&
+          p.Last().GetRegisterValues().Count == 1 && p.Last().GetRegisterValues().First().Value == 15 && p.Last().GetRegisterValues().First().Scale == 0 &&
           p.Last().GetRegisterValues().Last().Unit == Unit.Eur && p.Last().GetRegisterValues().First().ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpense &&
           p.Last().GetRegisterValues().Last().Tag == RegisterValueTag.Import)));
-        settingRepository.Verify(x => x.UpsertEnergiDataServiceImporterPosition(It.Is<DateTime>(p => p == dateTime2.AddHours(1) && p.Kind == dateTime2.Kind)));
+
+        importRepository.Verify(x => x.SetCurrentTimestamp(It.Is<string>(p => p == import.Label), It.Is<DateTime>(p => p == dateTime2.AddHours(1) && p.Kind == dateTime2.Kind)));
     }
 
     [Test]
     public async Task ImportReadingAccepterThrows()
     {
         // Arrange
-        var config = SetUpSettingRepositoryGetEnergiDataServiceImportConfig();
-        SetUpSettingRepositoryGetEnergiDataServiceImportPosition();
+        var dateTime = new DateTime(2023, 2, 28, 23, 0, 0, DateTimeKind.Utc);
+        var import = new Import("label", "channel", Unit.Eur, dateTime, null, true);
+        SetupImportRepositoryGetImports(import);
         SetUpEnergiDataServiceClientGetElectricityAmounts(new KwhAmount { Start = new DateTime(2023, 5, 15, 21, 29, 0, DateTimeKind.Utc), AmountDkk = 13 });
         readingAccepter.Setup(x => x.Accept(It.IsAny<IList<Reading>>())).Throws(new DataStoreBusyException());
         var target = CreateTarget();
@@ -224,7 +279,7 @@ public class EnergiDataServiceImporterTest
         await target.Import(DateTime.UtcNow);
 
         // Assert
-        settingRepository.Verify(x => x.UpsertEnergiDataServiceImporterPosition(It.IsAny<DateTime>()), Times.Never);
+        importRepository.Verify(x => x.SetCurrentTimestamp(It.IsAny<string>(), It.IsAny<DateTime>()), Times.Never);
     }
 
     [Test]
@@ -248,41 +303,15 @@ public class EnergiDataServiceImporterTest
         Assert.That(value, Is.EqualTo(expectedValue));
         Assert.That(scale, Is.EqualTo(expectedScale));
     }
-
-    private EnergiDataServiceImporterConfig SetUpSettingRepositoryGetEnergiDataServiceImportConfig(bool importEnabled = true, TimeSpan? timeSpan = null, string priceArea = "DK1", string label = "Main", Unit currency = Unit.Dkk)
+ 
+    private Import[] SetupImportRepositoryGetImports(params Import[] imports)
     {
-        if (timeSpan == null)
-        {
-            timeSpan = TimeSpan.FromHours(12);
-        }
-        var config = new EnergiDataServiceImporterConfig(importEnabled, timeSpan.Value, priceArea, label, currency);
-        settingRepository.Setup(x => x.GetEnergiDataServiceImporterConfig()).Returns(config);
-        return config;
-    }
-
-    private DateTime SetUpSettingRepositoryGetEnergiDataServiceImportPosition(DateTime? dateTime = null)
-    {
-        if (dateTime == null)
-        {
-            dateTime = DateTime.UtcNow;
-        }
-        settingRepository.Setup(x => x.GetEnergiDataServiceImporterPosition()).Returns(dateTime);
-        return dateTime.Value;
-    }
-
-    private DateTime SetUpLocationContextConvertTimeFromUtc(DateTime? dateTime = null)
-    {
-        if (dateTime == null)
-        {
-            dateTime = DateTime.Now;
-        }
-        locationContext.Setup(x => x.ConvertTimeFromUtc(It.IsAny<DateTime>())).Returns(dateTime.Value);
-        return dateTime.Value;
+        importRepository.Setup(x => x.GetImports()).Returns(imports);
+        return imports;
     }
 
     private KwhAmount[] SetUpEnergiDataServiceClientGetElectricityAmounts(params KwhAmount[] kwhAmounts)
     {
-
         energiDataServiceClient.Setup(x => x.GetElectricityAmounts(It.IsAny<DateTime>(), It.IsAny<TimeSpan>(), It.IsAny<string>()))
         .ReturnsAsync(kwhAmounts.ToList());
         return kwhAmounts;
@@ -290,7 +319,7 @@ public class EnergiDataServiceImporterTest
 
     private EnergiDataServiceImporter CreateTarget()
     {
-        return new EnergiDataServiceImporter(logger, settingRepository.Object, locationContext.Object, energiDataServiceClient.Object, readingAccepter.Object);
+        return new EnergiDataServiceImporter(logger, importRepository.Object, energiDataServiceClient.Object, readingAccepter.Object);
     }
 
 }

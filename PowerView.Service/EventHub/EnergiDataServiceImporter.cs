@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
+using System.Threading.Channels;
 using Microsoft.Extensions.Logging;
 using PowerView.Model;
 using PowerView.Model.Repository;
@@ -12,16 +14,14 @@ namespace PowerView.Service.EventHub
     public class EnergiDataServiceImporter : IEnergiDataServiceImporter
     {
         private readonly ILogger logger;
-        private readonly ISettingRepository settingRepository;
-        private readonly ILocationContext locationContext;
+        private readonly IImportRepository importRepository;
         private readonly IEnergiDataServiceClient energiDataServiceClient;
         private readonly IReadingAccepter readingAccepter;
 
-        public EnergiDataServiceImporter(ILogger<EnergiDataServiceImporter> logger, ISettingRepository settingRepository, ILocationContext locationContext, IEnergiDataServiceClient energiDataServiceClient, IReadingAccepter readingAccepter)
+        public EnergiDataServiceImporter(ILogger<EnergiDataServiceImporter> logger, IImportRepository importRepository, IEnergiDataServiceClient energiDataServiceClient, IReadingAccepter readingAccepter)
         {
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            this.settingRepository = settingRepository ?? throw new ArgumentNullException(nameof(settingRepository));
-            this.locationContext = locationContext ?? throw new ArgumentNullException(nameof(locationContext));
+            this.importRepository = importRepository ?? throw new ArgumentNullException(nameof(importRepository));
             this.energiDataServiceClient = energiDataServiceClient ?? throw new ArgumentNullException(nameof(energiDataServiceClient));
             this.readingAccepter = readingAccepter ?? throw new ArgumentNullException(nameof(readingAccepter));
         }
@@ -30,62 +30,74 @@ namespace PowerView.Service.EventHub
         {
             if (timestamp.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException(nameof(timestamp), "Must be UTC");
 
-            EnergiDataServiceImporterConfig config;
-            try
-            {
-                config = settingRepository.GetEnergiDataServiceImporterConfig();
-            }
-            catch (DomainConstraintException e)
-            {
-                logger.LogDebug(e, $"Skipping EnergiDataService import. Configuration absent or incomplete.");
-                return;
-            }
+            var enabledImportGroups = GetImportGroups(timestamp, importRepository.GetImports());
 
-            if (!config.ImportEnabled)
-            {
-                logger.LogTrace($"EnergiDataService import disabled");
-                return;
-            }
+            if (enabledImportGroups.Count == 0) return;
 
-            var start = settingRepository.GetEnergiDataServiceImporterPosition();
-            if (start == null) 
-            {
-                logger.LogInformation($"EnergiDataService import data starting date is today");
-                var dateLocal = locationContext.ConvertTimeFromUtc(timestamp);
-                start = dateLocal.Date.ToUniversalTime();
-            }
+            logger.LogTrace($"EnergiDataService import. {enabledImportGroups.Sum(x => x.Imports.Count)} enabled imports.");
 
-            IList<KwhAmount> kwhAmounts;
-            try
+            foreach (var importGroup in enabledImportGroups)
             {
-                kwhAmounts = await energiDataServiceClient.GetElectricityAmounts(start.Value, config.TimeSpan, config.PriceArea);
-            }
-            catch (EnergiDataServiceClientException e)
-            {
-                logger.LogInformation(e, $"Could not import income/expense values. Web request for EnergiDataService failed. Import will be retried later.");
-                return;
-            }
-
-            if (kwhAmounts.Count == 0) return;
-
-            var amountReadings = ToReadings(kwhAmounts, config.Label, "EnergiDataService", config.Currency);
-            try
-            {
-                logger.LogDebug($"Fetched {amountReadings.Sum(x => x.GetRegisterValues().Count)} values from Energi Data Service");
-                readingAccepter.Accept(amountReadings);
-            }
-            catch (DataStoreBusyException e)
-            {
-                var msg = $"Unable to add imported readings for label:{config.Label}. Data store busy. Going to retry on next trigger.";
-                Exception ex = null;
-                if (logger.IsEnabled(LogLevel.Debug))
+                IList<KwhAmount> kwhAmounts;
+                try
                 {
-                    ex = e;
+                    kwhAmounts = await energiDataServiceClient.GetElectricityAmounts(importGroup.PositionTimestamp, importGroup.TimeSpan, importGroup.Channel);
                 }
-                logger.LogInformation(ex, msg);
-                return;
+                catch (EnergiDataServiceClientException e)
+                {
+                    logger.LogInformation(e, $"Could not import income/expense values. Web request for EnergiDataService failed. Import will be retried later.");
+                    continue;
+                }
+
+                if (kwhAmounts.Count == 0) continue;
+
+                foreach (var import in importGroup.Imports)
+                {
+                    var amountReadings = ToReadings(kwhAmounts, import.Label, "EnergiDataService", import.Currency);
+                    try
+                    {
+                        logger.LogDebug($"Importing {amountReadings.Sum(x => x.GetRegisterValues().Count)} values from Energi Data Service for label {import.Label}");
+                        readingAccepter.Accept(amountReadings);
+                    }
+                    catch (DataStoreBusyException e)
+                    {
+                        var msg = $"Unable to add imported readings for label:{import.Label}. Data store busy. Going to retry on next trigger.";
+                        Exception ex = null;
+                        if (logger.IsEnabled(LogLevel.Debug))
+                        {
+                            ex = e;
+                        }
+                        logger.LogInformation(ex, msg);
+                        return;
+                    }
+                    importRepository.SetCurrentTimestamp(import.Label, kwhAmounts.Select(x => x.Start).Max().AddHours(1));
+                }
             }
-            settingRepository.UpsertEnergiDataServiceImporterPosition(kwhAmounts.Select(x => x.Start).Max().AddHours(1));
+        }
+
+        private List<ImportGroup> GetImportGroups(DateTime timestamp, ICollection<Import> imports)
+        {
+            var groups = imports
+              .Where(x => x.Enabled)
+              .Select(x => new { Import = x, PositionTimestamp = x.CurrentTimestamp != null ? x.CurrentTimestamp.Value : x.FromTimestamp })
+              .GroupBy(x => new { x.Import.Channel, x.PositionTimestamp });
+
+            var importGroups = new List<ImportGroup>();
+            foreach (var group in groups)
+            {
+                var channel = group.Key.Channel;
+                var positionTimestamp = group.Key.PositionTimestamp;
+                var timeSpan = positionTimestamp < (timestamp - TimeSpan.FromDays(3)) ? TimeSpan.FromDays(3) : TimeSpan.FromHours(6);
+                var importGroup = new ImportGroup 
+                { 
+                    Channel = channel, 
+                    PositionTimestamp = positionTimestamp, 
+                    TimeSpan = timeSpan,
+                    Imports = group.Select(x => x.Import).ToList()
+                };
+                importGroups.Add(importGroup);
+            }
+            return importGroups;
         }
 
         private IList<Reading> ToReadings(IList<KwhAmount> kwhAmounts, string label, string deviceId, Unit currency)
@@ -130,6 +142,14 @@ namespace PowerView.Service.EventHub
                 amountDecimal = amountDecimal - decimalDigit;
             }
             return (amountIntegral, (short)(iterations * -1));
+        }
+
+        private class ImportGroup
+        {
+            public string Channel { get; set; }
+            public DateTime PositionTimestamp { get; set; }
+            public TimeSpan TimeSpan { get; set; }
+            public List<Import> Imports { get; set; }
         }
     }
 }

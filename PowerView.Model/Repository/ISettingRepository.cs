@@ -19,13 +19,4 @@ public interface ISettingRepository
     SmtpConfig GetSmtpConfig();
 
     void UpsertSmtpConfig(SmtpConfig smtpConfig);
-
-    EnergiDataServiceImporterConfig GetEnergiDataServiceImporterConfig();
-
-    void UpsertEnergiDataServiceImporterConfig(EnergiDataServiceImporterConfig edsiConfig);
-
-    DateTime? GetEnergiDataServiceImporterPosition();
-
-    void UpsertEnergiDataServiceImporterPosition(DateTime position);
-
 }
