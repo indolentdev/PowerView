@@ -502,7 +502,7 @@
     "1.0.22.7.0.255": "Produceret Effekt L1", 
     "1.0.42.7.0.255": "Produceret Effekt L2", 
     "1.0.62.7.0.255": "Produceret Effekt L3", 
-    "1.68.25.67.0.255": "Timepris per kWh ekskl. moms",
+    "1.68.25.67.0.255": "Time beløb per kWh ekskl. moms",
     "15.0.223.0.0.255": "Temperatur", 
     "15.0.223.0.2.255": "Relativ Luftfugtighed", 
     "8.0.1.0.0.255": "Volume Total", 
