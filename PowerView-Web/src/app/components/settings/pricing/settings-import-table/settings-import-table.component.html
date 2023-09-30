@@ -9,7 +9,7 @@
     </ng-container>
     <ng-container matColumnDef="channel">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'columns.channel' | translate }}</th>
-        <td mat-cell *matCellDef="let v">{{ v.channel }}</td>
+        <td mat-cell *matCellDef="let v">{{ 'forms.settings.pricing.import.channels.' + v.channel | translate:{channel:v.channel} }}</td>
     </ng-container>
     <ng-container matColumnDef="currency">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'columns.currency' | translate }}</th>
