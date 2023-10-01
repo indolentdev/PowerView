@@ -39,7 +39,7 @@ public class SettingsImportsController : ControllerBase
                     Channel = i.Channel,
                     Currency = i.Currency.ToString().ToUpperInvariant(),
                     FromTimestamp = DateTimeMapper.Map(i.FromTimestamp),
-                    CurrentTimestamp = DateTimeMapper.Map(i.CurrentTimestamp),
+                    CurrentTimestamp = DateTimeMapper.Map(i.CurrentTimestamp != null ? i.CurrentTimestamp.Value.AddHours(-1) : null),
                     Enabled = i.Enabled
                 })
                 .ToList()

@@ -46,7 +46,7 @@ public class SettingsImportsControllerTest
     }
     
     [Test]
-    public async Task GetCostBreakdowns()
+    public async Task GetImports()
     {
         // Arrange
         DateTime dateTime = new DateTime(2023, 9, 27, 19, 0, 3, DateTimeKind.Utc);
@@ -234,7 +234,7 @@ public class SettingsImportsControllerTest
         Assert.That(dto.channel, Is.EqualTo(import.Channel));
         Assert.That(dto.currency, Is.EqualTo(import.Currency.ToString().ToUpperInvariant()));
         Assert.That(dto.fromTimestamp, Is.EqualTo(DateTimeMapper.Map(import.FromTimestamp)));
-        Assert.That(dto.currentTimestamp, Is.EqualTo(DateTimeMapper.Map(import.CurrentTimestamp)));
+        Assert.That(dto.currentTimestamp, Is.EqualTo(DateTimeMapper.Map(import.CurrentTimestamp != null ? import.CurrentTimestamp.Value.AddHours(-1) : null)));
         Assert.That(dto.enabled, Is.EqualTo(import.Enabled));
     }
 
