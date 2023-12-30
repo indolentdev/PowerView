@@ -25,6 +25,7 @@ namespace PowerView.Service.Test
         [Test]
         [TestCase("localhost")]
         [TestCase("127.0.0.1")]
+        [TestCase("*")]
         public void GetEventsUrlChangeLoopbackHost(string host)
         {
             // Arrange

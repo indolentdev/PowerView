@@ -22,7 +22,13 @@ namespace PowerView.Service
 
         private Uri GetBaseUri()
         {
-            var baseUri = new Uri(options.Value.BaseUrl);
+            var baseUrlString = options.Value.BaseUrl;
+            if (baseUrlString.Contains("://*"))
+            {
+                baseUrlString = baseUrlString.Replace("://*", "://localhost");
+            }
+
+            var baseUri = new Uri(baseUrlString);
             if (baseUri.IsLoopback)
             {
                 var ipAddress = GetIPv4Address();
