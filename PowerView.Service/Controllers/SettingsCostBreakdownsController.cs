@@ -39,14 +39,22 @@ public class SettingsCostBreakdownsController : ControllerBase
                     Title = cb.Title,
                     Currency = cb.Currency.ToString().ToUpperInvariant(),
                     Vat = cb.Vat,
-                    Entries = cb.Entries.Select(cbe => new
+                    EntryPeriods = cb.GetEntriesByPeriods().OrderByDescending(x => x.Key.FromDate).ThenByDescending(x => x.Key.ToDate).Select(cbeg => new
                     {
-                        FromDate = DateTimeMapper.Map(cbe.FromDate),
-                        ToDate = DateTimeMapper.Map(cbe.ToDate),
-                        Name = cbe.Name,
-                        StartTime = cbe.StartTime,
-                        EndTime = cbe.EndTime,
-                        Amount = cbe.Amount
+                        Period = new
+                        {
+                            FromDate = DateTimeMapper.Map(cbeg.Key.FromDate),
+                            ToDate = DateTimeMapper.Map(cbeg.Key.ToDate),
+                        },
+                        Entries = cbeg.Value.Select(cbe => new
+                        {
+                            FromDate = DateTimeMapper.Map(cbe.FromDate),
+                            ToDate = DateTimeMapper.Map(cbe.ToDate),
+                            Name = cbe.Name,
+                            StartTime = cbe.StartTime,
+                            EndTime = cbe.EndTime,
+                            Amount = cbe.Amount
+                        }).ToList(),
                     }).ToList()
                 })
                 .ToList()

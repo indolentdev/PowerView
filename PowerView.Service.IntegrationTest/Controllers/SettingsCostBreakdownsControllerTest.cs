@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Net;
@@ -49,8 +50,15 @@ public class SettingsCostBreakdownsControllerTest
     {
         // Arrange
         DateTime dateTime = new DateTime(2023, 9, 27, 19, 0, 3, DateTimeKind.Utc);
-        var costBreakdown1 = new CostBreakdown("Title1", Unit.Eur, 10, new [] { new CostBreakdownEntry(dateTime, dateTime.AddDays(1), "N1-1", 2, 21, 1.2345678), new CostBreakdownEntry(dateTime, dateTime.AddDays(1), "N1-2", 0, 23, 2.222222) });
-        var costBreakdown2 = new CostBreakdown("Title2", Unit.Dkk, 25, new[] { new CostBreakdownEntry(dateTime, dateTime.AddDays(2), "N2-1", 3, 20, 2.345678) });
+        var costBreakdown1 = new CostBreakdown("Title1", Unit.Eur, 10, new [] { 
+            new CostBreakdownEntry(dateTime.AddDays(1), dateTime.AddDays(2), "N1-1", 2, 21, 1.2345678), 
+            new CostBreakdownEntry(dateTime.AddDays(1), dateTime.AddDays(2), "N1-2", 0, 23, 2.222222),
+            new CostBreakdownEntry(dateTime, dateTime.AddDays(1), "N1-3", 0, 19, 3),
+            new CostBreakdownEntry(dateTime.AddDays(2), dateTime.AddDays(3), "N1-4", 0, 18, 4.444)
+        });
+        var costBreakdown2 = new CostBreakdown("Title2", Unit.Dkk, 25, new[] { 
+            new CostBreakdownEntry(dateTime, dateTime.AddDays(2), "N2-1", 3, 20, 2.345678) 
+        });
         costBreakdownRepository.Setup(cbr => cbr.GetCostBreakdowns()).Returns(new[] { costBreakdown1, costBreakdown2 });
 
         // Act
@@ -60,8 +68,8 @@ public class SettingsCostBreakdownsControllerTest
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         var json = await response.Content.ReadFromJsonAsync<TestCostBreakdownSetDto>();
         Assert.That(json.costBreakdowns.Length, Is.EqualTo(2));
-        AssertCostBreakdown(costBreakdown1, json.costBreakdowns[0]);
-        AssertCostBreakdown(costBreakdown2, json.costBreakdowns[1]);
+        AssertCostBreakdown(costBreakdown1, new [] { new[] { costBreakdown1.Entries[3] }, new [] { costBreakdown1.Entries[0], costBreakdown1.Entries[1] }, new [] { costBreakdown1.Entries[2] } }, json.costBreakdowns[0]);
+        AssertCostBreakdown(costBreakdown2, new [] { new [] { costBreakdown2.Entries[0] } }, json.costBreakdowns[1]);
         costBreakdownRepository.Verify(cbr => cbr.GetCostBreakdowns());
     }
 
@@ -454,26 +462,32 @@ public class SettingsCostBreakdownsControllerTest
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
     }
 
-    private void AssertCostBreakdown(CostBreakdown costBreakdown, TestCostBreakdownDto dto)
+    private void AssertCostBreakdown(CostBreakdown costBreakdown, CostBreakdownEntry[][] entryPeriods, TestCostBreakdownDto dto)
     {
         Assert.That(dto.title, Is.EqualTo(costBreakdown.Title));
         Assert.That(dto.currency, Is.EqualTo(costBreakdown.Currency.ToString().ToUpperInvariant()));
         Assert.That(dto.vat, Is.EqualTo(costBreakdown.Vat));
-        Assert.That(dto.entries.Length, Is.EqualTo(costBreakdown.Entries.Count));
-        for (int ix = 0; ix < costBreakdown.Entries.Count; ix++)
+        Assert.That(dto.entryPeriods.Length, Is.EqualTo(entryPeriods.Length));
+        for (var ix = 0; ix < entryPeriods.Length; ix++)
         {
-            AssertCostBreakdownEntry(costBreakdown.Entries[ix], dto.entries[ix]);
+            var expectedEntryPeriods = entryPeriods[ix];
+            var actualEntryPeriod = dto.entryPeriods[ix];
+            Assert.That(actualEntryPeriod.entries.Length, Is.EqualTo(expectedEntryPeriods.Length));
+            for ( var ix2 = 0; ix2 < expectedEntryPeriods.Length; ix2++)
+            {
+                AssertCostBreakdownEntry(expectedEntryPeriods[ix2], actualEntryPeriod.entries[ix2]);
+            }
         }
     }
 
-    private void AssertCostBreakdownEntry(CostBreakdownEntry costBreakdownEntry, CostBreakdownEntryDto dto)
+    private void AssertCostBreakdownEntry(CostBreakdownEntry costBreakdownEntry, TestCostBreakdownEntryDto dto)
     {
-        Assert.That(dto.FromDate, Is.EqualTo(costBreakdownEntry.FromDate));
-        Assert.That(dto.ToDate, Is.EqualTo(costBreakdownEntry.ToDate));
-        Assert.That(dto.Name, Is.EqualTo(costBreakdownEntry.Name));
-        Assert.That(dto.StartTime, Is.EqualTo(costBreakdownEntry.StartTime));
-        Assert.That(dto.EndTime, Is.EqualTo(costBreakdownEntry.EndTime));
-        Assert.That(dto.Amount, Is.EqualTo(costBreakdownEntry.Amount));
+        Assert.That(DateTime.Parse(dto.fromDate, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal), Is.EqualTo(costBreakdownEntry.FromDate));
+        Assert.That(DateTime.Parse(dto.toDate, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal), Is.EqualTo(costBreakdownEntry.ToDate));
+        Assert.That(dto.name, Is.EqualTo(costBreakdownEntry.Name));
+        Assert.That(dto.startTime, Is.EqualTo(costBreakdownEntry.StartTime));
+        Assert.That(dto.endTime, Is.EqualTo(costBreakdownEntry.EndTime));
+        Assert.That(dto.amount, Is.EqualTo(costBreakdownEntry.Amount));
     }
 
     internal class TestCostBreakdownSetDto
@@ -489,7 +503,36 @@ public class SettingsCostBreakdownsControllerTest
 
         public int? vat { get; set; }
 
-        public CostBreakdownEntryDto[] entries { get; set; }
+        public TestCostBreakdownEntryPeriodDto[] entryPeriods { get; set; }
+    }
+
+    public class TestCostBreakdownEntryPeriodDto
+    {
+        public TestCostBreakdownPeriodDto period { get; set; }
+
+        public TestCostBreakdownEntryDto[] entries { get; set; }
+    }
+
+    public class TestCostBreakdownPeriodDto
+    {
+        public string fromDate { get; set; }
+
+        public string toDate { get; set; }
+    }
+
+    public class TestCostBreakdownEntryDto
+    {
+        public string fromDate { get; set; }
+
+        public string toDate { get; set; }
+
+        public string name { get; set; }
+
+        public int? startTime { get; set; }
+
+        public int? endTime { get; set; }
+
+        public double? amount { get; set; }
     }
 
 }

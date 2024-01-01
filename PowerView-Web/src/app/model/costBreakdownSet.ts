@@ -1,7 +1,7 @@
-import { CostBreakdown } from './costBreakdown';
+import { CostBreakdownWithPeriod } from './costBreakdownWithPeriod';
 
 export class CostBreakdownSet {
-    costBreakdowns: CostBreakdown[];
+    costBreakdowns: CostBreakdownWithPeriod[];
 
     constructor() {
         this.costBreakdowns = [];

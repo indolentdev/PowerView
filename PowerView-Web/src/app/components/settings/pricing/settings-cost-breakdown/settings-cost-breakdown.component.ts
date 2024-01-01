@@ -8,6 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { SettingsService, AddCostBreakdownError, AddCostBreakdownEntryError, UpdateCostBreakdownEntryError } from '../../../../services/settings.service';
 import { CostBreakdown } from '../../../../model/costBreakdown';
 import { CostBreakdownEntry } from '../../../../model/costBreakdownEntry';
+import { CostBreakdownWithPeriod } from '../../../../model/costBreakdownWithPeriod';
 
 @Component({
   selector: 'app-settings-cost-breakdown',
@@ -22,8 +23,8 @@ export class SettingsCostBreakdownComponent {
 
   currencies = ['DKK', 'EUR']; // TODO: Get these from the server..
 
-  costBreakdowns: CostBreakdown[];
-  selectedCostBreakdown: CostBreakdown;
+  costBreakdowns: CostBreakdownWithPeriod[];
+  selectedCostBreakdown: CostBreakdownWithPeriod;
   selectedCostBreakdownTitle: string;
   entryClear: string; // changing this will cause the entry-component to clear itself
 

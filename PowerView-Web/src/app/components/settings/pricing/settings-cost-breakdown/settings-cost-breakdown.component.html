@@ -81,9 +81,17 @@
 <div class="divCenterOuter">
   <div class="divCenterInner">
     <div *ngIf="selectedCostBreakdown !== undefined && selectedCostBreakdown != null">
-      <app-settings-cost-breakdown-entry-table [costBreakdownEntries]="selectedCostBreakdown.entries"
-        (editCostBreakdownEntry)="editCostBreakdownEntry($event)" (deleteCostBreakdownEntry)="deleteCostBreakdownEntry($event)">
-      </app-settings-cost-breakdown-entry-table>
+
+      <div *ngFor="let cbp of selectedCostBreakdown.entryPeriods">
+        <h2>{{ cbp.period.fromDate | date:'shortDate' }} - {{ cbp.period.toDate | date:'shortDate' }}</h2>
+
+        <app-settings-cost-breakdown-entry-table [costBreakdownEntries]="cbp.entries"
+          (editCostBreakdownEntry)="editCostBreakdownEntry($event)"
+          (deleteCostBreakdownEntry)="deleteCostBreakdownEntry($event)">
+        </app-settings-cost-breakdown-entry-table>
+
+        <br/>
+      </div>
     
       <br />
     </div>

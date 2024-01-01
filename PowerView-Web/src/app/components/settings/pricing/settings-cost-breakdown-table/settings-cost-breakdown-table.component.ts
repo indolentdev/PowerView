@@ -3,6 +3,8 @@ import { MatSort, MatSortable } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { NGXLogger } from 'ngx-logger';
 import { CostBreakdown } from '../../../../model/costBreakdown';
+import { CostBreakdownPeriod } from 'src/app/model/costBreakdownPeriod';
+import { CostBreakdownWithPeriod } from 'src/app/model/costBreakdownWithPeriod';
 
 @Component({
   selector: 'app-settings-cost-breakdown-table',
@@ -65,6 +67,14 @@ export class SettingsCostBreakdownTableComponent {
     }
     this.log.debug("Delete clicked", item);
     this.deleteAction.emit(item);
+  }
+
+  entriesSum(arr: CostBreakdownPeriod[]): number {
+    let innerLength = 0;
+    for (const item of arr) {
+      innerLength += item.entries.length;
+    }
+    return innerLength;
   }
 
 }
