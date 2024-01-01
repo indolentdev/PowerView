@@ -17,7 +17,7 @@
     </ng-container>
     <ng-container matColumnDef="fromTimestamp">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'columns.fromDate' | translate }}</th>
-        <td mat-cell *matCellDef="let v">{{ v.fromTimestamp | date:'shortDate' }}</td>
+        <td mat-cell *matCellDef="let v">{{ v.fromTimestamp | date:'mediumDate' }}</td>
     </ng-container>
     <ng-container matColumnDef="currentTimestamp">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'columns.status' | translate }}</th>
