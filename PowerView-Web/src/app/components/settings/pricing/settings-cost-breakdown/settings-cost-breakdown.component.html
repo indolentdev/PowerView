@@ -83,7 +83,7 @@
     <div *ngIf="selectedCostBreakdown !== undefined && selectedCostBreakdown != null">
 
       <div *ngFor="let cbp of selectedCostBreakdown.entryPeriods">
-        <h2>{{ cbp.period.fromDate | date:'mediumDate' }} - {{ cbp.period.toDate | date:'mediumDate' }}</h2>
+        <h2>{{ cbp.period.fromDate | date:'mediumDate' }} - {{ cbp.period.toDate | date:'mediumDate' }} ({{ cbp.entries.length }})</h2>
 
         <app-settings-cost-breakdown-entry-table [costBreakdownEntries]="cbp.entries"
           (editCostBreakdownEntry)="editCostBreakdownEntry($event)"

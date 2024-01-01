@@ -28,7 +28,7 @@ export class SettingsCostBreakdownEntryTableComponent {
     let empty = [];
     this.dataSource = new MatTableDataSource<any>(empty);
 
-    this.sort.sort(<MatSortable>({ id: 'fromDate', start: 'asc' }));
+    this.sort.sort(<MatSortable>({ id: 'name', start: 'asc' }));
     this.sort.disableClear = true;
 
     this.refresh();
