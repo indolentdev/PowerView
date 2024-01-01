@@ -53,8 +53,7 @@ public class SettingsCostBreakdownsControllerTest
         var costBreakdown1 = new CostBreakdown("Title1", Unit.Eur, 10, new [] { 
             new CostBreakdownEntry(dateTime.AddDays(1), dateTime.AddDays(2), "N1-1", 2, 21, 1.2345678), 
             new CostBreakdownEntry(dateTime.AddDays(1), dateTime.AddDays(2), "N1-2", 0, 23, 2.222222),
-            new CostBreakdownEntry(dateTime, dateTime.AddDays(1), "N1-3", 0, 19, 3),
-            new CostBreakdownEntry(dateTime.AddDays(2), dateTime.AddDays(3), "N1-4", 0, 18, 4.444)
+            new CostBreakdownEntry(dateTime.AddDays(3), dateTime.AddDays(4), "N1-3", 0, 18, 3.333)
         });
         var costBreakdown2 = new CostBreakdown("Title2", Unit.Dkk, 25, new[] { 
             new CostBreakdownEntry(dateTime, dateTime.AddDays(2), "N2-1", 3, 20, 2.345678) 
@@ -68,7 +67,7 @@ public class SettingsCostBreakdownsControllerTest
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         var json = await response.Content.ReadFromJsonAsync<TestCostBreakdownSetDto>();
         Assert.That(json.costBreakdowns.Length, Is.EqualTo(2));
-        AssertCostBreakdown(costBreakdown1, new [] { new[] { costBreakdown1.Entries[3] }, new [] { costBreakdown1.Entries[0], costBreakdown1.Entries[1] }, new [] { costBreakdown1.Entries[2] } }, json.costBreakdowns[0]);
+        AssertCostBreakdown(costBreakdown1, new [] { new [] { costBreakdown1.Entries[2] }, new [] { costBreakdown1.Entries[0], costBreakdown1.Entries[1] } }, json.costBreakdowns[0]);
         AssertCostBreakdown(costBreakdown2, new [] { new [] { costBreakdown2.Entries[0] } }, json.costBreakdowns[1]);
         costBreakdownRepository.Verify(cbr => cbr.GetCostBreakdowns());
     }

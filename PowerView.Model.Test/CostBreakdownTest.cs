@@ -46,22 +46,36 @@ public class CostBreakDownTest
     }
 
     [Test]
+    public void GetEntriesByPeriodsEmpty()
+    {
+        // Arrange
+        var target = new CostBreakdown("Hep", Unit.Dkk, 25, Array.Empty<CostBreakdownEntry>());
+
+        // Act
+        var entriesPeriods = target.GetEntriesByPeriods();
+
+        // Assert
+        Assert.That(entriesPeriods, Is.Empty);
+    }
+
+    [Test]
     public void GetEntriesByPeriods()
     {
         // Arrange
-        var dateTime = new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-        var plus1Month = dateTime.AddMonths(1);
-        var plus2Months = dateTime.AddMonths(2);
-        var plus3Months = dateTime.AddMonths(3);
-        var plus4Months = dateTime.AddMonths(4);
-        var plus5Months = dateTime.AddMonths(5);
+        var t1 = new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        var t2 = t1.AddMonths(1);
+        var t3 = t1.AddMonths(2);
+        var t4 = new DateTime(2000, 3, 31, 0, 0, 0, DateTimeKind.Utc);
+        var t5 = new DateTime(2000, 4, 30, 0, 0, 0, DateTimeKind.Utc);
+        var t6 = new DateTime(2000, 5, 31, 0, 0, 0, DateTimeKind.Utc);
+        var t7 = new DateTime(2000, 6, 30, 0, 0, 0, DateTimeKind.Utc);
 
-        var e1a = new CostBreakdownEntry(dateTime, plus3Months, "e1a", 0, 23, 11);
-        var e1b = new CostBreakdownEntry(dateTime, plus3Months, "e1b", 0, 23, 12);
-        var e2 = new CostBreakdownEntry(dateTime, plus5Months, "e2", 0, 23, 21);
-        var e3 = new CostBreakdownEntry(plus1Month, plus2Months, "e3", 0, 23, 31);
-        var e4 = new CostBreakdownEntry(plus2Months, plus4Months, "e4", 0, 23, 41);
-        var e5 = new CostBreakdownEntry(plus2Months, plus5Months, "e5", 0, 23, 51);
+        var e1a = new CostBreakdownEntry(t1, t4, "e1a", 0, 23, 11);
+        var e1b = new CostBreakdownEntry(t1, t4, "e1b", 0, 23, 12);
+        var e2 = new CostBreakdownEntry(t1, t5, "e2", 0, 23, 21);
+        var e3 = new CostBreakdownEntry(t2, t5, "e3", 0, 23, 31);
+        var e4 = new CostBreakdownEntry(t3, t6, "e4", 0, 23, 41);
+        var e5 = new CostBreakdownEntry(t3, t7, "e5", 0, 23, 51);
 
         var target = new CostBreakdown("Hep", Unit.Dkk, 25, new[] { e1a, e1b, e2, e3, e4, e5 });
 
@@ -69,12 +83,13 @@ public class CostBreakDownTest
         var entriesPeriods = target.GetEntriesByPeriods();
 
         // Assert
-        AssertEntryGroup((dateTime, plus3Months), new [] { e1a, e1b, e3 }, entriesPeriods);
-        AssertEntryGroup((dateTime, plus5Months), new[] { e1a, e1b, e2, e3, e4, e5 }, entriesPeriods);
-        AssertEntryGroup((plus1Month, plus2Months), new[] { e3 }, entriesPeriods);
-        AssertEntryGroup((plus2Months, plus4Months), new[] { e4 }, entriesPeriods);
-        AssertEntryGroup((plus2Months, plus5Months), new[] { e4, e5 }, entriesPeriods);
-        Assert.That(entriesPeriods.Count, Is.EqualTo(5));
+        Assert.That(entriesPeriods.Count, Is.EqualTo(6));
+        AssertEntryGroup((t1, t2), new [] { e1a, e1b, e2 }, entriesPeriods);
+        AssertEntryGroup((t2, t3), new[] { e1a, e1b, e2, e3 }, entriesPeriods);
+        AssertEntryGroup((t3, t4), new[] { e1a, e1b, e2, e3, e4, e5 }, entriesPeriods);
+        AssertEntryGroup((t4 + TimeSpan.FromDays(1), t5), new[] { e2, e3, e4, e5 }, entriesPeriods);
+        AssertEntryGroup((t5 + TimeSpan.FromDays(1), t6), new[] { e4, e5 }, entriesPeriods);
+        AssertEntryGroup((t6 + TimeSpan.FromDays(1), t7), new[] { e5 }, entriesPeriods);
     }
 
     private static void AssertEntryGroup((DateTime FromDate, DateTime ToDate) expectedKey, CostBreakdownEntry[] expectedValue, IDictionary<(DateTime FromDate, DateTime ToDate), IReadOnlyList<CostBreakdownEntry>> actual)

@@ -38,7 +38,11 @@ namespace PowerView.Model
         result.Add(group, entryList);
         foreach (var entry in byFromDateToDate)
         {
-          if (entry.FromDate >= group.FromDate && entry.ToDate <= group.ToDate)
+          if (
+              (entry.FromDate <= group.FromDate && entry.ToDate > group.FromDate ) ||
+              (entry.FromDate >= group.FromDate && entry.ToDate <= group.ToDate) ||
+              (entry.FromDate < group.ToDate && entry.ToDate >= group.ToDate)
+          )
           {
             entryList.Add(entry);
           }
@@ -50,29 +54,29 @@ namespace PowerView.Model
 
     private static List<(DateTime FromDate, DateTime ToDate)> GetPeriodGroups(List<CostBreakdownEntry> byFromDateToDate)
     {
+      var byFromDates = byFromDateToDate.Select(x => (DateTime?)x.FromDate).Distinct().ToList();
+      var byToDates = byFromDateToDate.Select(x => x.ToDate).OrderBy(x => x).Distinct().ToList();
+
       var groups = new List<(DateTime FromDate, DateTime ToDate)>();
 
-      foreach (var e in byFromDateToDate)
+      if (byFromDates.Count == 0) return groups;
+
+      var fromDate = byFromDates.First().Value;
+      while (fromDate < byToDates.Last())
       {
-        if (groups.Count == 0)
-        {
-          groups.Add((e.FromDate, e.ToDate));
-          continue;
-        }
+        var toDate1 = byFromDates.FirstOrDefault(x => x > fromDate);
+        var toDate2 = byToDates.First(x => x > fromDate);
 
-        var previous = groups.Last();
-        if (e.FromDate == previous.FromDate && e.ToDate == previous.ToDate) continue;
-
-        if (e.FromDate > previous.FromDate)
+        var toDate = toDate2;
+        var inc = true;
+        if (toDate1 != null && toDate1.Value < toDate2)
         {
-          groups.Add((e.FromDate, e.ToDate));
-          continue;
+          toDate = toDate1.Value;
+          inc = false;
         }
+        groups.Add((fromDate, toDate));
 
-        if (e.ToDate > previous.ToDate)
-        {
-          groups.Add((e.FromDate, e.ToDate));
-        }
+        fromDate = toDate + (inc ? TimeSpan.FromDays(1) : TimeSpan.Zero);
       }
 
       return groups;
