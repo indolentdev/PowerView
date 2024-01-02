@@ -75,6 +75,25 @@ namespace PowerView.Model.Test.Repository
       AssertImportExists(import);
     }
 
+    /// <summary>
+    /// We cant allow combining income/expence obis codes with regular metering obis codes on the same label
+    /// .. the current model does not support multiple different device ids for the same label timestamp.
+    /// </summary>
+    [Test]
+    public void AddImportMixingLabelWithNonIncomeExpenceAmountObisCodes()
+    {
+      // Arrange
+      var dateTime = new DateTime(2023, 9, 3, 15, 54, 28, DateTimeKind.Utc);
+      DbContext.InsertLabels((8, "lbl", (UnixTime)dateTime));
+      DbContext.InsertObisCodes((9, ObisCode.ElectrActiveEnergyA14));
+      DbContext.InsertLabelObisLive((8, 9, (UnixTime)DateTime.UtcNow));
+      var import = new Import("lbl", "CH1", Unit.Eur, dateTime, null, true);
+      var target = CreateTarget();
+
+      // Act & Assert
+      Assert.That(() => target.AddImport(import), Throws.TypeOf<DataStoreUniqueConstraintException>());
+    }
+
     [Test]
     public void AddImportDuplicate()
     {

@@ -71,14 +71,19 @@ namespace PowerView.Model.Test.Repository
         {
             var labels = dbReadings
               .GroupBy(x => x.LabelId)
-              .Select(x => new { Id = x.Key, LabelName = "Label-" + x.Key, Timestamp = (UnixTime)x.First().Timestamp })
-              .ToList();
+              .Select(x => (Id: x.Key, LabelName: "Label-" + x.Key, Timestamp: x.First().Timestamp))
+              .ToArray();
 
-            dbContext.ExecuteTransaction(@"
-              INSERT INTO Label (Id, LabelName, Timestamp) 
-              SELECT @Id, @LabelName, @Timestamp WHERE NOT EXISTS (SELECT 1 FROM Label WHERE Id = @Id);", labels);
+            dbContext.InsertLabels(labels);
 
             return labels.Select(x => x.LabelName).ToList();
+        }
+
+        public static void InsertLabels(this DbContext dbContext, params (byte Id, string LabelName, UnixTime Timestamp)[] labels)
+        {
+            dbContext.ExecuteTransaction(@"
+              INSERT INTO Label (Id, LabelName, Timestamp) 
+              SELECT @Id, @LabelName, @Timestamp WHERE NOT EXISTS (SELECT 1 FROM Label WHERE Id = @Id);", labels.Select(x => new { x.Id, x.LabelName, x.Timestamp }));
         }
 
         private static List<string> InsertDevices(DbContext dbContext, IDbReading[] dbReadings)
@@ -157,6 +162,12 @@ namespace PowerView.Model.Test.Repository
             var allObisCodes = dbContext.QueryTransaction<(byte Id, long ObisCode)>("SELECT Id, ObisCode FROM Obis;");
 
             return allObisCodes.Select(x => (x.Id, ObisCode: (ObisCode)x.ObisCode)).Where(x => obisCodes.Any(oc => oc == x.ObisCode)).ToList();
+        }
+
+        public static void InsertLabelObisLive(this DbContext dbContext, params (byte LabelId, byte ObisId, UnixTime LatestTimestamp)[] lblOcLive)
+        {
+            dbContext.ExecuteTransaction("INSERT INTO LabelObisLive (LabelId, ObisId, LatestTimestamp) VALUES (@LabelId, @ObisId, @LatestTimestamp);", 
+              lblOcLive.Select(x => new { x.LabelId, x.ObisId, x.LatestTimestamp }));
         }
 
     }

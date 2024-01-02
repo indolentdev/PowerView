@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 using PowerView.Model.Repository;
@@ -168,9 +169,9 @@ namespace PowerView.Model.Test.Repository
         public void AddOneReadingOneRegisterUpdatesLabelObisLive()
         {
             // Arrange
-            DbContext.ExecuteTransaction("INSERT INTO Label (Id, LabelName, Timestamp) VALUES (@Id, @Label, @Ts);", new { Id = 8, Label = "TheLabel", Ts = (UnixTime)DateTime.UtcNow.AddDays(-44) });
+            DbContext.InsertLabels((Id: 8, LabelName: "TheLabel", Timestamp: (UnixTime)DateTime.UtcNow.AddDays(-44)));
             DbContext.InsertObisCodes((9, (ObisCode)"1.2.3.4.5.6"));
-            DbContext.ExecuteTransaction("INSERT INTO LabelObisLive (LabelId, ObisId, LatestTimestamp) VALUES (@LabelId, @ObisId, @LatestTimestamp);", new { LabelId = 8, ObisId = 9, LatestTimestamp = (UnixTime)DateTime.UtcNow.AddMinutes(-1) });
+            DbContext.InsertLabelObisLive((LabelId: 8, ObisId: 9, LatestTimestamp: (UnixTime)DateTime.UtcNow.AddMinutes(-1)));
             var reading = new Reading("TheLabel", "1", DateTime.UtcNow, new[] { new RegisterValue("1.2.3.4.5.6", 10, -1, Unit.WattHour) });
             var target = CreateTarget();
 
@@ -185,10 +186,10 @@ namespace PowerView.Model.Test.Repository
         public void AddOneReadingOneRegisterDoesNotUpdateLabelObisLive()
         {
             // Arrange
-            DbContext.ExecuteTransaction("INSERT INTO Label (Id, LabelName, Timestamp) VALUES (@Id, @Label, @Ts);", new { Id = 8, Label = "TheLabel", Ts = (UnixTime)DateTime.UtcNow.AddDays(-44) });
+            DbContext.InsertLabels((Id: 8, LabelName: "TheLabel", Timestamp: (UnixTime)DateTime.UtcNow.AddDays(-44)));
             DbContext.InsertObisCodes((9, (ObisCode)"1.2.3.4.5.6"));
             var latestTimestamp = (UnixTime)DateTime.UtcNow.AddMinutes(10);
-            DbContext.ExecuteTransaction("INSERT INTO LabelObisLive (LabelId, ObisId, LatestTimestamp) VALUES (@LabelId, @ObisId, @LatestTimestamp);", new { LabelId = 8, ObisId = 9, LatestTimestamp = latestTimestamp });
+            DbContext.InsertLabelObisLive((LabelId: 8, ObisId: 9, LatestTimestamp: latestTimestamp));
             var reading = new Reading("TheLabel", "1", DateTime.UtcNow, new[] { new RegisterValue("1.2.3.4.5.6", 10, -1, Unit.WattHour) });
             var target = CreateTarget();
 
@@ -205,7 +206,7 @@ namespace PowerView.Model.Test.Repository
         public void AddOneReadingOneRegisterDuplicateDoesNotInsertLabelObisLive()
         {
             // Arrange
-            DbContext.ExecuteTransaction("INSERT INTO Label (Id, LabelName, Timestamp) VALUES (@Id, @Label, @Ts);", new { Id = 8, Label = "TheLabel", Ts = (UnixTime)DateTime.UtcNow.AddDays(-44) });
+            DbContext.InsertLabels((Id: 8, LabelName: "TheLabel", Timestamp: (UnixTime)DateTime.UtcNow.AddDays(-44)));
             DbContext.InsertObisCodes((9, (ObisCode)"1.2.3.4.5.6"));
             var reading = new Reading("TheLabel", "1", DateTime.UtcNow, new[] { new RegisterValue("1.2.3.4.5.6", 10, -1, Unit.WattHour) });
             var target = CreateTarget();
@@ -218,6 +219,19 @@ namespace PowerView.Model.Test.Repository
             // Assert
             var rows = DbContext.QueryTransaction<Db.LabelObisLive>("SELECT * FROM LabelObisLive;");
             Assert.That(rows, Is.Empty);
+        }
+
+        [Test]
+        public void AddObisCodesCrossedWithIncomeExpenceObisCodeForSameLabel()
+        {
+            // Arrange
+            var reading = new Reading("TheLabel", "1", DateTime.UtcNow, new[] { new RegisterValue("1.2.3.4.5.6", 10, -1, Unit.WattHour) });
+            var target = CreateTarget();
+            target.Add(new[] { reading });
+            var readingObisCodeCrossed = new Reading("TheLabel", "1a", DateTime.UtcNow.AddMinutes(1), new[] { new RegisterValue(ObisCode.ElectrActiveEnergyKwhIncomeExpense, 10, 0, Unit.Eur) });
+
+            // Act & Assert
+            Assert.That(() => target.Add(new[] { readingObisCodeCrossed }), Throws.TypeOf<DataStoreException>());
         }
 
         [Test]

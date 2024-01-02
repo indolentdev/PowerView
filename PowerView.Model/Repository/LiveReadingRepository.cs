@@ -38,18 +38,25 @@ namespace PowerView.Model.Repository
             try
             {
                 // First insert the readings
-                foreach (var reading in dbReadingsMap.Keys)
+                foreach (var readingItem in dbReadingsMap)
                 {
-                    var readingsAffected = DbContext.Connection.Execute("INSERT OR IGNORE INTO LiveReading (LabelId, DeviceId, Timestamp) VALUES (@LabelId, @DeviceId, @Timestamp);", reading, transaction);
-                    var readingId = DbContext.Connection.QueryFirstOrDefault<long?>("SELECT Id FROM LiveReading WHERE Timestamp=@Timestamp AND LabelId=@LabelId;", reading, transaction);
+                    var dbLabelObisCodes = DbContext.Connection.Query<ObisCode>("SELECT oc.ObisCode FROM LabelObisLive lol JOIN Label lbl ON lol.LabelId=lbl.Id JOIN Obis oc ON lol.ObisId=oc.Id WHERE lbl.LabelName=@Label;", readingItem.Value).ToList();
+                    var readingObisCodes = readingItem.Value.GetRegisterValues().Select(x => x.ObisCode).ToList();
+                    if (dbLabelObisCodes.Count > 0 && readingObisCodes.Count > 0 && dbLabelObisCodes.Contains(ObisCode.ElectrActiveEnergyKwhIncomeExpense) != readingObisCodes.Contains(ObisCode.ElectrActiveEnergyKwhIncomeExpense))
+                    {
+                        throw new SqliteException($"Unsupported obis code combination for label {readingItem.Value.Label}. Db ObisCodes:{string.Join(", ", dbLabelObisCodes)}. Reading obis codes:{string.Join(", ", readingObisCodes)}", 28); // 28: SQLITE Warning
+                    }
+
+                    var readingsAffected = DbContext.Connection.Execute("INSERT OR IGNORE INTO LiveReading (LabelId, DeviceId, Timestamp) VALUES (@LabelId, @DeviceId, @Timestamp);", readingItem.Key, transaction);
+                    var readingId = DbContext.Connection.QueryFirstOrDefault<long?>("SELECT Id FROM LiveReading WHERE Timestamp=@Timestamp AND LabelId=@LabelId;", readingItem.Key, transaction);
 
                     if (readingId == null || readingId == 0)
                     {
-                        throw new SqliteException($"Reading.Id not provided after insert. Timestamp:{((DateTime)reading.Timestamp).ToString("o")}, LabelId:{reading.LabelId}, Reading.Id:{readingId}. Insert rows affected:{readingsAffected}", 28); // 28: SQLITE Warning
+                        throw new SqliteException($"Reading.Id not provided after insert. Timestamp:{((DateTime)readingItem.Key.Timestamp).ToString("o")}, LabelId:{readingItem.Key.LabelId}, Reading.Id:{readingId}. Insert rows affected:{readingsAffected}", 28); // 28: SQLITE Warning
                     }
 
                     // remember the Reading.Id value for the reading, for foreign key composition.
-                    reading.Id = readingId.Value;
+                    readingItem.Key.Id = readingId.Value;
                 }
 
 

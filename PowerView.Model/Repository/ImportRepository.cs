@@ -35,18 +35,35 @@ FROM Import i;";
     {
       if (import == null) throw new ArgumentNullException(nameof(import));
 
-      var dbImport = new Db.Import
+      using var transaction = DbContext.BeginTransaction();
+      try
       {
-        Label = import.Label,
-        Channel = import.Channel,
-        Currency = (int)import.Currency,
-        FromTimestamp = import.FromTimestamp,
-        CurrentTimestamp = import.CurrentTimestamp,
-        Enabled = import.Enabled
-      };
+        var labelObisCodes = DbContext.Connection.Query<ObisCode>("SELECT oc.ObisCode FROM LabelObisLive lol JOIN Label lbl ON lol.LabelId=lbl.Id JOIN Obis oc ON lol.ObisId=oc.Id WHERE lbl.LabelName=@Label;", import, transaction);
+        if (labelObisCodes.Any(x => x != ObisCode.ElectrActiveEnergyKwhIncomeExpense))
+        {
+          throw new DataStoreUniqueConstraintException($"Label '{import.Label}' already alotted for other and non compatible obis codes:{string.Join(", ", labelObisCodes)}");
+        }
 
-      const string sql = "INSERT INTO Import (Label,Channel,Currency,FromTimestamp,CurrentTimestamp,Enabled) VALUES (@Label,@Channel,@Currency,@FromTimestamp,@CurrentTimestamp,@Enabled);";
-      DbContext.ExecuteTransaction(sql, dbImport);
+        var dbImport = new Db.Import
+        {
+          Label = import.Label,
+          Channel = import.Channel,
+          Currency = (int)import.Currency,
+          FromTimestamp = import.FromTimestamp,
+          CurrentTimestamp = import.CurrentTimestamp,
+          Enabled = import.Enabled
+        };
+        const string sql = "INSERT INTO Import (Label,Channel,Currency,FromTimestamp,CurrentTimestamp,Enabled) VALUES (@Label,@Channel,@Currency,@FromTimestamp,@CurrentTimestamp,@Enabled);";
+        DbContext.Connection.Execute(sql, dbImport, transaction);
+
+        transaction.Commit();
+      }
+      catch (SqliteException e)
+      {
+        transaction.Rollback();
+        throw DataStoreExceptionFactory.Create(e);
+      }
+
     }
 
     public void DeleteImport(string label)
