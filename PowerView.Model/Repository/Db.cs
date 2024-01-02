@@ -226,5 +226,12 @@ namespace PowerView.Model.Repository
             public bool Enabled { get; set; }
         }
 
+        public class LabelObisLive
+        {
+            public byte LabelId { get; set; }
+            public byte ObisId { get; set; }
+            public UnixTime LatestTimestamp { get; set; }
+        }
+
     }
 }

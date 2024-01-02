@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
@@ -150,6 +151,76 @@ namespace PowerView.Model.Test.Repository
         }
 
         [Test]
+        public void AddOneReadingOneRegisterInsertsLabelObisLive()
+        {
+            // Arrange
+            var reading = new Reading("TheLabel", "1", DateTime.UtcNow, new[] { new RegisterValue("1.2.3.4.5.6", 10, -1, Unit.WattHour) });
+            var target = CreateTarget();
+
+            // Act
+            target.Add(new[] { reading });
+
+            // Assert
+            AssertLabelObisLive(reading);
+        }
+
+        [Test]
+        public void AddOneReadingOneRegisterUpdatesLabelObisLive()
+        {
+            // Arrange
+            DbContext.ExecuteTransaction("INSERT INTO Label (Id, LabelName, Timestamp) VALUES (@Id, @Label, @Ts);", new { Id = 8, Label = "TheLabel", Ts = (UnixTime)DateTime.UtcNow.AddDays(-44) });
+            DbContext.InsertObisCodes((9, (ObisCode)"1.2.3.4.5.6"));
+            DbContext.ExecuteTransaction("INSERT INTO LabelObisLive (LabelId, ObisId, LatestTimestamp) VALUES (@LabelId, @ObisId, @LatestTimestamp);", new { LabelId = 8, ObisId = 9, LatestTimestamp = (UnixTime)DateTime.UtcNow.AddMinutes(-1) });
+            var reading = new Reading("TheLabel", "1", DateTime.UtcNow, new[] { new RegisterValue("1.2.3.4.5.6", 10, -1, Unit.WattHour) });
+            var target = CreateTarget();
+
+            // Act
+            target.Add(new[] { reading });
+
+            // Assert
+            AssertLabelObisLive(reading);
+        }
+
+        [Test]
+        public void AddOneReadingOneRegisterDoesNotUpdateLabelObisLive()
+        {
+            // Arrange
+            DbContext.ExecuteTransaction("INSERT INTO Label (Id, LabelName, Timestamp) VALUES (@Id, @Label, @Ts);", new { Id = 8, Label = "TheLabel", Ts = (UnixTime)DateTime.UtcNow.AddDays(-44) });
+            DbContext.InsertObisCodes((9, (ObisCode)"1.2.3.4.5.6"));
+            var latestTimestamp = (UnixTime)DateTime.UtcNow.AddMinutes(10);
+            DbContext.ExecuteTransaction("INSERT INTO LabelObisLive (LabelId, ObisId, LatestTimestamp) VALUES (@LabelId, @ObisId, @LatestTimestamp);", new { LabelId = 8, ObisId = 9, LatestTimestamp = latestTimestamp });
+            var reading = new Reading("TheLabel", "1", DateTime.UtcNow, new[] { new RegisterValue("1.2.3.4.5.6", 10, -1, Unit.WattHour) });
+            var target = CreateTarget();
+
+            // Act
+            target.Add(new[] { reading });
+
+            // Assert
+            var rows = DbContext.QueryTransaction<Db.LabelObisLive>("SELECT * FROM LabelObisLive WHERE LabelId=@labelId AND ObisId=@obisId AND LatestTimestamp=@LatestTimestamp;",
+              new { labelId = 8, obisId = 9, LatestTimestamp = latestTimestamp });
+            Assert.That(rows.Count, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void AddOneReadingOneRegisterDuplicateDoesNotInsertLabelObisLive()
+        {
+            // Arrange
+            DbContext.ExecuteTransaction("INSERT INTO Label (Id, LabelName, Timestamp) VALUES (@Id, @Label, @Ts);", new { Id = 8, Label = "TheLabel", Ts = (UnixTime)DateTime.UtcNow.AddDays(-44) });
+            DbContext.InsertObisCodes((9, (ObisCode)"1.2.3.4.5.6"));
+            var reading = new Reading("TheLabel", "1", DateTime.UtcNow, new[] { new RegisterValue("1.2.3.4.5.6", 10, -1, Unit.WattHour) });
+            var target = CreateTarget();
+            target.Add(new[] { reading });
+            DbContext.ExecuteTransaction("DELETE FROM LabelObisLive;");
+
+            // Act
+            target.Add(new[] { reading });
+
+            // Assert
+            var rows = DbContext.QueryTransaction<Db.LabelObisLive>("SELECT * FROM LabelObisLive;");
+            Assert.That(rows, Is.Empty);
+        }
+
+        [Test]
         public void GetObisCodesThrows()
         {
             // Arrange
@@ -220,6 +291,29 @@ namespace PowerView.Model.Test.Repository
             var expectedRegisterTags = registerValueTags.Select(x => new { ObisCode = (long)x.ObisCode, Tags = (byte)x.Tag }).ToArray();
             var actualRegisterTags = regTag.Select(x => new { ObisCode = (long)x.ObisCode, Tags = (byte)x.Tags }).ToArray();
             Assert.That(actualRegisterTags, Is.EquivalentTo(expectedRegisterTags));
+        }
+
+        private void AssertLabelObisLive(Reading reading)
+        {
+            var labelIds = DbContext.QueryTransaction<long>("SELECT Id FROM Label WHERE LabelName = @Label;", reading);
+            Assert.That(labelIds.Count, Is.EqualTo(1));
+            var labelId = labelIds.First();
+
+            var obisIds = new List<long>();
+            foreach (var registerValue in reading.GetRegisterValues())
+            {
+                var obisId = DbContext.QueryTransaction<long>("SELECT Id FROM Obis WHERE ObisCode = @ObisCode;", new { ObisCode = (long)registerValue.ObisCode });
+                obisIds.AddRange(obisId);
+            }
+
+            var labelObisLiveRows = new List<Db.LabelObisLive>();
+            foreach (var obisId in obisIds)
+            {
+                var rows = DbContext.QueryTransaction<Db.LabelObisLive>("SELECT * FROM LabelObisLive WHERE LabelId=@labelId AND ObisId=@obisId AND LatestTimestamp=@LatestTimestamp",
+                  new { labelId, obisId, LatestTimestamp = (UnixTime)reading.Timestamp });
+                labelObisLiveRows.AddRange(rows);
+            }
+            Assert.That(labelObisLiveRows.Count, Is.EqualTo(obisIds.Count));
         }
 
     }

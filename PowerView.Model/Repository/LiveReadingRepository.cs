@@ -54,9 +54,10 @@ namespace PowerView.Model.Repository
 
 
                 // then insert the registers
-                var dbRegisters = GetDbLiveRegisters(dbReadingsMap, obisIds).ToList();
-                foreach (var register in dbRegisters)
+                var dbRegistersAndReadings = GetDbLiveRegisters(dbReadingsMap, obisIds).ToList();
+                foreach (var registerAndReading in dbRegistersAndReadings)
                 {
+                    var register = registerAndReading.DbLiveRegister;
                     var registersAffected = DbContext.Connection.Execute("INSERT OR IGNORE INTO LiveRegister (ReadingId, ObisId, Value, Scale, Unit) VALUES (@ReadingId, @ObisId, @Value, @Scale, @Unit);",
                       register, transaction);
                     if (registersAffected == 0)
@@ -71,6 +72,12 @@ namespace PowerView.Model.Repository
                     .Where(x => x.Tags != 0)
                     .ToList();
                 DbContext.Connection.Execute("INSERT INTO LiveRegisterTag (ReadingId, ObisId, Tags) VALUES (@ReadingId, @ObisId, @Tags);", dbRegisterTags, transaction);
+
+                // then touch label obis live
+                var dbLabelObisLiveAndReadingId = GetDbLabelObisLive(dbReadingsMap, obisIds)
+                    .Where(x => !ignoredRegisters.ContainsKey((x.ReadingId, x.LabelObisLive.ObisId)))
+                    .ToList();
+                DbContext.Connection.Execute("INSERT OR IGNORE INTO LabelObisLive (LabelId, ObisId, LatestTimestamp) VALUES (@LabelId, @ObisId, @LatestTimestamp); UPDATE LabelObisLive SET LatestTimestamp=@LatestTimestamp WHERE LabelId=@LabelId AND ObisId=@ObisId AND LatestTimestamp < @LatestTimestamp;", dbLabelObisLiveAndReadingId.Select(x => x.LabelObisLive), transaction);
 
                 transaction.Commit();
             }
@@ -96,13 +103,13 @@ namespace PowerView.Model.Repository
             }
         }
 
-        private static IEnumerable<Db.LiveRegister> GetDbLiveRegisters(IDictionary<Db.LiveReading, Reading> dbLiveReadingsMap, IDictionary<ObisCode, byte> obisIds)
+        private static IEnumerable<(Db.LiveRegister DbLiveRegister, Db.LiveReading DbLiveReading)> GetDbLiveRegisters(IDictionary<Db.LiveReading, Reading> dbLiveReadingsMap, IDictionary<ObisCode, byte> obisIds)
         {
             foreach (var entry in dbLiveReadingsMap)
             {
                 foreach (var lr in entry.Value.GetRegisterValues())
                 {
-                    yield return new Db.LiveRegister { ReadingId = entry.Key.Id, ObisId = obisIds[lr.ObisCode], Value = lr.Value, Scale = lr.Scale, Unit = (byte)lr.Unit };
+                    yield return (new Db.LiveRegister { ReadingId = entry.Key.Id, ObisId = obisIds[lr.ObisCode], Value = lr.Value, Scale = lr.Scale, Unit = (byte)lr.Unit }, entry.Key);
                 }
             }
         }
@@ -114,6 +121,17 @@ namespace PowerView.Model.Repository
                 foreach (var lr in entry.Value.GetRegisterValues())
                 {
                     yield return new Db.LiveRegisterTag { ReadingId = entry.Key.Id, ObisId = obisIds[lr.ObisCode], Tags = (byte)lr.Tag };
+                }
+            }
+        }
+
+        private static IEnumerable<(Db.LabelObisLive LabelObisLive, long ReadingId)> GetDbLabelObisLive(IDictionary<Db.LiveReading, Reading> dbLiveReadingsMap, IDictionary<ObisCode, byte> obisIds)
+        {
+            foreach (var entry in dbLiveReadingsMap)
+            {
+                foreach (var lr in entry.Value.GetRegisterValues())
+                {
+                    yield return (new Db.LabelObisLive { LabelId = entry.Key.LabelId, ObisId = obisIds[lr.ObisCode], LatestTimestamp = entry.Key.Timestamp }, entry.Key.Id);
                 }
             }
         }
