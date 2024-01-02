@@ -40,11 +40,11 @@ namespace PowerView.Model.Repository
                 // First insert the readings
                 foreach (var readingItem in dbReadingsMap)
                 {
-                    var dbLabelObisCodes = DbContext.Connection.Query<ObisCode>("SELECT oc.ObisCode FROM LabelObisLive lol JOIN Label lbl ON lol.LabelId=lbl.Id JOIN Obis oc ON lol.ObisId=oc.Id WHERE lbl.LabelName=@Label;", readingItem.Value).ToList();
+                    var dbLabelObisCodes = DbContext.Connection.Query<long>("SELECT oc.ObisCode FROM LabelObisLive lol JOIN Label lbl ON lol.LabelId=lbl.Id JOIN Obis oc ON lol.ObisId=oc.Id WHERE lbl.LabelName=@Label;", readingItem.Value).Select(x => (ObisCode)x).ToList();
                     var readingObisCodes = readingItem.Value.GetRegisterValues().Select(x => x.ObisCode).ToList();
                     if (dbLabelObisCodes.Count > 0 && readingObisCodes.Count > 0 && dbLabelObisCodes.Contains(ObisCode.ElectrActiveEnergyKwhIncomeExpense) != readingObisCodes.Contains(ObisCode.ElectrActiveEnergyKwhIncomeExpense))
                     {
-                        throw new SqliteException($"Unsupported obis code combination for label {readingItem.Value.Label}. Db ObisCodes:{string.Join(", ", dbLabelObisCodes)}. Reading obis codes:{string.Join(", ", readingObisCodes)}", 28); // 28: SQLITE Warning
+                        throw new SqliteException($"Unsupported obis code combination for label '{readingItem.Value.Label}'. Db ObisCodes:{string.Join(", ", dbLabelObisCodes)}. Reading obis codes:{string.Join(", ", readingObisCodes)}", 28); // 28: SQLITE Warning
                     }
 
                     var readingsAffected = DbContext.Connection.Execute("INSERT OR IGNORE INTO LiveReading (LabelId, DeviceId, Timestamp) VALUES (@LabelId, @DeviceId, @Timestamp);", readingItem.Key, transaction);
