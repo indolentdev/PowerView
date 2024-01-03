@@ -56,8 +56,8 @@ export class EventsTableComponent implements OnInit, OnChanges {
         {
           var leakParams = {
            newline: "\n",
-           startTimestamp: formatDate(leakAmplification.startTimestamp, 'short', this.locale),
-           endTimestamp: formatDate(leakAmplification.endTimestamp, 'short', this.locale),
+           startTimestamp: formatDate(leakAmplification.startTimestamp, 'medium', this.locale),
+           endTimestamp: formatDate(leakAmplification.endTimestamp, 'medium', this.locale),
            value: leakAmplification.value,
            unit: leakAmplification.unit
           };

@@ -6,7 +6,7 @@
   </ng-container>
   <ng-container matColumnDef="timestamp">
     <th mat-header-cell *matHeaderCellDef>{{ 'columns.timestamp' | translate }}</th>
-    <td mat-cell *matCellDef="let v">{{ v.timestamp | date:'short' }}</td>
+    <td mat-cell *matCellDef="let v">{{ v.timestamp | date:'medium' }}</td>
   </ng-container>
   <ng-container matColumnDef="gaugeValue">
     <th mat-header-cell *matHeaderCellDef>{{ 'columns.gaugeValue' | translate }}</th>
