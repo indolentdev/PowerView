@@ -80,7 +80,7 @@ namespace PowerView.Service.Test.Mqtt
         {
           if (mqttServer != null)
           { 
-            Assert.IsTrue(mqttServer.StopAsync().Wait(3000), "MqttServer to did not stop timely"); 
+            Assert.That(mqttServer.StopAsync().Wait(3000), Is.True, "MqttServer to did not stop timely");
           }
           mqttServer = null;
         }
