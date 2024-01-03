@@ -85,8 +85,7 @@ namespace PowerView.Model.Test.Repository
 
       // Assert
       AssertEmailRecipientExists(emailRecipient);
-      var emailRecipeintMeterEventPositions = DbContext.QueryTransaction<Db.EmailRecipientMeterEventPosition>("",
-        "SELECT * FROM EmailRecipientMeterEventPosition;");
+      var emailRecipeintMeterEventPositions = DbContext.QueryTransaction<Db.EmailRecipientMeterEventPosition>("SELECT * FROM EmailRecipientMeterEventPosition;");
       Assert.That(emailRecipeintMeterEventPositions.Count, Is.EqualTo(0));
     }
 
