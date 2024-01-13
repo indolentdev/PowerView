@@ -24,7 +24,6 @@ namespace PowerView.Service.Test.Mailer
     private Task smtpServerTask;
     private IUserAuthenticator userAuthenticator;
     private X509Certificate2 certificate;
-    private SmtpLogger smtpLogger = new SmtpLogger();
     private MemoryMessageStore messageStore;
     private SmtpResponse nextSmtpResponse;
 
@@ -46,11 +45,6 @@ namespace PowerView.Service.Test.Mailer
       int port = ((IPEndPoint)l.LocalEndpoint).Port;
       l.Stop();
       return port;
-    }
-
-    public string GetSmtpLog()
-    {
-      return smtpLogger.ToString();
     }
 
     public void SetNextSendSmtpResponse(SmtpResponse smtpResponse)
@@ -96,7 +90,6 @@ namespace PowerView.Service.Test.Mailer
       var options = optionsBuilder.Build();
 
       var serviceCollection = new ServiceCollection();
-      serviceCollection.AddSingleton<ILogger>(smtpLogger);
       serviceCollection.AddSingleton<IMessageStore>(messageStore);
 
       if (userAuthenticator != null) 
@@ -174,18 +167,4 @@ namespace PowerView.Service.Test.Mailer
     }
   }
 
-  internal class SmtpLogger : ILogger
-  {
-    private readonly System.Text.StringBuilder sb = new System.Text.StringBuilder();
-    
-    public void LogVerbose(string format, params object[] args)
-    {
-      sb.AppendFormat(format, args).AppendLine(string.Empty);
-    }
-
-    public override string ToString()
-    {
-      return sb.ToString();
-    }
-  }
 }
