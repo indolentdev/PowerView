@@ -6,7 +6,9 @@ import { ProfileLast31dComponent } from './components/profiles/profile-last31d/p
 import { ProfileDayComponent } from './components/profiles/profile-day/profile-day.component';
 import { ProfileMonthComponent } from './components/profiles/profile-month/profile-month.component';
 import { ProfileLast12mComponent } from './components/profiles/profile-last12m/profile-last12m.component';
+import { ProfileLast10yComponent } from './components/profiles/profile-last10y/profile-last10y.component';
 import { ProfileYearComponent } from './components/profiles/profile-year/profile-year.component';
+import { ProfileDecadeComponent } from './components/profiles/profile-decade/profile-decade.component';
 import { DiffBydatesComponent } from './components/diff/diff-bydates/diff-bydates.component';
 import { GaugesLatestComponent } from './components/gauges/gauges-latest/gauges-latest.component';
 import { GaugesBydateComponent } from './components/gauges/gauges-bydate/gauges-bydate.component';
@@ -33,6 +35,8 @@ const routes: Routes = [
   { path: 'profile/month', component: ProfileMonthComponent },
   { path: 'profile/last12m', component: ProfileLast12mComponent },
   { path: 'profile/year', component: ProfileYearComponent },
+  { path: 'profile/last10y', component: ProfileLast10yComponent },
+  { path: 'profile/decade', component: ProfileDecadeComponent },
   { path: 'diff/bydates', component: DiffBydatesComponent },
   { path: 'gauges/latest', component: GaugesLatestComponent },
   { path: 'gauges/bydate', component: GaugesBydateComponent },

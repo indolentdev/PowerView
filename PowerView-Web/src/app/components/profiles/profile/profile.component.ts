@@ -38,6 +38,7 @@ export class ProfileComponent implements OnInit {
   @Input('dpChooseResource') dpChooseResource: string;
   @Input('dpStartView') dpStartView: string;
   @Input('dpMaxStartTime') dpMaxStartTime: Moment;
+  @Input('dpFilter') dpFilter: any;
 
   constructor(private log: NGXLogger, private router: Router, private route: ActivatedRoute, private profileService: ProfileService) { 
   }

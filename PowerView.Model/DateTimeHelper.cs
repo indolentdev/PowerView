@@ -20,7 +20,7 @@ namespace PowerView.Model
     public DateTime GetPeriodEnd(string period)
     {
       if (period == null) throw new ArgumentNullException("period");
-      if (period != "day" && period != "month" && period != "year") throw new ArgumentOutOfRangeException("period", "Must be: day, month or year. Was:" + period);
+      if (period != "day" && period != "month" && period != "year" && period != "decade") throw new ArgumentOutOfRangeException("period", "Must be: day, month, year or decade. Was:" + period);
 
       DateTime end;
       switch (period)
@@ -35,6 +35,10 @@ namespace PowerView.Model
 
         case "year":
           end = origin.AddYears(1);
+          break;
+
+        case "decade":
+          end = origin.AddYears(10);
           break;
 
         default:
@@ -95,6 +99,14 @@ namespace PowerView.Model
             return AdjustForDst(timeZoneInfo, dt, next);
           };
 
+        case "years":
+          if (ToInt32(intervalElements[0]) != 1) throw new ArgumentOutOfRangeException("interval", interval, "Year part invalid");
+          return dt =>
+          {
+            var next = dt.AddYears(1);
+            return AdjustForDst(timeZoneInfo, dt, next);
+          };
+
         default:
           throw new NotSupportedException();
       }
@@ -119,6 +131,10 @@ namespace PowerView.Model
         case "months":
           if (ToInt32(intervalElements[0]) != 1) throw new ArgumentOutOfRangeException("interval", interval, "Month part invalid");
           return DivideMonths;
+
+        case "years":
+          if (ToInt32(intervalElements[0]) != 1) throw new ArgumentOutOfRangeException("interval", interval, "Year part invalid");
+          return DivideYears;
 
         default:
           throw new ArgumentOutOfRangeException("interval", interval, "Unknown interval");
@@ -183,6 +199,21 @@ namespace PowerView.Model
       return adjusted;
     }
 
+    private DateTime DivideYears(DateTime dt)
+    {
+      var originOneYearTimeSpan = origin.AddYears(1) - origin;
+      var diffTimeSpan = dt - origin;
+      var magnitude = Convert.ToInt32(diffTimeSpan.Ticks / originOneYearTimeSpan.Ticks);
+
+      foreach (var years in Enumerable.Range(magnitude - 3, 6).Reverse())
+      {
+        var spacedOrigin = origin.AddYears(years);
+        if (spacedOrigin <= dt) return spacedOrigin;
+      }
+
+      throw new NotImplementedException($"Seems year divider needs futher implementation. Origin:{origin.ToString("O")}. DateTime:{dt.ToString("O")}");
+    }
+
     private static string[] SplitInterval(string interval)
     {
       if (interval == null) throw new ArgumentNullException("interval");
@@ -190,7 +221,7 @@ namespace PowerView.Model
       var intervalElements = interval.Split(new[] { '-' }, StringSplitOptions.None);
       if (intervalElements.Length != 2) throw new ArgumentOutOfRangeException("interval", interval, "Unknown interval");
 
-      if (intervalElements[1] != "minutes" && intervalElements[1] != "days" && intervalElements[1] != "months")
+      if (intervalElements[1] != "minutes" && intervalElements[1] != "days" && intervalElements[1] != "months" && intervalElements[1] != "years")
       {
         throw new ArgumentOutOfRangeException("interval", interval, "Unknown interval");
       }

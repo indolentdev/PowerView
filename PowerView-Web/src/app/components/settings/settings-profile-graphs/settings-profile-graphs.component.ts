@@ -34,7 +34,7 @@ export class SettingsProfileGraphsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.profileGraphPeriods = [ "day", "month", "year" ];
+    this.profileGraphPeriods = [ "day", "month", "year", "decade" ];
     this.profileGraphIntervals = [];
     this.profileGraphSeries = [];
   
@@ -342,6 +342,11 @@ export class SettingsProfileGraphsComponent implements OnInit {
       {
         "period": "year",
         "value": "1-months",
+        "default": true
+      },
+      {
+        "period": "decade",
+        "value": "1-years",
         "default": true
       }
     ];

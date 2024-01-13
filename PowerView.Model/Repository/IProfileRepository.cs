@@ -9,5 +9,7 @@ namespace PowerView.Model.Repository
     TimeRegisterValueLabelSeriesSet GetMonthProfileSet(DateTime preStart, DateTime start, DateTime end);
 
     TimeRegisterValueLabelSeriesSet GetYearProfileSet(DateTime preStart, DateTime start, DateTime end);
+
+    TimeRegisterValueLabelSeriesSet GetDecadeProfileSet(DateTime preStart, DateTime start, DateTime end);
   }
 }

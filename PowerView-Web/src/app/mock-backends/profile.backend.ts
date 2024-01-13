@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { profileDay } from './profile-day.json';
 import { profileMonth } from './profile-month.json';
 import { profileYear } from './profile-year.json';
+import { profileDecade } from './profile-decade.json';
 
 export function profileBackend(url: string, method: string, request: HttpRequest<any>): Observable<HttpEvent<any>> {
 
@@ -51,55 +52,20 @@ export function profileBackend(url: string, method: string, request: HttpRequest
             resp.complete();
         });            
     }
-/*
-    if (url.endsWith('gauges/custom') && method === "GET") {
+
+    if (url.indexOf('/profile/decade') > -1 && method === "GET") {
         return new Observable(resp => {
             resp.next(new HttpResponse({
                 status: 200,
                 body: {
-                    timestamp: gaugesCustom.timestamp,
-                    groups: gaugesCustom.groups
+                    page: profileDecade.page,
+                    startTime: profileYear.startTime,
+                    graphs: profileDecade.graphs,
+                    periodTotals: profileDecade.periodTotals
                 }
             }));
             resp.complete();
-        });            
-    }
-*/
-/*
-        // would normally get the username from a cookie or token
-        let username = "hank";
-
-        // find if any user matches login credentials
-        let filteredUser = users.filter(user => {
-            return user.username === username;
         });
+    }
 
-        // check to see if the user exists
-        if (filteredUser.length) {
-            let user = filteredUser[0];
-            return new Observable(resp => {
-                resp.next(new HttpResponse({
-                    status: 200,
-                    body: {
-                        "id": user.id,
-                        "firstName": user.firstName,
-                        "lastName": user.lastName,
-                        "username": user.username,
-                        "preferredEmail": user.preferredEmail
-                    }
-                }));
-                resp.complete();
-            });            
-        } else {
-            // else return 400 bad request
-            return new Observable(resp => {
-                resp.next(new HttpResponse({
-                    status: 400,
-                    body: { error: "Unauthorized" }
-                }));
-                resp.complete();
-            });
-        }
-*/            
-//    }
 }

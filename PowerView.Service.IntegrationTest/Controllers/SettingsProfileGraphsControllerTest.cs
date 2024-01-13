@@ -73,7 +73,7 @@ public class SettingsProfileGraphsControllerTest
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         var json = await response.Content.ReadFromJsonAsync<TestProfileGraphSerieSetDto>();
         Assert.That(json.items, Is.Not.Null);
-        Assert.That(json.items.Length, Is.EqualTo(12));
+        Assert.That(json.items.Length, Is.EqualTo(16));
         AssertProfileGraphSerie("day", label, ObisCode.ElectrActiveEnergyA14Period, json.items[0]);
         AssertProfileGraphSerie("day", label, ObisCode.ElectrActualPowerP14, json.items[1]);
         AssertProfileGraphSerie("day", label, ObisCode.ElectrActiveEnergyA14NetDelta, json.items[2]);
@@ -86,6 +86,10 @@ public class SettingsProfileGraphsControllerTest
         AssertProfileGraphSerie("year", label, ObisCode.ElectrActiveEnergyA14Period, json.items[9]);
         AssertProfileGraphSerie("year", label, ObisCode.ElectrActiveEnergyA14NetDelta, json.items[10]);
         AssertProfileGraphSerie("year", label, ObisCode.ElectrActiveEnergyA23NetDelta, json.items[11]);
+        AssertProfileGraphSerie("decade", label, ObisCode.ElectrActiveEnergyA14Delta, json.items[12]);
+        AssertProfileGraphSerie("decade", label, ObisCode.ElectrActiveEnergyA14Period, json.items[13]);
+        AssertProfileGraphSerie("decade", label, ObisCode.ElectrActiveEnergyA14NetDelta, json.items[14]);
+        AssertProfileGraphSerie("decade", label, ObisCode.ElectrActiveEnergyA23NetDelta, json.items[15]);
         serieNameRepository.Verify(snr => snr.GetSeriesNames(locationContext.TimeZoneInfo));
     }
 
@@ -123,7 +127,7 @@ public class SettingsProfileGraphsControllerTest
 
     [Test]
     [TestCase("da")]
-    [TestCase("monthh")]
+    [TestCase("decadee")]
     public async Task GetProfileGraphPagesQueryInvalid(string period)
     {
         // Arrange

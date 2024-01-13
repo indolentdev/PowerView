@@ -270,7 +270,7 @@ public class ProfileControllerTest
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
         profileGraphRepository.Verify(pgr => pgr.GetProfileGraphs(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
-        profileRepository.Verify(dpr => dpr.GetDayProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Never);
+        profileRepository.Verify(dpr => dpr.GetMonthProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Never);
     }
 
     [Test]
@@ -284,7 +284,7 @@ public class ProfileControllerTest
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
         profileGraphRepository.Verify(pgr => pgr.GetProfileGraphs(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
-        profileRepository.Verify(dpr => dpr.GetDayProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Never);
+        profileRepository.Verify(dpr => dpr.GetMonthProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Never);
     }
 
     [Test]
@@ -298,7 +298,7 @@ public class ProfileControllerTest
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
         profileGraphRepository.Verify(pgr => pgr.GetProfileGraphs(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
-        profileRepository.Verify(dpr => dpr.GetDayProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Never);
+        profileRepository.Verify(dpr => dpr.GetMonthProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Never);
     }
 
     [Test]
@@ -391,14 +391,14 @@ public class ProfileControllerTest
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
         profileGraphRepository.Verify(pgr => pgr.GetProfileGraphs(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
-        profileRepository.Verify(dpr => dpr.GetDayProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Never);
+        profileRepository.Verify(dpr => dpr.GetYearProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Never);
     }
 
     [Test]
     public async Task GetYearProfileDateTimesPassedToRepository()
     {
         // Arrange
-        var profileGraph = new ProfileGraph("month", "thePage", "Import", "1-months", 1,
+        var profileGraph = new ProfileGraph("year", "thePage", "Import", "1-months", 1,
           new[] { new SeriesName("Label1", "1.0.1.8.0.255"), new SeriesName("Label1", "1.66.1.8.0.255"), new SeriesName("Label1", "1.65.1.8.0.255") });
         StubProfileGraph(profileGraph);
         var midnight = new DateTime(2018, 12, 31, 23, 0, 0, DateTimeKind.Utc); // Midnight Denmark time..
@@ -437,7 +437,7 @@ public class ProfileControllerTest
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
         profileGraphRepository.Verify(pgr => pgr.GetProfileGraphs(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
-        profileRepository.Verify(dpr => dpr.GetDayProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Never);
+        profileRepository.Verify(dpr => dpr.GetYearProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Never);
     }
 
     [Test]
@@ -451,7 +451,7 @@ public class ProfileControllerTest
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
         profileGraphRepository.Verify(pgr => pgr.GetProfileGraphs(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
-        profileRepository.Verify(dpr => dpr.GetDayProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Never);
+        profileRepository.Verify(dpr => dpr.GetYearProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Never);
     }
 
     [Test]
@@ -515,7 +515,160 @@ public class ProfileControllerTest
         AssertPeriodTotals("Label0", "1.66.2.8.0.255", "kWh", 2000d, json.periodtotals[1]);
     }
 
-    private static IEnumerable<DateTime> GetMonthDateTimes(DateTime origin)
+  [Test]
+  public async Task GetDecadeProfilePeriodAndPagePassedToRepository()
+  {
+    // Arrange
+    var profileGraph = new ProfileGraph("decade", "ThePage", "title", "1-years", 1, new[] { new SeriesName("Label", ObisCode.ElectrActiveEnergyA14Period) });
+    StubProfileGraph(profileGraph);
+    var midnight = new DateTime(2019, 12, 31, 23, 0, 0, DateTimeKind.Utc); // Midnight Denmark time..
+    profileRepository.Setup(dpr => dpr.GetDecadeProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+      .Returns(new TimeRegisterValueLabelSeriesSet(midnight, midnight.AddYears(10), new TimeRegisterValueLabelSeries[0]));
+
+    // Act
+    var response = await httpClient.GetAsync($"api/profile/decade?page={profileGraph.Page}&start={midnight.ToString("o")}");
+
+    // Assert
+    profileGraphRepository.Verify(pgr => pgr.GetProfileGraphs(profileGraph.Period, profileGraph.Page));
+  }
+
+  [Test]
+  public async Task GetDecadeProfilePageQueryStringAbsent()
+  {
+    // Arrange
+    var midnight = new DateTime(2019, 12, 31, 23, 0, 0, DateTimeKind.Utc); // Midnight Denmark time..
+
+    // Act
+    var response = await httpClient.GetAsync($"api/profile/decade?page=thePage");
+
+    // Assert
+    Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+    profileGraphRepository.Verify(pgr => pgr.GetProfileGraphs(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+    profileRepository.Verify(dpr => dpr.GetDecadeProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Never);
+  }
+
+  [Test]
+  public async Task GetDecadeProfileDateTimesPassedToRepository()
+  {
+    // Arrange
+    var profileGraph = new ProfileGraph("decade", "thePage", "Import", "1-years", 1,
+      new[] { new SeriesName("Label1", "1.0.1.8.0.255"), new SeriesName("Label1", "1.66.1.8.0.255"), new SeriesName("Label1", "1.65.1.8.0.255") });
+    StubProfileGraph(profileGraph);
+    var midnight = new DateTime(2019, 12, 31, 23, 0, 0, DateTimeKind.Utc); // Midnight Denmark time..
+    profileRepository.Setup(dpr => dpr.GetDecadeProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+      .Returns(new TimeRegisterValueLabelSeriesSet(midnight, midnight.AddYears(10), new TimeRegisterValueLabelSeries[0]));
+
+    // Act
+    var response = await httpClient.GetAsync($"api/profile/decade?page={profileGraph.Page}&start={midnight.ToString("o")}");
+
+    // Assert
+    profileRepository.Verify(dpr => dpr.GetDecadeProfileSet(It.Is<DateTime>(dt => dt == midnight.AddDays(-183) && dt.Kind == midnight.Kind),
+      It.Is<DateTime>(dt => dt == midnight && dt.Kind == midnight.Kind), It.Is<DateTime>(dt => dt == midnight.AddYears(10) && dt.Kind == midnight.Kind)));
+  }
+
+  [Test]
+  public async Task GetDecadeProfileStartQueryStringAbsent()
+  {
+    // Arrange
+
+    // Act
+    var response = await httpClient.GetAsync($"api/profile/decade?page=thePage");
+
+    // Assert
+    Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+    profileRepository.Verify(dpr => dpr.GetDecadeProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Never);
+  }
+
+  [Test]
+  public async Task GetDecadeProfileStartQueryStringBad()
+  {
+    // Arrange
+
+    // Act
+    var response = await httpClient.GetAsync($"api/profile/decade?page=thePage&start=badDateTime");
+
+    // Assert
+    Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+    profileGraphRepository.Verify(pgr => pgr.GetProfileGraphs(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+    profileRepository.Verify(dpr => dpr.GetDecadeProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Never);
+  }
+
+  [Test]
+  public async Task GetDecadeProfileStartQueryStringNoyUtc()
+  {
+    // Arrange
+
+    // Act
+    var response = await httpClient.GetAsync($"api/profile/decade?page=thePage&start={DateTime.Now.ToString("o")}");
+
+    // Assert
+    Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+    profileGraphRepository.Verify(pgr => pgr.GetProfileGraphs(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+    profileRepository.Verify(dpr => dpr.GetDecadeProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Never);
+  }
+
+  [Test]
+  public async Task GetDecadeProfile()
+  {
+    // Arrange
+    var profileGraph1 = new ProfileGraph("decade", "thePage", "Import", "1-years", 1,
+      new[] { new SeriesName("Label1", "1.66.1.8.0.255"), new SeriesName("Label1", "1.65.1.8.0.255") });
+    var profileGraph2 = new ProfileGraph("decade", "thePage", "Export", "1-years", 2,
+      new[] { new SeriesName("Label0", "1.66.2.8.0.255"), new SeriesName("Label0", "1.65.2.8.0.255") });
+    StubProfileGraph(profileGraph1, profileGraph2);
+    var midnight = new DateTime(2019, 12, 31, 23, 0, 0, DateTimeKind.Utc); // Midnight Denmark time..
+    var t1 = midnight;
+    var t2 = midnight.AddYears(1);
+    var t3 = midnight.AddYears(2);
+    var label1Values = new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> {
+        {"1.0.1.8.0.255", new [] { new TimeRegisterValue("1", t1, 2, 6, Unit.WattHour), new TimeRegisterValue("1", t2, 3, 6, Unit.WattHour) } }
+      };
+    var label2Values = new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> {
+        {"1.0.2.8.0.255", new [] { new TimeRegisterValue("1", t1, 4, 6, Unit.WattHour), new TimeRegisterValue("1", t3, 6, 6, Unit.WattHour) } }
+      };
+    var lss = new TimeRegisterValueLabelSeriesSet(t1, t1.AddYears(10), new[] { new TimeRegisterValueLabelSeries("Label1", label1Values), new TimeRegisterValueLabelSeries("Label0", label2Values) });
+    profileRepository.Setup(dpr => dpr.GetDecadeProfileSet(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(lss);
+
+    // Act
+    var response = await httpClient.GetAsync($"api/profile/decade?page=thePage&start={midnight.ToString("o")}");
+
+    // Assert
+    Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+    var json = await response.Content.ReadFromJsonAsync<ViewModelProfileRoot>();
+    Assert.That(json.graphs.Length, Is.EqualTo(2));
+
+    var electricityImport = new ViewModelProfileGraph
+    {
+      title = profileGraph1.Title,
+      categories = Enumerable.Range(0, 10).Select(i => midnight.AddYears(i)).Select(ToStringYear).ToArray(),
+      series = new[] {
+          new ViewModelProfileSerie { label = "Label1", obisCode = "1.65.1.8.0.255", unit = "kWh", serietype = "ST_1.65.1.8.0.255", serieyaxis = "YA_1.65.1.8.0.255", seriecolor = "SC_Label1_1.65.1.8.0.255",
+            values = new double?[] { 0, 1000 }.Concat(Enumerable.Repeat<double?>(null, 8)).ToArray() },
+          new ViewModelProfileSerie { label = "Label1", obisCode = "1.66.1.8.0.255", unit = "kWh", serietype = "ST_1.66.1.8.0.255", serieyaxis = "YA_1.66.1.8.0.255", seriecolor = "SC_Label1_1.66.1.8.0.255",
+            values = new double?[] { 0, 1000 }.Concat(Enumerable.Repeat<double?>(null, 8)).ToArray() }
+        }
+    };
+    AssertSerieSet(electricityImport, json.graphs.First());
+
+    var electricityExport = new ViewModelProfileGraph
+    {
+      title = profileGraph2.Title,
+      categories = Enumerable.Range(0, 10).Select(i => midnight.AddYears(i)).Select(ToStringYear).ToArray(),
+      series = new[] {
+          new ViewModelProfileSerie { label = "Label0", obisCode = "1.65.2.8.0.255", unit = "kWh", serietype = "ST_1.65.2.8.0.255", serieyaxis = "YA_1.65.2.8.0.255", seriecolor = "SC_Label0_1.65.2.8.0.255",
+            values = new double?[] { 0, null, 2000 }.Concat(Enumerable.Repeat<double?>(null, 7)).ToArray() },
+          new ViewModelProfileSerie { label = "Label0", obisCode = "1.66.2.8.0.255", unit = "kWh", serietype = "ST_1.66.2.8.0.255", serieyaxis = "YA_1.66.2.8.0.255", seriecolor = "SC_Label0_1.66.2.8.0.255",
+            values = new double?[] { 0, null, 2000 }.Concat(Enumerable.Repeat<double?>(null, 7)).ToArray() }
+        }
+    };
+    AssertSerieSet(electricityExport, json.graphs.Last());
+
+    Assert.That(json.periodtotals.Length, Is.EqualTo(2));
+    AssertPeriodTotals("Label1", "1.66.1.8.0.255", "kWh", 1000d, json.periodtotals[0]);
+    AssertPeriodTotals("Label0", "1.66.2.8.0.255", "kWh", 2000d, json.periodtotals[1]);
+  }
+
+  private static IEnumerable<DateTime> GetMonthDateTimes(DateTime origin)
     {
         var timeZoneInfo = TimeZoneHelper.GetDenmarkTimeZoneInfo();
         return Enumerable.Range(0, 12).Select(i =>
@@ -550,6 +703,11 @@ public class ProfileControllerTest
     }
 
     private static string ToStringMonth(DateTime dt)
+    {
+        return dt.ToString("yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture);
+    }
+
+    private static string ToStringYear(DateTime dt)
     {
         return dt.ToString("yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture);
     }

@@ -50,6 +50,7 @@ import { ProfileTotalTableComponent } from './components/profiles/profile-total-
 import { ProfileComponent } from './components/profiles/profile/profile.component';
 import { ProfileMonthComponent } from './components/profiles/profile-month/profile-month.component';
 import { ProfileYearComponent } from './components/profiles/profile-year/profile-year.component';
+import { ProfileDecadeComponent } from './components/profiles/profile-decade/profile-decade.component';
 import { EventsLatestComponent } from './components/events/events-latest/events-latest.component';
 import { EventsTableComponent } from './components/events/events-table/events-table.component';
 import { SettingsSeriesColorsComponent } from './components/settings/settings-series-colors/settings-series-colors.component';
@@ -87,6 +88,7 @@ import { ExportCostBreakdownComponent } from './components/export/export-cost-br
 import { SettingsImportComponent } from './components/settings/pricing/settings-import/settings-import.component';
 import { SettingsImportTableComponent } from './components/settings/pricing/settings-import-table/settings-import-table.component';
 import { SettingsImportEnergiDataServiceComponent } from './components/settings/pricing/settings-import-energi-data-service/settings-import-energi-data-service.component';
+import { ProfileLast10yComponent } from './components/profiles/profile-last10y/profile-last10y.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -133,6 +135,7 @@ if (environment.useMockBackend == true) {
     ProfileComponent,
     ProfileMonthComponent,
     ProfileYearComponent,
+    ProfileDecadeComponent,
     EventsLatestComponent,
     EventsTableComponent,
     SettingsSeriesColorsComponent,
@@ -169,7 +172,8 @@ if (environment.useMockBackend == true) {
     ExportCostBreakdownComponent,
     SettingsImportComponent,
     SettingsImportTableComponent,
-    SettingsImportEnergiDataServiceComponent
+    SettingsImportEnergiDataServiceComponent,
+    ProfileLast10yComponent
   ],
   imports: [
     BrowserModule,

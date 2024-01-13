@@ -9,7 +9,7 @@ namespace PowerView.Model
     public ProfileGraph(string period, string page, string title, string interval, long rank, IList<SeriesName> serieNames)
     {
       if (string.IsNullOrEmpty(period)) throw new ArgumentNullException("period");
-      if (!(new[] { "day", "month", "year" }.Contains(period))) throw new ArgumentOutOfRangeException("period", period, "Invalid period");
+      if (!(new[] { "day", "month", "year", "decade" }.Contains(period))) throw new ArgumentOutOfRangeException("period", period, "Invalid period");
       if (page == null) throw new ArgumentNullException("page");
       if (string.IsNullOrEmpty(title)) throw new ArgumentNullException("title");
       if (string.IsNullOrEmpty(interval)) throw new ArgumentNullException("interval");

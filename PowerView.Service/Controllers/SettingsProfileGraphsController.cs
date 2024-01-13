@@ -41,15 +41,17 @@ public class SettingsProfileGraphsController : ControllerBase
           .Select(sn => new { Period = "month", sn.Label, ObisCode = sn.ObisCode.ToString() });
         var year = serieNames.Where(sn => sn.ObisCode.IsDelta || sn.ObisCode.IsPeriod)
           .Select(sn => new { Period = "year", sn.Label, ObisCode = sn.ObisCode.ToString() });
+        var decade = serieNames.Where(sn => sn.ObisCode.IsDelta || sn.ObisCode.IsPeriod)
+          .Select(sn => new { Period = "decade", sn.Label, ObisCode = sn.ObisCode.ToString() });
 
-        var r = new { Items = day.Concat(month).Concat(year) };
+        var r = new { Items = day.Concat(month).Concat(year).Concat(decade).ToList() };
         return Ok(r);
     }
 
     [HttpGet("pages")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public ActionResult GetProfileGraphPages([BindRequired, FromQuery, StringLength(5, MinimumLength = 3)] string period)
+    public ActionResult GetProfileGraphPages([BindRequired, FromQuery, StringLength(6, MinimumLength = 3)] string period)
     {
         var pages = profileGraphRepository.GetProfileGraphPages(period);
 

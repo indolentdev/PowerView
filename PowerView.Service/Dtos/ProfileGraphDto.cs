@@ -27,9 +27,9 @@ namespace PowerView.Service.Dtos
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            if (Period != "day" && Period != "month" && Period != "year")
+            if (Period != "day" && Period != "month" && Period != "year" && Period != "decade")
             {
-                yield return new ValidationResult("Value invalid. Must be day, month or year", new[] { nameof(Period) });
+                yield return new ValidationResult("Value invalid. Must be day, month, year or decade", new[] { nameof(Period) });
             }
 
             var distinctSeriesCount = Series.Select(x => new { x.Label, x.ObisCode }).Distinct().Count();

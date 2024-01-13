@@ -51,6 +51,9 @@ namespace PowerView.Model.Test
 
     [TestCase("year", "2018-12-31T23:00Z", "2019-12-31T23:00Z")]
     [TestCase("year", "2018-07-31T22:00Z", "2019-07-31T22:00Z")]
+
+    [TestCase("decade", "2009-12-31T23:00Z", "2019-12-31T23:00Z")]
+    [TestCase("decade", "2019-12-31T23:00Z", "2029-12-31T23:00Z")]
     public void GetPeriodEnd(string period, string originString, string endString)
     {
       // Arrange
@@ -76,6 +79,7 @@ namespace PowerView.Model.Test
     [TestCase("1.234567-minutes", typeof(ArgumentOutOfRangeException))]
     [TestCase("2-days", typeof(ArgumentOutOfRangeException))]
     [TestCase("2-months", typeof(ArgumentOutOfRangeException))]
+    [TestCase("3-years", typeof(ArgumentOutOfRangeException))]
     [TestCase("them-minutes", typeof(FormatException))]
     [TestCase("them-days", typeof(FormatException))]
     [TestCase("them-months", typeof(FormatException))]
@@ -98,6 +102,7 @@ namespace PowerView.Model.Test
     [TestCase("15-minutes", "2019-09-23T22:00Z", "2019-09-23T22:15Z")]
     [TestCase("30-minutes", "2019-09-23T22:00Z", "2019-09-23T22:30Z")]
     [TestCase("60-minutes", "2019-09-23T22:00Z", "2019-09-23T23:00Z")]
+
     [TestCase("1-days", "2019-03-29T23:00Z", "2019-03-30T23:00Z")] // Before Norm -> DST
     [TestCase("1-days", "2019-03-30T23:00Z", "2019-03-31T22:00Z")] // Norm -> DST
     [TestCase("1-days", "2019-03-31T22:00Z", "2019-04-01T22:00Z")] // After Norm -> DST
@@ -112,6 +117,8 @@ namespace PowerView.Model.Test
     [TestCase("1-months", "2019-09-30T22:00Z", "2019-10-31T23:00Z")] // DST -> Norm 
     [TestCase("1-months", "2019-10-31T23:00Z", "2019-11-30T23:00Z")] // After DST -> Norm
     [TestCase("1-months", "2019-02-15T23:00Z", "2019-03-15T23:00Z")]
+
+    [TestCase("1-years", "2019-12-31T23:00Z", "2020-12-31T23:00Z")]
     public void GetNext(string interval, string inDateTimeString, string outDateTimeString)
     {
       // Arrange
@@ -165,6 +172,7 @@ namespace PowerView.Model.Test
     [TestCase("1.234567-minutes", typeof(ArgumentOutOfRangeException))]
     [TestCase("2-days", typeof(ArgumentOutOfRangeException))]
     [TestCase("2-months", typeof(ArgumentOutOfRangeException))]
+    [TestCase("2-years", typeof(ArgumentOutOfRangeException))]
     [TestCase("them-minutes", typeof(FormatException))]
     [TestCase("them-days", typeof(FormatException))]
     [TestCase("them-months", typeof(FormatException))]
@@ -223,6 +231,7 @@ namespace PowerView.Model.Test
     [TestCase("2020-09-30T22:00:00.000Z", "1-days", "2020-10-25T22:55:00.000Z", "2020-10-24T22:00:00.000Z")] // DST -> Norm
     [TestCase("2020-09-30T22:00:00.000Z", "1-days", "2020-10-26T22:55:00.000Z", "2020-10-25T23:00:00.000Z")] // After DST -> Norm
 
+    [TestCase("2019-05-27T22:00:00.000Z", "1-months", "2019-05-27T22:00:00.000Z", "2019-05-27T22:00:00.000Z")]
     [TestCase("2019-05-27T22:00:00.000Z", "1-months", "2019-06-25T02:37:00.000Z", "2019-05-27T22:00:00.000Z")]
     [TestCase("2019-05-27T22:00:00.000Z", "1-months", "2019-07-02T02:37:00.000Z", "2019-06-27T22:00:00.000Z")]
     [TestCase("2019-05-31T22:00:00.000Z", "1-months", "2019-07-02T02:37:00.000Z", "2019-06-30T22:00:00.000Z")]
@@ -237,6 +246,12 @@ namespace PowerView.Model.Test
     [TestCase("2019-09-30T22:00:00.000Z", "1-months", "2019-10-31T23:01:00.000Z", "2019-10-31T23:00:00.000Z")] // DST -> Norm
     [TestCase("2019-09-30T22:00:00.000Z", "1-months", "2019-11-30T22:55:00.000Z", "2019-10-31T23:00:00.000Z")] // After DST -> Norm
     [TestCase("2019-10-31T23:00:00.000Z", "1-months", "2019-11-30T23:01:00.000Z", "2019-11-30T23:00:00.000Z")] // After DST -> Norm
+
+    [TestCase("2019-12-31T23:00:00.000Z", "1-years", "2019-12-31T23:00:00.000Z", "2019-12-31T23:00:00.000Z")]
+    [TestCase("2019-12-31T23:00:00.000Z", "1-years", "2019-12-31T23:01:00.000Z", "2019-12-31T23:00:00.000Z")]
+    [TestCase("2019-12-31T23:00:00.000Z", "1-years", "2020-01-28T20:00:00.000Z", "2019-12-31T23:00:00.000Z")]
+    [TestCase("2019-12-31T23:00:00.000Z", "1-years", "2020-12-28T23:00:00.000Z", "2019-12-31T23:00:00.000Z")]
+    [TestCase("2019-12-31T23:00:00.000Z", "1-years", "2020-12-31T23:01:00.000Z", "2020-12-31T23:00:00.000Z")]
     public void GetDivider(string originString, string interval, string inDateTimeString, string outDateTimeString)
     {
       // Arrange

@@ -11,6 +11,7 @@ export class TopComponent implements OnInit {
   dayProfilePages: string[];
   monthProfilePages: string[];
   yearProfilePages: string[];
+  decadeProfilePages: string[];
 
   constructor(private log: NGXLogger, private menuService: MenuService) { }
 
@@ -34,6 +35,10 @@ export class TopComponent implements OnInit {
 
     this.menuService.getProfilePageNames("year").subscribe(x => { 
       this.yearProfilePages = x.items.sort();
+    });
+
+    this.menuService.getProfilePageNames("decade").subscribe(x => {
+      this.decadeProfilePages = x.items.sort();
     });
   }
 

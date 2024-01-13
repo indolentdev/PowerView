@@ -20,7 +20,9 @@
     "pricing": "Pricing",
     "profile": "Profile",
     "profileDay": "Day Profile",
+    "profileDecade": "Decade Profile",
     "profileGraphs": "Profile Graphs",
+    "profileLast10y": "Last 10 Years",
     "profileLast12m": "Last 12 Months",
     "profileLast24h": "Last 24 Hours",
     "profileLast31d": "Last 31 Days",
@@ -70,6 +72,7 @@
     "crudeDataCounts": "Showing {{count}} of {{total}} entries",
     "crudeDataDelete": "Delete Crude Data",
     "dayProfile": "Day Profile",
+    "decadeProfile": "Decade Profile",
     "diffByDates": "Diff Between Dates",
     "emailRecipients": "Email Recipients",
     "emailRecipientsAdd": "Add Email Recipient",
@@ -80,6 +83,7 @@
     "exportDiffsHourly": "Export Diffs Hourly",
     "exportGaugesHourly": "Export Gauges Hourly",
     "exportHourly": "Export Hourly",
+    "last10yProfile": "Last 10 Years Profile",
     "last12mProfile": "Last 12 Months Profile",
     "last24hProfile": "Last 24 Hours Profile",
     "last31dProfile": "Last 31 Days Profile",
@@ -103,7 +107,8 @@
     "period": {
       "day": "Day",
       "month": "Month",
-      "year": "Year"
+      "year": "Year",
+      "decade": "Decade"
     },
     "periodPage": "Period:{{period}} - Page:{{page}}",
     "profileGraphs": "Profile Graphs",
@@ -367,7 +372,8 @@
         "periods": {
           "day": "Day",
           "month": "Month",
-          "year": "Year"
+          "year": "Year",
+          "decade": "Decade"
         },
         "placeholderInterval": "Interval",
         "placeholderPage": "Page",
@@ -378,7 +384,8 @@
           "maxLength_25": "Maximum 25 characters",
           "minLength_1": "Minimum 1 characters",
           "required": "Required"
-        }
+        },
+        "years": "year(s)"
       },
       "relayControls": {
         "buttonActionDelete": "Delete",

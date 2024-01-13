@@ -28,6 +28,11 @@ namespace PowerView.Model.Repository
       return GetLabelSeriesSet(preStart, start, end, "MonthReading", "MonthRegister");
     }
 
+    public TimeRegisterValueLabelSeriesSet GetDecadeProfileSet(DateTime preStart, DateTime start, DateTime end)
+    {
+      return GetLabelSeriesSet(preStart, start, end, "YearReading", "YearRegister");
+    }
+
     private TimeRegisterValueLabelSeriesSet GetLabelSeriesSet(DateTime preStart, DateTime start, DateTime end, string readingTable, string registerTable)
     {
       if (preStart.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("preStart", "Must be UTC");
@@ -58,7 +63,7 @@ WHERE rea.Timestamp >= @From AND rea.Timestamp < @To;";
         foreach (IGrouping<ObisCode, RowLocal> obisCodeGroup in groupedByObisCode)
         {
           obisCodeToTimeRegisterValues.Add(obisCodeGroup.Key, obisCodeGroup.Select(row =>
-            new TimeRegisterValue(row.DeviceId, row.Timestamp, row.Value, row.Scale, (Unit)row.Unit)) );
+            new TimeRegisterValue(row.DeviceId, row.Timestamp, row.Value, row.Scale, (Unit)row.Unit)));
         }
         labelSeries.Add(new TimeRegisterValueLabelSeries(labelGroup.Key, obisCodeToTimeRegisterValues));
       }

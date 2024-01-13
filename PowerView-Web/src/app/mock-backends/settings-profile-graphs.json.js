@@ -193,6 +193,70 @@ export let settingsProfileGraphs = {
          ]
       },
       {
+         "period":"decade",
+         "page":"",
+         "title":"Water",
+         "interval":"1-years",
+         "series":[
+            {
+               "label":"Water",
+               "obisCode":"8.66.1.0.0.255"
+            },
+            {
+               "label":"Water",
+               "obisCode":"8.65.1.0.0.255"
+            }
+         ]
+      },
+      {
+         "period":"decade",
+         "page":"",
+         "title":"El Import",
+         "interval":"1-years",
+         "series":[
+            {
+               "label":"Heater",
+               "obisCode":"1.66.1.8.0.255"
+            },
+            {
+               "label":"Heater",
+               "obisCode":"1.65.1.8.0.255"
+            },
+            {
+               "label":"Main",
+               "obisCode":"1.66.1.8.0.255"
+            },
+            {
+               "label":"Main",
+               "obisCode":"1.65.1.8.0.255"
+            }
+         ]
+      },
+      {
+         "period":"decade",
+         "page":"",
+         "title":"El Export",
+         "interval":"1-years",
+         "series":[
+            {
+               "label":"Inverter",
+               "obisCode":"1.66.2.8.0.255"
+            },
+            {
+               "label":"Inverter",
+               "obisCode":"1.65.2.8.0.255"
+            },
+            {
+               "label":"Main",
+               "obisCode":"1.66.2.8.0.255"
+            },
+            {
+               "label":"Main",
+               "obisCode":"1.65.2.8.0.255"
+            }
+         ]
+      },
+      {
          "period":"day",
          "page":"",
          "title":"Relay",

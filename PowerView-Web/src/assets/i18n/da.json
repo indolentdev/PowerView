@@ -20,7 +20,9 @@
     "pricing": "Priser",
     "profile": "Profil",
     "profileDay": "Dagsprofil",
+    "profileDecade": "Årtiprofil",
     "profileGraphs": "Profil Grafer",
+    "profileLast10y": "Seneste 10 År",
     "profileLast12m": "Seneste 12 Måneder",
     "profileLast24h": "Seneste 24 Timer",
     "profileLast31d": "Seneste 31 Dage",
@@ -70,6 +72,7 @@
     "crudeDataCounts": "Viser {{count}} af {{total}} indgange",
     "crudeDataDelete": "Slet Rå Data",
     "dayProfile": "Dagsprofil",
+    "decadeProfile": "Årtiprofil",
     "diffByDates": "Forskel Mellem Datoer",
     "emailRecipients": "E-mail Modtagere",
     "emailRecipientsAdd": "Tilføj E-mail Modtager",
@@ -80,6 +83,7 @@
     "exportDiffsHourly": "Eksport Forskelle Time",
     "exportGaugesHourly": "Eksport Tællerstande Time",
     "exportHourly": "Eksport Time",
+    "last10yProfile": "Profil for Seneste 10 År",
     "last12mProfile": "Profil for Seneste 12 Måneder",
     "last24hProfile": "Profil for Seneste 24 Timer",
     "last31dProfile": "Profil for Seneste 31 Dage",
@@ -103,7 +107,8 @@
     "period": {
       "day": "Dag",
       "month": "Måned",
-      "year": "År"
+      "year": "År",
+      "decade": "Årti"
     },
     "periodPage": "Periode:{{period}} - Side:{{page}}",
     "profileGraphs": "Profil Grafer",
@@ -367,7 +372,8 @@
         "periods": {
           "day": "Dag",
           "month": "Måned",
-          "year": "År"
+          "year": "År",
+          "decade": "Årti"
         },
         "placeholderInterval": "Interval",
         "placeholderPage": "Side",
@@ -378,7 +384,8 @@
           "maxLength_25": "Maksimum 25 tegn",
           "minLength_1": "Minimum 1 tegn",
           "required": "Påkrævet"
-        }
+        },
+        "years": "år"
       },
       "relayControls": {
         "buttonActionDelete": "Slet",

@@ -58,6 +58,15 @@ public class ProfileController : ControllerBase
         return GetProfile(page, start, profileRepository.GetYearProfileSet, "year");
     }
 
+    [HttpGet("decade")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public ActionResult GetDecadeProfile(
+        [BindRequired, FromQuery, StringLength(32, MinimumLength = 0)] string page,
+        [BindRequired, FromQuery, UtcDateTime] DateTime start)
+    {
+        return GetProfile(page, start, profileRepository.GetDecadeProfileSet, "decade");
+    }
+
     private ActionResult GetProfile(string page, DateTime start,
       Func<DateTime, DateTime, DateTime, TimeRegisterValueLabelSeriesSet> getLabelSeriesSet, string period)
     {

@@ -5,9 +5,11 @@
   <button mat-menu-item [matMenuTriggerFor]="profileLast24hMenu">{{ 'menu.profileLast24h' | translate }}</button>
   <button mat-menu-item [matMenuTriggerFor]="profileLast31dMenu">{{ 'menu.profileLast31d' | translate }}</button>
   <button mat-menu-item [matMenuTriggerFor]="profileLast12mMenu">{{ 'menu.profileLast12m' | translate }}</button>
+  <button mat-menu-item [matMenuTriggerFor]="profileLast10yMenu">{{ 'menu.profileLast10y' | translate }}</button>
   <button mat-menu-item [matMenuTriggerFor]="profileDayMenu">{{ 'menu.profileDay' | translate }}</button>
   <button mat-menu-item [matMenuTriggerFor]="profileMonthMenu">{{ 'menu.profileMonth' | translate }}</button>
   <button mat-menu-item [matMenuTriggerFor]="profileYearMenu">{{ 'menu.profileYear' | translate }}</button>
+  <button mat-menu-item [matMenuTriggerFor]="profileDecadeMenu">{{ 'menu.profileDecade' | translate }}</button>
 </mat-menu>
 
 <mat-menu #profileLast24hMenu="matMenu">
@@ -43,6 +45,17 @@
   </ng-container>
 </mat-menu>
 
+<mat-menu #profileLast10yMenu="matMenu">
+  <ng-container *ngFor="let decadeProfilePage of decadeProfilePages">
+    <ng-container *ngIf="decadeProfilePage === ''">
+      <button mat-menu-item [routerLink]="['/profile/last10y']" [queryParams]="{page: ''}">{{ 'menu.defaultPage' | translate }}</button>
+    </ng-container>
+    <ng-container *ngIf="decadeProfilePage !== ''">
+      <button mat-menu-item [routerLink]="['/profile/last10y']" [queryParams]="{page: decadeProfilePage }">{{ decadeProfilePage }}</button>
+    </ng-container>
+  </ng-container>
+</mat-menu>
+
 <mat-menu #profileDayMenu="matMenu">
   <ng-container *ngFor="let dayProfilePage of dayProfilePages">
     <ng-container *ngIf="dayProfilePage === ''">
@@ -72,6 +85,17 @@
     </ng-container>
     <ng-container *ngIf="yearProfilePage !== ''">
       <button mat-menu-item [routerLink] ="['/profile/year']" [queryParams]="{page: yearProfilePage }" >{{ yearProfilePage }}</button>
+    </ng-container>
+  </ng-container>
+</mat-menu>
+
+<mat-menu #profileDecadeMenu="matMenu">
+  <ng-container *ngFor="let decadeProfilePage of decadeProfilePages">
+    <ng-container *ngIf="decadeProfilePage === ''">
+      <button mat-menu-item [routerLink]="['/profile/decade']" [queryParams]="{page: ''}">{{ 'menu.defaultPage' | translate }}</button>
+    </ng-container>
+    <ng-container *ngIf="decadeProfilePage !== ''">
+      <button mat-menu-item [routerLink]="['/profile/decade']" [queryParams]="{page: decadeProfilePage }">{{ decadeProfilePage }}</button>
     </ng-container>
   </ng-container>
 </mat-menu>

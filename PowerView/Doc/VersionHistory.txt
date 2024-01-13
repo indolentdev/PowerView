@@ -4,6 +4,7 @@ PowerView version 1.1.0 - January 2024
 - Show tags for crude metering data. E.g. manually entered.
 - Ability to define cost breakdowns for fixed expenses
 - Ability to export cost breakdowns for fixed expenses with hourly amounts
+- Support for last 10 years and decade profile
 - Fixed a bug where PowerView startup would fail if the DbBackup folder contained custom files.
 - Fixed a bug where PowerView would not send emails for detected meter events.
 - Minor stability improvements.

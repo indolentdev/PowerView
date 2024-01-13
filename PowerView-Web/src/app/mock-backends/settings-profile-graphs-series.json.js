@@ -194,7 +194,57 @@ export let settingsProfileGraphsSeries = {
          "period":"year",
          "label":"Water",
          "obisCode":"8.65.1.0.0.255"
-      }
+      },
+      {
+         "period":"decade",
+         "label":"Heater",
+         "obisCode":"1.66.1.8.0.255"
+      },
+      {
+         "period":"decade",
+         "label":"Heater",
+         "obisCode":"1.65.1.8.0.255"
+      },
+      {
+         "period":"decade",
+         "label":"Inverter",
+         "obisCode":"1.66.2.8.0.255"
+      },
+      {
+         "period":"decade",
+         "label":"Inverter",
+         "obisCode":"1.65.2.8.0.255"
+      },
+      {
+         "period":"decade",
+         "label":"Main",
+         "obisCode":"1.66.1.8.0.255"
+      },
+      {
+         "period":"decade",
+         "label":"Main",
+         "obisCode":"1.65.1.8.0.255"
+      },
+      {
+         "period":"decade",
+         "label":"Main",
+         "obisCode":"1.66.2.8.0.255"
+      },
+      {
+         "period":"decade",
+         "label":"Main",
+         "obisCode":"1.65.2.8.0.255"
+      },
+      {
+         "period":"decade",
+         "label":"Water",
+         "obisCode":"8.66.1.0.0.255"
+      },
+      {
+         "period":"decade",
+         "label":"Water",
+         "obisCode":"8.65.1.0.0.255"
+      }      
    ]
 }
 ;

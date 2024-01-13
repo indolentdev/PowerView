@@ -88,6 +88,11 @@ describe('TopComponent', () => {
     expect().nothing(); // suppress Spec has no expectations warning
   });
 
+  it('should get decade profile pages', () => {
+    verify(menuService.getProfilePageNames("decade"));
+    expect().nothing(); // suppress Spec has no expectations warning
+  });
+
   it('should refresh pages on signal', () => {
     // Arrange
 
@@ -95,7 +100,7 @@ describe('TopComponent', () => {
     profileGraphPagesChange.emit();
 
     // Assert
-    verify(menuService.getProfilePageNames(anyString())).times(2*3);  // 2 for ngOnInit and emit, 3 for day/month/year
+    verify(menuService.getProfilePageNames(anyString())).times(2*4);  // 2 for ngOnInit and emit, 4 for day/month/year/decade
     expect().nothing(); // suppress Spec has no expectations warning
   });
 });
