@@ -9,6 +9,7 @@ import { gaugesBackend } from './mock-backends/gauges.backend';
 import { eventsBackend } from './mock-backends/events.backend';
 import { labelsBackend } from './mock-backends/labels.backend';
 import { crudeDataBackend } from './mock-backends/crudeData.backend';
+import { historyStatusBackend } from './mock-backends/historyStatus.backend ';
 import { exportBackend } from './mock-backends/export.backend';
 import { settingsBackend } from './mock-backends/settings.backend';
 import { obisBackend } from './mock-backends/obis.backend';
@@ -32,6 +33,7 @@ export class MockHttpInterceptor implements HttpInterceptor {
       eventsBackend(url, method, request) ||
       labelsBackend(url, method, request) ||
       crudeDataBackend(url, method, request) ||
+      historyStatusBackend(url, method, request) ||
       exportBackend(url, method, request) ||
       settingsBackend(url, method, request) ||
       obisBackend(url, method, request) ||

@@ -1,0 +1,21 @@
+th.mat-mdc-header-cell {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+tr.mat-mdc-footer-row,
+tr.mat-mdc-row {
+    height: 2em;
+}
+
+td.mat-mdc-cell,
+td.mat-mdc-footer-cell,
+th.mat-mdc-header-cell {
+    padding-left: 7px;
+    padding-right: 7px;
+}
+
+.mat-mdc-cell.mat-column-gaugeValue,
+.mat-mdc-header-cell.mat-column-gaugeValue {
+    text-align: right;
+}

@@ -170,5 +170,11 @@ namespace PowerView.Model.Test.Repository
               lblOcLive.Select(x => new { x.LabelId, x.ObisId, x.LatestTimestamp }));
         }
 
+        public static void InsertStreamPosition(this DbContext dbContext, params (string StreamName, byte LabelId, long Position)[] streamPositions)
+        {
+            dbContext.ExecuteTransaction("INSERT INTO StreamPosition (StreamName,LabelId,Position) VALUES (@StreamName,@LabelId,@Position);", 
+              streamPositions.Select(x => new { x.StreamName, x.LabelId, x.Position }));
+        }
+
     }
 }

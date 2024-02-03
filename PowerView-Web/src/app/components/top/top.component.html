@@ -120,6 +120,7 @@
 <mat-menu #dataMenu="matMenu">
   <button mat-menu-item [routerLink]="['/data/crude/add']">{{ 'menu.crudeAdd' | translate }}</button>
   <button mat-menu-item [routerLink]="['/data/crude/bydate']">{{ 'menu.crudeByDate' | translate }}</button>
+  <button mat-menu-item [routerLink]="['/data/history/status']">{{ 'menu.historyStatus' | translate }}</button>
 </mat-menu>
 
 <button mat-raised-button color="primary" [matMenuTriggerFor]="exportMenu">{{ 'menu.export' | translate }}</button>

@@ -1,3 +1,6 @@
+PowerView version 1.2.0 - Xxxxx 2024
+- Show history status for day, month and year intervals
+
 PowerView version 1.1.0 - January 2024
 - Improved user flow for adding crude metering data
 - Ability to delete crude metering data

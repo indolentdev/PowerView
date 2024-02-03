@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Emit;
 
 namespace PowerView.Model.Repository
 {
@@ -75,16 +76,16 @@ WHERE rea.Timestamp >= @From AND rea.Timestamp < @To;";
       return date.Day != DateTime.DaysInMonth(date.Year, date.Month) ? date.AddMonths(1) : date.AddDays(1).AddMonths(1).AddDays(-1);
     }
 
-        private class RowLocal
-        {
-            public string Label { get; set; }
-            public string DeviceId { get; set; }
-            public UnixTime Timestamp { get; set; }
-            public long ObisCode { get; set; }
-            public int Value { get; set; }
-            public short Scale { get; set; }
-            public byte Unit { get; set; }
-        }
-
+    private class RowLocal
+    {
+      public string Label { get; set; }
+      public string DeviceId { get; set; }
+      public UnixTime Timestamp { get; set; }
+      public long ObisCode { get; set; }
+      public int Value { get; set; }
+      public short Scale { get; set; }
+      public byte Unit { get; set; }
     }
+
+  }
 }
