@@ -116,6 +116,29 @@ public class DeviceReadingControllerTest
 
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.ServiceUnavailable));
+        readingAccepter.Verify(ra => ra.Accept(It.IsAny<IList<Reading>>()), Times.Exactly(2));
+    }
+
+    [Test]
+    public async Task PostApiDevicesLivereadings_DataStoreBusy_FirstChanceError()
+    {
+        // Arrange
+
+        var count = 0;
+        readingAccepter.Setup(ra => ra.Accept(It.IsAny<IList<Reading>>())).Callback(() => 
+        {
+            count++;
+            if (count == 1) throw new DataStoreBusyException();
+
+        });
+        var liveReadingSetDto = GetLiveReadingSetDto();
+
+        // Act
+        var response = await httpClient.PostAsync("api/devices/livereadings", JsonContent.Create(liveReadingSetDto));
+
+        // Assert
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
+        readingAccepter.Verify(ra => ra.Accept(It.IsAny<IList<Reading>>()), Times.Exactly(2));
     }
 
     [Test]

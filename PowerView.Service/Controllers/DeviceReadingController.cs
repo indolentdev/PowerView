@@ -36,22 +36,38 @@ public class DeviceReadingController : ControllerBase
                     x.RegisterValues.Select(y => new RegisterValue(y.ObisCode, y.Value.Value, y.Scale.Value, y.Unit.Value))))
             .ToList();
 
-        try
+        logger.LogTrace($"Received {liveReadings.Sum(x => x.GetRegisterValues().Count)} values through device readings api");
+
+        var runAccept = true;
+        var dataStoreBusyExceptionCount = 0;
+        while (runAccept && dataStoreBusyExceptionCount <= 1)
         {
-            logger.LogTrace($"Received {liveReadings.Sum(x => x.GetRegisterValues().Count)} values through device readings api");
-            readingAccepter.Accept(liveReadings);
-        }
-        catch (DataStoreBusyException e)
-        {
-            var statusCode = StatusCodes.Status503ServiceUnavailable;
-            var msg = $"Unable to add readings for label(s):{string.Join(",", liveReadings.Select(r => r.Label))}. Data store busy. Responding {statusCode}. {e.InnerException?.Message}";
-            Exception ex = null;
-            if (logger.IsEnabled(LogLevel.Debug))
+            try
             {
-                ex = e;
+                readingAccepter.Accept(liveReadings);
+                runAccept = false;
             }
-            logger.LogInformation(ex, msg);
-            return StatusCode(statusCode, "Data store busy");
+            catch (DataStoreBusyException e)
+            {
+                dataStoreBusyExceptionCount++;
+                if (dataStoreBusyExceptionCount == 1)
+                {
+                    logger.LogTrace(e, "First chance exception accepting readings. Retrying once.");
+                    Task.Delay(350).GetAwaiter().GetResult();
+                }
+                else
+                {
+                    var statusCode = StatusCodes.Status503ServiceUnavailable;
+                    var msg = $"Unable to add readings for label(s):{string.Join(",", liveReadings.Select(r => r.Label))}. Data store busy. Responding {statusCode}. {e.InnerException?.Message}";
+                    Exception ex = null;
+                    if (logger.IsEnabled(LogLevel.Debug))
+                    {
+                        ex = e;
+                    }
+                    logger.LogInformation(ex, msg);
+                    return StatusCode(statusCode, "Data store busy");
+                }
+            }
         }
 
         return NoContent();
@@ -68,10 +84,11 @@ public class DeviceReadingController : ControllerBase
         var reading = new Reading(labelRegisterValue.Label, labelRegisterValue.DeviceId, labelRegisterValue.Timestamp.Value,
           new[] { new RegisterValue(labelRegisterValue.ObisCode, labelRegisterValue.Value.Value, labelRegisterValue.Scale.Value, UnitMapper.Map(labelRegisterValue.Unit), RegisterValueTag.Manual) });
 
+        logger.LogTrace($"Received {reading.GetRegisterValues().Count} values through manual readings api");
+
         try
         {
-            logger.LogTrace($"Received {reading.GetRegisterValues().Count} values through manual readings api");
-            readingAccepter.Accept(new [] { reading });
+            readingAccepter.Accept(new[] { reading });
             readingHistoryRepository.ClearDayMonthYearHistory();
         }
         catch (DataStoreUniqueConstraintException e)
