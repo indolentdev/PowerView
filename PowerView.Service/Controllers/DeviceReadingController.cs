@@ -44,7 +44,7 @@ public class DeviceReadingController : ControllerBase
         catch (DataStoreBusyException e)
         {
             var statusCode = StatusCodes.Status503ServiceUnavailable;
-            var msg = $"Unable to add readings for label(s):{string.Join(",", liveReadings.Select(r => r.Label))}. Data store busy. Responding {statusCode}";
+            var msg = $"Unable to add readings for label(s):{string.Join(",", liveReadings.Select(r => r.Label))}. Data store busy. Responding {statusCode}. {e.InnerException?.Message}";
             Exception ex = null;
             if (logger.IsEnabled(LogLevel.Debug))
             {
