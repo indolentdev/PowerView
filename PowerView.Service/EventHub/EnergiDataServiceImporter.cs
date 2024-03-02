@@ -124,7 +124,7 @@ namespace PowerView.Service.EventHub
 
             var (value, scale) = LossyToRegisterValue(amount);
 
-            return new RegisterValue(ObisCode.ElectrActiveEnergyKwhIncomeExpense, value, scale, currency, RegisterValueTag.Import);
+            return new RegisterValue(ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat, value, scale, currency, RegisterValueTag.Import);
         }
 
         internal static (int Value, short Scale) LossyToRegisterValue(double amount)

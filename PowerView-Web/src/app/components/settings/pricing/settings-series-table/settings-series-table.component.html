@@ -1,0 +1,23 @@
+<table mat-table [dataSource]="dataSource" matSort class="center">
+    <ng-container matColumnDef="nameSeries">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'columns.series' | translate }}</th>
+        <td mat-cell *matCellDef="let v">{{ v.nameSeries }}</td>
+    </ng-container>
+    <ng-container matColumnDef="baseSeries">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'columns.baseSeries' | translate }}</th>
+        <td mat-cell *matCellDef="let v">{{ v.baseSeries }}</td>
+    </ng-container>
+    <ng-container matColumnDef="costBreakdownName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'columns.costBreakdown' | translate }}</th>
+        <td mat-cell *matCellDef="let v">{{ v.costBreakdownName }}</td>
+    </ng-container>
+    <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>{{ 'columns.actions' | translate }}</th>
+        <td mat-cell *matCellDef="let v">
+            <button style="margin-left:3px;margin-right:3px" mat-raised-button type="button" (click)="deleteClick(v)">{{
+                'forms.settings.pricing.series.buttonActionDelete' | translate }}</button>
+        </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr style="white-space: pre-wrap;" mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+</table>

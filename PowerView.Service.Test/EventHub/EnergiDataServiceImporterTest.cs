@@ -222,11 +222,11 @@ public class EnergiDataServiceImporterTest
         readingAccepter.Verify(x => x.Accept(It.Is<IList<Reading>>(p => p.Count == 2 &&
           p.First().Label == import.Label && p.First().DeviceId == "EnergiDataService" && p.First().Timestamp == dateTime1 && p.First().Timestamp.Kind == dateTime1.Kind &&
           p.First().GetRegisterValues().Count == 1 && p.First().GetRegisterValues().First().Value == 12 && p.First().GetRegisterValues().First().Scale == 0 &&
-          p.First().GetRegisterValues().First().Unit == Unit.Dkk && p.First().GetRegisterValues().First().ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpense &&
+          p.First().GetRegisterValues().First().Unit == Unit.Dkk && p.First().GetRegisterValues().First().ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat &&
           p.First().GetRegisterValues().First().Tag == RegisterValueTag.Import &&
           p.Last().Label == import.Label && p.Last().DeviceId == "EnergiDataService" && p.Last().Timestamp == dateTime2 && p.Last().Timestamp.Kind == dateTime2.Kind &&
           p.Last().GetRegisterValues().Count == 1 && p.Last().GetRegisterValues().First().Value == 15 && p.Last().GetRegisterValues().First().Scale == 0 &&
-          p.Last().GetRegisterValues().Last().Unit == Unit.Dkk && p.Last().GetRegisterValues().First().ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpense &&
+          p.Last().GetRegisterValues().Last().Unit == Unit.Dkk && p.Last().GetRegisterValues().First().ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat &&
           p.Last().GetRegisterValues().Last().Tag == RegisterValueTag.Import)));
 
         importRepository.Verify(x => x.SetCurrentTimestamp(It.Is<string>(p => p == import.Label), It.Is<DateTime>(p => p == dateTime2.AddHours(1) && p.Kind == dateTime2.Kind)));
@@ -254,11 +254,11 @@ public class EnergiDataServiceImporterTest
         readingAccepter.Verify(x => x.Accept(It.Is<IList<Reading>>(p => p.Count == 2 &&
           p.First().Label == import.Label && p.First().DeviceId == "EnergiDataService" && p.First().Timestamp == dateTime1 && p.First().Timestamp.Kind == dateTime1.Kind &&
           p.First().GetRegisterValues().Count == 1 && p.First().GetRegisterValues().First().Value == 12 && p.First().GetRegisterValues().First().Scale == 0 &&
-          p.First().GetRegisterValues().First().Unit == Unit.Eur && p.First().GetRegisterValues().First().ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpense &&
+          p.First().GetRegisterValues().First().Unit == Unit.Eur && p.First().GetRegisterValues().First().ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat &&
           p.First().GetRegisterValues().First().Tag == RegisterValueTag.Import &&
           p.Last().Label == import.Label && p.Last().DeviceId == "EnergiDataService" && p.Last().Timestamp == dateTime2 && p.Last().Timestamp.Kind == dateTime2.Kind &&
           p.Last().GetRegisterValues().Count == 1 && p.Last().GetRegisterValues().First().Value == 15 && p.Last().GetRegisterValues().First().Scale == 0 &&
-          p.Last().GetRegisterValues().Last().Unit == Unit.Eur && p.Last().GetRegisterValues().First().ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpense &&
+          p.Last().GetRegisterValues().Last().Unit == Unit.Eur && p.Last().GetRegisterValues().First().ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat &&
           p.Last().GetRegisterValues().Last().Tag == RegisterValueTag.Import)));
 
         importRepository.Verify(x => x.SetCurrentTimestamp(It.Is<string>(p => p == import.Label), It.Is<DateTime>(p => p == dateTime2.AddHours(1) && p.Kind == dateTime2.Kind)));

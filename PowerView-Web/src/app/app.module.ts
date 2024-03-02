@@ -91,6 +91,8 @@ import { SettingsImportEnergiDataServiceComponent } from './components/settings/
 import { ProfileLast10yComponent } from './components/profiles/profile-last10y/profile-last10y.component';
 import { HistoryStatusComponent } from './components/data/history-status/history-status.component';
 import { HistoryStatusTableComponent } from './components/data/history-status-table/history-status-table.component';
+import { SettingsSeriesComponent } from './components/settings/pricing/settings-series/settings-series.component';
+import { SettingsSeriesTableComponent } from './components/settings/pricing/settings-series-table/settings-series-table.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -177,7 +179,9 @@ if (environment.useMockBackend == true) {
     SettingsImportEnergiDataServiceComponent,
     ProfileLast10yComponent,
     HistoryStatusComponent,
-    HistoryStatusTableComponent
+    HistoryStatusTableComponent,
+    SettingsSeriesComponent,
+    SettingsSeriesTableComponent
   ],
   imports: [
     BrowserModule,

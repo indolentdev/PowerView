@@ -228,7 +228,7 @@ namespace PowerView.Model.Test.Repository
             var reading = new Reading("TheLabel", "1", DateTime.UtcNow, new[] { new RegisterValue("1.2.3.4.5.6", 10, -1, Unit.WattHour) });
             var target = CreateTarget();
             target.Add(new[] { reading });
-            var readingObisCodeCrossed = new Reading("TheLabel", "1a", DateTime.UtcNow.AddMinutes(1), new[] { new RegisterValue(ObisCode.ElectrActiveEnergyKwhIncomeExpense, 10, 0, Unit.Eur) });
+            var readingObisCodeCrossed = new Reading("TheLabel", "1a", DateTime.UtcNow.AddMinutes(1), new[] { new RegisterValue(ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat, 10, 0, Unit.Eur) });
 
             // Act & Assert
             Assert.That(() => target.Add(new[] { readingObisCodeCrossed }), Throws.TypeOf<DataStoreException>());

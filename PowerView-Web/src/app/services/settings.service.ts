@@ -16,11 +16,15 @@ import { Import } from '../model/import';
 import { ImportCreate } from '../model/importCreate';
 import { ImportSet } from '../model/importSet';
 import { ApplicationProperties } from '../model/applicationProperties';
+import { GeneratorSeries } from '../model/generatorSeries';
+import { GeneratorSeriesSet } from '../model/generatorSeriesSet';
+import { GeneratorBaseSeriesSet } from '../model/generatorBaseSeriesSet';
 import { MqttParams } from '../model/mqttParams';
 import { ProfileGraph } from '../model/profileGraph';
 import { ProfileGraphSet } from '../model/profileGraphSet';
 import { ProfileGraphSerieSet } from '../model/profileGraphSerieSet';
 import { SerieColorSet } from '../model/serieColorSet';
+import { SerieName } from '../model/serieName';
 import { SmtpParams } from '../model/smtpParams';
 
 import { Moment } from 'moment'
@@ -34,6 +38,8 @@ const constLocal = {
   disconnectrulesOptions: "settings/disconnectrules/options",
   emailRecipients: "settings/emailrecipients",
   imports: "settings/imports",
+  generatorsSeries: "settings/generators/series",
+  generatorsBaseSeries: "settings/generators/bases/series",
   application: "settings/application",
   mqtt: "settings/mqtt",
   mqttTest: "settings/mqtt/test",
@@ -288,6 +294,56 @@ export class SettingsService {
       default:
         return TestEmailRecipientError.UnspecifiedError;
     }
+  }
+
+  public getGeneratorsSeries(): Observable<GeneratorSeriesSet> {
+    return this.dataService.get<GeneratorSeriesSet>(constLocal.generatorsSeries, undefined, new GeneratorSeriesSet);
+  }
+
+  public addGeneratorsSeries(generatorSeries: GeneratorSeries): Observable<any> {
+    return this.dataService.post(constLocal.generatorsSeries, generatorSeries)
+      .pipe(catchError(error => {
+        return throwError(this.convertToAddGeneratorSeriesError(error));
+      }));
+  }
+
+  private convertToAddGeneratorSeriesError(error: any): AddGeneratorSeriesError {
+    if (!(error instanceof HttpErrorResponse)) {
+      return AddGeneratorSeriesError.UnspecifiedError;
+    }
+
+    var httpErrorResponse = error as HttpErrorResponse;
+    switch (httpErrorResponse.status) {
+      case 400:
+        return AddGeneratorSeriesError.RequestContentIncomplete;
+      case 409:
+        return AddGeneratorSeriesError.RequestContentDuplicate;
+      default:
+        return AddGeneratorSeriesError.UnspecifiedError;
+    }
+  }
+
+  public deleteGeneratorSeries(label: string, obisCode: string): Observable<any> {
+    return this.dataService.delete(constLocal.generatorsSeries + "/" + encodeURIComponent(label) + "/" + encodeURIComponent(obisCode))
+      .pipe(catchError(error => {
+        return throwError(this.convertToDeleteGeneratorSeriesError(error));
+      }));
+  }
+
+  private convertToDeleteGeneratorSeriesError(error: any): DeleteGeneratorSeriesError {
+    if (!(error instanceof HttpErrorResponse)) {
+      return DeleteGeneratorSeriesError.UnspecifiedError;
+    }
+
+    var httpErrorResponse = error as HttpErrorResponse;
+    switch (httpErrorResponse.status) {
+      default:
+        return DeleteGeneratorSeriesError.UnspecifiedError;
+    }
+  }
+
+  public getGeneratorsBaseSeries(): Observable<GeneratorBaseSeriesSet> {
+    return this.dataService.get<GeneratorBaseSeriesSet>(constLocal.generatorsBaseSeries, undefined, new GeneratorBaseSeriesSet);
   }
 
   public getImports(): Observable<ImportSet> {
@@ -594,6 +650,16 @@ export enum TestEmailRecipientError {
   EmailTestFailed = "EmailTestFailed",
   EmailServerConnectionFailed = "EmailServerConnectionFailed",
   EmailServerAuthenticationFailed = "EmailServerAuthenticationFailed"
+}
+
+export enum AddGeneratorSeriesError {
+  UnspecifiedError = "UnspecifiedError",
+  RequestContentIncomplete = "RequestContentIncomplete",
+  RequestContentDuplicate = "RequestContentDuplicate"
+}
+
+export enum DeleteGeneratorSeriesError {
+  UnspecifiedError = "UnspecifiedError"
 }
 
 export enum AddImportError {

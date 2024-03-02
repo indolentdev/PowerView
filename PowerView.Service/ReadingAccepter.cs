@@ -48,12 +48,12 @@ public class ReadingAccepter : IReadingAccepter
 
     private bool RegisterValueOk(RegisterValue rv)
     {
-        return !rv.ObisCode.IsUtilitySpecific || rv.ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpense;
+        return !rv.ObisCode.IsUtilitySpecific || rv.ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat;
     }
 
     private bool SignalHub(IList<Reading> readings)
     {
-        return !readings.SelectMany(x => x.GetRegisterValues()).Any(x => x.ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpense);
+        return !readings.SelectMany(x => x.GetRegisterValues()).Any(x => x.ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat);
     }
 
 }

@@ -1,0 +1,58 @@
+<div>
+    <h2>{{ 'headings.series' | translate }}</h2>
+</div>
+
+<div class="divCenterOuter">
+    {{ 'headings.settingsSeriesInfo' | translate }}
+</div>
+
+<br />
+
+<div class="divCenterOuter">
+  <form #form="ngForm" [formGroup]="formGroup" (ngSubmit)="submitForm(formGroup.value)">
+    <mat-form-field style="width:19em">
+      <mat-select placeholder="{{ 'common.chooseSeries' | translate }}" formControlName="series" id="series" required>
+        <mat-option *ngFor="let opt of baseSeries" [value]="{ label:opt.label, obisCode:opt.obisCode }">
+          {{ opt.serie }}
+        </mat-option>
+      </mat-select>
+      <mat-hint align="end">{{ 'forms.settings.pricing.series.hintSeries' | translate }}</mat-hint>
+      <mat-error *ngIf="hasError('series', 'required')">{{ 'forms.settings.pricing.series.valErrors.required' | translate }}</mat-error>
+    </mat-form-field>
+
+    <br/>
+
+    <mat-form-field style="width:19em">
+      <mat-select placeholder="{{ 'common.chooseCostBreakdown' | translate }}" formControlName="costBreakdown" id="costBreakdown" required>
+        <mat-option *ngFor="let opt of costBreakdowns" [value]="opt">{{ opt.title }}</mat-option>
+      </mat-select>
+      <mat-hint align="end">{{ 'forms.settings.pricing.series.hintCostBreakdown' | translate }}</mat-hint>
+      <mat-error *ngIf="hasError('costBreakdown', 'required')">{{ 'forms.settings.pricing.series.valErrors.required' | translate }}</mat-error>
+    </mat-form-field>
+
+    <br/>
+    
+    <mat-form-field style="width:19em">
+      <input matInput type="text" placeholder="{{ 'common.chooseLabel' | translate }}" formControlName="label" id="label" required>
+      <mat-hint align="end">{{ 'forms.settings.pricing.series.hintLabel' | translate }}</mat-hint>
+      <mat-error *ngIf="hasError('label', 'required')">{{ 'forms.settings.pricing.series.valErrors.required' | translate }}</mat-error>
+      <mat-error *ngIf="hasError('label', 'minlength')">{{ 'forms.settings.pricing.series.valErrors.minLength_1' | translate }}</mat-error>
+      <mat-error *ngIf="hasError('label', 'maxlength')">{{ 'forms.settings.pricing.series.valErrors.maxLength_25' | translate }}</mat-error>
+    </mat-form-field>
+
+    <br />
+
+    <button mat-raised-button style="margin:5px;" type="submit" [disabled]="!formGroup.valid">{{ 'forms.settings.pricing.series.buttonAdd' | translate }}</button>
+  </form>
+</div>
+
+<div class="divCenterOuter">
+  <div class="divCenterInner">
+
+    <app-settings-series-table [generatorSeries]="generatorSeries"
+      (deleteGeneratorSeries)="deleteGeneratorSeries($event)">
+    </app-settings-series-table>
+    <br />
+
+  </div>
+</div>

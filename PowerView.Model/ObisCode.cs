@@ -45,7 +45,8 @@ namespace PowerView.Model
         public static readonly ObisCode ElectrActualPowerP23L1 = "1.0.22.7.0.255";
         public static readonly ObisCode ElectrActualPowerP23L2 = "1.0.42.7.0.255";
         public static readonly ObisCode ElectrActualPowerP23L3 = "1.0.62.7.0.255";
-        public static readonly ObisCode ElectrActiveEnergyKwhIncomeExpense = "1.68.25.67.0.255"; // 68=income/expense amount per kWh, 25=(active) energy import/export, 67=From timestamp and 60 mins.
+        public static readonly ObisCode ElectrActiveEnergyKwhIncomeExpenseExclVat = "1.68.25.67.0.255"; // 68=income/expense amount excl vat per kWh, 25=(active) energy import/export, 67=From timestamp and 60 mins.
+        public static readonly ObisCode ElectrActiveEnergyKwhIncomeExpenseInclVat = "1.69.25.67.0.255"; // 68=income/expense amount incl vat per kWh, 25=(active) energy import/export, 67=From timestamp and 60 mins.
 
         private static readonly Regex isElectricityImport = new Regex(@"^1\.[0-9]{1,3}\.[246]?1\.[7-8]{1}\.0\.255$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Compiled);
         private static readonly Regex isElectricityExport = new Regex(@"^1\.[0-9]{1,3}\.[246]?2\.[7-8]{1}\.0\.255$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Compiled);

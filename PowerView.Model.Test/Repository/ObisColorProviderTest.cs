@@ -17,13 +17,13 @@ public class ObisColorProviderTest
         var obisCodes = GetObisCodes().ToArray();
 
         // Assert
-        Assert.That(obisCodes.Length, Is.EqualTo(43), "Remember to extend this test fixture when adding obis code definitions");
+        Assert.That(obisCodes.Length, Is.EqualTo(44), "Remember to extend this test fixture when adding obis code definitions");
     }
 
     [Test]
     public void Black([Values("1.0.21.7.0.255", "1.0.41.7.0.255", "1.0.61.7.0.255", "1.0.22.7.0.255", "1.0.42.7.0.255", "1.0.62.7.0.255",
       "1.0.1.8.0.255", "1.0.2.8.0.255", "8.0.1.0.0.255", "6.0.1.0.0.255",
-      "6.0.2.0.0.255", "1.68.25.67.0.255")] string obisCode)
+      "6.0.2.0.0.255", "1.68.25.67.0.255", "1.69.25.67.0.255")] string obisCode)
     {
         // Arrange
         var target = CreateTarget();

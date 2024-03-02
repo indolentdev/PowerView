@@ -5,6 +5,8 @@ import { settingsCostbreakdowns } from './settings-cost-breakdowns.json';
 import { settingsDisconnectrules } from './settings-disconnectrules.json';
 import { settingsDisconnectrulesOptions } from './settings-disconnectrules-options.json';
 import { settingsEmailRecipients } from './settings-email-recipients.json';
+import { settingsGeneratorSeries } from './settings-generatorSeries.json';
+import { settingsGeneratorBaseSeries } from './settings-generatorBaseSeries.json';
 import { settingsImports } from './settings-imports.json';
 import { settingsApplication } from './settings-application.json';
 import { settingsMqtt } from './settings-mqtt.json';
@@ -160,6 +162,50 @@ export function settingsBackend(url: string, method: string, request: HttpReques
         return new Observable(resp => {
             resp.next(new HttpResponse({
                 status: 204
+            }));
+            resp.complete();
+        });
+    }
+
+    if (url.indexOf('settings/generators/series') > -1 && method === "GET") {
+        return new Observable(resp => {
+            resp.next(new HttpResponse({
+                status: 200,
+                body: {
+                    items: settingsGeneratorSeries.items
+                }
+            }));
+            resp.complete();
+        });
+    }
+
+    if (url.indexOf('settings/generators/series') > -1 && method === "POST") {
+//        return throwError(new HttpErrorResponse({status:409}));
+        return new Observable(resp => {
+            resp.next(new HttpResponse({
+                status: 204
+            }));
+            resp.complete();
+        });
+    }
+
+    if (url.indexOf('settings/generators/series') > -1 && method === "DELETE") {
+//        return throwError(new HttpErrorResponse({status:400}));
+        return new Observable(resp => {
+            resp.next(new HttpResponse({
+                status: 204
+            }));
+            resp.complete();
+        });
+    }
+
+    if (url.indexOf('settings/generators/bases/series') > -1 && method === "GET") {
+        return new Observable(resp => {
+            resp.next(new HttpResponse({
+                status: 200,
+                body: {
+                    items: settingsGeneratorBaseSeries.items
+                }
             }));
             resp.complete();
         });
