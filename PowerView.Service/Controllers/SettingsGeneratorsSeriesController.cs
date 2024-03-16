@@ -90,8 +90,9 @@ public class SettingsGeneratorsSeriesController : ControllerBase
             Items = baseSeries
                 .Select(bs => new
                 {
-                    Label = bs.BaseSeries.Label,
-                    ObisCode = bs.BaseSeries.ObisCode.ToString(),
+                    ObisCode = ObisCode.ElectrActiveEnergyKwhIncomeExpenseInclVat.ToString(),
+                    BaseLabel = bs.BaseSeries.Label,
+                    BaseObisCode = bs.BaseSeries.ObisCode.ToString(),
                     LatestTimestamp = bs.LatestTimestamp.ToString("o")
                 })
                 .ToList()

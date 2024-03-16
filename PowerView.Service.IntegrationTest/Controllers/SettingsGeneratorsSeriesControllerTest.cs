@@ -213,8 +213,9 @@ public class SettingsGeneratorsSeriesControllerTest
         var json = await response.Content.ReadFromJsonAsync<TestBasesSeriesSetDto>();
         Assert.That(json.items, Is.Not.Null);
         Assert.That(json.items.Length, Is.EqualTo(1));
-        Assert.That(json.items.First().label, Is.EqualTo("b"));
-        Assert.That(json.items.First().obisCode, Is.EqualTo("6.5.4.3.2.1"));
+        Assert.That(json.items.First().obisCode, Is.EqualTo(ObisCode.ElectrActiveEnergyKwhIncomeExpenseInclVat.ToString()));
+        Assert.That(json.items.First().baseLabel, Is.EqualTo("b"));
+        Assert.That(json.items.First().baseObisCode, Is.EqualTo("6.5.4.3.2.1"));
         Assert.That(json.items.First().latestTimestamp, Is.EqualTo(dateTime.ToString("o")));
     }
 
@@ -225,8 +226,9 @@ public class SettingsGeneratorsSeriesControllerTest
 
     internal class TestBasesSeriesDto
     {
-        public string label { get; set; }
         public string obisCode { get; set; }
+        public string baseLabel { get; set; }
+        public string baseObisCode { get; set; }
         public string latestTimestamp { get; set; }
     }
 

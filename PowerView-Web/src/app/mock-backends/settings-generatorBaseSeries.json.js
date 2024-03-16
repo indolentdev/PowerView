@@ -1,12 +1,14 @@
 export let settingsGeneratorBaseSeries = {
    "items":[
       {
-         "label":"El",
-         "obisCode":"1.68.25.67.0.255"
+         "obisCode": "1.69.25.67.0.255",
+         "baseLabel":"El",
+         "baseObisCode":"1.68.25.67.0.255"
       },
       {
-         "label": "El2",
-         "obisCode": "1.68.25.67.0.255"
+         "obisCode": "1.69.25.67.0.255",
+         "baseLabel": "El2",
+         "baseObisCode": "1.68.25.67.0.255"
       }
    ]
 }

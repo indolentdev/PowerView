@@ -44,14 +44,6 @@ export class SettingsSeriesComponent {
     this.refresh();
   }
 
-/*
-  ngOnChanges(changes: SimpleChanges) {
-    if (this.formGroup != null) {
-      this.resetForm();
-    }
-  }
-*/
-
   refresh() {
     this.settingsService.getGeneratorsSeries().subscribe(x => {
       let withNameSeries = this.obisTranslateService.AddSerieProperty(x.items, "nameLabel", "nameObisCode", "nameSeries");
@@ -60,7 +52,7 @@ export class SettingsSeriesComponent {
     });
 
     this.settingsService.getGeneratorsBaseSeries().subscribe(x => {
-      let series = this.obisTranslateService.AddSerieProperty(x.items);
+      let series = this.obisTranslateService.AddSerieProperty(x.items, "baseLabel", "baseObisCode");
       this.baseSeries = series;
     });
 
@@ -84,9 +76,17 @@ export class SettingsSeriesComponent {
 
     this.dismissSnackBar();
 
-    this.log.debug("Adding generator series", formGroupValue);
+    let generatorSeries = {
+      nameLabel: formGroupValue.label,
+      nameObisCode: formGroupValue.series.obisCode,
+      baseLabel: formGroupValue.series.baseLabel,
+      baseObisCode: formGroupValue.series.baseObisCode,
+      costBreakdownTitle: formGroupValue.costBreakdown.title
+    };
 
-    this.settingsService.addGeneratorsSeries(formGroupValue).subscribe(_ => {
+    this.log.debug("Adding generator series", generatorSeries);
+
+    this.settingsService.addGeneratorsSeries(generatorSeries).subscribe(_ => {
       this.log.debug("Add ok");
       this.translateService.get('forms.settings.pricing.series.confirmAdd').subscribe(message => {
         this.snackBarRef = this.snackBar.open(message, undefined, { duration: 9000 });

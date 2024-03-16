@@ -1,4 +1,5 @@
 PowerView version 1.2.0 - Xxxxx 2024
+- Generate electricity pricing incl. vat from pricing excl. vat and cost breakdown
 - Show history status for day, month and year intervals
 
 PowerView version 1.1.0 - January 2024
