@@ -3,5 +3,5 @@ export class GeneratorSeries {
     nameObisCode: string;
     baseLabel: string;
     baseObisCode: string;
-    costBreakdownName: string;
+    costBreakdownTitle: string;
  }

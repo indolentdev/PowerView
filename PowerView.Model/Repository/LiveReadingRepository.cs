@@ -24,11 +24,11 @@ namespace PowerView.Model.Repository
                 return;
             }
 
-            var labels = GetLabelIds(liveReadings.Select(l => l.Label).Distinct().ToList())
+            var labels = DbContext.GetLabelIds(liveReadings.Select(l => l.Label).Distinct().ToList())
                 .ToDictionary(x => x.Label, x => x.Id);
-            var deviceIds = GetDeviceIds(liveReadings.Select(l => l.DeviceId).Distinct().ToList())
+            var deviceIds = DbContext.GetDeviceIds(liveReadings.Select(l => l.DeviceId).Distinct().ToList())
                 .ToDictionary(x => x.DeviceId, x => x.Id);
-            var obisIds = GetObisIds(liveReadings.SelectMany(x => x.GetRegisterValues()).Select(x => x.ObisCode).Distinct().ToList())
+            var obisIds = DbContext.GetObisIds(liveReadings.SelectMany(x => x.GetRegisterValues()).Select(x => x.ObisCode).Distinct().ToList())
                 .ToDictionary(x => x.ObisCode, x => x.Id);
 
             var dbReadingsMap = liveReadings.ToDictionary(lr => new Db.LiveReading { LabelId = labels[lr.Label], DeviceId = deviceIds[lr.DeviceId], Timestamp = lr.Timestamp });
@@ -141,40 +141,6 @@ namespace PowerView.Model.Repository
                     yield return (new Db.LabelObisLive { LabelId = entry.Key.LabelId, ObisId = obisIds[lr.ObisCode], LatestTimestamp = entry.Key.Timestamp }, entry.Key.Id);
                 }
             }
-        }
-
-        private IList<(byte Id, string Label)> GetLabelIds(List<string> labels)
-        {
-            UnixTime now = DateTime.UtcNow;
-            var labelsAndTimestamps = labels.Select(x => new { LabelName = x, Timestamp = now });
-            DbContext.ExecuteTransaction(@"
-              INSERT INTO Label (LabelName, Timestamp) VALUES (@LabelName, @Timestamp)
-                ON CONFLICT(LabelName) DO UPDATE SET Timestamp = @Timestamp;", labelsAndTimestamps);
-
-            return DbContext.QueryTransaction<(byte Id, string Label)>("SELECT Id, LabelName FROM Label;");
-        }
-
-        private IList<(byte Id, string DeviceId)> GetDeviceIds(List<string> deviceIds)
-        {
-            UnixTime now = DateTime.UtcNow;
-            var deviceIdsAndTimestamps = deviceIds.Select(x => new { DeviceName = x, Timestamp = now });
-            DbContext.ExecuteTransaction(@"
-              INSERT INTO Device (DeviceName, Timestamp) VALUES (@DeviceName, @Timestamp)
-                ON CONFLICT(DeviceName) DO UPDATE SET Timestamp = @Timestamp;", deviceIdsAndTimestamps);
-
-            return DbContext.QueryTransaction<(byte Id, string DeviceId)>("SELECT Id, DeviceName FROM Device;");
-        }
-
-        private IList<(byte Id, ObisCode ObisCode)> GetObisIds(List<ObisCode> obisCodes)
-        {
-            var obisCodesLocal = obisCodes.Select(x => new { ObisCode = (long)x });
-            DbContext.ExecuteTransaction(@"
-              INSERT INTO Obis (ObisCode) VALUES (@ObisCode)
-                ON CONFLICT(ObisCode) DO NOTHING;", obisCodesLocal);
-
-            return DbContext.QueryTransaction<(byte Id, long ObisCode)>("SELECT Id, ObisCode FROM Obis;")
-                .Select(x => (x.Id, (ObisCode)x.ObisCode))
-                .ToList();
         }
 
         public IList<ObisCode> GetObisCodes(string label, DateTime cutoff)

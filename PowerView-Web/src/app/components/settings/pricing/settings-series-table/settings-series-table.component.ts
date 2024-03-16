@@ -10,7 +10,7 @@ import { GeneratorSeries } from '../../../../model/generatorSeries';
   styleUrls: ['./settings-series-table.component.css']
 })
 export class SettingsSeriesTableComponent {
-  displayedColumns = ['nameSeries', 'baseSeries', 'costBreakdownName', 'actions'];
+  displayedColumns = ['nameSeries', 'baseSeries', 'costBreakdownTitle', 'actions'];
   dataSource: MatTableDataSource<any>;
 
   @ViewChild(MatSort, { static: true }) sort: MatSort;

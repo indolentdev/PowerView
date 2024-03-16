@@ -86,6 +86,18 @@ namespace PowerView.Model.Test.Repository
               SELECT @Id, @LabelName, @Timestamp WHERE NOT EXISTS (SELECT 1 FROM Label WHERE Id = @Id);", labels.Select(x => new { x.Id, x.LabelName, x.Timestamp }));
         }
 
+        public static List<(byte Id, string Label)> InsertLabels(this DbContext dbContext, params string[] labels)
+        {
+            dbContext.ExecuteTransaction(@"
+              INSERT INTO Label (LabelName, Timestamp) 
+              SELECT @LabelName, @Timestamp WHERE NOT EXISTS (SELECT 1 FROM Label WHERE LabelName = @LabelName);", 
+                labels.Select(x => new { LabelName = x, Timestamp = DateTime.UtcNow }) );
+
+            var allLabels = dbContext.QueryTransaction<(byte Id, string LabelName)>("SELECT Id, LabelName FROM Label;");
+
+            return allLabels.Select(x => (x.Id, Label: x.LabelName)).Where(x => labels.Any(l => l == x.Label)).ToList();
+        }
+
         private static List<string> InsertDevices(DbContext dbContext, IDbReading[] dbReadings)
         {
             UnixTime now = DateTime.UtcNow;
@@ -150,6 +162,11 @@ namespace PowerView.Model.Test.Repository
             var allObisCodes = dbContext.QueryTransaction<(byte Id, long ObisCode)>("SELECT Id, ObisCode FROM Obis;");
 
             return allObisCodes.Select(x => (x.Id, (ObisCode)x.ObisCode)).Where(x => obisCodes.Any(oc => oc.Id == x.Id)).ToList();
+        }
+
+        public static List<(byte Id, ObisCode ObisCode)> InsertObisCodes(this DbContext dbContext, params ObisCode[] obisCodes)
+        {
+            return InsertObisCodes(dbContext, obisCodes.ToList());
         }
 
         public static List<(byte Id, ObisCode ObisCode)> InsertObisCodes(this DbContext dbContext, IList<ObisCode> obisCodes)

@@ -238,7 +238,7 @@ namespace PowerView.Model.Test.Repository
 
     private void AssertImportExists(Import import, bool not = false)
     {
-      AssertImportExists(import.Label, import.Channel, (int)import.Currency, import.FromTimestamp, import.Enabled);
+      AssertImportExists(import.Label, import.Channel, (int)import.Currency, import.FromTimestamp, import.Enabled, not);
     }
 
     private ImportRepository CreateTarget()

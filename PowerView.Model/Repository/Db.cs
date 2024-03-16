@@ -226,6 +226,15 @@ namespace PowerView.Model.Repository
             public bool Enabled { get; set; }
         }
 
+        public class GeneratorSeries
+        {
+            public string Label { get; set; }
+            public long ObisCode { get; set; }
+            public byte BaseLabelId { get; set; }
+            public byte BaseObisId { get; set; }
+            public string CostBreakdownTitle { get; set; }
+        }
+
         public class LabelObisLive
         {
             public byte LabelId { get; set; }
