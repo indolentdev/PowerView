@@ -12,7 +12,7 @@
   <form #form="ngForm" [formGroup]="formGroup" (ngSubmit)="submitForm(formGroup.value)">
     <mat-form-field style="width:19em">
       <mat-select placeholder="{{ 'common.chooseSeries' | translate }}" formControlName="series" id="series" required>
-        <mat-option *ngFor="let opt of baseSeries" [value]="{ label:opt.label, obisCode:opt.obisCode }">
+        <mat-option *ngFor="let opt of baseSeries" [value]="{ baseLabel:opt.baseLabel, baseObisCode:opt.baseObisCode, obisCode:opt.obisCode }">
           {{ opt.serie }}
         </mat-option>
       </mat-select>
