@@ -7,6 +7,7 @@ namespace PowerView.Service.Dtos
     public class EmailRecipientDto
     {
         [Required]
+        [StringLength(25, MinimumLength = 1)]
         public string Name { get; set; }
 
         [Required]

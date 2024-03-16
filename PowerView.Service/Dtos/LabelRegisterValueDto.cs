@@ -7,7 +7,7 @@ namespace PowerView.Service.Dtos
     public class LabelRegisterValueDto
     {
         [Required]
-        [MinLength(1)]
+        [StringLength(25, MinimumLength = 1)]
         public string Label { get; set; }
 
         [Required]
@@ -28,7 +28,7 @@ namespace PowerView.Service.Dtos
         public string Unit { get; set; }
 
         [Required]
-        [MinLength(1)]
+        [StringLength(25, MinimumLength = 1)]
         public string DeviceId { get; set; }
     }
 }

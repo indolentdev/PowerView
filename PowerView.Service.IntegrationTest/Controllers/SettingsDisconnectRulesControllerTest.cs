@@ -17,7 +17,7 @@ using PowerView.Service.Mappers;
 namespace PowerView.Service.IntegrationTest;
 
 [TestFixture]
-public class SettingsDisconnectRulesModuleTest
+public class SettingsDisconnectRulesControllerTest
 {
     private WebApplicationFactory<TestProgram> application;
     private HttpClient httpClient;

@@ -7,6 +7,7 @@ namespace PowerView.Service.Dtos
     public class DisconnectRuleDto : IValidatableObject
     {
         [Required]
+        [StringLength(25, MinimumLength = 1)]
         public string NameLabel { get; set; }
 
         [Required]
@@ -14,6 +15,7 @@ namespace PowerView.Service.Dtos
         public string NameObisCode { get; set; }
 
         [Required]
+        [StringLength(25, MinimumLength = 1)]
         public string EvaluationLabel { get; set; }
 
         [Required]
