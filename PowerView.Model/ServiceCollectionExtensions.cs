@@ -42,6 +42,7 @@ namespace PowerView.Model
             serviceCollection.AddTransient<ICostBreakdownRepository, CostBreakdownRepository>();
             serviceCollection.AddTransient<IImportRepository, ImportRepository>();
             serviceCollection.AddTransient<IGeneratorSeriesRepository, GeneratorSeriesRepository>();
+            serviceCollection.AddTransient<ICostBreakdownGeneratorSeriesRepository, CostBreakdownGeneratorSeriesRepository>();
 
             return serviceCollection;
         }

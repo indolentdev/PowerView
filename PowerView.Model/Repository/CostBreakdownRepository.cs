@@ -48,12 +48,12 @@ ORDER BY cb.Id, cbe.FromDate, cbe.ToDate, cbe.Name;";
       return queryResult.Select(x => ToCostBreakdown(x.Parent, x.Children)).ToList();
     }
 
-    private CostBreakdown ToCostBreakdown(Db.CostBreakdown costBreakdown, IEnumerable<Db.CostBreakdownEntry> entries)
+    internal static CostBreakdown ToCostBreakdown(Db.CostBreakdown costBreakdown, IEnumerable<Db.CostBreakdownEntry> entries)
     {
       return new CostBreakdown(costBreakdown.Title, (Unit)costBreakdown.Currency, costBreakdown.Vat, entries.Select(ToCostBreakdownEntry).ToList());
     }
 
-    private CostBreakdownEntry ToCostBreakdownEntry(Db.CostBreakdownEntry entry)
+    private static CostBreakdownEntry ToCostBreakdownEntry(Db.CostBreakdownEntry entry)
     {
       return new CostBreakdownEntry(entry.FromDate, entry.ToDate, entry.Name, entry.StartTime, entry.EndTime, entry.Amount);
     }

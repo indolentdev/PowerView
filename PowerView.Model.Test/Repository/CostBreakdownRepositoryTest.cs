@@ -37,9 +37,9 @@ namespace PowerView.Model.Test.Repository
       // Arrange
       var dateTime = new DateTime(2023, 9, 3, 15, 54, 28, DateTimeKind.Utc);
       var costBreakdownDb1 = new Db.CostBreakdown { Title = "t1", Currency = (int)Unit.Eur, Vat = 10 };
-      InsertCostBreakdown(costBreakdownDb1);
+      DbContext.InsertCostBreakdown(costBreakdownDb1);
       var costBreakdownDb2 = new Db.CostBreakdown { Title = "t2", Currency = (int)Unit.Dkk, Vat = 25 };
-      InsertCostBreakdown(costBreakdownDb2);
+      DbContext.InsertCostBreakdown(costBreakdownDb2);
       var target = CreateTarget();
 
       // Act
@@ -78,7 +78,7 @@ namespace PowerView.Model.Test.Repository
       // Arrange
       var dateTime = new DateTime(2023, 9, 3, 15, 54, 28, DateTimeKind.Utc);
       var costBreakdownDb1 = new Db.CostBreakdown { Title = "t1", Currency = (int)Unit.Eur, Vat = 10 };
-      InsertCostBreakdown(costBreakdownDb1);
+      DbContext.InsertCostBreakdown(costBreakdownDb1);
       var target = CreateTarget();
 
       // Act
@@ -97,7 +97,7 @@ namespace PowerView.Model.Test.Repository
       var costBreakdownDb1 = new Db.CostBreakdown { Title = "t1", Currency = (int)Unit.Eur, Vat = 10 };
       var costBreakdownEntryDb11 = new Db.CostBreakdownEntry { FromDate = dateTime, ToDate = dateTime.AddDays(4), Name = "N11", StartTime = 2, EndTime = 20, Amount = 1.234567 };
       var costBreakdownEntryDb12 = new Db.CostBreakdownEntry { FromDate = dateTime, ToDate = dateTime.AddDays(8), Name = "N12", StartTime = 3, EndTime = 21, Amount = 2.345678 };
-      InsertCostBreakdown(costBreakdownDb1, costBreakdownEntryDb11, costBreakdownEntryDb12);
+      DbContext.InsertCostBreakdown(costBreakdownDb1, costBreakdownEntryDb11, costBreakdownEntryDb12);
       var target = CreateTarget();
 
       // Act
@@ -114,9 +114,9 @@ namespace PowerView.Model.Test.Repository
       // Arrange
       var dateTime = new DateTime(2023, 9, 3, 15, 54, 28, DateTimeKind.Utc);
       var costBreakdownDb1 = new Db.CostBreakdown { Title = "t1", Currency = (int)Unit.Eur, Vat = 10 };
-      InsertCostBreakdown(costBreakdownDb1);
+      DbContext.InsertCostBreakdown(costBreakdownDb1);
       var costBreakdownDb2 = new Db.CostBreakdown { Title = "t2", Currency = (int)Unit.Dkk, Vat = 25 };
-      InsertCostBreakdown(costBreakdownDb2);
+      DbContext.InsertCostBreakdown(costBreakdownDb2);
       var target = CreateTarget();
 
       // Act
@@ -136,10 +136,10 @@ namespace PowerView.Model.Test.Repository
       var costBreakdownDb1 = new Db.CostBreakdown { Title = "t1", Currency = (int)Unit.Eur, Vat = 10 };
       var costBreakdownEntryDb11 = new Db.CostBreakdownEntry { FromDate = dateTime, ToDate = dateTime.AddDays(4), Name = "N11", StartTime = 2, EndTime = 20, Amount = 1.234567 };
       var costBreakdownEntryDb12 = new Db.CostBreakdownEntry { FromDate = dateTime, ToDate = dateTime.AddDays(8), Name = "N12", StartTime = 3, EndTime = 21, Amount = 2.345678 };
-      InsertCostBreakdown(costBreakdownDb1, costBreakdownEntryDb11, costBreakdownEntryDb12);
+      DbContext.InsertCostBreakdown(costBreakdownDb1, costBreakdownEntryDb11, costBreakdownEntryDb12);
       var costBreakdownDb2 = new Db.CostBreakdown { Title = "t2", Currency = (int)Unit.Dkk, Vat = 25 };
       var costBreakdownEntryDb21 = new Db.CostBreakdownEntry { FromDate = dateTime, ToDate = dateTime.AddDays(2), Name = "N21", StartTime = 0, EndTime = 23, Amount = 3.456789 };
-      InsertCostBreakdown(costBreakdownDb2, costBreakdownEntryDb21);
+      DbContext.InsertCostBreakdown(costBreakdownDb2, costBreakdownEntryDb21);
       var target = CreateTarget();
 
       // Act
@@ -222,10 +222,10 @@ namespace PowerView.Model.Test.Repository
       var costBreakdownDb1 = new Db.CostBreakdown { Title = "t1", Currency = (int)Unit.Eur, Vat = 10 };
       var costBreakdownEntryDb11 = new Db.CostBreakdownEntry { FromDate = dateTime, ToDate = dateTime.AddDays(4), Name = "N11", StartTime = 2, EndTime = 20, Amount = 1.234567 };
       var costBreakdownEntryDb12 = new Db.CostBreakdownEntry { FromDate = dateTime, ToDate = dateTime.AddDays(8), Name = "N12", StartTime = 3, EndTime = 21, Amount = 2.345678 };
-      InsertCostBreakdown(costBreakdownDb1, costBreakdownEntryDb11, costBreakdownEntryDb12);
+      DbContext.InsertCostBreakdown(costBreakdownDb1, costBreakdownEntryDb11, costBreakdownEntryDb12);
       var costBreakdownDb2 = new Db.CostBreakdown { Title = "t2", Currency = (int)Unit.Dkk, Vat = 25 };
       var costBreakdownEntryDb21 = new Db.CostBreakdownEntry { FromDate = dateTime, ToDate = dateTime.AddDays(4), Name = "N11", StartTime = 2, EndTime = 20, Amount = 1.234567 };
-      InsertCostBreakdown(costBreakdownDb2, costBreakdownEntryDb21);
+      DbContext.InsertCostBreakdown(costBreakdownDb2, costBreakdownEntryDb21);
       var target = CreateTarget();
 
       // Act
@@ -256,7 +256,7 @@ namespace PowerView.Model.Test.Repository
       // Arrange
       var dateTime = new DateTime(2023, 9, 3, 15, 54, 28, DateTimeKind.Utc);
       var costBreakdownDb = new Db.CostBreakdown { Title = "t1", Currency = (int)Unit.Eur, Vat = 10 };
-      InsertCostBreakdown(costBreakdownDb);
+      DbContext.InsertCostBreakdown(costBreakdownDb);
       var entry = new CostBreakdownEntry(dateTime, dateTime.AddDays(5), "e", 0, 23, 1.234567);
       var target = CreateTarget();
 
@@ -285,7 +285,7 @@ namespace PowerView.Model.Test.Repository
       // Arrange
       var dateTime = new DateTime(2023, 9, 3, 15, 54, 28, DateTimeKind.Utc);
       var costBreakdownDb = new Db.CostBreakdown { Title = "t1", Currency = (int)Unit.Eur, Vat = 10 };
-      InsertCostBreakdown(costBreakdownDb, new Db.CostBreakdownEntry { FromDate = dateTime, ToDate = dateTime.AddDays(5), Name = "e", StartTime = 1, EndTime = 22, Amount = 1.23 });
+      DbContext.InsertCostBreakdown(costBreakdownDb, new Db.CostBreakdownEntry { FromDate = dateTime, ToDate = dateTime.AddDays(5), Name = "e", StartTime = 1, EndTime = 22, Amount = 1.23 });
       var entry = new CostBreakdownEntry(dateTime, dateTime.AddDays(5), "e", 0, 23, 1.234567);
       var target = CreateTarget();
 
@@ -317,7 +317,7 @@ namespace PowerView.Model.Test.Repository
       var dateTime = new DateTime(2023, 9, 3, 15, 54, 28, DateTimeKind.Utc);
       var costBreakdownDb = new Db.CostBreakdown { Title = "t1", Currency = (int)Unit.Eur, Vat = 10 };
       var costBreakdownEntryDb = new Db.CostBreakdownEntry { FromDate = dateTime, ToDate = dateTime.AddDays(4), Name = "N11", StartTime = 2, EndTime = 20, Amount = 1.234567 };
-      InsertCostBreakdown(costBreakdownDb, costBreakdownEntryDb);
+      DbContext.InsertCostBreakdown(costBreakdownDb, costBreakdownEntryDb);
       var target = CreateTarget();
       var costBreakdownEntry = new CostBreakdownEntry(dateTime.AddDays(-1), dateTime.AddDays(6), "OtherName", 4, 19, 9.876543);
 
@@ -348,7 +348,7 @@ namespace PowerView.Model.Test.Repository
       // Arrange
       var dateTime = new DateTime(2023, 9, 3, 15, 54, 28, DateTimeKind.Utc);
       var costBreakdownDb = new Db.CostBreakdown { Title = "t1", Currency = (int)Unit.Eur, Vat = 10 };
-      InsertCostBreakdown(costBreakdownDb);
+      DbContext.InsertCostBreakdown(costBreakdownDb);
       var target = CreateTarget();
       var costBreakdownEntry = new CostBreakdownEntry(dateTime.AddDays(-1), dateTime.AddDays(6), "OtherName", 4, 19, 9.876543);
 
@@ -378,7 +378,7 @@ namespace PowerView.Model.Test.Repository
       var dateTime = new DateTime(2023, 9, 3, 15, 54, 28, DateTimeKind.Utc);
       var costBreakdownDb = new Db.CostBreakdown { Title = "t1", Currency = (int)Unit.Eur, Vat = 10 };
       var costBreakdownEntryDb = new Db.CostBreakdownEntry { FromDate = dateTime, ToDate = dateTime.AddDays(4), Name = "N11", StartTime = 2, EndTime = 20, Amount = 1.234567 };
-      InsertCostBreakdown(costBreakdownDb, costBreakdownEntryDb);
+      DbContext.InsertCostBreakdown(costBreakdownDb, costBreakdownEntryDb);
       var target = CreateTarget();
 
       // Act
@@ -399,7 +399,7 @@ namespace PowerView.Model.Test.Repository
       Assert.That(() => target.DeleteCostBreakdownEntry("DoesNotExist", dateTime, dateTime, "Name"), Throws.TypeOf<DataStoreException>());
     }
 
-    private static void AssertCostBreakdown(Db.CostBreakdown dbCostBreakdown, Db.CostBreakdownEntry[] dbCostBreakdownEntry, CostBreakdown costBreakdown)
+    internal static void AssertCostBreakdown(Db.CostBreakdown dbCostBreakdown, Db.CostBreakdownEntry[] dbCostBreakdownEntry, CostBreakdown costBreakdown)
     {
       Assert.That(costBreakdown.Title, Is.EqualTo(dbCostBreakdown.Title));
       Assert.That(costBreakdown.Currency, Is.EqualTo((Unit)dbCostBreakdown.Currency));
@@ -459,22 +459,6 @@ namespace PowerView.Model.Test.Repository
     private CostBreakdownRepository CreateTarget()
     {
       return new CostBreakdownRepository(DbContext);
-    }
-
-    private void InsertCostBreakdown(Db.CostBreakdown costBreakdown, params Db.CostBreakdownEntry[] costBreakdownEntries)
-    {
-      var id = DbContext.QueryTransaction<long>(
-        "INSERT INTO CostBreakdown (Title,Currency,Vat) VALUES (@Title,@Currency,@Vat); SELECT last_insert_rowid();",
-        costBreakdown).First();
-      costBreakdown.Id = id;
-
-      foreach (var entry in costBreakdownEntries)
-      {
-        entry.CostBreakdownId = id;
-      }
-
-      DbContext.ExecuteTransaction(
-        "INSERT INTO CostBreakdownEntry (CostBreakdownId,FromDate,ToDate,Name,StartTime,EndTime,Amount) VALUES (@CostBreakdownId,@FromDate,@ToDate,@Name,@StartTime,@EndTime,@Amount);", costBreakdownEntries);
     }
 
   }

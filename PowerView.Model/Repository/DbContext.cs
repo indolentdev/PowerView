@@ -54,6 +54,11 @@ namespace PowerView.Model.Repository
             return InTransaction(transaction => connection.Query(sql, param, transaction, false, CommandTimeout).ToList());
         }
 
+        internal void QueryMultiMappingTransaction<T1, T2, T3, TReturn>(string sql, Func<T1, T2, T3, TReturn> map, object param = null, string splitOn = "Id")
+        {
+            InTransaction(transaction => connection.Query(sql, map, param, transaction, true, splitOn, CommandTimeout));
+        }
+
         internal IList<TReturn> QueryNoTransaction<TReturn>(string sql, object param = null, int? commandTimeout = null)
         {
             var cmdTimeout = commandTimeout != null ? commandTimeout.Value : CommandTimeout;

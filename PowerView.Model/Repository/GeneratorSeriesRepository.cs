@@ -23,12 +23,12 @@ SELECT gs.Label, gs.ObisCode, bl.LabelName AS BaseLabel, bo.ObisCode AS BaseObis
 FROM GeneratorSeries gs
 JOIN Label bl ON gs.BaseLabelId = bl.Id
 JOIN Obis bo ON gs.BaseObisId = bo.Id;";
-      var queryResult = DbContext.QueryTransaction<dynamic>(sql);
+      var queryResult = DbContext.QueryTransaction<Db.GeneratorSeriesEx>(sql);
 
       return queryResult.Select(ToGeneratorSeries).ToList();
     }
 
-    private static GeneratorSeries ToGeneratorSeries(dynamic gs)
+    internal static GeneratorSeries ToGeneratorSeries(Db.GeneratorSeriesEx gs)
     {
       return new GeneratorSeries(new SeriesName(gs.Label, gs.ObisCode), new SeriesName(gs.BaseLabel, gs.BaseObisCode), gs.CostBreakdownTitle);
     }

@@ -37,7 +37,7 @@ namespace PowerView.Model.Test.Repository
       // Arrange
       var labels = DbContext.InsertLabels("lbl2", "lbl4");
       var obisCodes = DbContext.InsertObisCodes(ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat);
-      InsertGeneratorSeries(
+      DbContext.InsertGeneratorSeries(
         new Db.GeneratorSeries { Label = "lbl1", ObisCode = ObisCode.ElectrActiveEnergyKwhIncomeExpenseInclVat, BaseLabelId = labels[0].Id, BaseObisId = obisCodes[0].Id, CostBreakdownTitle = "CostBreakdown1" },
         new Db.GeneratorSeries { Label = "lbl3", ObisCode = ObisCode.ElectrActiveEnergyKwhIncomeExpenseInclVat, BaseLabelId = labels[1].Id, BaseObisId = obisCodes[0].Id, CostBreakdownTitle = "CostBreakdown2" });
 
@@ -127,7 +127,7 @@ namespace PowerView.Model.Test.Repository
       // Arrange
       var labels = DbContext.InsertLabels("lbl2", "lbl4");
       var obisCodes = DbContext.InsertObisCodes(ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat);
-      InsertGeneratorSeries(
+      DbContext.InsertGeneratorSeries(
         new Db.GeneratorSeries { Label = "lbl1", ObisCode = ObisCode.ElectrActiveEnergyKwhIncomeExpenseInclVat, BaseLabelId = labels[0].Id, BaseObisId = obisCodes[0].Id, CostBreakdownTitle = "CostBreakdown1" },
         new Db.GeneratorSeries { Label = "lbl3", ObisCode = ObisCode.ElectrActiveEnergyKwhIncomeExpenseInclVat, BaseLabelId = labels[1].Id, BaseObisId = obisCodes[0].Id, CostBreakdownTitle = "CostBreakdown2" });
       var target = CreateTarget();
@@ -174,7 +174,7 @@ namespace PowerView.Model.Test.Repository
       }));
     }
 
-    private static void AssertGeneratorSeries(SeriesName series, SeriesName baseSeries, string costBreakdownTitle, GeneratorSeries generatorSeries)
+    internal static void AssertGeneratorSeries(SeriesName series, SeriesName baseSeries, string costBreakdownTitle, GeneratorSeries generatorSeries)
     {
       Assert.That(generatorSeries.Series, Is.EqualTo(series));
       Assert.That(generatorSeries.BaseSeries, Is.EqualTo(baseSeries));
@@ -204,13 +204,6 @@ namespace PowerView.Model.Test.Repository
     private GeneratorSeriesRepository CreateTarget()
     {
       return new GeneratorSeriesRepository(DbContext);
-    }
-
-    private void InsertGeneratorSeries(params Db.GeneratorSeries[] generatorSeries)
-    {
-      DbContext.ExecuteTransaction(
-        "INSERT INTO GeneratorSeries (Label, ObisCode, BaseLabelId, BaseObisId, CostBreakdownTitle) VALUES (@Label, @ObisCode, @BaseLabelId, @BaseObisId, @CostBreakdownTitle);",
-        generatorSeries);
     }
 
   }

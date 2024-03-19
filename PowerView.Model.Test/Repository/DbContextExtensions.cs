@@ -193,5 +193,28 @@ namespace PowerView.Model.Test.Repository
               streamPositions.Select(x => new { x.StreamName, x.LabelId, x.Position }));
         }
 
+        public static void InsertCostBreakdown(this DbContext dbContext, Db.CostBreakdown costBreakdown, params Db.CostBreakdownEntry[] costBreakdownEntries)
+        {
+            var id = dbContext.QueryTransaction<long>(
+              "INSERT INTO CostBreakdown (Title,Currency,Vat) VALUES (@Title,@Currency,@Vat); SELECT last_insert_rowid();",
+              costBreakdown).First();
+            costBreakdown.Id = id;
+
+            foreach (var entry in costBreakdownEntries)
+            {
+                entry.CostBreakdownId = id;
+            }
+
+            dbContext.ExecuteTransaction(
+              "INSERT INTO CostBreakdownEntry (CostBreakdownId,FromDate,ToDate,Name,StartTime,EndTime,Amount) VALUES (@CostBreakdownId,@FromDate,@ToDate,@Name,@StartTime,@EndTime,@Amount);", costBreakdownEntries);
+        }
+
+        public static void InsertGeneratorSeries(this DbContext dbContext, params Db.GeneratorSeries[] generatorSeries)
+        {
+            dbContext.ExecuteTransaction(
+              "INSERT INTO GeneratorSeries (Label, ObisCode, BaseLabelId, BaseObisId, CostBreakdownTitle) VALUES (@Label, @ObisCode, @BaseLabelId, @BaseObisId, @CostBreakdownTitle);",
+              generatorSeries);
+        }
+
     }
 }
