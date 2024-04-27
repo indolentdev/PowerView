@@ -16,24 +16,21 @@ namespace PowerView.Service.Controllers;
 public class SettingsProfileGraphsController : ControllerBase
 {
     private readonly ILogger logger;
-    private readonly ISeriesNameRepository serieNameRepository;
+    private readonly ISeriesNameProvider serieNameProvider;
     private readonly IProfileGraphRepository profileGraphRepository;
-    private readonly ILocationContext locationContext;
 
-    public SettingsProfileGraphsController(ILogger<SettingsProfileGraphsController> logger, ISeriesNameRepository serieNameRepository, IProfileGraphRepository profileGraphRepository, ILocationContext locationContext)
+    public SettingsProfileGraphsController(ILogger<SettingsProfileGraphsController> logger, ISeriesNameProvider serieNameProvider, IProfileGraphRepository profileGraphRepository)
     {
         this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        this.serieNameRepository = serieNameRepository ?? throw new ArgumentNullException(nameof(serieNameRepository));
+        this.serieNameProvider = serieNameProvider ?? throw new ArgumentNullException(nameof(serieNameProvider));
         this.profileGraphRepository = profileGraphRepository ?? throw new ArgumentNullException(nameof(profileGraphRepository));
-        this.locationContext = locationContext ?? throw new ArgumentNullException(nameof(locationContext));
     }
 
     [HttpGet("series")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public ActionResult GetProfileGraphSeries()
     {
-        var timeZoneInfo = locationContext.TimeZoneInfo;
-        var serieNames = serieNameRepository.GetSeriesNames(timeZoneInfo);
+        var serieNames = serieNameProvider.GetSeriesNames();
 
         var day = serieNames.Where(sn => !sn.ObisCode.IsDelta || sn.ObisCode == ObisCode.ElectrActiveEnergyA14NetDelta || sn.ObisCode == ObisCode.ElectrActiveEnergyA23NetDelta)
           .Select(sn => new { Period = "day", sn.Label, ObisCode = sn.ObisCode.ToString() });

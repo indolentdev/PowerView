@@ -17,7 +17,7 @@ namespace PowerView.Model.Test.SeriesGenerators
     public void IsSatisfiedBy(string minutendObisCode, string substrahendObisCoe, bool expectedResult)
     {
       // Arrange
-      var dict = new Dictionary<ObisCode, IEnumerable<NormalizedDurationRegisterValue>>
+      var dict = new Dictionary<ObisCode, ICollection<NormalizedDurationRegisterValue>>
       {
         { "1.2.3.4.5.6", new List<NormalizedDurationRegisterValue>() },
         { "6.5.4.3.2.1", new List<NormalizedDurationRegisterValue>() }

@@ -18,6 +18,7 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddTransient<IEventQueue, EventQueue>();
         serviceCollection.AddTransient<IReadingAccepter, ReadingAccepter>();
         serviceCollection.AddTransient<IUrlProvider, UrlProvider>();
+        serviceCollection.AddTransient<ISeriesNameProvider, SeriesNameProvider>();
 
         // Translations
         serviceCollection.AddTransient<ITranslation, Translation>();

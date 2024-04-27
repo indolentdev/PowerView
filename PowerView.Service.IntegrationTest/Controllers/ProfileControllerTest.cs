@@ -25,6 +25,7 @@ public class ProfileControllerTest
     private Mock<IProfileRepository> profileRepository;
     private Mock<ISeriesColorRepository> serieRepository;
     private Mock<IProfileGraphRepository> profileGraphRepository;
+    private Mock<ICostBreakdownGeneratorSeriesRepository> costBreakdownGeneratorSeriesRepository;
     private Mock<ISerieMapper> serieMapper;
 
     [SetUp]
@@ -33,11 +34,13 @@ public class ProfileControllerTest
         profileRepository = new Mock<IProfileRepository>();
         serieRepository = new Mock<ISeriesColorRepository>();
         profileGraphRepository = new Mock<IProfileGraphRepository>();
+        costBreakdownGeneratorSeriesRepository = new Mock<ICostBreakdownGeneratorSeriesRepository>();
         serieMapper = new Mock<ISerieMapper>();
 
         serieRepository.Setup(sr => sr.GetColorCached(It.IsAny<string>(), It.IsAny<ObisCode>())).Returns<string, ObisCode>((l, oc) => "SC_" + l + "_" + oc);
         serieMapper.Setup(ocm => ocm.MapToSerieType(It.IsAny<ObisCode>())).Returns<ObisCode>(oc => "ST_" + oc);
         serieMapper.Setup(ocm => ocm.MapToSerieYAxis(It.IsAny<ObisCode>())).Returns<ObisCode>(oc => "YA_" + oc);
+        costBreakdownGeneratorSeriesRepository.Setup(x => x.GetCostBreakdownGeneratorSeries()).Returns(new List<CostBreakdownGeneratorSeries>());
 
         application = new WebApplicationFactory<TestProgram>()
             .WithWebHostBuilder(builder =>
@@ -47,6 +50,7 @@ public class ProfileControllerTest
                     sc.AddSingleton(profileRepository.Object);
                     sc.AddSingleton(serieRepository.Object);
                     sc.AddSingleton(profileGraphRepository.Object);
+                    sc.AddSingleton(costBreakdownGeneratorSeriesRepository.Object);
                     sc.AddSingleton(TimeZoneHelper.GetDenmarkLocationContext());
                     sc.AddSingleton(serieMapper.Object);
                 });

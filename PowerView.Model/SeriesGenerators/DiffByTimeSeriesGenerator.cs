@@ -17,7 +17,7 @@ namespace PowerView.Model.SeriesGenerators
       generatedValues = new List<NormalizedDurationRegisterValue>();
     }
 
-    public bool IsSatisfiedBy(IDictionary<ObisCode, IEnumerable<NormalizedDurationRegisterValue>> values)
+    public bool IsSatisfiedBy(IDictionary<ObisCode, ICollection<NormalizedDurationRegisterValue>> values)
     {
       return values.ContainsKey(minuendObisCode) && values.ContainsKey(substrahendObisCode);
     }

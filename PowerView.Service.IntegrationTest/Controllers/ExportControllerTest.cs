@@ -60,7 +60,7 @@ public class ExportControllerTest
         var response = await httpClient.GetAsync($"api/export/labels");
 
         // Assert
-        seriesNameRepository.Verify(x => x.GetStoredSeriesNames());
+        seriesNameRepository.Verify(x => x.GetSeriesNames());
     }
 
     [Test]
@@ -755,8 +755,7 @@ public class ExportControllerTest
 
     private void SetupSeriesNameRepositoryGetStoredSeriesNames(params SeriesName[] seriesNames)
     {
-        seriesNameRepository.Setup(x => x.GetStoredSeriesNames())
-            .Returns(seriesNames);
+        seriesNameRepository.Setup(x => x.GetSeriesNames()).Returns(seriesNames);
     }
 
     private void SetupExportRepositoryGetLiveCumulativeSeries(TimeRegisterValueLabelSeriesSet lss)

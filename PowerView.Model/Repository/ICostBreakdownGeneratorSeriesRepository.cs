@@ -11,5 +11,5 @@ namespace PowerView.Model.Repository;
 
 public interface ICostBreakdownGeneratorSeriesRepository
 {
-  ICollection<CostBreakdownGeneratorSeries> GetCostBreakdownGeneratorSeries();
+  IList<CostBreakdownGeneratorSeries> GetCostBreakdownGeneratorSeries();
 }

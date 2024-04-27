@@ -104,7 +104,7 @@ namespace PowerView.Service.Mappers
                 return "dcOutputStatusHiddenYAxis";
             }
 
-            if (obisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat)
+            if (obisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat || obisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpenseInclVat)
             {
                 return "currencyAmount";
             }

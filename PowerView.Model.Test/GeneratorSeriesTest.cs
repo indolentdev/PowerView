@@ -62,5 +62,22 @@ namespace PowerView.Model.Test
       Assert.That(t1.Equals((object)t3), Is.False);
     }
 
+    [Test]
+    [TestCase("1.69.25.67.0.255", "1.68.25.67.0.255", "60-minutes", true)]
+    [TestCase("1.69.25.67.0.255", "1.68.25.67.0.255", "30-minutes", false)]
+    [TestCase("1.69.25.67.0.255", "1.70.25.67.0.255", "60-minutes", false)]
+    [TestCase("1.70.25.67.0.255", "1.68.25.67.0.255", "60-minutes", false)]
+    public void SupportsInterval(string obisCode, string baseObisCode, string interval, bool expected)
+    {
+      // Arrange
+      var target = new GeneratorSeries(new SeriesName("lbl", obisCode), new SeriesName("lbl", baseObisCode), "cbTitle");
+
+      // Act
+      var supported = target.SupportsInterval(interval);
+
+      // Assert
+      Assert.That(supported, Is.EqualTo(expected));
+    }
+
   }
 }

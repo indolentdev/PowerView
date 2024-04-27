@@ -19,9 +19,8 @@ public class SettingsProfileGraphsControllerTest
 {
     private WebApplicationFactory<TestProgram> application;
     private HttpClient httpClient;
-    private Mock<ISeriesNameRepository> serieNameRepository;
+    private Mock<ISeriesNameProvider> serieNameProvider;
     private Mock<IProfileGraphRepository> profileGraphRepository;
-    private ILocationContext locationContext;
 
     private const string ProfileGraphsRoute = "/api/settings/profilegraphs";
     private const string ProfileGraphsSeriesRoute = ProfileGraphsRoute + "/series";
@@ -32,18 +31,16 @@ public class SettingsProfileGraphsControllerTest
     [SetUp]
     public void SetUp()
     {
-        serieNameRepository = new Mock<ISeriesNameRepository>();
+        serieNameProvider = new Mock<ISeriesNameProvider>();
         profileGraphRepository = new Mock<IProfileGraphRepository>();
-        locationContext = TimeZoneHelper.GetDenmarkLocationContext();
 
         application = new WebApplicationFactory<TestProgram>()
             .WithWebHostBuilder(builder =>
             {
                 builder.ConfigureServices((ctx, sc) =>
                 {
-                    sc.AddSingleton(serieNameRepository.Object);
+                    sc.AddSingleton(serieNameProvider.Object);
                     sc.AddSingleton(profileGraphRepository.Object);
-                    sc.AddSingleton(locationContext);
                 });
             });
 
@@ -64,7 +61,7 @@ public class SettingsProfileGraphsControllerTest
         var serieNames = new[] { new SeriesName(label, ObisCode.ElectrActiveEnergyA14Delta), new SeriesName(label, ObisCode.ElectrActiveEnergyA14Period),
             new SeriesName(label, ObisCode.ElectrActualPowerP14),
             new SeriesName(label, ObisCode.ElectrActiveEnergyA14NetDelta), new SeriesName(label, ObisCode.ElectrActiveEnergyA23NetDelta) };
-        serieNameRepository.Setup(snr => snr.GetSeriesNames(It.IsAny<TimeZoneInfo>())).Returns(serieNames);
+        serieNameProvider.Setup(snr => snr.GetSeriesNames()).Returns(serieNames);
 
         // Act
         var response = await httpClient.GetAsync($"api/settings/profilegraphs/series");
@@ -90,7 +87,7 @@ public class SettingsProfileGraphsControllerTest
         AssertProfileGraphSerie("decade", label, ObisCode.ElectrActiveEnergyA14Period, json.items[13]);
         AssertProfileGraphSerie("decade", label, ObisCode.ElectrActiveEnergyA14NetDelta, json.items[14]);
         AssertProfileGraphSerie("decade", label, ObisCode.ElectrActiveEnergyA23NetDelta, json.items[15]);
-        serieNameRepository.Verify(snr => snr.GetSeriesNames(locationContext.TimeZoneInfo));
+        serieNameProvider.Verify(snr => snr.GetSeriesNames());
     }
 
     [Test]

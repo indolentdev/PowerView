@@ -5,9 +5,7 @@ namespace PowerView.Model.Repository
 {
   public interface ISeriesNameRepository
   {
-    IList<SeriesName> GetSeriesNames(TimeZoneInfo timeZoneInfo);
-
-    IList<SeriesName> GetStoredSeriesNames();
+    IList<SeriesName> GetSeriesNames();
   }
 }
 

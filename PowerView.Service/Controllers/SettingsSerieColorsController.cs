@@ -19,17 +19,15 @@ public class SettingsSerieColorsController : ControllerBase
 {
     private readonly ILogger logger;
     private readonly ISeriesColorRepository serieColorRepository;
-    private readonly ISeriesNameRepository serieNameRepository;
+    private readonly ISeriesNameProvider serieNameProvider;
     private readonly IObisColorProvider obisColorProvider;
-    private readonly ILocationContext locationContext;
 
-    public SettingsSerieColorsController(ILogger<SettingsSerieColorsController> logger, ISeriesColorRepository serieColorRepository, ISeriesNameRepository serieNameRepository, IObisColorProvider obisColorProvider, ILocationContext locationContext)
+    public SettingsSerieColorsController(ILogger<SettingsSerieColorsController> logger, ISeriesColorRepository serieColorRepository, ISeriesNameProvider serieNameProvider, IObisColorProvider obisColorProvider)
     {
         this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         this.serieColorRepository = serieColorRepository ?? throw new ArgumentNullException(nameof(serieColorRepository));
-        this.serieNameRepository = serieNameRepository ?? throw new ArgumentNullException(nameof(serieNameRepository));
+        this.serieNameProvider = serieNameProvider ?? throw new ArgumentNullException(nameof(serieNameProvider));
         this.obisColorProvider = obisColorProvider ?? throw new ArgumentNullException(nameof(obisColorProvider));
-        this.locationContext = locationContext ?? throw new ArgumentNullException(nameof(locationContext));
     }
 
     [HttpGet("")]
@@ -37,8 +35,7 @@ public class SettingsSerieColorsController : ControllerBase
     public ActionResult GetSeriesColors()
     {
         var seriesColorsDb = serieColorRepository.GetSeriesColors();
-        var timeZoneInfo = locationContext.TimeZoneInfo;
-        var seriesColors = serieNameRepository.GetSeriesNames(timeZoneInfo)
+        var seriesColors = serieNameProvider.GetSeriesNames()
           .ToDictionary(sn => sn, sn => new SeriesColor(new SeriesName(sn.Label, sn.ObisCode), obisColorProvider.GetColor(sn.ObisCode)));
 
         foreach (var seriesColor in seriesColorsDb)

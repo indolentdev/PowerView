@@ -20,9 +20,8 @@ public class SettingsSerieColorsModuleTest
     private WebApplicationFactory<TestProgram> application;
     private HttpClient httpClient;
     private Mock<ISeriesColorRepository> seriesColorRepository;
-    private Mock<ISeriesNameRepository> seriesNameRepository;
+    private Mock<ISeriesNameProvider> seriesNameProvider;
     private Mock<IObisColorProvider> obisColorProvider;
-    private ILocationContext locationContext;
 
     private const string SerieColorsRoute = "/api/settings/seriecolors";
 
@@ -30,9 +29,8 @@ public class SettingsSerieColorsModuleTest
     public void SetUp()
     {
         seriesColorRepository = new Mock<ISeriesColorRepository>();
-        seriesNameRepository = new Mock<ISeriesNameRepository>();
+        seriesNameProvider = new Mock<ISeriesNameProvider>();
         obisColorProvider = new Mock<IObisColorProvider>();
-        locationContext = TimeZoneHelper.GetDenmarkLocationContext();
 
         application = new WebApplicationFactory<TestProgram>()
             .WithWebHostBuilder(builder =>
@@ -40,9 +38,8 @@ public class SettingsSerieColorsModuleTest
                 builder.ConfigureServices((ctx, sc) =>
                 {
                     sc.AddSingleton(seriesColorRepository.Object);
-                    sc.AddSingleton(seriesNameRepository.Object);
+                    sc.AddSingleton(seriesNameProvider.Object);
                     sc.AddSingleton(obisColorProvider.Object);
-                    sc.AddSingleton(locationContext);
                 });
             });
 
@@ -59,7 +56,6 @@ public class SettingsSerieColorsModuleTest
     public async Task GetSeriesColors()
     {
         // Arrange
-        var timeZoneInfo = locationContext.TimeZoneInfo;
         var sc1 = new SeriesColor(new SeriesName("label1", "1.2.3.4.5.6"), "#123456");
         var sc2 = new SeriesColor(new SeriesName("label2", "6.5.4.3.2.1"), "#654321");
         var serieColorsDb = new[] { sc2, sc1 };
@@ -67,7 +63,7 @@ public class SettingsSerieColorsModuleTest
         var sn3 = new SeriesName("label1", "1.2.3.4.5.6");
         var sn4 = new SeriesName("label3", "1.2.3.4.5.6");
         var serieNames = new[] { sn4, sn3 };
-        seriesNameRepository.Setup(snr => snr.GetSeriesNames(It.IsAny<TimeZoneInfo>())).Returns(serieNames);
+        seriesNameProvider.Setup(snr => snr.GetSeriesNames()).Returns(serieNames);
         obisColorProvider.Setup(ocp => ocp.GetColor(It.IsAny<ObisCode>())).Returns("#222222");
 
         // Act
@@ -81,7 +77,7 @@ public class SettingsSerieColorsModuleTest
         AssertSeriesColor(sc1, json.items.First());
         AssertSeriesColor(sc2, json.items.Skip(1).First());
         AssertSeriesColor(new SeriesColor(new SeriesName(sn4.Label, sn4.ObisCode), "#222222"), json.items.Last());
-        seriesNameRepository.Verify(snr => snr.GetSeriesNames(timeZoneInfo));
+        seriesNameProvider.Verify(snr => snr.GetSeriesNames());
     }
 
     private static void AssertSeriesColor(SeriesColor expected, TestSeriesColorDto actual)

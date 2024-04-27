@@ -259,6 +259,7 @@ namespace PowerView.Service.Test.Mappers
 
         [Test]
         [TestCase("1.68.25.67.0.255")]
+        [TestCase("1.69.25.67.0.255")]
         public void MapToSerieYAxisCurrencyAmount(string obisCode)
         {
             // Arrange

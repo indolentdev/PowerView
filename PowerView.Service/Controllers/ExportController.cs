@@ -32,7 +32,7 @@ public class ExportController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public ActionResult GetLabels()
     {
-        var seriesNames = seriesNameRepository.GetStoredSeriesNames();
+        var seriesNames = seriesNameRepository.GetSeriesNames();
 
         var r = seriesNames
           .Where(x => x.ObisCode.IsCumulative)
@@ -51,7 +51,7 @@ public class ExportController : ControllerBase
     {
         if (from >= to) return BadRequest("to must be greater than from");
         var labelSeriesSet = exportRepository.GetLiveCumulativeSeries(from, to, label);
-        var intervalGroup = new IntervalGroup(locationContext.TimeZoneInfo, from, "60-minutes", labelSeriesSet);
+        var intervalGroup = new IntervalGroup(locationContext.TimeZoneInfo, from, "60-minutes", labelSeriesSet, Array.Empty<CostBreakdownGeneratorSeries>());
         intervalGroup.Prepare();
 
         var falttened = intervalGroup.NormalizedDurationLabelSeriesSet
@@ -132,7 +132,7 @@ public class ExportController : ControllerBase
     {
         if (from >= to) return BadRequest("to must be greater than from");
         var labelSeriesSet = exportRepository.GetLiveCumulativeSeries(from, to, label);
-        var intervalGroup = new IntervalGroup(locationContext.TimeZoneInfo, from, "60-minutes", labelSeriesSet);
+        var intervalGroup = new IntervalGroup(locationContext.TimeZoneInfo, from, "60-minutes", labelSeriesSet, Array.Empty<CostBreakdownGeneratorSeries>());
         intervalGroup.Prepare();
 
         var falttened = intervalGroup.NormalizedLabelSeriesSet

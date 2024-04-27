@@ -16,6 +16,17 @@ namespace PowerView.Model
     public SeriesName BaseSeries { get; private set; }
     public string CostBreakdownTitle { get; private set; }
 
+    public bool SupportsInterval(string interval)
+    {
+      if (BaseSeries.ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat && Series.ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpenseInclVat && 
+        interval == "60-minutes")
+      {
+        return true;
+      }
+
+      return false;
+    }
+
     public override bool Equals(object obj)
     {
       if (!(obj is GeneratorSeries)) return false;

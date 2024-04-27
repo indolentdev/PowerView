@@ -18,15 +18,17 @@ public class ProfileController : ControllerBase
     private readonly IProfileRepository profileRepository;
     private readonly ISeriesColorRepository serieRepository;
     private readonly IProfileGraphRepository profileGraphRepository;
+    private readonly ICostBreakdownGeneratorSeriesRepository costBreakdownGeneratorSeriesRepository;
     private readonly ILocationContext locationContext;
     private readonly ISerieMapper serieMapper;
 
-    public ProfileController(ILogger<ProfileController> logger, IProfileRepository profileRepository, ISeriesColorRepository serieRepository, IProfileGraphRepository profileGraphRepository, ILocationContext locationContext, ISerieMapper serieMapper)
+    public ProfileController(ILogger<ProfileController> logger, IProfileRepository profileRepository, ISeriesColorRepository serieRepository, IProfileGraphRepository profileGraphRepository, ICostBreakdownGeneratorSeriesRepository costBreakdownGeneratorSeriesRepository, ILocationContext locationContext, ISerieMapper serieMapper)
     {
         this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         this.profileRepository = profileRepository ?? throw new ArgumentNullException(nameof(profileRepository));
         this.serieRepository = serieRepository ?? throw new ArgumentNullException(nameof(serieRepository));
         this.profileGraphRepository = profileGraphRepository ?? throw new ArgumentNullException(nameof(profileGraphRepository));
+        this.costBreakdownGeneratorSeriesRepository = costBreakdownGeneratorSeriesRepository ?? throw new ArgumentNullException(nameof(costBreakdownGeneratorSeriesRepository));
         this.locationContext = locationContext ?? throw new ArgumentNullException(nameof(locationContext));
         this.serieMapper = serieMapper ?? throw new ArgumentNullException(nameof(serieMapper));
     }
@@ -76,7 +78,9 @@ public class ProfileController : ControllerBase
             return BadRequest();
         }
 
-        var viewSet = GetProfileViewSet(profileGraphs, getLabelSeriesSet, start, period);
+        var costBreakdownGeneratorSeries = costBreakdownGeneratorSeriesRepository.GetCostBreakdownGeneratorSeries();
+
+        var viewSet = GetProfileViewSet(profileGraphs, getLabelSeriesSet, start, period, costBreakdownGeneratorSeries);
 
         var r = new
         {
@@ -88,7 +92,7 @@ public class ProfileController : ControllerBase
         return Ok(r);
     }
 
-    private ProfileViewSet GetProfileViewSet(ICollection<ProfileGraph> profileGraphs, Func<DateTime, DateTime, DateTime, TimeRegisterValueLabelSeriesSet> getLabelSeriesSet, DateTime start, string period)
+    private ProfileViewSet GetProfileViewSet(ICollection<ProfileGraph> profileGraphs, Func<DateTime, DateTime, DateTime, TimeRegisterValueLabelSeriesSet> getLabelSeriesSet, DateTime start, string period, IList<CostBreakdownGeneratorSeries> costBreakdownGeneratorSeries)
     {
         // Distinct intervals
         var distinctIntervals = profileGraphs.GroupBy(x => x.Interval).ToList();
@@ -115,7 +119,7 @@ public class ProfileController : ControllerBase
             var groupInterval = group.Key;
             var groupProfileGraphs = group.ToList();
 
-            var intervalGroup = new ProfileGraphIntervalGroup(timeZoneInfo, start, groupInterval, groupProfileGraphs, labelSeriesSet);
+            var intervalGroup = new ProfileGraphIntervalGroup(timeZoneInfo, start, groupInterval, groupProfileGraphs, labelSeriesSet, costBreakdownGeneratorSeries);
             intervalGroup.Prepare();
             intervalGroups.Add(intervalGroup);
         }

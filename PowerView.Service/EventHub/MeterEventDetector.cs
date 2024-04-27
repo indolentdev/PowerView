@@ -32,7 +32,7 @@ namespace PowerView.Service.EventHub
       var preStart = localMidnightAsUtc.Subtract(TimeSpan.FromMinutes(30));
       var labelSeriesSet = profileRepository.GetDayProfileSet(preStart, localMidnightAsUtc, end);
 
-      var intervalGroup = new IntervalGroup(locationContext.TimeZoneInfo, localMidnightAsUtc, "5-minutes", labelSeriesSet);
+      var intervalGroup = new IntervalGroup(locationContext.TimeZoneInfo, localMidnightAsUtc, "5-minutes", labelSeriesSet, Array.Empty<CostBreakdownGeneratorSeries>());
       intervalGroup.Prepare();
 
       var meterEventCandidates = GetMeterEventCandidates(timestamp, localMidnightAsUtc, intervalGroup.NormalizedDurationLabelSeriesSet).ToArray();
