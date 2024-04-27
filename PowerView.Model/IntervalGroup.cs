@@ -9,20 +9,23 @@ namespace PowerView.Model
   {
     private readonly Func<DateTime, DateTime> timeDivider;
     private readonly Func<DateTime, DateTime> getNext;
+    private readonly TimeZoneInfo timeZoneInfo;
 
-    public IntervalGroup(TimeZoneInfo timeZoneinfo, DateTime start, string interval, TimeRegisterValueLabelSeriesSet labelSeriesSet)
+    public IntervalGroup(TimeZoneInfo timeZoneInfo, DateTime start, string interval, TimeRegisterValueLabelSeriesSet labelSeriesSet, IList<CostBreakdownGeneratorSeries> costBreakdownGeneratorSeries)
     {
-      var dateTimeHelper = new DateTimeHelper(timeZoneinfo, start);
+      var dateTimeHelper = new DateTimeHelper(timeZoneInfo, start);
       timeDivider = dateTimeHelper.GetDivider(interval);
       getNext = dateTimeHelper.GetNext(interval);
-      if (labelSeriesSet == null) throw new ArgumentNullException("labelSeriesSet");
+      this.timeZoneInfo = timeZoneInfo; // Null validated by DateTimeHelper.
 
       Interval = interval;
-      LabelSeriesSet = labelSeriesSet;
+      LabelSeriesSet = labelSeriesSet ?? throw new ArgumentNullException(nameof(labelSeriesSet));
+      CostBreakdownGeneratorSeries = costBreakdownGeneratorSeries ?? throw new ArgumentNullException(nameof(costBreakdownGeneratorSeries));
     }
 
     public string Interval { get; private set; }
     public TimeRegisterValueLabelSeriesSet LabelSeriesSet { get; private set; }
+    public IList<CostBreakdownGeneratorSeries> CostBreakdownGeneratorSeries { get; private set; }
 
     public IList<DateTime> Categories { get; private set; }
     public LabelSeriesSet<NormalizedTimeRegisterValue> NormalizedLabelSeriesSet { get; private set; }
@@ -34,8 +37,11 @@ namespace PowerView.Model
 
       NormalizedLabelSeriesSet = LabelSeriesSet.Normalize(timeDivider);
 
-      NormalizedDurationLabelSeriesSet = new LabelSeriesSet<NormalizedDurationRegisterValue>(NormalizedLabelSeriesSet.Start, NormalizedLabelSeriesSet.End,
-        TransformToNormalizedDurations(NormalizedLabelSeriesSet).ToList());
+      NormalizedDurationLabelSeriesSet = new LabelSeriesSet<NormalizedDurationRegisterValue>(
+        NormalizedLabelSeriesSet.Start, 
+        NormalizedLabelSeriesSet.End,
+        NormalizedLabelSeriesSet.Count() * 2,
+        TransformToNormalizedDurations(NormalizedLabelSeriesSet));
     }
 
     private List<DateTime> GetCategories()
@@ -53,18 +59,63 @@ namespace PowerView.Model
 
     private IEnumerable<LabelSeries<NormalizedDurationRegisterValue>> TransformToNormalizedDurations(LabelSeriesSet<NormalizedTimeRegisterValue> labelSeriesSet)
     {
+      var costBreakdownGeneratorSeriesByBaseSeriesName = CostBreakdownGeneratorSeries.ToLookup(x => x.GeneratorSeries.BaseSeries);
+
+      var result = new Dictionary<string, IDictionary<ObisCode, ICollection<NormalizedDurationRegisterValue>>>();
       foreach (var labelSeries in labelSeriesSet)
       {
-        var durationLabelSeriesContent = new Dictionary<ObisCode, IEnumerable<NormalizedDurationRegisterValue>>();
+        var label = labelSeries.Label;
+        if (!result.ContainsKey(label))
+        {
+          result.Add(label, new Dictionary<ObisCode, ICollection<NormalizedDurationRegisterValue>>());
+        }
+        var obisDurationValues = result[label];
 
+        // Transform non-cumulative series to normalized non-cumulative series.
         var nonCumulativeLabelSeries = labelSeries.GetNonCumulativeSeries();
         foreach (var item in nonCumulativeLabelSeries)
         {
           var durationValues = item.Value.Select(x => new NormalizedDurationRegisterValue(x.TimeRegisterValue.Timestamp, x.TimeRegisterValue.Timestamp,
             x.NormalizedTimestamp, x.NormalizedTimestamp, x.TimeRegisterValue.UnitValue, x.TimeRegisterValue.DeviceId)).ToList();
-          durationLabelSeriesContent.Add(item.Key, durationValues);
+          obisDurationValues.Add(item.Key, durationValues);
         }
 
+        // Generate additional series from normalized non-cumulative series.
+        foreach (var obisCode in obisDurationValues.Keys.ToList())
+        {
+          var seriesName = new SeriesName(label, obisCode);
+          foreach (var costBreakdownGeneratorSeries in costBreakdownGeneratorSeriesByBaseSeriesName[seriesName])
+          {
+            var baseSeries = obisDurationValues[obisCode];
+            var generatedSeriesName = costBreakdownGeneratorSeries.GeneratorSeries.Series;
+            try
+            {
+              if (!costBreakdownGeneratorSeries.GeneratorSeries.SupportsInterval(Interval)) continue;
+              var generatedResult = costBreakdownGeneratorSeries.CostBreakdown.ApplyAmountsAndVat(timeZoneInfo, baseSeries).ToList();
+
+              if (generatedResult.Where(x => x.Entries.Count == 0).Any()) continue; // Only include the series if all items had generated values
+
+              var generatedValues = generatedResult.Select(x => x.Value).ToList();
+              if (generatedSeriesName.Label == labelSeries.Label)
+              {
+                obisDurationValues.Add(generatedSeriesName.ObisCode, generatedValues);
+              }
+              else
+              {
+                if (!result.ContainsKey(generatedSeriesName.Label))
+                {
+                  result.Add(generatedSeriesName.Label, new Dictionary<ObisCode, ICollection<NormalizedDurationRegisterValue>>());
+                }
+                result[generatedSeriesName.Label].Add(generatedSeriesName.ObisCode, generatedValues);
+              }
+            }
+            catch (DataMisalignedException)
+            {  // Something went wrong with series generation. Skip that generated series.
+            }
+          }
+        }
+
+        // Transform cumulative series by generating "spin-off" normalized non-cumulative series.
         var generator = new SeriesFromCumulativeGenerator();
         var cumulativeLabelSeries = labelSeries.GetCumulativeSeries();
         if (cumulativeLabelSeries.Count > 0)
@@ -72,12 +123,22 @@ namespace PowerView.Model
           var durationValues = generator.Generate(cumulativeLabelSeries);
           foreach (var item in durationValues)
           {
-            durationLabelSeriesContent.Add(item.Key, item.Value);
+            obisDurationValues.Add(item.Key, item.Value);
           }
         }
 
-        var durationLabelSeries = new LabelSeries<NormalizedDurationRegisterValue>(labelSeries.Label, durationLabelSeriesContent);
-        yield return durationLabelSeries;
+//        var durationLabelSeries = new LabelSeries<NormalizedDurationRegisterValue>(labelSeries.Label, durationLabelSeriesContent);
+//        result.Add(labelSeries.Label, durationLabelSeries);
+      }
+
+      foreach (var res in result)
+      {
+        var d = new Dictionary<ObisCode, IEnumerable<NormalizedDurationRegisterValue>>();
+        foreach (var item in res.Value)
+        {
+          d.Add(item.Key, item.Value);
+        }
+        yield return new LabelSeries<NormalizedDurationRegisterValue>(res.Key, d);
       }
     }
   }

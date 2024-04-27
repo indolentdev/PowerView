@@ -16,15 +16,17 @@ namespace PowerView.Model.Test
       var start = DateTime.Today.ToUniversalTime();
       const string interval = "5-minutes";
       var labelSeriesSet = new TimeRegisterValueLabelSeriesSet(DateTime.UtcNow, DateTime.UtcNow + TimeSpan.FromDays(1), new TimeRegisterValueLabelSeries[0]);
+      var costBreakdownGeneratorSeries = new List<CostBreakdownGeneratorSeries>();
 
       // Act & Assert
-      Assert.That(() => new IntervalGroup(null, start, interval, labelSeriesSet), Throws.TypeOf<ArgumentNullException>());
-      Assert.That(() => new IntervalGroup(timeZoneInfo, DateTime.Now, interval, labelSeriesSet), Throws.TypeOf<ArgumentOutOfRangeException>());
-      Assert.That(() => new IntervalGroup(timeZoneInfo, start, null, labelSeriesSet), Throws.ArgumentNullException);
-      Assert.That(() => new IntervalGroup(timeZoneInfo, start, interval, null), Throws.ArgumentNullException);
+      Assert.That(() => new IntervalGroup(null, start, interval, labelSeriesSet, costBreakdownGeneratorSeries), Throws.TypeOf<ArgumentNullException>());
+      Assert.That(() => new IntervalGroup(timeZoneInfo, DateTime.Now, interval, labelSeriesSet, costBreakdownGeneratorSeries), Throws.TypeOf<ArgumentOutOfRangeException>());
+      Assert.That(() => new IntervalGroup(timeZoneInfo, start, null, labelSeriesSet, costBreakdownGeneratorSeries), Throws.ArgumentNullException);
+      Assert.That(() => new IntervalGroup(timeZoneInfo, start, interval, null, costBreakdownGeneratorSeries), Throws.ArgumentNullException);
+      Assert.That(() => new IntervalGroup(timeZoneInfo, start, interval, labelSeriesSet, null), Throws.TypeOf<ArgumentNullException>());
 
-      Assert.That(() => new IntervalGroup(timeZoneInfo, start, string.Empty, labelSeriesSet), Throws.TypeOf<ArgumentOutOfRangeException>());
-      Assert.That(() => new IntervalGroup(timeZoneInfo, start, "whatnot", labelSeriesSet), Throws.TypeOf<ArgumentOutOfRangeException>());
+      Assert.That(() => new IntervalGroup(timeZoneInfo, start, string.Empty, labelSeriesSet, costBreakdownGeneratorSeries), Throws.TypeOf<ArgumentOutOfRangeException>());
+      Assert.That(() => new IntervalGroup(timeZoneInfo, start, "whatnot", labelSeriesSet, costBreakdownGeneratorSeries), Throws.TypeOf<ArgumentOutOfRangeException>());
     }
 
     [Test]
@@ -39,13 +41,15 @@ namespace PowerView.Model.Test
       var labelSeriesSet = new TimeRegisterValueLabelSeriesSet(DateTime.UtcNow, DateTime.UtcNow + TimeSpan.FromDays(1), new[] {
         new TimeRegisterValueLabelSeries(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, new[] { new TimeRegisterValue("d1", DateTime.UtcNow, new UnitValue()) } } })
       });
+      var costBreakdownGeneratorSeries = new List<CostBreakdownGeneratorSeries>();
 
       // Act
-      var target = new IntervalGroup(timeZoneInfo, start, interval, labelSeriesSet);
+      var target = new IntervalGroup(timeZoneInfo, start, interval, labelSeriesSet, costBreakdownGeneratorSeries);
 
       // Assert
       Assert.That(target.Interval, Is.EqualTo(interval));
       Assert.That(target.LabelSeriesSet, Is.SameAs(labelSeriesSet));
+      Assert.That(target.CostBreakdownGeneratorSeries, Is.SameAs(costBreakdownGeneratorSeries));
 
       Assert.That(target.Categories, Is.Null);
       Assert.That(target.NormalizedLabelSeriesSet, Is.Null);
@@ -66,7 +70,8 @@ namespace PowerView.Model.Test
         new TimeRegisterValueLabelSeries(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, new[] {
         new TimeRegisterValue("SN1", start, 1234, Unit.Watt) } } })
       });
-      var target = new IntervalGroup(timeZoneInfo, start, interval, labelSeriesSet);
+      var costBreakdownGeneratorSeries = new List<CostBreakdownGeneratorSeries>();
+      var target = new IntervalGroup(timeZoneInfo, start, interval, labelSeriesSet, costBreakdownGeneratorSeries);
 
       // Act
       target.Prepare();
@@ -91,7 +96,8 @@ namespace PowerView.Model.Test
         new TimeRegisterValueLabelSeries(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, new[] {
         new TimeRegisterValue("SN1", start, 1234, Unit.Watt) } } })
       });
-      var target = new IntervalGroup(timeZoneInfo, start, interval, labelSeriesSet);
+      var costBreakdownGeneratorSeries = new List<CostBreakdownGeneratorSeries>();
+      var target = new IntervalGroup(timeZoneInfo, start, interval, labelSeriesSet, costBreakdownGeneratorSeries);
 
       // Act
       target.Prepare();
@@ -116,7 +122,8 @@ namespace PowerView.Model.Test
         new TimeRegisterValueLabelSeries(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, new[] { 
         new TimeRegisterValue("SN1", start.AddMinutes(2), 1234, Unit.Watt) } } })
       });
-      var target = new IntervalGroup(timeZoneInfo, start, interval, labelSeriesSet);
+      var costBreakdownGeneratorSeries = new List<CostBreakdownGeneratorSeries>();
+      var target = new IntervalGroup(timeZoneInfo, start, interval, labelSeriesSet, costBreakdownGeneratorSeries);
       var divider = new DateTimeHelper(timeZoneInfo, start).GetDivider(interval);
 
       // Act
@@ -151,7 +158,8 @@ namespace PowerView.Model.Test
         new TimeRegisterValueLabelSeries(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, new[] {
         new TimeRegisterValue("SN1", start, 1234, Unit.Watt) } } })
       });
-      var target = new IntervalGroup(timeZoneInfo, start, interval, labelSeriesSet);
+      var costBreakdownGeneratorSeries = new List<CostBreakdownGeneratorSeries>();
+      var target = new IntervalGroup(timeZoneInfo, start, interval, labelSeriesSet, costBreakdownGeneratorSeries);
 
       // Act
       target.Prepare();

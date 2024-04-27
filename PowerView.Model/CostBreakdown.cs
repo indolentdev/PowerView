@@ -82,6 +82,37 @@ namespace PowerView.Model
       return groups;
     }
 
+    public IEnumerable<(NormalizedDurationRegisterValue Value, ICollection<CostBreakdownEntry> Entries)> ApplyAmountsAndVat(TimeZoneInfo timeZoneInfo, IEnumerable<NormalizedDurationRegisterValue> values)
+    {
+      if (timeZoneInfo == null) throw new ArgumentNullException(nameof(timeZoneInfo));
+      if (values == null) throw new ArgumentNullException(nameof(values));
+
+      foreach (var value in values)
+      {
+        if (value.UnitValue.Unit != Currency)
+        {
+          throw new DataMisalignedException($"Currency not compatible. Expected:{Currency}. Was:{value.UnitValue.Unit}");
+        }
+
+        var applyingEntries = Entries
+          .Where(x => x.AppliesToDates(value.NormalizedStart, value.NormalizedEnd)) // Match on entry UTC from and to dates
+          .Where(x => x.AppliesToTime(
+            TimeOnly.FromDateTime(TimeZoneInfo.ConvertTimeFromUtc(value.NormalizedStart, timeZoneInfo))) // Match on entry local time hours.
+          )
+          .ToList();
+        var applyingEntriesAmount = applyingEntries.Sum(x => x.Amount);
+        var amountExclVat = value.UnitValue.Value + applyingEntriesAmount;
+        var amountInclVat = amountExclVat * ((Vat * 0.01) + 1);
+
+        var newValue = new NormalizedDurationRegisterValue(value.Start, value.End, value.NormalizedStart, value.NormalizedEnd, 
+          new UnitValue(amountInclVat, value.UnitValue.Unit), value.DeviceIds.Concat(new [] { Title }).ToArray());
+
+        yield return (newValue, applyingEntries);
+      }
+
+      yield break;
+    }
+
   }
 }
 

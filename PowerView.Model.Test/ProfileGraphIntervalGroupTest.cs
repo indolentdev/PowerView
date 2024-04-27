@@ -16,16 +16,18 @@ namespace PowerView.Model.Test
       const string interval = "5-minutes";
       var profileGraphs = new List<ProfileGraph>();
       var labelSeriesSet = new TimeRegisterValueLabelSeriesSet(DateTime.UtcNow, DateTime.UtcNow + TimeSpan.FromDays(1), new TimeRegisterValueLabelSeries[0]);
+      var costBreakdownGeneratorSeries = new List<CostBreakdownGeneratorSeries>();
 
       // Act & Assert
-      Assert.That(() => new ProfileGraphIntervalGroup(null, start, interval, profileGraphs, labelSeriesSet), Throws.TypeOf<ArgumentNullException>());
-      Assert.That(() => new ProfileGraphIntervalGroup(timeZoneInfo, DateTime.Now, interval, profileGraphs, labelSeriesSet), Throws.TypeOf<ArgumentOutOfRangeException>());
-      Assert.That(() => new ProfileGraphIntervalGroup(timeZoneInfo, start, null, profileGraphs, labelSeriesSet), Throws.ArgumentNullException);
-      Assert.That(() => new ProfileGraphIntervalGroup(timeZoneInfo, start, interval, null, labelSeriesSet), Throws.ArgumentNullException);
-      Assert.That(() => new ProfileGraphIntervalGroup(timeZoneInfo, start, interval, profileGraphs, null), Throws.ArgumentNullException);
+      Assert.That(() => new ProfileGraphIntervalGroup(null, start, interval, profileGraphs, labelSeriesSet, costBreakdownGeneratorSeries), Throws.TypeOf<ArgumentNullException>());
+      Assert.That(() => new ProfileGraphIntervalGroup(timeZoneInfo, DateTime.Now, interval, profileGraphs, labelSeriesSet, costBreakdownGeneratorSeries), Throws.TypeOf<ArgumentOutOfRangeException>());
+      Assert.That(() => new ProfileGraphIntervalGroup(timeZoneInfo, start, null, profileGraphs, labelSeriesSet, costBreakdownGeneratorSeries), Throws.ArgumentNullException);
+      Assert.That(() => new ProfileGraphIntervalGroup(timeZoneInfo, start, interval, null, labelSeriesSet, costBreakdownGeneratorSeries), Throws.ArgumentNullException);
+      Assert.That(() => new ProfileGraphIntervalGroup(timeZoneInfo, start, interval, profileGraphs, null, costBreakdownGeneratorSeries), Throws.ArgumentNullException);
+      Assert.That(() => new ProfileGraphIntervalGroup(timeZoneInfo, start, interval, profileGraphs, labelSeriesSet, null), Throws.ArgumentNullException);
 
-      Assert.That(() => new ProfileGraphIntervalGroup(timeZoneInfo, start, string.Empty, profileGraphs, labelSeriesSet), Throws.TypeOf<ArgumentOutOfRangeException>());
-      Assert.That(() => new ProfileGraphIntervalGroup(timeZoneInfo, start, "whatnot", profileGraphs, labelSeriesSet), Throws.TypeOf<ArgumentOutOfRangeException>());
+      Assert.That(() => new ProfileGraphIntervalGroup(timeZoneInfo, start, string.Empty, profileGraphs, labelSeriesSet, costBreakdownGeneratorSeries), Throws.TypeOf<ArgumentOutOfRangeException>());
+      Assert.That(() => new ProfileGraphIntervalGroup(timeZoneInfo, start, "whatnot", profileGraphs, labelSeriesSet, costBreakdownGeneratorSeries), Throws.TypeOf<ArgumentOutOfRangeException>());
     }
 
     [Test]
@@ -42,14 +44,16 @@ namespace PowerView.Model.Test
       var labelSeriesSet = new TimeRegisterValueLabelSeriesSet(DateTime.UtcNow, DateTime.UtcNow + TimeSpan.FromDays(1), new[] {
         new TimeRegisterValueLabelSeries(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, new[] { new TimeRegisterValue("d1", DateTime.UtcNow, new UnitValue()) } } })
       });
+      var costBreakdownGeneratorSeries = new List<CostBreakdownGeneratorSeries>();
 
       // Act
-      var target = new ProfileGraphIntervalGroup(timeZoneInfo, start, interval, profileGraphs, labelSeriesSet);
+      var target = new ProfileGraphIntervalGroup(timeZoneInfo, start, interval, profileGraphs, labelSeriesSet, costBreakdownGeneratorSeries);
 
       // Assert
       Assert.That(target.Interval, Is.EqualTo(interval));
       Assert.That(target.ProfileGraphs, Is.EqualTo(profileGraphs));
       Assert.That(target.LabelSeriesSet, Is.SameAs(labelSeriesSet));
+      Assert.That(target.CostBreakdownGeneratorSeries, Is.SameAs(costBreakdownGeneratorSeries));
 
       Assert.That(target.Categories, Is.Null);
       Assert.That(target.NormalizedLabelSeriesSet, Is.Null);

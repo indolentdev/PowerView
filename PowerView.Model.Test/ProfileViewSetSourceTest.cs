@@ -128,7 +128,8 @@ namespace PowerView.Model.Test
       }
       if (start == null) start = new DateTime(2019, 8, 26, 0, 0, 0, DateTimeKind.Local).ToUniversalTime();
       var intervalGroup = new ProfileGraphIntervalGroup(TimeZoneInfo.Local, start.Value, profileGraphs.First().Interval, profileGraphs, 
-        GetLabelSeriesSet(firstTimestamp, fromFirstCount, start, fromStartCount, interval, baseValue, profileGraphs));
+        GetLabelSeriesSet(firstTimestamp, fromFirstCount, start, fromStartCount, interval, baseValue, profileGraphs),
+        Array.Empty<CostBreakdownGeneratorSeries>());
       intervalGroup.Prepare();
       return intervalGroup;
     }
