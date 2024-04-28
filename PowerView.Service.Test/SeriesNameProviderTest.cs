@@ -99,7 +99,7 @@ public class SeriesNameProviderTest
             }),
             new GeneratorSeries(new SeriesName(label, ObisCode.ElectrActiveEnergyKwhIncomeExpenseInclVat), new SeriesName(label, ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat), "CbTitle")
         );
-        costBreakdownGeneratorSeriesRepository.Setup(x => x.GetCostBreakdownGeneratorSeries()).Returns(Array.Empty<CostBreakdownGeneratorSeries>());
+        costBreakdownGeneratorSeriesRepository.Setup(x => x.GetCostBreakdownGeneratorSeries()).Returns(new [] { costBreakdownGeneratorSeries } );
 
         // Act
         var serieNames = target.GetSeriesNames();
