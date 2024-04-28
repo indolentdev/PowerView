@@ -19,35 +19,64 @@ namespace PowerView.Service
             this.seriesNameRepository = seriesNameRepository ?? throw new ArgumentNullException(nameof(seriesNameRepository));
             this.costBreakdownGeneratorSeriesRepository = costBreakdownGeneratorSeriesRepository ?? throw new ArgumentNullException(nameof(costBreakdownGeneratorSeriesRepository));
         }
-        
+
         public IList<SeriesName> GetSeriesNames()
         {
-            var labelsAndObisCodes = seriesNameRepository.GetSeriesNames();
+            var seriesNames = seriesNameRepository.GetSeriesNames();
             var costBreakdownGeneratorSeries = costBreakdownGeneratorSeriesRepository.GetCostBreakdownGeneratorSeries();
+
+            var intervalGroup = CreateIntervalGroup(seriesNames, costBreakdownGeneratorSeries);
+            intervalGroup.Prepare();
+
+            var actualSeriesNames = intervalGroup.NormalizedDurationLabelSeriesSet
+              .SelectMany(ls => ls.Select(oc => new SeriesName(ls.Label, oc)))
+              .ToList();
+            return actualSeriesNames;
+        }
+
+        private IntervalGroup CreateIntervalGroup(IList<SeriesName> seriesNames, IList<CostBreakdownGeneratorSeries> costBreakdownGeneratorSeries)
+        {
+            // Conjure some data to make the series generation work.
+            var seriesNamesUnits = new Dictionary<SeriesName, Unit>();
+            foreach (var costBreakdownGenS in costBreakdownGeneratorSeries)
+            {
+                seriesNamesUnits.Add(costBreakdownGenS.GeneratorSeries.BaseSeries, costBreakdownGenS.CostBreakdown.Currency);
+            }
+            foreach (var seriesName in seriesNames)
+            {
+                if (!seriesNamesUnits.ContainsKey(seriesName)) seriesNamesUnits.Add(seriesName, Unit.Joule);
+            }
 
             var nowLocal = locationcontext.ConvertTimeFromUtc(DateTime.UtcNow);
             var midnight = new DateTime(nowLocal.Year, nowLocal.Month, nowLocal.Day, 0, 0, 0, nowLocal.Kind).ToUniversalTime();
             var dt1 = midnight;
             var dt2 = midnight.AddMinutes(60);
-            var fakeUnit = Unit.Joule;
-            IEnumerable<TimeRegisterValue> fakeTimeRegisterValues = new List<TimeRegisterValue> { new TimeRegisterValue("1", dt1, 1, 0, fakeUnit), new TimeRegisterValue("1", dt2, 2, 0, fakeUnit) };
 
-            var labelGroups = labelsAndObisCodes.GroupBy(x => (string)x.Label, x => (ObisCode)(long)x.ObisCode);
+            var labelGroups = seriesNames.GroupBy(x => (string)x.Label, x => (ObisCode)(long)x.ObisCode);
             var labelSeries = new List<TimeRegisterValueLabelSeries>(8);
             foreach (var labelToObisCodes in labelGroups)
             {
-                var fakeObisToTimeRegisterValues = labelToObisCodes.Distinct().ToDictionary(oc => oc, x => fakeTimeRegisterValues);
-                var labelS = new TimeRegisterValueLabelSeries(labelToObisCodes.Key, fakeObisToTimeRegisterValues);
+                var label = labelToObisCodes.Key;
+                var fakeObisToTimeRegisterValues = labelToObisCodes
+                  .Distinct()
+                  .ToDictionary(oc => oc, oc => CreateTimeRegisterValues(dt1, dt2, seriesNamesUnits[new SeriesName(label, oc)]) );
+                var labelS = new TimeRegisterValueLabelSeries(label, fakeObisToTimeRegisterValues);
                 labelSeries.Add(labelS);
             }
             var labelSeriesSet = new TimeRegisterValueLabelSeriesSet(dt1, dt2, labelSeries);
             var intervalGroup = new IntervalGroup(locationcontext.TimeZoneInfo, midnight, "60-minutes", labelSeriesSet, costBreakdownGeneratorSeries);
-            intervalGroup.Prepare();
 
-            var seriesNames = intervalGroup.NormalizedDurationLabelSeriesSet
-              .SelectMany(ls => ls.Select(oc => new SeriesName(ls.Label, oc)))
-              .ToList();
-            return seriesNames;
+            return intervalGroup;
+        }
+
+        private static IEnumerable<TimeRegisterValue> CreateTimeRegisterValues(DateTime dt1, DateTime dt2, Unit unit)
+        {
+            var fakeTimeRegisterValues = new TimeRegisterValue[]
+            {
+                new TimeRegisterValue("1", dt1, 1, 0, unit),
+                new TimeRegisterValue("1", dt2, 2, 0, unit)
+            };
+            return fakeTimeRegisterValues;
         }
 
     }

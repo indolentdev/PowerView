@@ -82,4 +82,32 @@ public class SeriesNameProviderTest
         Assert.That(serieNames.Count(sc => sc.Label == label && sc.ObisCode == ObisCode.ElectrActualPowerP14Average), Is.EqualTo(1));
     }
 
+    [Test]
+    [TestCase(Unit.Dkk)]
+    [TestCase(Unit.Eur)]
+    public void GetSeriesNamesAddCostBreakdownGeneratorSeriesObisCode(Unit unit)
+    {
+        // Arrange
+        const string label = "lbl1";
+        var seriesNames = new[] { new SeriesName(label, ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat) };
+        seriesNameRepository.Setup(x => x.GetSeriesNames()).Returns(seriesNames);
+        var utcNow = DateTime.UtcNow;
+        var costBreakdownGeneratorSeries = new CostBreakdownGeneratorSeries(
+            new CostBreakdown("CbTitle", unit, 25, new [] 
+            { 
+                new CostBreakdownEntry(utcNow - TimeSpan.FromDays(2), utcNow + TimeSpan.FromDays(2), "entry name", 0, 23, 2) 
+            }),
+            new GeneratorSeries(new SeriesName(label, ObisCode.ElectrActiveEnergyKwhIncomeExpenseInclVat), new SeriesName(label, ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat), "CbTitle")
+        );
+        costBreakdownGeneratorSeriesRepository.Setup(x => x.GetCostBreakdownGeneratorSeries()).Returns(Array.Empty<CostBreakdownGeneratorSeries>());
+
+        // Act
+        var serieNames = target.GetSeriesNames();
+
+        // Assert
+        Assert.That(serieNames.Count, Is.EqualTo(2));
+        Assert.That(serieNames.Count(sc => sc.Label == label && sc.ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat), Is.EqualTo(1));
+        Assert.That(serieNames.Count(sc => sc.Label == label && sc.ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpenseInclVat), Is.EqualTo(1));
+    }
+
 }
