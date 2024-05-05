@@ -11,14 +11,10 @@ namespace PowerView.Model.Test
     public void ConstructorsThrows()
     {
       // Arrange
-      var timeZoneInfo = GetTimeZoneInfo();
-      var origin = new DateTime(2019, 09, 22, 23, 0, 0, DateTimeKind.Utc);
       var locationContext = TimeZoneHelper.GetDenmarkLocationContext();
+      var origin = new DateTime(2019, 09, 22, 23, 0, 0, DateTimeKind.Utc);
 
       // Act & Assert
-      Assert.That(() => new DateTimeHelper((TimeZoneInfo)null, origin), Throws.TypeOf<ArgumentNullException>());
-      Assert.That(() => new DateTimeHelper(timeZoneInfo, DateTime.SpecifyKind(origin, DateTimeKind.Local)), Throws.TypeOf<ArgumentOutOfRangeException>());
-
       Assert.That(() => new DateTimeHelper((ILocationContext)null, origin), Throws.TypeOf<ArgumentNullException>());
       Assert.That(() => new DateTimeHelper(locationContext, DateTime.SpecifyKind(origin, DateTimeKind.Local)), Throws.TypeOf<ArgumentOutOfRangeException>());
     }
@@ -27,9 +23,9 @@ namespace PowerView.Model.Test
     public void GetPeriodEndThrows()
     {
       // Arrange
-      var timeZoneInfo = GetTimeZoneInfo();
+      var locationContext = TimeZoneHelper.GetDenmarkLocationContext();
       var origin = new DateTime(2019, 09, 22, 22, 0, 0, DateTimeKind.Utc);
-      var target = new DateTimeHelper(timeZoneInfo, origin);
+      var target = new DateTimeHelper(locationContext, origin);
 
       // Act & Assert
       Assert.That(() => target.GetPeriodEnd(null), Throws.TypeOf<ArgumentNullException>());
@@ -61,10 +57,10 @@ namespace PowerView.Model.Test
     public void GetPeriodEnd(string period, string originString, string endString)
     {
       // Arrange
-      var timeZoneInfo = GetTimeZoneInfo();
+      var locationContext = TimeZoneHelper.GetDenmarkLocationContext();
       var origin = DateTime.Parse(originString, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
       var end = DateTime.Parse(endString, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
-      var target = new DateTimeHelper(timeZoneInfo, origin);
+      var target = new DateTimeHelper(locationContext, origin);
 
       // Act
       var dateTime = target.GetPeriodEnd(period);
@@ -90,9 +86,9 @@ namespace PowerView.Model.Test
     public void GetNextThrows(string interval, Type exceptionType)
     {
       // Arrange
-      var timeZoneInfo = GetTimeZoneInfo();
+      var locationContext = TimeZoneHelper.GetDenmarkLocationContext();
       var origin = new DateTime(2019, 9, 23, 22, 0, 0, DateTimeKind.Utc);
-      var target = new DateTimeHelper(timeZoneInfo, origin);
+      var target = new DateTimeHelper(locationContext, origin);
 
       // Act & Assert
       Assert.That(() => target.GetNext(interval), Throws.TypeOf(exceptionType));
@@ -126,10 +122,10 @@ namespace PowerView.Model.Test
     public void GetNext(string interval, string inDateTimeString, string outDateTimeString)
     {
       // Arrange
-      var timeZoneInfo = GetTimeZoneInfo();
+      var locationContext = TimeZoneHelper.GetDenmarkLocationContext();
       var inDateTime = DateTime.Parse(inDateTimeString, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
       var outDateTime = DateTime.Parse(outDateTimeString, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
-      var target = new DateTimeHelper(timeZoneInfo, inDateTime);
+      var target = new DateTimeHelper(locationContext, inDateTime);
 
       // Act
       var getNext = target.GetNext(interval);
@@ -144,13 +140,13 @@ namespace PowerView.Model.Test
     public void GetNextSuccessiveNormalToDst()
     {
       // Arrange
-      var timeZoneinfo = TimeZoneInfo.FindSystemTimeZoneById("CET");
+      var locationContext = TimeZoneHelper.GetDenmarkLocationContext();
       var start = new DateTime(2020, 3, 28, 12, 40, 0, DateTimeKind.Utc);
       var interval = "60-minutes";
       var periodStart = start;
       var periodEnd = new DateTime(2020, 3, 29, 11, 40, 0, DateTimeKind.Utc);
 
-      var target = new DateTimeHelper(timeZoneinfo, start);
+      var target = new DateTimeHelper(locationContext, start);
       var getNext = target.GetNext(interval);
 
       var categories = new System.Collections.Generic.List<DateTime>();
@@ -183,9 +179,9 @@ namespace PowerView.Model.Test
     public void GetDividerThrows(string interval, Type exceptionType)
     {
       // Arrange
-      var timeZoneInfo = GetTimeZoneInfo();
+      var locationContext = TimeZoneHelper.GetDenmarkLocationContext();
       var start = new DateTime(2019, 9, 23, 22, 0, 0, DateTimeKind.Utc);
-      var target = new DateTimeHelper(timeZoneInfo, start);
+      var target = new DateTimeHelper(locationContext, start);
 
       // Act & Assert
       Assert.That(() => target.GetDivider(interval), Throws.TypeOf(exceptionType));
@@ -259,11 +255,11 @@ namespace PowerView.Model.Test
     public void GetDivider(string originString, string interval, string inDateTimeString, string outDateTimeString)
     {
       // Arrange
-      var timeZoneInfo = GetTimeZoneInfo();
+      var locationContext = TimeZoneHelper.GetDenmarkLocationContext();
       var origin = DateTime.Parse(originString, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
       var inDateTime = DateTime.Parse(inDateTimeString, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
       var outDateTime = DateTime.Parse(outDateTimeString, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
-      var target = new DateTimeHelper(timeZoneInfo, origin);
+      var target = new DateTimeHelper(locationContext, origin);
             // Act
       var divider = target.GetDivider(interval);
       var dateTime = divider(inDateTime);
@@ -271,11 +267,6 @@ namespace PowerView.Model.Test
       // Assert
       Assert.That(dateTime, Is.EqualTo(outDateTime));
       Assert.That(dateTime.Kind, Is.EqualTo(outDateTime.Kind));
-    }
-
-    private static TimeZoneInfo GetTimeZoneInfo()
-    {
-      return TimeZoneHelper.GetDenmarkTimeZoneInfo();
     }
 
   }

@@ -4,7 +4,7 @@ using System.Globalization;
 namespace PowerView.Model
 {
   /// <summary>
-  /// Location/region info as a cheap dependency.
+  /// Location/region info as an easy dependency.
   /// </summary>
   public interface ILocationContext
   {

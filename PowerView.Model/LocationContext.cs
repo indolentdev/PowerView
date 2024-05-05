@@ -33,7 +33,7 @@ namespace PowerView.Model
 
         public bool IsDaylightSavingTime(DateTime dateTime)
         {
-            if (dateTime.Kind != DateTimeKind.Unspecified) throw new ArgumentOutOfRangeException("dateTime", "Must be Unspecified");
+            if (dateTime.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("dateTime", "Must be UTC. Was:" + dateTime.Kind);
 
             return TimeZoneInfo.IsDaylightSavingTime(dateTime);
         }

@@ -15,7 +15,7 @@ namespace PowerView.Model
     {
       this.locationContext = locationContext ?? throw new ArgumentNullException(nameof(locationContext));
 
-      var dateTimeHelper = new DateTimeHelper(locationContext.TimeZoneInfo, start);
+      var dateTimeHelper = new DateTimeHelper(locationContext, start);
       timeDivider = dateTimeHelper.GetDivider(interval);
       getNext = dateTimeHelper.GetNext(interval);
 

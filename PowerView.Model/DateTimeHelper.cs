@@ -5,7 +5,7 @@ namespace PowerView.Model
 {
   public class DateTimeHelper
   {
-    private readonly TimeZoneInfo timeZoneInfo;
+    private readonly ILocationContext locationContext;
     private readonly DateTime origin;
 
     public DateTimeHelper(ILocationContext locationContext, DateTime origin)
@@ -13,16 +13,7 @@ namespace PowerView.Model
       if (locationContext == null) throw new ArgumentNullException(nameof(locationContext));
       if (origin.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException(nameof(origin), "Must be UTC");
 
-      this.timeZoneInfo = locationContext.TimeZoneInfo;
-      this.origin = origin;
-    }
-
-    public DateTimeHelper(TimeZoneInfo timeZoneInfo, DateTime origin)
-    {
-      if (timeZoneInfo == null) throw new ArgumentNullException("timeZoneInfo");
-      if (origin.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("origin", "Must be UTC");
-
-      this.timeZoneInfo = timeZoneInfo;
+      this.locationContext = locationContext;
       this.origin = origin;
     }
 
@@ -54,13 +45,13 @@ namespace PowerView.Model
           throw new NotSupportedException();
       }
 
-      return AdjustForDst(timeZoneInfo, origin, end);
+      return AdjustForDst(locationContext, origin, end);
     }
 
-    private static DateTime AdjustForDst(TimeZoneInfo timeZoneInfo, DateTime previous, DateTime next)
+    private static DateTime AdjustForDst(ILocationContext locationContext, DateTime previous, DateTime next)
     {
-      var previousIsDst = timeZoneInfo.IsDaylightSavingTime(previous);
-      var nextIsDst = timeZoneInfo.IsDaylightSavingTime(next);
+      var previousIsDst = locationContext.IsDaylightSavingTime(previous);
+      var nextIsDst = locationContext.IsDaylightSavingTime(next);
       if (previousIsDst != nextIsDst)
       {
         if (previousIsDst) next += TimeSpan.FromHours(1); else next -= TimeSpan.FromHours(1);
@@ -97,7 +88,7 @@ namespace PowerView.Model
           return dt =>
           {
             var next = dt.AddDays(1);
-            return AdjustForDst(timeZoneInfo, dt, next);
+            return AdjustForDst(locationContext, dt, next);
           };
 
         case "months":
@@ -105,7 +96,7 @@ namespace PowerView.Model
           return dt =>
           {
             var next = NextMonth(dt);
-            return AdjustForDst(timeZoneInfo, dt, next);
+            return AdjustForDst(locationContext, dt, next);
           };
 
         case "years":
@@ -113,7 +104,7 @@ namespace PowerView.Model
           return dt =>
           {
             var next = dt.AddYears(1);
-            return AdjustForDst(timeZoneInfo, dt, next);
+            return AdjustForDst(locationContext, dt, next);
           };
 
         default:
@@ -158,8 +149,8 @@ namespace PowerView.Model
 
     private DateTime DivideDays(TimeSpan days, DateTime dt)
     {
-      var originIsDst = timeZoneInfo.IsDaylightSavingTime(origin);
-      var dtIsDst = timeZoneInfo.IsDaylightSavingTime(dt);
+      var originIsDst = locationContext.IsDaylightSavingTime(origin);
+      var dtIsDst = locationContext.IsDaylightSavingTime(dt);
       if (originIsDst == dtIsDst)
       {
         return Divide(dt, origin, days);
@@ -167,7 +158,7 @@ namespace PowerView.Model
 
       var oneDay = TimeSpan.FromDays(1);
       var dtClosestOriginWithSameDstStatus = origin;
-      while (dtClosestOriginWithSameDstStatus < dt && timeZoneInfo.IsDaylightSavingTime(dtClosestOriginWithSameDstStatus + oneDay) == originIsDst)
+      while (dtClosestOriginWithSameDstStatus < dt && locationContext.IsDaylightSavingTime(dtClosestOriginWithSameDstStatus + oneDay) == originIsDst)
       {
         dtClosestOriginWithSameDstStatus += oneDay;
       }
@@ -189,7 +180,7 @@ namespace PowerView.Model
       var year = dt.Year;
       var month = dt.Month;
       if (dt.TimeOfDay < origin.TimeOfDay ||
-          (dt.TimeOfDay < origin.TimeOfDay + TimeSpan.FromHours(1) && !timeZoneInfo.IsDaylightSavingTime(dt) && timeZoneInfo.IsDaylightSavingTime(origin)))
+          (dt.TimeOfDay < origin.TimeOfDay + TimeSpan.FromHours(1) && !locationContext.IsDaylightSavingTime(dt) && locationContext.IsDaylightSavingTime(origin)))
       {
         month--;
         if (month == 0)
@@ -204,7 +195,7 @@ namespace PowerView.Model
       var day = lastDayOfMonth ? daysInMonth : Math.Min(origin.Day, daysInMonth);
 
       var divided = new DateTime(year, month, day, origin.Hour, origin.Minute, origin.Second, origin.Millisecond, dt.Kind);
-      var adjusted = AdjustForDst(timeZoneInfo, origin, divided);
+      var adjusted = AdjustForDst(locationContext, origin, divided);
       return adjusted;
     }
 
