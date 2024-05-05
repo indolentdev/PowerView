@@ -92,6 +92,127 @@ public class CostBreakDownTest
         AssertEntryGroup((t6 + TimeSpan.FromDays(1), t7), new[] { e5 }, entriesPeriods);
     }
 
+    [Test]
+    public void ApplyThrows()
+    {
+        // Arrange
+        var locationContext = TimeZoneHelper.GetDenmarkLocationContext();
+        var values = Array.Empty<NormalizedDurationRegisterValue>();
+        var target = new CostBreakdown("Hep", Unit.Dkk, 25, new List<CostBreakdownEntry>());
+
+        // Act & Assert
+        Assert.That(() => target.Apply(null, values), Throws.ArgumentNullException);
+        Assert.That(() => target.Apply(locationContext, null), Throws.ArgumentNullException);
+    }
+
+    [Test]
+    public void ApplyEmpty()
+    {
+        // Arrange
+        var locationContext = TimeZoneHelper.GetDenmarkLocationContext();
+        var values = Array.Empty<NormalizedDurationRegisterValue>();
+        var entries = new List<CostBreakdownEntry> { new CostBreakdownEntry(DateTime.UtcNow, DateTime.UtcNow.AddMinutes(4), "theName", 3, 21, 12.34) };
+        var target = new CostBreakdown("theTitle", Unit.Eur, 25, entries);
+
+        // Act
+        var result = target.Apply(locationContext, values);
+
+        // Assert
+        Assert.That(result, Is.Empty);
+    }
+
+    [Test]
+    public void Apply()
+    {
+        // Arrange
+        var locationContext = TimeZoneHelper.GetDenmarkLocationContext();
+        var values = new [] { new NormalizedDurationRegisterValue(
+            new DateTime(2024, 5, 20, 14, 0, 0, DateTimeKind.Utc), new DateTime(2024, 5, 20, 15, 0, 0, DateTimeKind.Utc),
+            new DateTime(2024, 5, 20, 14, 0, 0, DateTimeKind.Utc), new DateTime(2024, 5, 20, 15, 0, 0, DateTimeKind.Utc),
+            new UnitValue(12.34, Unit.Eur), "EnergiDataService" ) };
+        var entry = new CostBreakdownEntry(new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc), 
+          new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc), "entry", 3, 21, 12.34);
+        var target = new CostBreakdown("theTitle", Unit.Eur, 25, new [] { entry });
+
+        // Act
+        var result = target.Apply(locationContext, values);
+
+        // Assert
+        Assert.That(result.Select(x => x.Value).ToList(), Is.EqualTo(new [] { new NormalizedDurationRegisterValue(
+            new DateTime(2024, 5, 20, 14, 0, 0, DateTimeKind.Utc), new DateTime(2024, 5, 20, 15, 0, 0, DateTimeKind.Utc),
+            new DateTime(2024, 5, 20, 14, 0, 0, DateTimeKind.Utc), new DateTime(2024, 5, 20, 15, 0, 0, DateTimeKind.Utc),
+            new UnitValue(12.34*2*1.25, Unit.Eur), "EnergiDataService", "theTitle" )
+        }));
+        Assert.That(result.First().Entries, Is.EqualTo(new[] { entry }));
+    }
+
+    [Test]
+    public void ApplySkippedByEntryDate()
+    {
+        // Arrange
+        var locationContext = TimeZoneHelper.GetDenmarkLocationContext();
+        var values = new[] { new NormalizedDurationRegisterValue(
+            new DateTime(2024, 5, 20, 14, 0, 0, DateTimeKind.Utc), new DateTime(2024, 5, 20, 15, 0, 0, DateTimeKind.Utc),
+            new DateTime(2024, 5, 20, 14, 0, 0, DateTimeKind.Utc), new DateTime(2024, 5, 20, 15, 0, 0, DateTimeKind.Utc),
+            new UnitValue(12.34, Unit.Eur), "EnergiDataService" ) };
+        var entry = new CostBreakdownEntry(new DateTime(2023, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+          new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc), "entry", 3, 21, 12.34);
+        var target = new CostBreakdown("theTitle", Unit.Eur, 25, new[] { entry });
+
+        // Act
+        var result = target.Apply(locationContext, values);
+
+        // Assert
+        Assert.That(result.Select(x => x.Value).ToList(), Is.EqualTo(new[] { new NormalizedDurationRegisterValue(
+            new DateTime(2024, 5, 20, 14, 0, 0, DateTimeKind.Utc), new DateTime(2024, 5, 20, 15, 0, 0, DateTimeKind.Utc),
+            new DateTime(2024, 5, 20, 14, 0, 0, DateTimeKind.Utc), new DateTime(2024, 5, 20, 15, 0, 0, DateTimeKind.Utc),
+            new UnitValue(12.34*1.25, Unit.Eur), "EnergiDataService", "theTitle" )
+        }));
+        Assert.That(result.First().Entries, Is.Empty);
+    }
+
+    [Test]
+    public void ApplySkippedByEntryTime()
+    {
+        // Arrange
+        var locationContext = TimeZoneHelper.GetDenmarkLocationContext();
+        var values = new[] { new NormalizedDurationRegisterValue(
+            new DateTime(2024, 5, 20, 14, 0, 0, DateTimeKind.Utc), new DateTime(2024, 5, 20, 15, 0, 0, DateTimeKind.Utc),
+            new DateTime(2024, 5, 20, 14, 0, 0, DateTimeKind.Utc), new DateTime(2024, 5, 20, 15, 0, 0, DateTimeKind.Utc),
+            new UnitValue(12.34, Unit.Eur), "EnergiDataService" ) };
+        var entry = new CostBreakdownEntry(new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+          new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc), "entry", 0, 15, 12.34);
+        var target = new CostBreakdown("theTitle", Unit.Eur, 25, new[] { entry });
+
+        // Act
+        var result = target.Apply(locationContext, values);
+
+        // Assert
+        Assert.That(result.Select(x => x.Value).ToList(), Is.EqualTo(new[] { new NormalizedDurationRegisterValue(
+            new DateTime(2024, 5, 20, 14, 0, 0, DateTimeKind.Utc), new DateTime(2024, 5, 20, 15, 0, 0, DateTimeKind.Utc),
+            new DateTime(2024, 5, 20, 14, 0, 0, DateTimeKind.Utc), new DateTime(2024, 5, 20, 15, 0, 0, DateTimeKind.Utc),
+            new UnitValue(12.34*1.25, Unit.Eur), "EnergiDataService", "theTitle" )
+        }));
+        Assert.That(result.First().Entries, Is.Empty);
+    }
+
+    [Test]
+    public void ApplyIncompatibleUnits()
+    {
+        // Arrange
+        var locationContext = TimeZoneHelper.GetDenmarkLocationContext();
+        var values = new[] { new NormalizedDurationRegisterValue(
+            new DateTime(2024, 5, 20, 14, 0, 0, DateTimeKind.Utc), new DateTime(2024, 5, 20, 15, 0, 0, DateTimeKind.Utc),
+            new DateTime(2024, 5, 20, 14, 0, 0, DateTimeKind.Utc), new DateTime(2024, 5, 20, 15, 0, 0, DateTimeKind.Utc),
+            new UnitValue(12.34, Unit.Eur), "EnergiDataService" ) };
+        var entry = new CostBreakdownEntry(new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+          new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc), "entry", 3, 21, 12.34);
+        var target = new CostBreakdown("theTitle", Unit.Dkk, 25, new[] { entry });
+
+        // Act & Assert
+        Assert.That(() => target.Apply(locationContext, values), Throws.TypeOf<DataMisalignedException>());
+    }
+
     private static void AssertEntryGroup((DateTime FromDate, DateTime ToDate) expectedKey, CostBreakdownEntry[] expectedValue, IDictionary<(DateTime FromDate, DateTime ToDate), IReadOnlyList<CostBreakdownEntry>> actual)
     {
         Assert.That(actual.Keys, Contains.Item(expectedKey));

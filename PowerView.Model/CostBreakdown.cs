@@ -87,6 +87,11 @@ namespace PowerView.Model
       if (locationContext == null) throw new ArgumentNullException(nameof(locationContext));
       if (values == null) throw new ArgumentNullException(nameof(values));
 
+      return ApplyInternal(locationContext, values).ToList();
+    }
+
+    private IEnumerable<(NormalizedDurationRegisterValue Value, ICollection<CostBreakdownEntry> Entries)> ApplyInternal(ILocationContext locationContext, IEnumerable<NormalizedDurationRegisterValue> values)
+    {
       foreach (var value in values)
       {
         if (value.UnitValue.Unit != Currency)
@@ -104,13 +109,11 @@ namespace PowerView.Model
         var amountExclVat = value.UnitValue.Value + applyingEntriesAmount;
         var amountInclVat = amountExclVat * ((Vat * 0.01) + 1);
 
-        var newValue = new NormalizedDurationRegisterValue(value.Start, value.End, value.NormalizedStart, value.NormalizedEnd, 
-          new UnitValue(amountInclVat, value.UnitValue.Unit), value.DeviceIds.Concat(new [] { Title }).ToArray());
+        var newValue = new NormalizedDurationRegisterValue(value.Start, value.End, value.NormalizedStart, value.NormalizedEnd,
+          new UnitValue(amountInclVat, value.UnitValue.Unit), value.DeviceIds.Concat(new[] { Title }).ToArray());
 
         yield return (newValue, applyingEntries);
       }
-
-      yield break;
     }
 
   }

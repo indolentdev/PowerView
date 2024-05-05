@@ -171,7 +171,7 @@ namespace PowerView.Model.Repository
       where TDstReading : class, IDbReading
     {
       var orderedReadings = readings.OrderBy(r => r.Timestamp)
-        .Select(r => new ReduceItem<TSrcReading> { Reading=r, CoarseTimestamp=ChangeTimeZoneAndReduce<TDstReading>(r.Timestamp)}).ToArray();
+        .Select(r => new ReduceItem<TSrcReading>(r, ChangeTimeZoneAndReduce<TDstReading>(r.Timestamp))).ToList();
 
       var coarseMinimumDateTime = ChangeTimeZoneAndReduce<TDstReading>(minimumDateTime);
       var coarseMaximumDateTime = ChangeTimeZoneAndReduce<TDstReading>(maximumDateTime);
@@ -199,7 +199,7 @@ namespace PowerView.Model.Repository
       }
 
       // Also search the readings.. if a meter exchange has happened then include both readings.
-      for (var ix = 0; ix < orderedReadings.Length - 1; ix++)
+      for (var ix = 0; ix < orderedReadings.Count - 1; ix++)
       { 
         var a = orderedReadings[ix];
         var b = orderedReadings[ix+1];
@@ -219,8 +219,14 @@ namespace PowerView.Model.Repository
     private class ReduceItem<TSrcReading>
       where TSrcReading : class, IDbReading
     {
-      public TSrcReading Reading { get; set; }
-      public DateTime CoarseTimestamp { get; set; }
+      public ReduceItem(TSrcReading reading, DateTime coarseTimestamp)
+      {
+        Reading = reading;
+        CoarseTimestamp = coarseTimestamp;
+      }
+
+      public TSrcReading Reading { get; private set; }
+      public DateTime CoarseTimestamp { get; private set; }
     }
 
     private DateTime ChangeTimeZoneAndReduce<TDstReading>(DateTime dateTime)
