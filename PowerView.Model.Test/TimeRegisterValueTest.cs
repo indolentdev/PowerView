@@ -50,7 +50,8 @@ namespace PowerView.Model.Test
       // Arrange
       var dt = DateTime.Today.ToUniversalTime();
       var target = new TimeRegisterValue("1", dt, 100, 2, Unit.WattHour);
-      var timeDivider = new DateTimeHelper(TimeZoneInfo.Local, dt).GetDivider("60-minutes");
+      var locationContext = TimeZoneHelper.GetDenmarkLocationContext();
+      var timeDivider = new DateTimeHelper(locationContext, dt).GetDivider("60-minutes");
 
       // Act
       var normalizedTimeRegisterValue = target.Normalize(timeDivider);

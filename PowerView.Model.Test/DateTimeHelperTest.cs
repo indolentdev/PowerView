@@ -8,15 +8,19 @@ namespace PowerView.Model.Test
   public class DateTimeHelperTest
   {
     [Test]
-    public void ConstructorThrows()
+    public void ConstructorsThrows()
     {
       // Arrange
       var timeZoneInfo = GetTimeZoneInfo();
       var origin = new DateTime(2019, 09, 22, 23, 0, 0, DateTimeKind.Utc);
+      var locationContext = TimeZoneHelper.GetDenmarkLocationContext();
 
       // Act & Assert
-      Assert.That(() => new DateTimeHelper(null, origin), Throws.TypeOf<ArgumentNullException>());
+      Assert.That(() => new DateTimeHelper((TimeZoneInfo)null, origin), Throws.TypeOf<ArgumentNullException>());
       Assert.That(() => new DateTimeHelper(timeZoneInfo, DateTime.SpecifyKind(origin, DateTimeKind.Local)), Throws.TypeOf<ArgumentOutOfRangeException>());
+
+      Assert.That(() => new DateTimeHelper((ILocationContext)null, origin), Throws.TypeOf<ArgumentNullException>());
+      Assert.That(() => new DateTimeHelper(locationContext, DateTime.SpecifyKind(origin, DateTimeKind.Local)), Throws.TypeOf<ArgumentOutOfRangeException>());
     }
 
     [Test]

@@ -94,5 +94,34 @@ namespace PowerView.Model.Test
       Assert.That(changedDateTime.Kind, Is.EqualTo(DateTimeKind.Utc));
     }
 
+    [Test]
+    public void IsDaylightSavingTimeThrows()
+    {
+      // Arrange
+      var target = new LocationContext();
+      target.Setup(TimeZoneHelper.GetDenmarkTimeZoneInfo(), CultureInfo.CurrentCulture);
+      var dateTimeLocal = new DateTime(2015, 12, 30, 17, 31, 45, DateTimeKind.Local);
+
+      // Act & Assert
+      Assert.That(() => target.IsDaylightSavingTime(dateTimeLocal), Throws.TypeOf<ArgumentOutOfRangeException>());
+      Assert.That(() => target.IsDaylightSavingTime(DateTime.UtcNow), Throws.TypeOf<ArgumentOutOfRangeException>());
+    }
+
+    [Test]
+    public void IsDaylightSavingTime()
+    {
+      // Arrange
+      var target = new LocationContext();
+      target.Setup(TimeZoneHelper.GetDenmarkTimeZoneInfo(), CultureInfo.CurrentCulture);
+      var dateTime = new DateTime(2015, 6, 30, 17, 31, 45, DateTimeKind.Unspecified);
+
+      // Act
+      var dst = target.IsDaylightSavingTime(dateTime);
+
+      // Assert
+      Assert.That(dst, Is.True);
+    }
+
+
   }
 }

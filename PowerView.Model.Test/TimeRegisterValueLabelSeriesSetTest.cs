@@ -84,7 +84,8 @@ namespace PowerView.Model.Test
       };
       var labelSeries = new TimeRegisterValueLabelSeries(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, timeRegisterValues } });
       var target = new TimeRegisterValueLabelSeriesSet(baseTime, baseTime + TimeSpan.FromMinutes(30), new[] { labelSeries });
-      var timeDivider = new DateTimeHelper(TimeZoneInfo.Local, DateTime.Today.ToUniversalTime()).GetDivider("10-minutes");
+      var locationContext = TimeZoneHelper.GetDenmarkLocationContext();
+      var timeDivider = new DateTimeHelper(locationContext, DateTime.Today.ToUniversalTime()).GetDivider("10-minutes");
 
       // Act
       var target2 = target.Normalize(timeDivider);

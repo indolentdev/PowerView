@@ -184,7 +184,8 @@ namespace PowerView.Model.Test
 
     private static DateTimeHelper GetDateTimeHelper()
     {
-      var dateTimeHelper = new DateTimeHelper(TimeZoneInfo.Local, new DateTime(2015, 02, 13, 00, 00, 00, DateTimeKind.Local).ToUniversalTime());
+      var locationContext = TimeZoneHelper.GetDenmarkLocationContext();
+      var dateTimeHelper = new DateTimeHelper(locationContext, new DateTime(2015, 02, 13, 00, 00, 00, DateTimeKind.Local).ToUniversalTime());
       return dateTimeHelper;
     }
 

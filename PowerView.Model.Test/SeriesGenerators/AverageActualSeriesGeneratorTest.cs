@@ -263,7 +263,8 @@ namespace PowerView.Model.Test.SeriesGenerators
 
     private static Func<DateTime, DateTime> GetDivider(string interval = "5-minutes")
     {
-      var dateTimeHelper = new DateTimeHelper(TimeZoneInfo.Local, new DateTime(2015, 02, 13, 00, 00, 00, DateTimeKind.Local).ToUniversalTime());
+      var locationContext = TimeZoneHelper.GetDenmarkLocationContext();
+      var dateTimeHelper = new DateTimeHelper(locationContext, new DateTime(2015, 02, 13, 00, 00, 00, DateTimeKind.Local).ToUniversalTime());
       var timeDivider = dateTimeHelper.GetDivider(interval);
       return timeDivider;
     }

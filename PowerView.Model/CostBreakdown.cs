@@ -82,9 +82,9 @@ namespace PowerView.Model
       return groups;
     }
 
-    public IEnumerable<(NormalizedDurationRegisterValue Value, ICollection<CostBreakdownEntry> Entries)> ApplyAmountsAndVat(TimeZoneInfo timeZoneInfo, IEnumerable<NormalizedDurationRegisterValue> values)
+    public IEnumerable<(NormalizedDurationRegisterValue Value, ICollection<CostBreakdownEntry> Entries)> Apply(ILocationContext locationContext, IEnumerable<NormalizedDurationRegisterValue> values)
     {
-      if (timeZoneInfo == null) throw new ArgumentNullException(nameof(timeZoneInfo));
+      if (locationContext == null) throw new ArgumentNullException(nameof(locationContext));
       if (values == null) throw new ArgumentNullException(nameof(values));
 
       foreach (var value in values)
@@ -97,7 +97,7 @@ namespace PowerView.Model
         var applyingEntries = Entries
           .Where(x => x.AppliesToDates(value.NormalizedStart, value.NormalizedEnd)) // Match on entry UTC from and to dates
           .Where(x => x.AppliesToTime(
-            TimeOnly.FromDateTime(TimeZoneInfo.ConvertTimeFromUtc(value.NormalizedStart, timeZoneInfo))) // Match on entry local time hours.
+            TimeOnly.FromDateTime(locationContext.ConvertTimeFromUtc(value.NormalizedStart))) // Match on entry local time hours.
           )
           .ToList();
         var applyingEntriesAmount = applyingEntries.Sum(x => x.Amount);

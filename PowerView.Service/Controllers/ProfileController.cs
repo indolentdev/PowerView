@@ -98,8 +98,7 @@ public class ProfileController : ControllerBase
         var distinctIntervals = profileGraphs.GroupBy(x => x.Interval).ToList();
 
         // Find query start and end times based on max interval and period...
-        var timeZoneInfo = locationContext.TimeZoneInfo;
-        var dateTimeHelper = new DateTimeHelper(timeZoneInfo, start);
+        var dateTimeHelper = new DateTimeHelper(locationContext, start);
         var end = dateTimeHelper.GetPeriodEnd(period);
         var maxInterval = distinctIntervals.Select(x => dateTimeHelper.GetNext(x.Key)(start)).Max();
         var preStart = start.AddTicks((start - maxInterval).Ticks / 2); // .. half the interval backwards.
@@ -119,7 +118,7 @@ public class ProfileController : ControllerBase
             var groupInterval = group.Key;
             var groupProfileGraphs = group.ToList();
 
-            var intervalGroup = new ProfileGraphIntervalGroup(timeZoneInfo, start, groupInterval, groupProfileGraphs, labelSeriesSet, costBreakdownGeneratorSeries);
+            var intervalGroup = new ProfileGraphIntervalGroup(locationContext, start, groupInterval, groupProfileGraphs, labelSeriesSet, costBreakdownGeneratorSeries);
             intervalGroup.Prepare();
             intervalGroups.Add(intervalGroup);
         }

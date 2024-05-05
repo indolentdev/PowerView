@@ -126,8 +126,9 @@ namespace PowerView.Model.Test
       {
         profileGraphs = new[] { GetProfileGraph() };
       }
+      var locationContext = TimeZoneHelper.GetDenmarkLocationContext();
       if (start == null) start = new DateTime(2019, 8, 26, 0, 0, 0, DateTimeKind.Local).ToUniversalTime();
-      var intervalGroup = new ProfileGraphIntervalGroup(TimeZoneInfo.Local, start.Value, profileGraphs.First().Interval, profileGraphs, 
+      var intervalGroup = new ProfileGraphIntervalGroup(locationContext, start.Value, profileGraphs.First().Interval, profileGraphs, 
         GetLabelSeriesSet(firstTimestamp, fromFirstCount, start, fromStartCount, interval, baseValue, profileGraphs),
         Array.Empty<CostBreakdownGeneratorSeries>());
       intervalGroup.Prepare();

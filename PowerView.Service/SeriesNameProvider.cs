@@ -64,7 +64,7 @@ namespace PowerView.Service
                 labelSeries.Add(labelS);
             }
             var labelSeriesSet = new TimeRegisterValueLabelSeriesSet(dt1, dt2, labelSeries);
-            var intervalGroup = new IntervalGroup(locationcontext.TimeZoneInfo, midnight, "60-minutes", labelSeriesSet, costBreakdownGeneratorSeries);
+            var intervalGroup = new IntervalGroup(locationcontext, midnight, "60-minutes", labelSeriesSet, costBreakdownGeneratorSeries);
 
             return intervalGroup;
         }

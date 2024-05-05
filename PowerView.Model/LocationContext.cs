@@ -31,6 +31,13 @@ namespace PowerView.Model
             return TimeZoneInfo.ConvertTimeToUtc(dateTime, TimeZoneInfo);
         }
 
+        public bool IsDaylightSavingTime(DateTime dateTime)
+        {
+            if (dateTime.Kind != DateTimeKind.Unspecified) throw new ArgumentOutOfRangeException("dateTime", "Must be Unspecified");
+
+            return TimeZoneInfo.IsDaylightSavingTime(dateTime);
+        }
+
 
     }
 }

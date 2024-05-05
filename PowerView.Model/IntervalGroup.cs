@@ -7,16 +7,17 @@ namespace PowerView.Model
 {
   public class IntervalGroup
   {
+    private readonly ILocationContext locationContext;
     private readonly Func<DateTime, DateTime> timeDivider;
     private readonly Func<DateTime, DateTime> getNext;
-    private readonly TimeZoneInfo timeZoneInfo;
 
-    public IntervalGroup(TimeZoneInfo timeZoneInfo, DateTime start, string interval, TimeRegisterValueLabelSeriesSet labelSeriesSet, IList<CostBreakdownGeneratorSeries> costBreakdownGeneratorSeries)
+    public IntervalGroup(ILocationContext locationContext, DateTime start, string interval, TimeRegisterValueLabelSeriesSet labelSeriesSet, IList<CostBreakdownGeneratorSeries> costBreakdownGeneratorSeries)
     {
-      var dateTimeHelper = new DateTimeHelper(timeZoneInfo, start);
+      this.locationContext = locationContext ?? throw new ArgumentNullException(nameof(locationContext));
+
+      var dateTimeHelper = new DateTimeHelper(locationContext.TimeZoneInfo, start);
       timeDivider = dateTimeHelper.GetDivider(interval);
       getNext = dateTimeHelper.GetNext(interval);
-      this.timeZoneInfo = timeZoneInfo; // Null validated by DateTimeHelper.
 
       Interval = interval;
       LabelSeriesSet = labelSeriesSet ?? throw new ArgumentNullException(nameof(labelSeriesSet));
@@ -91,7 +92,7 @@ namespace PowerView.Model
             try
             {
               if (!costBreakdownGeneratorSeries.GeneratorSeries.SupportsInterval(Interval)) continue;
-              var generatedResult = costBreakdownGeneratorSeries.CostBreakdown.ApplyAmountsAndVat(timeZoneInfo, baseSeries).ToList();
+              var generatedResult = costBreakdownGeneratorSeries.CostBreakdown.Apply(locationContext, baseSeries).ToList();
 
               if (generatedResult.Where(x => x.Entries.Count == 0).Any()) continue; // Only include the series if all items had generated values
 
@@ -126,9 +127,6 @@ namespace PowerView.Model
             obisDurationValues.Add(item.Key, item.Value);
           }
         }
-
-//        var durationLabelSeries = new LabelSeries<NormalizedDurationRegisterValue>(labelSeries.Label, durationLabelSeriesContent);
-//        result.Add(labelSeries.Label, durationLabelSeries);
       }
 
       foreach (var res in result)

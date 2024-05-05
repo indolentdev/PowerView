@@ -8,6 +8,15 @@ namespace PowerView.Model
     private readonly TimeZoneInfo timeZoneInfo;
     private readonly DateTime origin;
 
+    public DateTimeHelper(ILocationContext locationContext, DateTime origin)
+    {
+      if (locationContext == null) throw new ArgumentNullException(nameof(locationContext));
+      if (origin.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException(nameof(origin), "Must be UTC");
+
+      this.timeZoneInfo = locationContext.TimeZoneInfo;
+      this.origin = origin;
+    }
+
     public DateTimeHelper(TimeZoneInfo timeZoneInfo, DateTime origin)
     {
       if (timeZoneInfo == null) throw new ArgumentNullException("timeZoneInfo");

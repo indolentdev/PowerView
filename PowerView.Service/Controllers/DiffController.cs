@@ -38,7 +38,7 @@ public class DiffController : ControllerBase
         sw.Stop();
         if (logger.IsEnabled(LogLevel.Debug)) logger.LogDebug($"GetDiff timing - Get: {sw.ElapsedMilliseconds}ms");
 
-        var intervalGroup = new IntervalGroup(locationContext.TimeZoneInfo, from, "1-days", lss, Array.Empty<CostBreakdownGeneratorSeries>());
+        var intervalGroup = new IntervalGroup(locationContext, from, "1-days", lss, Array.Empty<CostBreakdownGeneratorSeries>());
         sw.Restart();
         intervalGroup.Prepare();
         sw.Stop();

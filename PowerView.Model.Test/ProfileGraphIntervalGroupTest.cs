@@ -11,7 +11,7 @@ namespace PowerView.Model.Test
     public void ConstructorThrows()
     {
       // Arrange
-      var timeZoneInfo = TimeZoneInfo.Local;
+      var locationContext = TimeZoneHelper.GetDenmarkLocationContext();
       var start = DateTime.Today.ToUniversalTime();
       const string interval = "5-minutes";
       var profileGraphs = new List<ProfileGraph>();
@@ -20,21 +20,21 @@ namespace PowerView.Model.Test
 
       // Act & Assert
       Assert.That(() => new ProfileGraphIntervalGroup(null, start, interval, profileGraphs, labelSeriesSet, costBreakdownGeneratorSeries), Throws.TypeOf<ArgumentNullException>());
-      Assert.That(() => new ProfileGraphIntervalGroup(timeZoneInfo, DateTime.Now, interval, profileGraphs, labelSeriesSet, costBreakdownGeneratorSeries), Throws.TypeOf<ArgumentOutOfRangeException>());
-      Assert.That(() => new ProfileGraphIntervalGroup(timeZoneInfo, start, null, profileGraphs, labelSeriesSet, costBreakdownGeneratorSeries), Throws.ArgumentNullException);
-      Assert.That(() => new ProfileGraphIntervalGroup(timeZoneInfo, start, interval, null, labelSeriesSet, costBreakdownGeneratorSeries), Throws.ArgumentNullException);
-      Assert.That(() => new ProfileGraphIntervalGroup(timeZoneInfo, start, interval, profileGraphs, null, costBreakdownGeneratorSeries), Throws.ArgumentNullException);
-      Assert.That(() => new ProfileGraphIntervalGroup(timeZoneInfo, start, interval, profileGraphs, labelSeriesSet, null), Throws.ArgumentNullException);
+      Assert.That(() => new ProfileGraphIntervalGroup(locationContext, DateTime.Now, interval, profileGraphs, labelSeriesSet, costBreakdownGeneratorSeries), Throws.TypeOf<ArgumentOutOfRangeException>());
+      Assert.That(() => new ProfileGraphIntervalGroup(locationContext, start, null, profileGraphs, labelSeriesSet, costBreakdownGeneratorSeries), Throws.ArgumentNullException);
+      Assert.That(() => new ProfileGraphIntervalGroup(locationContext, start, interval, null, labelSeriesSet, costBreakdownGeneratorSeries), Throws.ArgumentNullException);
+      Assert.That(() => new ProfileGraphIntervalGroup(locationContext, start, interval, profileGraphs, null, costBreakdownGeneratorSeries), Throws.ArgumentNullException);
+      Assert.That(() => new ProfileGraphIntervalGroup(locationContext, start, interval, profileGraphs, labelSeriesSet, null), Throws.ArgumentNullException);
 
-      Assert.That(() => new ProfileGraphIntervalGroup(timeZoneInfo, start, string.Empty, profileGraphs, labelSeriesSet, costBreakdownGeneratorSeries), Throws.TypeOf<ArgumentOutOfRangeException>());
-      Assert.That(() => new ProfileGraphIntervalGroup(timeZoneInfo, start, "whatnot", profileGraphs, labelSeriesSet, costBreakdownGeneratorSeries), Throws.TypeOf<ArgumentOutOfRangeException>());
+      Assert.That(() => new ProfileGraphIntervalGroup(locationContext, start, string.Empty, profileGraphs, labelSeriesSet, costBreakdownGeneratorSeries), Throws.TypeOf<ArgumentOutOfRangeException>());
+      Assert.That(() => new ProfileGraphIntervalGroup(locationContext, start, "whatnot", profileGraphs, labelSeriesSet, costBreakdownGeneratorSeries), Throws.TypeOf<ArgumentOutOfRangeException>());
     }
 
     [Test]
     public void ConstructorAndProperties()
     {
       // Arrange
-      var timeZoneInfo = TimeZoneInfo.Local;
+      var locationContext = TimeZoneHelper.GetDenmarkLocationContext();
       var start = DateTime.Today.ToUniversalTime();
       const string label = "label";
       const string interval = "5-minutes";
@@ -47,7 +47,7 @@ namespace PowerView.Model.Test
       var costBreakdownGeneratorSeries = new List<CostBreakdownGeneratorSeries>();
 
       // Act
-      var target = new ProfileGraphIntervalGroup(timeZoneInfo, start, interval, profileGraphs, labelSeriesSet, costBreakdownGeneratorSeries);
+      var target = new ProfileGraphIntervalGroup(locationContext, start, interval, profileGraphs, labelSeriesSet, costBreakdownGeneratorSeries);
 
       // Assert
       Assert.That(target.Interval, Is.EqualTo(interval));

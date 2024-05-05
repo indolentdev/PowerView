@@ -12,7 +12,7 @@ namespace PowerView.Model.Test
     public void ConstructorThrows()
     {
       // Arrange
-      var timeZoneInfo = TimeZoneInfo.Local;
+      var locationContext = TimeZoneHelper.GetDenmarkLocationContext();
       var start = DateTime.Today.ToUniversalTime();
       const string interval = "5-minutes";
       var labelSeriesSet = new TimeRegisterValueLabelSeriesSet(DateTime.UtcNow, DateTime.UtcNow + TimeSpan.FromDays(1), new TimeRegisterValueLabelSeries[0]);
@@ -20,20 +20,20 @@ namespace PowerView.Model.Test
 
       // Act & Assert
       Assert.That(() => new IntervalGroup(null, start, interval, labelSeriesSet, costBreakdownGeneratorSeries), Throws.TypeOf<ArgumentNullException>());
-      Assert.That(() => new IntervalGroup(timeZoneInfo, DateTime.Now, interval, labelSeriesSet, costBreakdownGeneratorSeries), Throws.TypeOf<ArgumentOutOfRangeException>());
-      Assert.That(() => new IntervalGroup(timeZoneInfo, start, null, labelSeriesSet, costBreakdownGeneratorSeries), Throws.ArgumentNullException);
-      Assert.That(() => new IntervalGroup(timeZoneInfo, start, interval, null, costBreakdownGeneratorSeries), Throws.ArgumentNullException);
-      Assert.That(() => new IntervalGroup(timeZoneInfo, start, interval, labelSeriesSet, null), Throws.TypeOf<ArgumentNullException>());
+      Assert.That(() => new IntervalGroup(locationContext, DateTime.Now, interval, labelSeriesSet, costBreakdownGeneratorSeries), Throws.TypeOf<ArgumentOutOfRangeException>());
+      Assert.That(() => new IntervalGroup(locationContext, start, null, labelSeriesSet, costBreakdownGeneratorSeries), Throws.ArgumentNullException);
+      Assert.That(() => new IntervalGroup(locationContext, start, interval, null, costBreakdownGeneratorSeries), Throws.ArgumentNullException);
+      Assert.That(() => new IntervalGroup(locationContext, start, interval, labelSeriesSet, null), Throws.TypeOf<ArgumentNullException>());
 
-      Assert.That(() => new IntervalGroup(timeZoneInfo, start, string.Empty, labelSeriesSet, costBreakdownGeneratorSeries), Throws.TypeOf<ArgumentOutOfRangeException>());
-      Assert.That(() => new IntervalGroup(timeZoneInfo, start, "whatnot", labelSeriesSet, costBreakdownGeneratorSeries), Throws.TypeOf<ArgumentOutOfRangeException>());
+      Assert.That(() => new IntervalGroup(locationContext, start, string.Empty, labelSeriesSet, costBreakdownGeneratorSeries), Throws.TypeOf<ArgumentOutOfRangeException>());
+      Assert.That(() => new IntervalGroup(locationContext, start, "whatnot", labelSeriesSet, costBreakdownGeneratorSeries), Throws.TypeOf<ArgumentOutOfRangeException>());
     }
 
     [Test]
     public void ConstructorAndProperties()
     {
       // Arrange
-      var timeZoneInfo = TimeZoneInfo.Local;
+      var locationContext = TimeZoneHelper.GetDenmarkLocationContext();
       var start = DateTime.Today.ToUniversalTime();
       const string label = "label";
       const string interval = "5-minutes";
@@ -44,7 +44,7 @@ namespace PowerView.Model.Test
       var costBreakdownGeneratorSeries = new List<CostBreakdownGeneratorSeries>();
 
       // Act
-      var target = new IntervalGroup(timeZoneInfo, start, interval, labelSeriesSet, costBreakdownGeneratorSeries);
+      var target = new IntervalGroup(locationContext, start, interval, labelSeriesSet, costBreakdownGeneratorSeries);
 
       // Assert
       Assert.That(target.Interval, Is.EqualTo(interval));
@@ -63,7 +63,7 @@ namespace PowerView.Model.Test
       const string label = "label";
       const string interval = "60-minutes";
       ObisCode obisCode = "1.2.3.4.5.6";
-      var timeZoneInfo = TimeZoneInfo.Local;
+      var locationContext = TimeZoneHelper.GetDenmarkLocationContext();
       var start = DateTime.Today.ToUniversalTime();
       var end = start.AddDays(1);
       var labelSeriesSet = new TimeRegisterValueLabelSeriesSet(start, end, new[] {
@@ -71,7 +71,7 @@ namespace PowerView.Model.Test
         new TimeRegisterValue("SN1", start, 1234, Unit.Watt) } } })
       });
       var costBreakdownGeneratorSeries = new List<CostBreakdownGeneratorSeries>();
-      var target = new IntervalGroup(timeZoneInfo, start, interval, labelSeriesSet, costBreakdownGeneratorSeries);
+      var target = new IntervalGroup(locationContext, start, interval, labelSeriesSet, costBreakdownGeneratorSeries);
 
       // Act
       target.Prepare();
@@ -89,15 +89,17 @@ namespace PowerView.Model.Test
       const string label = "label";
       const string interval = "1-days";
       ObisCode obisCode = "1.2.3.4.5.6";
-      var timeZoneInfo = TimeZoneInfo.Utc;
-      var start = new DateTime(2019, 3, 1, 00, 00, 00, DateTimeKind.Utc);
-      var end = start.AddMonths(1);
+      var startLocal = new DateTime(2019, 7, 1, 00, 00, 00, DateTimeKind.Unspecified);
+      var endLocal = startLocal.AddMonths(1);
+      var locationContext = TimeZoneHelper.GetDenmarkLocationContext();
+      var start = locationContext.ConvertTimeToUtc(startLocal);
+      var end = locationContext.ConvertTimeToUtc(endLocal);
       var labelSeriesSet = new TimeRegisterValueLabelSeriesSet(start, end, new[] {
         new TimeRegisterValueLabelSeries(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, new[] {
         new TimeRegisterValue("SN1", start, 1234, Unit.Watt) } } })
       });
       var costBreakdownGeneratorSeries = new List<CostBreakdownGeneratorSeries>();
-      var target = new IntervalGroup(timeZoneInfo, start, interval, labelSeriesSet, costBreakdownGeneratorSeries);
+      var target = new IntervalGroup(locationContext, start, interval, labelSeriesSet, costBreakdownGeneratorSeries);
 
       // Act
       target.Prepare();
@@ -115,7 +117,7 @@ namespace PowerView.Model.Test
       const string label = "label";
       const string interval = "60-minutes";
       ObisCode obisCode = "1.2.3.4.5.6";
-      var timeZoneInfo = TimeZoneInfo.Local;
+      var locationContext = TimeZoneHelper.GetDenmarkLocationContext();
       var start = DateTime.Today.ToUniversalTime();
       var end = start.AddDays(1);
       var labelSeriesSet = new TimeRegisterValueLabelSeriesSet(start, end, new[] {
@@ -123,8 +125,8 @@ namespace PowerView.Model.Test
         new TimeRegisterValue("SN1", start.AddMinutes(2), 1234, Unit.Watt) } } })
       });
       var costBreakdownGeneratorSeries = new List<CostBreakdownGeneratorSeries>();
-      var target = new IntervalGroup(timeZoneInfo, start, interval, labelSeriesSet, costBreakdownGeneratorSeries);
-      var divider = new DateTimeHelper(timeZoneInfo, start).GetDivider(interval);
+      var target = new IntervalGroup(locationContext, start, interval, labelSeriesSet, costBreakdownGeneratorSeries);
+      var divider = new DateTimeHelper(locationContext, start).GetDivider(interval);
 
       // Act
       target.Prepare();
@@ -151,7 +153,7 @@ namespace PowerView.Model.Test
       const string label = "label";
       const string interval = "60-minutes";
       ObisCode obisCode = ObisCode.ElectrActiveEnergyA14;
-      var timeZoneInfo = TimeZoneInfo.Local;
+      var locationContext = TimeZoneHelper.GetDenmarkLocationContext();
       var start = DateTime.Today.ToUniversalTime();
       var end = start.AddDays(1);
       var labelSeriesSet = new TimeRegisterValueLabelSeriesSet(start, end, new[] {
@@ -159,7 +161,7 @@ namespace PowerView.Model.Test
         new TimeRegisterValue("SN1", start, 1234, Unit.Watt) } } })
       });
       var costBreakdownGeneratorSeries = new List<CostBreakdownGeneratorSeries>();
-      var target = new IntervalGroup(timeZoneInfo, start, interval, labelSeriesSet, costBreakdownGeneratorSeries);
+      var target = new IntervalGroup(locationContext, start, interval, labelSeriesSet, costBreakdownGeneratorSeries);
 
       // Act
       target.Prepare();

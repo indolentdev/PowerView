@@ -189,7 +189,8 @@ namespace PowerView.Model.Test
         new TimeRegisterValue("sn1", baseTime + TimeSpan.FromMinutes(25), 16, Unit.WattHour)
       };
       var target = new TimeRegisterValueLabelSeries(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, timeRegisterValues } });
-      var timeDivider = new DateTimeHelper(TimeZoneInfo.Local, DateTime.Today.ToUniversalTime()).GetDivider("10-minutes");
+      var locationContext = TimeZoneHelper.GetDenmarkLocationContext();
+      var timeDivider = new DateTimeHelper(locationContext, DateTime.Today.ToUniversalTime()).GetDivider("10-minutes");
 
       // Act
       var normalized = target.Normalize(timeDivider);
@@ -220,7 +221,8 @@ namespace PowerView.Model.Test
       };
       var target = new TimeRegisterValueLabelSeries(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, timeRegisterValues } });
       var day = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0, DateTimeKind.Utc);
-      var timeDivider = new DateTimeHelper(TimeZoneInfo.Local, day).GetDivider("60-minutes");
+      var locationContext = TimeZoneHelper.GetDenmarkLocationContext();
+      var timeDivider = new DateTimeHelper(locationContext, day).GetDivider("60-minutes");
 
       // Act
       var normalized = target.Normalize(timeDivider);

@@ -13,5 +13,6 @@ namespace PowerView.Model
 
     DateTime ConvertTimeFromUtc(DateTime dateTime);
     DateTime ConvertTimeToUtc(DateTime dateTime);
+    bool IsDaylightSavingTime(DateTime dateTime);
   }
 }
