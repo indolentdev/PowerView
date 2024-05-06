@@ -46,10 +46,11 @@ public class SettingsApplicationModuleTest
     public async Task Get()
     {
         // Arrange
-        var timeZoneInfo = TimeZoneInfo.Local;
-        locationContext.Setup(lc => lc.TimeZoneInfo).Returns(timeZoneInfo);
         var cultureInfo = new CultureInfo("de-DE");
         locationContext.Setup(lc => lc.CultureInfo).Returns(cultureInfo);
+        const string timeZoneDisplayName = "TZ Name";
+        locationContext.Setup(lc => lc.GetTimeZoneDisplayName()).Returns(timeZoneDisplayName);
+
 
         // Act
         var response = await httpClient.GetAsync($"api/settings/application");
@@ -60,7 +61,7 @@ public class SettingsApplicationModuleTest
         Assert.That(json, Is.Not.Null);
         Assert.That(json.version, Is.Not.Null);
         Assert.That(json.culture, Is.EqualTo(cultureInfo.NativeName));
-        Assert.That(json.timeZone, Is.EqualTo(timeZoneInfo.DisplayName));
+        Assert.That(json.timeZone, Is.EqualTo(timeZoneDisplayName));
     }
 
     internal class TestApplicationDto

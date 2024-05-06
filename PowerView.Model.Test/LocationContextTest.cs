@@ -37,6 +37,22 @@ namespace PowerView.Model.Test
     }
 
     [Test]
+    public void GetTimeZoneDisplayName()
+    {
+      // Arrange
+      var timeZoneInfo = TimeZoneInfo.Local;
+      var cultureInfo = CultureInfo.CurrentCulture;
+      var target = new LocationContext();
+      target.Setup(timeZoneInfo, cultureInfo);
+
+      // Act
+      var displayName = target.GetTimeZoneDisplayName();
+
+      // Assert
+      Assert.That(displayName, Is.EqualTo(timeZoneInfo.DisplayName));
+    }
+
+    [Test]
     public void ConvertTimeZoneFromUtcThrows()
     {
       // Arrange

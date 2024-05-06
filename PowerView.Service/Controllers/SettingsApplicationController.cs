@@ -21,9 +21,9 @@ public class SettingsApplicationController : ControllerBase
     {
         var version = GetVersion();
         var cultureInfo = locationContext.CultureInfo;
-        var timeZone = locationContext.TimeZoneInfo;
+        var timeZoneDisplayName = locationContext.GetTimeZoneDisplayName();
 
-        var r = new { Version = version, Culture = cultureInfo.NativeName, TimeZone = timeZone.DisplayName };
+        var r = new { Version = version, Culture = cultureInfo.NativeName, TimeZone = timeZoneDisplayName };
         return Ok(r);
     }
 

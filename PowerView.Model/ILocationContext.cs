@@ -8,8 +8,9 @@ namespace PowerView.Model
   /// </summary>
   public interface ILocationContext
   {
-    TimeZoneInfo TimeZoneInfo { get; }
     CultureInfo CultureInfo { get; }
+
+    string GetTimeZoneDisplayName();
 
     DateTime ConvertTimeFromUtc(DateTime dateTime);
     DateTime ConvertTimeToUtc(DateTime dateTime);

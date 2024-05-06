@@ -17,6 +17,11 @@ namespace PowerView.Model
         public TimeZoneInfo TimeZoneInfo { get; private set; }
         public CultureInfo CultureInfo { get; private set; }
 
+        public string GetTimeZoneDisplayName()
+        {
+            return TimeZoneInfo.DisplayName;
+        }
+
         public DateTime ConvertTimeFromUtc(DateTime dateTime)
         {
             if (dateTime.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("dateTime", "Must be UTC. Was:" + dateTime.Kind);
