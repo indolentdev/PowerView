@@ -174,5 +174,42 @@ namespace PowerView.Model.Test
       Assert.That(target.NormalizedDurationLabelSeriesSet.First().Count(), Is.EqualTo(3));
     }
 
+    [Test]
+    [TestCase("label")]
+    [TestCase("otherLabel")]
+    public void Prepare_GeneratesFromCostBreakdownGeneratorSeries(string genLabel)
+    {
+      // Arrange
+      const string label = "label";
+      const string interval = "60-minutes";
+      var locationContext = TimeZoneHelper.GetDenmarkLocationContext();
+
+      var start = DateTime.Today.ToUniversalTime();
+      var end = start.AddDays(1);
+      var labelSeriesSet = new TimeRegisterValueLabelSeriesSet(start, end, new[] {
+        new TimeRegisterValueLabelSeries(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat, new[] {
+        new TimeRegisterValue("EnergiDataService", start.AddHours(1), 12.34, Unit.Dkk), new TimeRegisterValue("EnergiDataService", start.AddHours(2), 23.45, Unit.Dkk) } } })
+      });
+
+      var entry = new CostBreakdownEntry(new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc), new DateTime(4444, 1, 1, 0, 0, 0, DateTimeKind.Utc), "entry", 0, 23, 12.34);
+      var costBreakdown = new CostBreakdown("theTitle", Unit.Dkk, 25, new[] { entry });
+      var generatorSeries = new GeneratorSeries(new SeriesName(genLabel, ObisCode.ElectrActiveEnergyKwhIncomeExpenseInclVat), 
+        new SeriesName(label, ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat), costBreakdown.Title);
+
+      var costBreakdownGeneratorSeries = new List<CostBreakdownGeneratorSeries> { new CostBreakdownGeneratorSeries(costBreakdown, generatorSeries) };
+      var target = new IntervalGroup(locationContext, start, interval, labelSeriesSet, costBreakdownGeneratorSeries);
+
+      // Act
+      target.Prepare();
+
+      // Assert
+      Assert.That(target.NormalizedLabelSeriesSet.Count(), Is.EqualTo(1));
+      Assert.That(target.NormalizedLabelSeriesSet.First().Count(), Is.EqualTo(1));
+
+      var labelSeries = target.NormalizedDurationLabelSeriesSet.FirstOrDefault(x => x.Label == generatorSeries.Series.Label);
+      Assert.That(labelSeries, Is.Not.Null);
+      Assert.That(labelSeries.ContainsObisCode(generatorSeries.Series.ObisCode));
+    }
+
   }
 }
