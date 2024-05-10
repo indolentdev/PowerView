@@ -15,7 +15,7 @@ export class ProfileDayComponent implements OnInit {
 
   constructor(private log: NGXLogger) { 
     var now = moment();
-    this.dpMaxStartTime = moment();
+    this.dpMaxStartTime = moment().add(1, 'd');
     this.defaultStartTime = moment([now.year(), now.month(), now.date(), 0, 0, 0, 0]);
   }
 
