@@ -27,6 +27,18 @@ namespace PowerView.Model
       return false;
     }
 
+    public bool SupportsDurations(IEnumerable<NormalizedDurationRegisterValue> values)
+    {
+      if (BaseSeries.ObisCode != ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat) return false;
+      
+      foreach (var value in values)
+      {
+        var normStart = value.NormalizedStart;
+        if (normStart.Minute != 0 || normStart.Second != 0) return false;
+      }
+      return true;
+    }
+
     public override bool Equals(object obj)
     {
       if (!(obj is GeneratorSeries)) return false;

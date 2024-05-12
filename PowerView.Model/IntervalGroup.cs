@@ -92,6 +92,8 @@ namespace PowerView.Model
             try
             {
               if (!costBreakdownGeneratorSeries.GeneratorSeries.SupportsInterval(Interval)) continue;
+              if (!costBreakdownGeneratorSeries.GeneratorSeries.SupportsDurations(baseSeries)) continue;
+              
               var generatedResult = costBreakdownGeneratorSeries.CostBreakdown.Apply(locationContext, baseSeries).ToList();
 
               if (generatedResult.Where(x => x.Entries.Count == 0).Any()) continue; // Only include the series if all items had generated values

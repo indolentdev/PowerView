@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using NUnit.Framework;
 
 namespace PowerView.Model.Test
@@ -74,6 +77,27 @@ namespace PowerView.Model.Test
 
       // Act
       var supported = target.SupportsInterval(interval);
+
+      // Assert
+      Assert.That(supported, Is.EqualTo(expected));
+    }
+
+    [Test]
+    [TestCase("1.69.25.67.0.255", "1.68.25.67.0.255", "60-minutes", "2024-05-12T20:00:00Z", true)]
+    [TestCase("1.69.25.67.0.255", "1.68.25.67.99.255", "60-minutes", "2024-05-12T20:00:00Z", false)]
+    [TestCase("1.69.25.67.0.255", "1.68.25.67.0.255", "60-minutes", "2024-05-12T20:00:01Z", false)]
+    public void SupportsDurations(string obisCode, string baseObisCode, string interval, string timestampString, bool expected)
+    {
+      // Arrange
+      var target = new GeneratorSeries(new SeriesName("lbl", obisCode), new SeriesName("lbl", baseObisCode), "cbTitle");
+      var timestamp = DateTime.Parse(timestampString, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
+      var values = new[] { new NormalizedDurationRegisterValue(
+            timestamp.AddMinutes(1), timestamp.AddMinutes(61),
+            timestamp, timestamp.AddMinutes(60),
+            new UnitValue(12.34, Unit.Eur), "EnergiDataService" ) };
+
+      // Act
+      var supported = target.SupportsDurations(values);
 
       // Assert
       Assert.That(supported, Is.EqualTo(expected));
