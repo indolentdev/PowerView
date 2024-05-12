@@ -44,6 +44,7 @@ public class SettingsMqttControllerTest
     [TearDown]
     public void Teardown()
     {
+        httpClient?.Dispose();
         application?.Dispose();
     }
 

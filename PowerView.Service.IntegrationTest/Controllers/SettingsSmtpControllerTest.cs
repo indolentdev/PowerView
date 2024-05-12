@@ -38,6 +38,7 @@ public class SettingsSmtpControllerTest
     [TearDown]
     public void Teardown()
     {
+        httpClient?.Dispose();
         application?.Dispose();
     }
 

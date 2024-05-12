@@ -44,6 +44,7 @@ public class ExportCostBreakdownControllerTest
     [TearDown]
     public void Teardown()
     {
+        httpClient?.Dispose();
         application?.Dispose();
     }
 

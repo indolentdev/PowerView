@@ -41,6 +41,7 @@ public class EventControllerTest
     [TearDown]
     public void Teardown()
     {
+        httpClient?.Dispose();
         application?.Dispose();
     }
 

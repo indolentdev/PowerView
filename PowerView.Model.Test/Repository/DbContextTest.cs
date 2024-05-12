@@ -17,6 +17,13 @@ namespace PowerView.Model.Test.Repository
             target = new DbContext(Connection);
         }
 
+        [TearDown]
+        public override void TearDown()
+        {
+            target.Dispose();
+            base.TearDown();
+        }
+
         [Test]
         public void ConstructorThrows()
         {

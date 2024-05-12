@@ -49,6 +49,7 @@ public class SettingsSerieColorsModuleTest
     [TearDown]
     public void Teardown()
     {
+        httpClient?.Dispose();
         application?.Dispose();
     }
 

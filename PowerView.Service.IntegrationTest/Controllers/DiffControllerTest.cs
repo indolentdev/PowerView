@@ -42,6 +42,7 @@ public class DiffControllerTest
     [TearDown]
     public void Teardown()
     {
+        httpClient?.Dispose();
         application?.Dispose();
     }
 

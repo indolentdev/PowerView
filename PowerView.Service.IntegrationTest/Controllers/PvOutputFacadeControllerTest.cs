@@ -72,6 +72,7 @@ public class PvOutputFacadeControllerTest
     [TearDown]
     public void Teardown()
     {
+        httpClient?.Dispose();
         application?.Dispose();
     }
 

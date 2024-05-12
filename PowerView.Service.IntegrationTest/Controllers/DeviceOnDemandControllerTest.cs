@@ -39,6 +39,7 @@ public class DeviceOnDemandControllerTest
     [TearDown]
     public void Teardown()
     {
+        httpClient?.Dispose();
         application?.Dispose();
     }
 

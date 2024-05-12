@@ -21,7 +21,7 @@ namespace PowerView.Model.Test.Repository
         }
 
         [TearDown]
-        public void TearDown()
+        public virtual void TearDown()
         {
             Connection?.Dispose();
         }

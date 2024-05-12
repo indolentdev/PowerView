@@ -105,10 +105,10 @@ namespace PowerView.Model.Test
             Assert.That(settings, Contains.Item(new KeyValuePair<string, string>("SMTP_Port", "1234")));
             Assert.That(settings, Contains.Item(new KeyValuePair<string, string>("SMTP_User", "theUser")));
 
-            Assert.That(settings.FirstOrDefault(x => x.Key == "SMTP_AuthCrypt"), Is.Not.Null);
+            Assert.That(settings.FirstOrDefault(x => x.Key == "SMTP_AuthCrypt"), Is.Not.Default);
             Assert.That(settings.First(x => x.Key == "SMTP_AuthCrypt").Value, Is.Not.EqualTo("theAuth"));
 
-            Assert.That(settings.FirstOrDefault(x => x.Key == "SMTP_AuthIv"), Is.Not.Null);
+            Assert.That(settings.FirstOrDefault(x => x.Key == "SMTP_AuthIv"), Is.Not.Default);
             Assert.That(settings, Contains.Item(new KeyValuePair<string, string>("SMTP_Email", "theEmail")));
         }
 

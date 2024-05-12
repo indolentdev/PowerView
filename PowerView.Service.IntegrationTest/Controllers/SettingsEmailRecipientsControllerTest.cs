@@ -48,6 +48,7 @@ public class SettingsEmailRecipientsControllerTest
     [TearDown]
     public void Teardown()
     {
+        httpClient?.Dispose();
         application?.Dispose();
     }
 

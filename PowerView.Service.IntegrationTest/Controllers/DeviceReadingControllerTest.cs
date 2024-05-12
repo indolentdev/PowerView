@@ -46,6 +46,7 @@ public class DeviceReadingControllerTest
     [TearDown]
     public void Teardown()
     {
+        httpClient?.Dispose();
         application?.Dispose();
     }
 

@@ -46,6 +46,7 @@ public class DataCrudeControllerTest
     [TearDown]
     public void Teardown()
     {
+        httpClient?.Dispose();
         application?.Dispose();
     }
 
