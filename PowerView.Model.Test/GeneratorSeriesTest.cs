@@ -92,7 +92,7 @@ namespace PowerView.Model.Test
       var target = new GeneratorSeries(new SeriesName("lbl", obisCode), new SeriesName("lbl", baseObisCode), "cbTitle");
       var timestamp = DateTime.Parse(timestampString, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
       var values = new[] { new NormalizedDurationRegisterValue(
-            timestamp.AddMinutes(1), timestamp.AddMinutes(61),
+            timestamp, timestamp.AddMinutes(60),
             timestamp, timestamp.AddMinutes(60),
             new UnitValue(12.34, Unit.Eur), "EnergiDataService" ) };
 

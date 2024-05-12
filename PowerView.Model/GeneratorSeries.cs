@@ -33,8 +33,8 @@ namespace PowerView.Model
       
       foreach (var value in values)
       {
-        var normStart = value.NormalizedStart;
-        if (normStart.Minute != 0 || normStart.Second != 0) return false;
+        var timestamp = value.Start;
+        if (timestamp.Minute != 0 || timestamp.Second != 0) return false;
       }
       return true;
     }
