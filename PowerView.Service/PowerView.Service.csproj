@@ -31,7 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MailKit" Version="4.3.0" />
+    <PackageReference Include="MailKit" Version="4.5.0" />
     <PackageReference Include="MQTTnet" Version="4.3.3.952" />
   </ItemGroup>
 
