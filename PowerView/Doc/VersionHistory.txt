@@ -1,6 +1,7 @@
 PowerView version 1.2.0 - Xxxxx 2024
 - Generate electricity pricing incl. vat from pricing excl. vat and cost breakdown
 - Show history status for day, month and year intervals
+- Auto refresh the day and last 24 hour profile views every 5 mins.
 
 PowerView version 1.1.0 - January 2024
 - Improved user flow for adding crude metering data

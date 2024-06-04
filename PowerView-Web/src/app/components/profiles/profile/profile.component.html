@@ -1,5 +1,8 @@
 <div>
-  <h2>{{ profileHeading | translate }}</h2>
+  <h2>
+    {{ profileHeading | translate }}
+    <mat-icon *ngIf="autoRefresh != null" aria-hidden="true" aria-label="Autorefresh enabled" fontIcon="autorenew"></mat-icon>
+  </h2>
 </div>
 
 <div *ngIf="page != undefined && page != null && page != ''">

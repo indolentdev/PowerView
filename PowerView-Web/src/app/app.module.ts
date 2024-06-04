@@ -17,6 +17,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatIcon, MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
@@ -198,6 +199,7 @@ if (environment.useMockBackend == true) {
     BrowserAnimationsModule,
     FormsModule,
     ReactiveFormsModule,
+    MatIconModule,
     MatInputModule,
     MatMenuModule,
     MatButtonModule,

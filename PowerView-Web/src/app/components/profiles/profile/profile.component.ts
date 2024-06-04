@@ -1,8 +1,9 @@
-import { Component, OnInit, Input, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, OnDestroy } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
 import { Router, ActivatedRoute, NavigationEnd } from "@angular/router";
 import { NGXLogger } from 'ngx-logger';
 import { MatDatepicker } from '@angular/material/datepicker';
+import { Observable, interval, Subscription, timer } from 'rxjs';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { ProfileService } from '../../../services/profile.service';
 import { ProfilePage } from '../../../model/profilePage';
@@ -19,10 +20,12 @@ const startTimeParam = "startTime";
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css']
 })
-export class ProfileComponent implements OnInit {
+export class ProfileComponent implements OnInit, OnDestroy {
   page: string;
   dpMinStartTime = moment("2010-01-01T00:00:00Z");
   fcStartTime = new UntypedFormControl(null);
+
+  autoRefresh: Subscription;
 
   profileSet: ProfilePage;
   profileTotalValues: ProfileTotalValue[] = [];
@@ -50,7 +53,7 @@ export class ProfileComponent implements OnInit {
         return;
       }
       if (!queryParams.has(startTimeParam)) {
-        this.navigate({ startTime: this.defaultStartTime.toISOString() });
+        this.navigateMerge({ startTime: this.defaultStartTime.toISOString() });
         return;
       }
 
@@ -68,17 +71,23 @@ export class ProfileComponent implements OnInit {
     });
   }
 
+  ngOnDestroy() {
+    if (this.autoRefresh) {
+      this.autoRefresh.unsubscribe();
+    }
+  }
+
   monthSelected(event: Moment) {
     if (this.dpStartView == "year") {
       this.dp.close();
-      this.navigate({ startTime: event.toISOString() });
+      this.navigateMerge({ startTime: event.toISOString() });
     }
   }
 
   yearSelected(event: Moment) {
     if (this.dpStartView == "multi-year") {
       this.dp.close();
-      this.navigate({ startTime: event.toISOString() });
+      this.navigateMerge({ startTime: event.toISOString() });
     }
   }
 
@@ -86,14 +95,18 @@ export class ProfileComponent implements OnInit {
     if (event == null) return;
     if (event.value == null) return;
 
-    this.navigate({ startTime: event.value.toISOString() });
+    this.navigateMerge({ startTime: event.value.toISOString() });
   }
 
-  navigate(queryParams: any): void {
+  navigateMerge(queryParams: any): void {
+    this.navigate(queryParams, "merge");
+  }
+
+  navigate(queryParams: any, queryParamsHandling: any): void {
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: queryParams,
-      queryParamsHandling: "merge",
+      queryParamsHandling: queryParamsHandling,
       replaceUrl: true
     });
   }
@@ -102,6 +115,27 @@ export class ProfileComponent implements OnInit {
     this.profileService.getProfilePage(profilePeriod, page, startTime).subscribe(x => { 
       this.profileSet = x;
       this.profileTotalValues = x.periodTotals;
+
+      if (this.autoRefresh) {
+        this.autoRefresh.unsubscribe();
+        this.autoRefresh = null;
+      }
+
+      let now = moment();
+      let diff = now.diff(startTime, 'minutes');
+      if (profilePeriod === "day" && diff > 0 && diff <= 60*24 + 60 ) {
+        let delayMinutes = 5;
+        this.log.debug("Activating auto refresh timer. Minutes:" + delayMinutes);
+        this.autoRefresh = timer(delayMinutes * 60 * 1000).subscribe(
+          x => {
+            this.log.debug("Auto refresh timer event.");
+            this.navigate({ page: page }, ""); // "" replaces existing query params.
+          },
+          (err) => {
+            this.log.warn("Auto refresh timer error.", err);
+          }
+        );
+      }
     });
   }
 
