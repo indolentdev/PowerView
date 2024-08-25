@@ -75,6 +75,9 @@ export class ProfileGraphComponent implements OnInit {
       title: {
         text: this.profileGraph.title
       },
+      accessibility: {
+        enabled: false
+      },
       chart: {
         zoomType: 'x',
         resetZoomButton: {
