@@ -4,7 +4,7 @@ import { NGXLogger } from 'ngx-logger';
 import { ExportSpec } from '../../../model/exportSpec';
 import { ExportSeriesGaugeSet } from '../../../model/exportSeriesGaugeSet';
 import { ExportService } from '../../../services/export.service';
-import { ExportToCsv } from 'export-to-csv';
+import { mkConfig, generateCsv, download } from 'export-to-csv';
 
 import { Moment } from 'moment'
 import * as moment from 'moment';
@@ -36,19 +36,19 @@ export class ExportGaugesHourlyComponent implements OnInit {
       };
 
       this.translateService.get('export.filename', params).subscribe(filename => {
-        const options = {
+        const options = mkConfig({
           fieldSeparator: ';',
           filename: filename,
-          quoteStrings: '',
+          quoteStrings: false,
           decimalSeparator: exportSpec.decimalSeparator,
-          showLabels: true,
+          //          showLabels: true,
           showTitle: false,
           useTextFile: false,
           useBom: true,
           useKeysAsHeaders: true,
-        };
-        const csvExporter = new ExportToCsv(options);
-        csvExporter.generateCsv(data);
+        });
+        const csv = generateCsv(options)(data);
+        download(options)(csv);
       });
 
     });
