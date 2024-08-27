@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { HttpClient } from "@angular/common/http";
-import { HttpClientTestingModule } from "@angular/common/http/testing";
+import { HttpClient, provideHttpClient, withInterceptorsFromDi } from "@angular/common/http";
+import { provideHttpClientTesting } from "@angular/common/http/testing";
 import { TranslateLoader, TranslateModule } from "@ngx-translate/core";
 import { HttpLoaderFactory } from "../../../app.module";
 import { MatButtonModule } from '@angular/material/button';
@@ -30,29 +30,28 @@ describe('SettingsSerieColorsComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ 
+    declarations: [
         SettingsSeriesColorsComponent,
-        SettingsSeriesColorsTableComponent 
-      ],
-      imports: [
-        HttpClientTestingModule,
-        TranslateModule.forRoot({
-          loader: {
-            provide: TranslateLoader,
-            useFactory: HttpLoaderFactory,
-            deps: [HttpClient]
-          }
+        SettingsSeriesColorsTableComponent
+    ],
+    imports: [TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient]
+            }
         }),
         MatTableModule,
         ColorPickerModule,
-        MatSnackBarModule,
-      ],
-      providers: [
-        {provide: NGXLogger, useValue: instance(log)},
-        {provide: SettingsService, useValue: instance(settingsService)},
-        {provide: MatSnackBar, useValue: instance(snackBar)}
-      ]
-    })
+        MatSnackBarModule],
+    providers: [
+        { provide: NGXLogger, useValue: instance(log) },
+        { provide: SettingsService, useValue: instance(settingsService) },
+        { provide: MatSnackBar, useValue: instance(snackBar) },
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
+    ]
+})
     .compileComponents();
   }));
 

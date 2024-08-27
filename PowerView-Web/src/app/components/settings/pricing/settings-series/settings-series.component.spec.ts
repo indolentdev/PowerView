@@ -2,8 +2,8 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { HttpClient } from "@angular/common/http";
-import { HttpClientTestingModule } from "@angular/common/http/testing";
+import { HttpClient, provideHttpClient, withInterceptorsFromDi } from "@angular/common/http";
+import { provideHttpClientTesting } from "@angular/common/http/testing";
 import { TranslateLoader, TranslateModule } from "@ngx-translate/core";
 import { HttpLoaderFactory } from "../../../../app.module";
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -41,15 +41,13 @@ describe('SettingsSeriesComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [SettingsSeriesComponent, SettingsSeriesTableComponent ],
-      imports: [
-        HttpClientTestingModule,
-        TranslateModule.forRoot({
-          loader: {
-            provide: TranslateLoader,
-            useFactory: HttpLoaderFactory,
-            deps: [HttpClient]
-          }
+    declarations: [SettingsSeriesComponent, SettingsSeriesTableComponent],
+    imports: [TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient]
+            }
         }),
         FormsModule,
         ReactiveFormsModule,
@@ -61,15 +59,16 @@ describe('SettingsSeriesComponent', () => {
         MatTableModule,
         MatSelectModule,
         MatSortModule,
-        MatSnackBarModule,
-      ],
-      providers: [
+        MatSnackBarModule],
+    providers: [
         { provide: NGXLogger, useValue: instance(log) },
         { provide: SettingsService, useValue: instance(settingsService) },
         { provide: MatSnackBar, useValue: instance(snackBar) },
-        { provide: MatDialog, useValue: instance(dialog) }
-      ]
-    })
+        { provide: MatDialog, useValue: instance(dialog) },
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
+    ]
+})
     .compileComponents();
 
     when(settingsService.getGeneratorsSeries()).thenReturn(of(new GeneratorSeriesSet()));

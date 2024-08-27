@@ -2,8 +2,8 @@ import { APP_BASE_HREF } from '@angular/common';
 
 import { NGXLogger } from 'ngx-logger';
 
-import { HttpClient } from "@angular/common/http";
-import { HttpClientTestingModule, HttpTestingController } from "@angular/common/http/testing";
+import { HttpClient, provideHttpClient, withInterceptorsFromDi } from "@angular/common/http";
+import { HttpTestingController, provideHttpClientTesting } from "@angular/common/http/testing";
 import { TestBed, waitForAsync } from '@angular/core/testing';
 import { TranslateLoader, TranslateModule, TranslateService } from "@ngx-translate/core";
 import { RouterModule, Routes } from '@angular/router';
@@ -33,31 +33,30 @@ describe('AppComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [
+    declarations: [
         AppComponent,
         TopComponent
-      ],
-      imports: [
-        HttpClientTestingModule,
-        TranslateModule.forRoot({
-          loader: {
-            provide: TranslateLoader,
-            useFactory: HttpLoaderFactory,
-            deps: [HttpClient]
-          }
+    ],
+    imports: [TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient]
+            }
         }),
         RouterModule.forRoot(routes, {}),
         MatMenuModule,
         MatButtonModule,
         MatTableModule,
-        LoadingBarModule
-      ],
-      providers: [
+        LoadingBarModule],
+    providers: [
         TranslateService,
-        { provide: APP_BASE_HREF, useValue : '/' },
-        { provide: NGXLogger, useValue: instance(log) }
-      ]
-    }).compileComponents();
+        { provide: APP_BASE_HREF, useValue: '/' },
+        { provide: NGXLogger, useValue: instance(log) },
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
+    ]
+}).compileComponents();
 
     translate = TestBed.inject(TranslateService);
     http = TestBed.inject(HttpTestingController);

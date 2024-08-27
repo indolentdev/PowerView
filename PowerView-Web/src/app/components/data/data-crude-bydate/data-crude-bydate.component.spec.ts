@@ -2,8 +2,8 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { HttpClient } from "@angular/common/http";
-import { HttpClientTestingModule } from "@angular/common/http/testing";
+import { HttpClient, provideHttpClient, withInterceptorsFromDi } from "@angular/common/http";
+import { provideHttpClientTesting } from "@angular/common/http/testing";
 import { TranslateLoader, TranslateModule } from "@ngx-translate/core";
 import { HttpLoaderFactory } from "../../../app.module";
 
@@ -38,19 +38,18 @@ describe('DataCrudeByDateComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [
+    declarations: [
         DataCrudeTableComponent,
         DataCrudeBydateTableComponent,
         DataCrudeByDateComponent,
-        ConfirmComponent],
-      imports: [
-        HttpClientTestingModule,
-        TranslateModule.forRoot({
-          loader: {
-            provide: TranslateLoader,
-            useFactory: HttpLoaderFactory,
-            deps: [HttpClient]
-          }
+        ConfirmComponent
+    ],
+    imports: [TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient]
+            }
         }),
         RouterTestingModule.withRoutes([]),
         FormsModule,
@@ -61,16 +60,16 @@ describe('DataCrudeByDateComponent', () => {
         MatSelectModule,
         MatSnackBarModule,
         MatDatepickerModule,
-        MatMomentDateModule
-      ],
-      providers: [
+        MatMomentDateModule],
+    providers: [
         { provide: NGXLogger, useValue: instance(log) },
         { provide: LabelsService, useValue: instance(labelsService) },
         { provide: MatSnackBar, useValue: instance(snackBar) },
-        { provide: MatDialog, useValue: instance(dialog) }
-
-      ]
-    })
+        { provide: MatDialog, useValue: instance(dialog) },
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
+    ]
+})
     .compileComponents();
 
     when(labelsService.getLabels()).thenReturn(of([]));

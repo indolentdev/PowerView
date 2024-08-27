@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { HttpClient } from "@angular/common/http";
-import { HttpClientTestingModule } from "@angular/common/http/testing";
+import { HttpClient, provideHttpClient, withInterceptorsFromDi } from "@angular/common/http";
+import { provideHttpClientTesting } from "@angular/common/http/testing";
 import { TranslateLoader, TranslateModule } from "@ngx-translate/core";
 import { HttpLoaderFactory } from "../../../app.module";
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -32,18 +32,16 @@ describe('SettingsProfileGraphsComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ 
+    declarations: [
         SettingsProfileGraphsComponent,
         SettingsProfileGraphsTableComponent
-      ],
-      imports: [
-        HttpClientTestingModule,
-        TranslateModule.forRoot({
-          loader: {
-            provide: TranslateLoader,
-            useFactory: HttpLoaderFactory,
-            deps: [HttpClient]
-          }
+    ],
+    imports: [TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient]
+            }
         }),
         BrowserAnimationsModule,
         ReactiveFormsModule,
@@ -53,14 +51,15 @@ describe('SettingsProfileGraphsComponent', () => {
         MatTableModule,
         MatSelectModule,
         MatSortModule,
-        MatSnackBarModule,
-      ],
-      providers: [
-        {provide: NGXLogger, useValue: instance(log)},
-        {provide: SettingsService, useValue: instance(settingsService)},
-        {provide: MatSnackBar, useValue: instance(snackBar)}
-      ]
-    })
+        MatSnackBarModule],
+    providers: [
+        { provide: NGXLogger, useValue: instance(log) },
+        { provide: SettingsService, useValue: instance(settingsService) },
+        { provide: MatSnackBar, useValue: instance(snackBar) },
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
+    ]
+})
     .compileComponents();
   }));
 

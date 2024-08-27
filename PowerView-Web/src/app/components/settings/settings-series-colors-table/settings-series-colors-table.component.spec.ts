@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { HttpClient } from "@angular/common/http";
-import { HttpClientTestingModule } from "@angular/common/http/testing";
+import { HttpClient, provideHttpClient, withInterceptorsFromDi } from "@angular/common/http";
+import { provideHttpClientTesting } from "@angular/common/http/testing";
 import { TranslateLoader, TranslateModule } from "@ngx-translate/core";
 import { HttpLoaderFactory } from "../../../app.module";
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -24,26 +24,25 @@ describe('SettingsSerieColorsTableComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ SettingsSeriesColorsTableComponent ],
-      imports: [
-        HttpClientTestingModule,
-        TranslateModule.forRoot({
-          loader: {
-            provide: TranslateLoader,
-            useFactory: HttpLoaderFactory,
-            deps: [HttpClient]
-          }
+    declarations: [SettingsSeriesColorsTableComponent],
+    imports: [TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient]
+            }
         }),
         BrowserAnimationsModule,
         MatSortModule,
         MatTableModule,
-        ColorPickerModule
-      ],
-      providers: [
-        {provide: NGXLogger, useValue: instance(log)},
-        {provide: ObisTranslateService, useValue: instance(obisService)}
-      ]
-    })
+        ColorPickerModule],
+    providers: [
+        { provide: NGXLogger, useValue: instance(log) },
+        { provide: ObisTranslateService, useValue: instance(obisService) },
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
+    ]
+})
     .compileComponents();
   }));
 

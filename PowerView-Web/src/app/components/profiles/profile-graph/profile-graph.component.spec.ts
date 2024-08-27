@@ -1,7 +1,7 @@
 import { Component, OnInit,ViewChild, Input } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { HttpClient } from "@angular/common/http";
-import { HttpClientTestingModule } from "@angular/common/http/testing";
+import { HttpClient, provideHttpClient, withInterceptorsFromDi } from "@angular/common/http";
+import { provideHttpClientTesting } from "@angular/common/http/testing";
 import { TranslateLoader, TranslateModule } from "@ngx-translate/core";
 import { HttpLoaderFactory } from "../../../app.module";
 import { MatTableModule } from '@angular/material/table';
@@ -22,24 +22,23 @@ describe('ProfileGraphComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ 
-        TestHostComponent, ProfileGraphComponent 
-      ],
-      imports: [
-        HttpClientTestingModule,
-        TranslateModule.forRoot({
-          loader: {
-            provide: TranslateLoader,
-            useFactory: HttpLoaderFactory,
-            deps: [HttpClient]
-          }
+    declarations: [
+        TestHostComponent, ProfileGraphComponent
+    ],
+    imports: [TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient]
+            }
         }),
-        HighchartsChartModule
-      ],
-      providers: [
-        {provide: NGXLogger, useValue: instance(log)}
-      ]
-    })
+        HighchartsChartModule],
+    providers: [
+        { provide: NGXLogger, useValue: instance(log) },
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
+    ]
+})
     .compileComponents();
   }));
 

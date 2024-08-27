@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClient } from "@angular/common/http";
-import { HttpClientTestingModule } from "@angular/common/http/testing";
+import { HttpClient, provideHttpClient, withInterceptorsFromDi } from "@angular/common/http";
+import { provideHttpClientTesting } from "@angular/common/http/testing";
 import { TranslateLoader, TranslateModule } from "@ngx-translate/core";
 import { HttpLoaderFactory } from "../../../../app.module";
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -25,15 +25,13 @@ describe('SettingsCostBreakdownEntryComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [SettingsCostBreakdownEntryComponent],
-      imports: [
-        HttpClientTestingModule,
-        TranslateModule.forRoot({
-          loader: {
-            provide: TranslateLoader,
-            useFactory: HttpLoaderFactory,
-            deps: [HttpClient]
-          }
+    declarations: [SettingsCostBreakdownEntryComponent],
+    imports: [TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient]
+            }
         }),
         FormsModule,
         ReactiveFormsModule,
@@ -43,12 +41,13 @@ describe('SettingsCostBreakdownEntryComponent', () => {
         MatButtonModule,
         MatSnackBarModule,
         MatDatepickerModule,
-        MatMomentDateModule
-      ],
-      providers: [
-        { provide: NGXLogger, useValue: instance(log) }
-      ]
-    })
+        MatMomentDateModule],
+    providers: [
+        { provide: NGXLogger, useValue: instance(log) },
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
+    ]
+})
     .compileComponents();
 
     fixture = TestBed.createComponent(SettingsCostBreakdownEntryComponent);

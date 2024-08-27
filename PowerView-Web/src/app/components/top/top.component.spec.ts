@@ -7,8 +7,8 @@ import { Observable, of } from 'rxjs';
 import { MenuService } from '../../services/menu.service';
 import { ProfilePageNameSet } from '../../model/profilePageNameSet';
 
-import { HttpClient } from "@angular/common/http";
-import { HttpClientTestingModule } from "@angular/common/http/testing";
+import { HttpClient, provideHttpClient, withInterceptorsFromDi } from "@angular/common/http";
+import { provideHttpClientTesting } from "@angular/common/http/testing";
 import { TranslateLoader, TranslateModule } from "@ngx-translate/core";
 import { HttpLoaderFactory } from "../../app.module";
 import { RouterModule, Routes } from '@angular/router';
@@ -35,26 +35,25 @@ describe('TopComponent', () => {
     menuService = mock(MenuService);
 
     TestBed.configureTestingModule({
-      declarations: [ TopComponent ],
-      imports: [
-        HttpClientTestingModule,
-        TranslateModule.forRoot({
-          loader: {
-            provide: TranslateLoader,
-            useFactory: HttpLoaderFactory,
-            deps: [HttpClient]
-          }
+    declarations: [TopComponent],
+    imports: [TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient]
+            }
         }),
         RouterModule.forRoot(routes, {}),
-        MatMenuModule,       
-        MatButtonModule        
-      ],
-      providers: [
-        { provide: APP_BASE_HREF, useValue : '/' },
+        MatMenuModule,
+        MatButtonModule],
+    providers: [
+        { provide: APP_BASE_HREF, useValue: '/' },
         { provide: NGXLogger, useValue: instance(log) },
-        { provide: MenuService, useValue: instance(menuService) }
-      ]
-    })
+        { provide: MenuService, useValue: instance(menuService) },
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
+    ]
+})
     .compileComponents();
   }));
 

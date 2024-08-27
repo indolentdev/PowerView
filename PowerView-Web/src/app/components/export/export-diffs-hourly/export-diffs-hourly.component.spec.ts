@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import { HttpClient } from "@angular/common/http";
-import { HttpClientTestingModule } from "@angular/common/http/testing";
+import { HttpClient, provideHttpClient, withInterceptorsFromDi } from "@angular/common/http";
+import { provideHttpClientTesting } from "@angular/common/http/testing";
 import { TranslateLoader, TranslateModule } from "@ngx-translate/core";
 import { HttpLoaderFactory } from "../../../app.module";
 
@@ -32,18 +32,16 @@ describe('ExportDiffsHourlyComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ 
+    declarations: [
         ExportDiffsHourlyComponent,
         ExportComponent
-      ],
-      imports: [
-        HttpClientTestingModule,
-        TranslateModule.forRoot({
-          loader: {
-            provide: TranslateLoader,
-            useFactory: HttpLoaderFactory,
-            deps: [HttpClient]
-          }
+    ],
+    imports: [TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient]
+            }
         }),
         RouterTestingModule.withRoutes([]),
         ReactiveFormsModule,
@@ -52,13 +50,14 @@ describe('ExportDiffsHourlyComponent', () => {
         MatTableModule,
         MatSelectModule,
         MatDatepickerModule,
-        MatMomentDateModule
-      ],
-      providers: [
-        {provide: NGXLogger, useValue: instance(log)},
-        {provide: ExportService, useValue: instance(exportService)}
-      ]
-    })
+        MatMomentDateModule],
+    providers: [
+        { provide: NGXLogger, useValue: instance(log) },
+        { provide: ExportService, useValue: instance(exportService) },
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
+    ]
+})
     .compileComponents();
   });
 
