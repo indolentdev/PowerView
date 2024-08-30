@@ -7,7 +7,7 @@ import { DiffService } from '../../../services/diff.service';
 import { DiffValueSet } from '../../../model/diffValueSet';
 
 import { Moment } from 'moment'
-import * as moment from 'moment';
+import moment from 'moment';
 
 const fromParam = "from";
 const toParam = "to";

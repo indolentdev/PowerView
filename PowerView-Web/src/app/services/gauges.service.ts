@@ -4,7 +4,7 @@ import { Observable, of } from 'rxjs';
 import { GaugeValueGroupSet } from '../model/gaugeValueGroupSet';
 
 import { Moment } from 'moment'
-import * as moment from 'moment';
+
 import { HttpParams } from '@angular/common/http';
 
 const constLocal = {

@@ -35,8 +35,6 @@ import { MockHttpInterceptor } from './mock-http.interceptor';
 
 import { environment } from '../environments/environment';
 
-import { GaugesService } from './services/gauges.service';
-
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { TopComponent } from './components/top/top.component';
@@ -112,103 +110,108 @@ export class DynamicLocaleId extends String {
 
 // providers to variable so we can append to it dynamically
 let providers: any[] = [
-  GaugesService,
   { provide: LOCALE_ID, useClass: DynamicLocaleId, deps: [TranslateService] }
 ];
 
 // use mock backend if env variable is set
 if (environment.useMockBackend == true) {
+  providers.push(provideHttpClient(withInterceptorsFromDi()));
+
   providers.push({
-      provide: HTTP_INTERCEPTORS,
-      useClass: MockHttpInterceptor,
-      multi: true
+    provide: HTTP_INTERCEPTORS,
+    useClass: MockHttpInterceptor,
+    multi: true
   });
 }
 
-@NgModule({ declarations: [
-        AppComponent,
-        TopComponent,
-        GaugesLatestComponent,
-        GaugesTableComponent,
-        GaugesBydateComponent,
-        DiffBydatesComponent,
-        DiffTableComponent,
-        ProfileDayComponent,
-        ProfileGraphComponent,
-        ProfileTotalTableComponent,
-        ProfileComponent,
-        ProfileMonthComponent,
-        ProfileYearComponent,
-        ProfileDecadeComponent,
-        EventsLatestComponent,
-        EventsTableComponent,
-        SettingsSeriesColorsComponent,
-        SettingsSeriesColorsTableComponent,
-        SettingsMqttComponent,
-        SettingsRelayControlsComponent,
-        SettingsRelayControlsTableComponent,
-        DefaultComponent,
-        SettingsProfileGraphsComponent,
-        SettingsProfileGraphsTableComponent,
-        SettingsSmtpComponent,
-        SettingsRecipientsComponent,
-        SettingsRecipientsTableComponent,
-        ProfileLast24hComponent,
-        ProfileLast12mComponent,
-        ProfileLast31dComponent,
-        HelpSeriesDescriptionsComponent,
-        HelpSeriesDescriptionsTableComponent,
-        SeriesMeasureKindsTableComponent,
-        ExportComponent,
-        ExportGaugesHourlyComponent,
-        ExportDiffsHourlyComponent,
-        DataCrudeTableComponent,
-        DataCrudeByDateComponent,
-        ScalerPipe,
-        DataCrudeBydateTableComponent,
-        DataCrudeAddComponent,
-        ConfirmComponent,
-        SettingsCostBreakdownComponent,
-        SettingsCostBreakdownTableComponent,
-        SettingsCostBreakdownEntryComponent,
-        SettingsCostBreakdownEntryTableComponent,
-        ExportCostBreakdownHourlyComponent,
-        ExportCostBreakdownComponent,
-        SettingsImportComponent,
-        SettingsImportTableComponent,
-        SettingsImportEnergiDataServiceComponent,
-        ProfileLast10yComponent,
-        HistoryStatusComponent,
-        HistoryStatusTableComponent,
-        SettingsSeriesComponent,
-        SettingsSeriesTableComponent
-    ],
-    bootstrap: [AppComponent], imports: [BrowserModule,
-        TranslateModule.forRoot({
-            loader: {
-                provide: TranslateLoader,
-                useFactory: HttpLoaderFactory,
-                deps: [HttpClient]
-            }
-        }),
-        LoggerModule.forRoot({ level: NgxLoggerLevel.DEBUG }),
-        AppRoutingModule,
-        BrowserAnimationsModule,
-        FormsModule,
-        ReactiveFormsModule,
-        MatIconModule,
-        MatInputModule,
-        MatMenuModule,
-        MatButtonModule,
-        MatTableModule,
-        MatSortModule,
-        MatCheckboxModule,
-        MatDialogModule,
-        MatSnackBarModule,
-        MatSelectModule,
-        MatDatepickerModule,
-        MatMomentDateModule,
-        HighchartsChartModule,
-        ColorPickerModule,
-        LoadingBarHttpClientModule], providers: [provideHttpClient(withInterceptorsFromDi())] })
+@NgModule({
+  declarations: [
+    AppComponent,
+    TopComponent,
+    GaugesLatestComponent,
+    GaugesTableComponent,
+    GaugesBydateComponent,
+    DiffBydatesComponent,
+    DiffTableComponent,
+    ProfileDayComponent,
+    ProfileGraphComponent,
+    ProfileTotalTableComponent,
+    ProfileComponent,
+    ProfileMonthComponent,
+    ProfileYearComponent,
+    ProfileDecadeComponent,
+    EventsLatestComponent,
+    EventsTableComponent,
+    SettingsSeriesColorsComponent,
+    SettingsSeriesColorsTableComponent,
+    SettingsMqttComponent,
+    SettingsRelayControlsComponent,
+    SettingsRelayControlsTableComponent,
+    DefaultComponent,
+    SettingsProfileGraphsComponent,
+    SettingsProfileGraphsTableComponent,
+    SettingsSmtpComponent,
+    SettingsRecipientsComponent,
+    SettingsRecipientsTableComponent,
+    ProfileLast24hComponent,
+    ProfileLast12mComponent,
+    ProfileLast31dComponent,
+    HelpSeriesDescriptionsComponent,
+    HelpSeriesDescriptionsTableComponent,
+    SeriesMeasureKindsTableComponent,
+    ExportComponent,
+    ExportGaugesHourlyComponent,
+    ExportDiffsHourlyComponent,
+    DataCrudeTableComponent,
+    DataCrudeByDateComponent,
+    ScalerPipe,
+    DataCrudeBydateTableComponent,
+    DataCrudeAddComponent,
+    ConfirmComponent,
+    SettingsCostBreakdownComponent,
+    SettingsCostBreakdownTableComponent,
+    SettingsCostBreakdownEntryComponent,
+    SettingsCostBreakdownEntryTableComponent,
+    ExportCostBreakdownHourlyComponent,
+    ExportCostBreakdownComponent,
+    SettingsImportComponent,
+    SettingsImportTableComponent,
+    SettingsImportEnergiDataServiceComponent,
+    ProfileLast10yComponent,
+    HistoryStatusComponent,
+    HistoryStatusTableComponent,
+    SettingsSeriesComponent,
+    SettingsSeriesTableComponent
+  ],
+  bootstrap: [AppComponent],
+  imports: [BrowserModule,
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: HttpLoaderFactory,
+        deps: [HttpClient]
+      }
+    }),
+    LoggerModule.forRoot({ level: NgxLoggerLevel.DEBUG }),
+    AppRoutingModule,
+    BrowserAnimationsModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatIconModule,
+    MatInputModule,
+    MatMenuModule,
+    MatButtonModule,
+    MatTableModule,
+    MatSortModule,
+    MatCheckboxModule,
+    MatDialogModule,
+    MatSnackBarModule,
+    MatSelectModule,
+    MatDatepickerModule,
+    MatMomentDateModule,
+    HighchartsChartModule,
+    ColorPickerModule,
+    LoadingBarHttpClientModule],
+  providers: providers
+})
 export class AppModule { }

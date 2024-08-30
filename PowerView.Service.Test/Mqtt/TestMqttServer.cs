@@ -34,7 +34,7 @@ namespace PowerView.Service.Test.Mqtt
 
     internal void AssertConnectionCount(int count)
     {
-      Assert.That(connections.Count, Is.EqualTo(count));
+      Assert.That(() => connections.Count, Is.EqualTo(count).After(1000, 50));
     }
 
     internal void AssertPublishCount(int count)

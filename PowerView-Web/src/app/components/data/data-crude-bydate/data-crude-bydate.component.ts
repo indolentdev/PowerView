@@ -6,7 +6,7 @@ import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { LabelsService } from 'src/app/services/labels.service';
 
 import { Moment } from 'moment'
-import * as moment from 'moment';
+import moment from 'moment';
 
 const labelParam = "label";
 const dateParam = "date";

@@ -7,7 +7,7 @@ import { ExportService } from '../../../services/export.service';
 import { mkConfig, generateCsv, download } from 'export-to-csv';
 
 import { Moment } from 'moment'
-import * as moment from 'moment';
+import moment from 'moment';
 
 @Component({
   selector: 'app-export-cost-breakdown-hourly',

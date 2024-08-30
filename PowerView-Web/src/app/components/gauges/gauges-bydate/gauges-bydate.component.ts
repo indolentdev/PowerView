@@ -7,7 +7,7 @@ import { GaugesService } from '../../../services/gauges.service';
 import { GaugeValueGroupSet } from '../../../model/gaugeValueGroupSet';
 
 import { Moment } from 'moment'
-import * as moment from 'moment';
+import moment from 'moment';
 
 const dateParam = "date";
 

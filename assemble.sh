@@ -23,7 +23,7 @@ then
 fi
 
 echo Copying web application
-cp -r "PowerView-Web/dist/PowerView-Web" "PowerView/bin/Release/net6.0/publish/PowerView-Web"
+cp -r "PowerView-Web/dist/PowerView-Web/browser" "PowerView/bin/Release/net6.0/publish/PowerView-Web"
 if [ $? -ne 0 ]
 then
   exit 1

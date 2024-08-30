@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NGXLogger } from 'ngx-logger';
 
 import { Moment } from 'moment'
-import * as moment from 'moment';
+import moment from 'moment';
 
 @Component({
   selector: 'app-profile-day',

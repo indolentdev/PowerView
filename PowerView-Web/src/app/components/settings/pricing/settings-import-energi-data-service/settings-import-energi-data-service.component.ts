@@ -4,7 +4,7 @@ import { NGXLogger } from 'ngx-logger';
 import { ImportCreate } from '../../../../model/importCreate';
 
 import { Moment } from 'moment'
-import * as moment from 'moment';
+import moment from 'moment';
 
 @Component({
   selector: 'app-settings-import-energi-data-service',

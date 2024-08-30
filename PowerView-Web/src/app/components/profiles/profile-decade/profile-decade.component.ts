@@ -5,7 +5,7 @@ import { DateAdapter } from '@angular/material/core';
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
 
 import { Moment } from 'moment'
-import * as moment from 'moment';
+import moment from 'moment';
 
 
 @Injectable()

@@ -95,8 +95,6 @@ namespace PowerView.Service.Test.Mqtt
       target.Publish(config, liveReadings);
 
       // Assert
-      System.Threading.Thread.Sleep(40); // Nasty sleep to allow both client and server side to execute.
-
       mqttServer.AssertConnectionCount(1);
       Assert.That(mqttServer.Connections[0].ProtocolVersion, Is.EqualTo(MQTTnet.Formatter.MqttProtocolVersion.V500));
       Assert.That(mqttServer.Connections[0].ClientId, Is.EqualTo(config.ClientId));

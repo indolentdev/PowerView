@@ -10,7 +10,7 @@ import { ProfilePage } from '../../../model/profilePage';
 import { ProfileTotalValue } from '../../../model/profileTotalValue';
 
 import { Moment } from 'moment'
-import * as moment from 'moment';
+import moment from 'moment';
 
 const pageParam = "page";
 const startTimeParam = "startTime";

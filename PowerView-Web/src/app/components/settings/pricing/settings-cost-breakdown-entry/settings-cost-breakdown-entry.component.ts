@@ -10,7 +10,7 @@ import { SettingsService, AddCostBreakdownError } from '../../../../services/set
 import { CostBreakdownEntry } from '../../../../model/costBreakdownEntry';
 
 import { Moment } from 'moment'
-import * as moment from 'moment';
+import moment from 'moment';
 
 @Component({
   selector: 'app-settings-cost-breakdown-entry',

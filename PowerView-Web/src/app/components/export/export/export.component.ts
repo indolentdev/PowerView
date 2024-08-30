@@ -7,7 +7,7 @@ import { ExportService } from '../../../services/export.service';
 import { ExportSpec } from '../../../model/exportSpec';
 
 import { Moment } from 'moment'
-import * as moment from 'moment';
+import moment from 'moment';
 
 const labelParam = "label";
 const fromParam = "from";
