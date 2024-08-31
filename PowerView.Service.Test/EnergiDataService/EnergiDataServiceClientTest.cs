@@ -95,24 +95,6 @@ public class EnergiDataServiceClientTest
     }
 
     [Test]
-    public async Task GetElectricityAmountsTooManyRequests()
-    {
-        // Arrange
-        var dateTime = new DateTime(2023, 04, 18, 22, 13, 22, DateTimeKind.Utc);
-        var timeSpan = TimeSpan.FromHours(3);
-        const string priceArea = "DK9";
-        var handler = SetupHttpClientFactory(HttpStatusCode.TooManyRequests);
-
-        var target = CreateTarget();
-
-        // Act
-        var amounts = await target.GetElectricityAmounts(dateTime, timeSpan, priceArea);
-
-        // Assert
-        Assert.That(amounts, Is.Empty);
-    }
-
-    [Test]
     public async Task GetElectricityAmountsRequestTimeout()
     {
         // Arrange
@@ -198,15 +180,6 @@ public class EnergiDataServiceClientTest
         var (httpMessageHandler, httpClient) = SetupHttpClientFactory();
         httpMessageHandler.Setup(x => x(It.IsAny<HttpRequestMessage>(), It.IsAny<CancellationToken>()))
             .Throws(exception);
-
-        return (httpMessageHandler, httpClient);
-    }
-
-    private (Mock<Func<HttpRequestMessage, CancellationToken, HttpResponseMessage>> Handler, HttpClient HttpClient) SetupHttpClientFactory(HttpStatusCode statusCode)
-    {
-        var (httpMessageHandler, httpClient) = SetupHttpClientFactory();
-        httpMessageHandler.Setup(x => x(It.IsAny<HttpRequestMessage>(), It.IsAny<CancellationToken>()))
-            .Returns(new HttpResponseMessage(statusCode));
 
         return (httpMessageHandler, httpClient);
     }

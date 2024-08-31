@@ -52,12 +52,6 @@ public class EnergiDataServiceClient : IEnergiDataServiceClient
             try
             {
                 using var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
-
-                if (response.StatusCode == HttpStatusCode.TooManyRequests) // 429
-                {
-                    return new ElSpotPricesDto { Records = new List<ElSpotPriceRecordDto>() }; // Backoff if the server doesn't handle the request right now.
-                }
-
                 response.EnsureSuccessStatusCode();
 
                 return await response.Content.ReadFromJsonAsync<ElSpotPricesDto>();

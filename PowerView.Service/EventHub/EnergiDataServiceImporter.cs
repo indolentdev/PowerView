@@ -45,7 +45,14 @@ namespace PowerView.Service.EventHub
                 }
                 catch (EnergiDataServiceClientException e)
                 {
-                    logger.LogInformation(e, $"Could not import income/expense values. Web request for EnergiDataService failed. Import will be retried later.");
+                    var hint = " Enable Debug log level for more information.";
+                    Exception logException = null;
+                    if (logger.IsEnabled(LogLevel.Debug) || logger.IsEnabled(LogLevel.Trace))
+                    {
+                        logException = e;
+                        hint = string.Empty;
+                    }
+                    logger.LogInformation(logException, $"Could not import income/expense values. Web request for EnergiDataService failed. Import will be retried later.{hint}");
                     continue;
                 }
 
