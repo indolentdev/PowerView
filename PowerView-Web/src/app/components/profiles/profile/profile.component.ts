@@ -22,7 +22,7 @@ const startTimeParam = "startTime";
 })
 export class ProfileComponent implements OnInit, OnDestroy {
   page: string;
-  dpMinStartTime = moment("2010-01-01T00:00:00Z");
+  dpMinStartTime = moment("2010-01-01T00:00:00");
   fcStartTime = new UntypedFormControl(null);
 
   autoRefresh: Subscription;
@@ -98,6 +98,41 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.navigateMerge({ startTime: event.value.toISOString() });
   }
 
+  navigatePrevious() {
+    this.navigateMerge({ startTime: this.getAdjacentStartTime(false).toISOString() });
+  }
+
+  previousDisabled(): boolean {
+    if (this.getAdjacentStartTime(false) < this.dpMinStartTime) return true;
+    return false;
+  }
+
+  navigateNext() {
+    this.navigateMerge({ startTime: this.getAdjacentStartTime(true).toISOString() });
+  }
+
+  nextDisabled(): boolean {
+    if (this.getAdjacentStartTime(true) > this.dpMaxStartTime) return true;
+    return false;
+  }
+
+  private getAdjacentStartTime(next: boolean) : Moment {
+    let stTime = this.fcStartTime.value;
+    if (stTime === null) return null;
+    let [val, comp] = this.getPeriodParameters();
+    let factor = next ? 1 : -1;
+    stTime = stTime.clone().add(val*factor, comp);
+    return stTime;
+  }
+
+  private getPeriodParameters(): [number, string] {
+    if (this.profilePeriod == "day") return [1, "days"];
+    if (this.profilePeriod == "month") return [1, "months"];
+    if (this.profilePeriod == "year") return [1, "years"];
+    if (this.profilePeriod == "decade") return [10, "years"];
+    return [0, "days"]
+  }
+
   navigateMerge(queryParams: any): void {
     this.navigate(queryParams, "merge");
   }
@@ -110,7 +145,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
       replaceUrl: true
     });
   }
-
+  
   getProfile(profilePeriod: string, page: string, startTime: Moment): void {
     this.profileService.getProfilePage(profilePeriod, page, startTime).subscribe(x => { 
       this.profileSet = x;

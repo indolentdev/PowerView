@@ -56,6 +56,8 @@
     "chooseYear": "Vælg årstal",
     "delete": "Slet",
     "forExampleProfileGraph": "Eksempel: For at tilføje en profil graf med serier vælg 'Indstillinger' derefter 'Profil Grafer'.",
+    "navNext": "Næste",
+    "navPrevious": "Forrige",
     "noDataFound": "Ingen data fundet",
     "placeholderLabel": "Etiket",
     "placeholderLabels": "Etiketter",

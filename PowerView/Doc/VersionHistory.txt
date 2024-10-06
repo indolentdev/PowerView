@@ -1,5 +1,5 @@
 PowerView version 1.3.0 - Xxxx 202x
-- TODO
+- Profile views have previous and next buttons, next to the date picker.
 
 PowerView version 1.2.0 - June 2024
 - Generate electricity pricing incl. vat from pricing excl. vat and cost breakdown

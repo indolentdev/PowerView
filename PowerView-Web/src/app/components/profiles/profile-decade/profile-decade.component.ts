@@ -35,7 +35,7 @@ export class ProfileDecadeComponent implements OnInit {
     var now = moment();
     let remainder = now.year() % 10;
     let decade = now.year() - remainder;
-    this.dpMaxStartTime = moment([now.year(), 12, 31, 12, 0, 0, 0]);
+    this.dpMaxStartTime = moment([now.year(), 11, 31, 12, 0, 0, 0]);
     this.defaultStartTime = moment([decade, 0, 1, 0, 0, 0, 0]);
   }
 

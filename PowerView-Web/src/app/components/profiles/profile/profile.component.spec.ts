@@ -8,10 +8,12 @@ import { HttpLoaderFactory } from "../../../app.module";
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
 
@@ -52,8 +54,10 @@ describe('ProfileComponent', () => {
         RouterTestingModule.withRoutes([]),
         ReactiveFormsModule,
         BrowserAnimationsModule,
+        MatIconModule,
         MatInputModule,
         MatTableModule,
+        MatTooltipModule,
         MatSortModule,
         MatDatepickerModule,
         MatMomentDateModule,

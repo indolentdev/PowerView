@@ -56,6 +56,8 @@
     "chooseYear": "Choose year",
     "delete": "Delete",
     "forExampleProfileGraph": "For example: To add a profile graph with series go to 'Settings' then 'ProfileGraphs'.",
+    "navNext": "Next",
+    "navPrevious": "Previous",
     "noDataFound": "No data found",
     "placeholderLabel": "Label",
     "placeholderLabels": "Labels",
