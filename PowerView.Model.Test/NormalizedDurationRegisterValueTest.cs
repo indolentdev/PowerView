@@ -68,6 +68,52 @@ namespace PowerView.Model.Test
     }
 
     [Test]
+    [TestCase(0, 0d)]
+    [TestCase(8, 8d / 3600d)]
+    [TestCase(-8, 8d / 3600d)]
+    public void GetDurationDeviationRatio(int secondsDeviation, double expectedDeviation)
+    {
+      // Arrange
+      var start = new DateTime(2024, 10, 13, 15, 0, 11, 0, DateTimeKind.Utc);
+      var end = start.AddHours(1).AddSeconds(secondsDeviation);
+      var normalizedStart = new DateTime(2024, 10, 13, 15, 0, 0, 0, DateTimeKind.Utc);
+      var normalizedEnd = normalizedStart.AddHours(1);
+      var target = new NormalizedDurationRegisterValue(start, end, normalizedStart, normalizedEnd, new UnitValue(1, 2, Unit.Joule), "d1");
+
+      // Act
+      var deviation = target.GetDurationDeviationRatio();
+
+      // Assert
+      Assert.That(deviation, Is.EqualTo(expectedDeviation).Within(0.0000001));
+    }
+
+    [Test]
+    [TestCase(0, 0, 0d)]
+    [TestCase(-8, 0, 8d / 3600d)]
+    [TestCase(0, 8, 8d / 3600d)]
+    [TestCase(4, 4, 8d / 3600d)]
+    [TestCase(-4, 4, 8d / 3600d)]
+    [TestCase(4, -4, 8d / 3600d)]
+    [TestCase(-4, -4, 8d / 3600d)]
+    public void GetPointDeviationRatio(int startSecondsDeviation, int endSecondsDeviation, double expectedDeviation)
+    {
+      // Arrange
+      var origin = new DateTime(2024, 10, 13, 15, 0, 0, 0, DateTimeKind.Utc);
+      var start = origin.AddSeconds(startSecondsDeviation);
+      var end = origin.AddHours(1).AddSeconds(endSecondsDeviation);
+      var normalizedStart = new DateTime(2024, 10, 13, 15, 0, 0, 0, DateTimeKind.Utc);
+      var normalizedEnd = normalizedStart.AddHours(1);
+      var target = new NormalizedDurationRegisterValue(start, end, normalizedStart, normalizedEnd, new UnitValue(1, 2, Unit.Joule), "d1");
+
+      // Act
+      var deviation = target.GetPointDeviationRatio();
+
+      // Assert
+      Assert.That(deviation, Is.EqualTo(expectedDeviation).Within(0.0000001));
+    }
+
+
+    [Test]
     public void SubtractNotNegative()
     {
       // Arrange

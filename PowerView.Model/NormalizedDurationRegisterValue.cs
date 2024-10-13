@@ -48,6 +48,27 @@ namespace PowerView.Model
       this.deviceIds = DeviceId.DistinctDeviceIds(deviceIds);
     }
 
+    public double GetDurationDeviationRatio()
+    {
+      var deviation = Duration - NormalizedDuration;
+      if (deviation < TimeSpan.Zero) deviation *= -1; // absolute deviation
+
+      return deviation / NormalizedDuration;
+    }
+
+    public double GetPointDeviationRatio()
+    {
+      var startDeviation = Start - NormalizedStart;
+      if (startDeviation < TimeSpan.Zero) startDeviation *= -1; // absolute deviation
+
+      var endDeviation = End - NormalizedEnd;
+      if (endDeviation < TimeSpan.Zero) endDeviation *= -1; // absolute deviation
+
+      var deviation = startDeviation + endDeviation;
+
+      return deviation / NormalizedDuration;
+    }
+
     public NormalizedDurationRegisterValue SubtractNotNegative(NormalizedDurationRegisterValue baseValue)
     {
       var substractedValue = UnitValue - baseValue.UnitValue;
