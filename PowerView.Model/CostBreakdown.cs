@@ -110,7 +110,7 @@ namespace PowerView.Model
         var amountInclVat = amountExclVat * ((Vat * 0.01) + 1);
 
         var newValue = new NormalizedDurationRegisterValue(value.Start, value.End, value.NormalizedStart, value.NormalizedEnd,
-          new UnitValue(amountInclVat, value.UnitValue.Unit), value.DeviceIds.Concat(new[] { Title }).ToArray());
+          new UnitValue(amountInclVat, value.UnitValue.Unit), value.DeviceIds.Concat(new[] { Title }));
 
         yield return (newValue, applyingEntries);
       }

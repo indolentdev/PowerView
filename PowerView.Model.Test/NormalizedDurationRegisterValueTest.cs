@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using NUnit.Framework;
 
 namespace PowerView.Model.Test
@@ -34,7 +35,7 @@ namespace PowerView.Model.Test
       var deviceIds = new[] { "D1", "D2" };
 
       // Act
-      var target = new NormalizedDurationRegisterValue(start, end, normalizedStart, normalizedEnd, unitValue, deviceIds);
+      var target = new NormalizedDurationRegisterValue(start, end, normalizedStart, normalizedEnd, unitValue, deviceIds[0], deviceIds[1]);
 
       // Assert
       Assert.That(target.Start, Is.EqualTo(start));
@@ -44,6 +45,26 @@ namespace PowerView.Model.Test
       Assert.That(target.UnitValue, Is.EqualTo(unitValue));
       Assert.That(target.DeviceIds, Is.EqualTo(deviceIds));
       Assert.That(target.OrderProperty, Is.EqualTo(end));
+    }
+
+    [Test]
+    [TestCase("D1", "d1", "D1")]
+    [TestCase("d1", "D1", "d1")]
+    public void DuplicateDeviceIds(string dId1, string dId2, string expected)
+    {
+      // Arrange
+      var start = DateTime.UtcNow;
+      var end = start.AddHours(1);
+      var normalizedStart = start.Subtract(TimeSpan.FromMinutes(1));
+      var normalizedEnd = normalizedStart.AddHours(1);
+      var unitValue = new UnitValue(1, 2, Unit.Joule);
+      IEnumerable<string> deviceIds = new[] { dId1, dId2 };
+
+      // Act
+      var target = new NormalizedDurationRegisterValue(start, end, normalizedStart, normalizedEnd, unitValue, deviceIds);
+
+      // Assert
+      Assert.That(target.DeviceIds, Is.EqualTo(new [] { expected }));
     }
 
     [Test]

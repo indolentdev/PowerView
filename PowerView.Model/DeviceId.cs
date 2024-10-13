@@ -18,13 +18,13 @@ namespace PowerView.Model
         return new string[0];
       }
 
-      var x = strings[0];
+      var stringsConcat = strings[0];
       for (var i=1; i<strings.Length; i++)
       {
-        x = x.Concat(strings[i]);
+        stringsConcat = stringsConcat.Concat(strings[i]);
       }
 
-      return x.Distinct(StringComparer.InvariantCultureIgnoreCase).ToArray();
+      return stringsConcat.Distinct(StringComparer.InvariantCultureIgnoreCase).ToArray();
     }
   }
 }

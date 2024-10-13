@@ -65,11 +65,10 @@ namespace PowerView.Model.SeriesGenerators
             normalizedTimeRegisterValue.UnitValue.Unit + ", " + addend.UnitValue.Unit);
         }
 
-        var deviceIds = DeviceId.DistinctDeviceIds(addend.DeviceIds, normalizedTimeRegisterValue.DeviceIds);
         addend = new NormalizedDurationRegisterValue(
           addend.Start, normalizedTimeRegisterValue.End, addend.NormalizedStart, normalizedTimeRegisterValue.NormalizedEnd,
           new UnitValue(addend.UnitValue.Value + normalizedTimeRegisterValue.UnitValue.Value, normalizedTimeRegisterValue.UnitValue.Unit),
-          deviceIds);
+          addend.DeviceIds.Concat(normalizedTimeRegisterValue.DeviceIds));
       }
       return addend;
     }

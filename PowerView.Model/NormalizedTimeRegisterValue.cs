@@ -63,7 +63,7 @@ namespace PowerView.Model
       }
 
       return new NormalizedDurationRegisterValue(baseValue.TimeRegisterValue.Timestamp, TimeRegisterValue.Timestamp,
-        baseValue.NormalizedTimestamp, NormalizedTimestamp, new UnitValue(dValue, substractedValue.Unit), TimeRegisterValue.DeviceId);
+        baseValue.NormalizedTimestamp, NormalizedTimestamp, new UnitValue(dValue, substractedValue.Unit), TimeRegisterValue.DeviceId, baseValue.TimeRegisterValue.DeviceId);
     }
 
     private double HandleQuirkAndWrap(NormalizedTimeRegisterValue baseValue, double dValue)

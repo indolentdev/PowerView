@@ -28,7 +28,7 @@ namespace PowerView.Model.SeriesGenerators
         {
           generatedValue = new NormalizedDurationRegisterValue(substrahend.TimeRegisterValue.Timestamp, minutend.TimeRegisterValue.Timestamp,
             substrahend.NormalizedTimestamp, minutend.NormalizedTimestamp, new UnitValue(0, minutend.TimeRegisterValue.UnitValue.Unit),
-            substrahend.TimeRegisterValue.DeviceId, minutend.TimeRegisterValue.DeviceId);
+            substrahend.TimeRegisterValue.DeviceId, minutend.TimeRegisterValue.DeviceId, substrahend.TimeRegisterValue.DeviceId);
         }
         else
         {

@@ -11,18 +11,27 @@ namespace PowerView.Model
     private readonly DateTime normalizedStart;
     private readonly DateTime normalizedEnd;
     private readonly UnitValue unitValue;
-    private readonly List<string> deviceIds;
+    private readonly IReadOnlyList<string> deviceIds;
 
     public DateTime Start { get { return start; } }
     public DateTime End { get { return end; } }
     public DateTime NormalizedStart { get { return normalizedStart; } }
     public DateTime NormalizedEnd { get { return normalizedEnd; } }
     public UnitValue UnitValue { get { return unitValue; } }
-    public IReadOnlyList<string> DeviceIds { get { return deviceIds.AsReadOnly(); } }
+    public IReadOnlyList<string> DeviceIds { get { return deviceIds; } }
 
     public DateTime OrderProperty { get { return End; } }
 
+    public TimeSpan Duration => End - Start;
+    public TimeSpan NormalizedDuration => NormalizedEnd - NormalizedStart;
+
     public NormalizedDurationRegisterValue(DateTime start, DateTime end, DateTime normalizedStart, DateTime normalizedEnd, UnitValue unitValue, params string[] deviceIds)
+      : this(start, end, normalizedStart, normalizedEnd, unitValue, (IEnumerable<string>)deviceIds)
+    {
+
+    }
+
+    public NormalizedDurationRegisterValue(DateTime start, DateTime end, DateTime normalizedStart, DateTime normalizedEnd, UnitValue unitValue, IEnumerable<string> deviceIds)
     {
       if (start.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("start", "Must be UTC");
       if (end.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("end", "Must be UTC");
@@ -36,7 +45,7 @@ namespace PowerView.Model
       this.normalizedStart = normalizedStart;
       this.normalizedEnd = normalizedEnd;
       this.unitValue = unitValue;
-      this.deviceIds = deviceIds.ToList();
+      this.deviceIds = DeviceId.DistinctDeviceIds(deviceIds);
     }
 
     public NormalizedDurationRegisterValue SubtractNotNegative(NormalizedDurationRegisterValue baseValue)
@@ -54,7 +63,7 @@ namespace PowerView.Model
       var newNormStart = new DateTime(Math.Min(NormalizedStart.Ticks, baseValue.NormalizedStart.Ticks), DateTimeKind.Utc);
       var newNormEnd = new DateTime(Math.Max(NormalizedEnd.Ticks, baseValue.NormalizedEnd.Ticks), DateTimeKind.Utc);
       var newValue = new NormalizedDurationRegisterValue(newStart, newEnd, newNormStart, newNormEnd,
-        new UnitValue(dValue, substractedValue.Unit), DeviceId.DistinctDeviceIds(DeviceIds.Concat(baseValue.DeviceIds)));
+        new UnitValue(dValue, substractedValue.Unit), DeviceIds.Concat(baseValue.DeviceIds));
 
       return newValue;
     }
