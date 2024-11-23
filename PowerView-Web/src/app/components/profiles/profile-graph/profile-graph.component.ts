@@ -4,11 +4,14 @@ import { NGXLogger } from 'ngx-logger';
 import { TranslateService } from '@ngx-translate/core';
 import { ObisTranslateService } from '../../../services/obis-translate.service';
 import * as Highcharts from 'highcharts';
+import more from 'highcharts/highcharts-more';
 import { Profile } from '../../../model/profile';
 import { ProfileSerie } from '../../../model/profileSerie';
 
 import { Moment } from 'moment'
 import moment from 'moment';
+
+more(Highcharts);
 
 @Component({
   selector: 'app-profile-graph',
@@ -52,7 +55,7 @@ export class ProfileGraphComponent implements OnInit {
     var thousandIx = s.indexOf("2") - 1;
     if (thousandIx > -1)
     {
-      var thousandSepCandidate = s.substr(thousandIx, 1);
+      var thousandSepCandidate = s.substring(thousandIx, 1);
       if (thousandSepCandidate === '.' || thousandSepCandidate === ',') {
         this.thousandSep = thousandSepCandidate;
       }
@@ -60,7 +63,7 @@ export class ProfileGraphComponent implements OnInit {
     var decimalPointIx = s.indexOf("3") -1;
     if (decimalPointIx > -1)
     {
-      this.decimalSep = s.substr(decimalPointIx, 1);
+      this.decimalSep = s.substring(decimalPointIx, 1);
     }
 //    this.log.info("Separators (thousand & decimal) :", this.thousandSep, this.decimalSep);
   }
@@ -103,7 +106,12 @@ export class ProfileGraphComponent implements OnInit {
         formatter: function () { // the "this" reference is changed by the function..
           var tooltipHtml = this.x + '<table>';
           for (let point of this.points) {
-            var valSplit = self.splitFormattedValue(point.y);
+            let val = point.y;
+            let pointPoint = point.point;
+            if (pointPoint !== undefined && pointPoint != null && "low" in pointPoint && "high" in pointPoint) {
+              val = pointPoint.high - pointPoint.low;
+            }
+            var valSplit = self.splitFormattedValue(val);
 
             tooltipHtml += 
             '<tr>' +
@@ -203,6 +211,7 @@ export class ProfileGraphComponent implements OnInit {
     for (let serie of series) {
       var serieName = serie.serie;
       var serieId = serieName.split(' ').join('-').toLowerCase();
+
       var chartSerie = {
           id: serieId,
           type: serie.serieType,
@@ -213,6 +222,19 @@ export class ProfileGraphComponent implements OnInit {
           data: serie.values
       };
       chartSeries.push(chartSerie);
+
+      if (Array.isArray(serie.deviationValues) && serie.deviationValues.length > 0) {
+        var chartSerieDeviation = {
+          id: chartSerie.id + '-deviation',
+          type: 'errorbar',
+          name: this.translateService.instant("profileGraphs.yAxis.Deviation", { name: chartSerie.name }),
+          color: chartSerie.color,
+          yAxis: chartSerie.yAxis,
+          unit: chartSerie.unit,
+          data: serie.deviationValues
+        }
+        chartSeries.push(chartSerieDeviation);
+      }
     }
     return chartSeries;
   }

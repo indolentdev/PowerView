@@ -10,7 +10,7 @@ export class SeriesMeasureKindsTableComponent implements OnInit {
   displayedColumns = ['name', 'associatedTo', 'description', 'hint'];
   dataSource: MatTableDataSource<any>;
 
-  measureKinds = ['current', 'cumulative', 'entryAverage', 'entryDifference', 'periodDifference', 'netEntryDifference', 'hourlyPeriod'];
+  measureKinds = ['current', 'cumulative', 'entryAverage', 'entryDifference', 'periodDifference', 'netEntryDifference', 'hourlyPeriod', 'deviation'];
 
   constructor() { }
 

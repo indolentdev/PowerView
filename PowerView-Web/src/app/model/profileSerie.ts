@@ -6,8 +6,10 @@ export class ProfileSerie {
     serieYAxis: string;
     serieColor: string;
     values: number[];
+    deviationValues: number[][];
 
     constructor() {
         this.values = [];
+        this.deviationValues = [];
     }    
 }

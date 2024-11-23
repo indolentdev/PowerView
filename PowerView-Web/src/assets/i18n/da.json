@@ -518,7 +518,8 @@
       "Flow": "Gennemstrømning",
       "Temperature": "Temperatur",
       "RelativeHumidity": "Relativ Luftfugtighed",
-      "CurrencyAmount": "Beløb"
+      "CurrencyAmount": "Beløb",
+      "Deviation": "{{ name }} Afvigelse"
     }
   },
 
@@ -634,7 +635,8 @@
         "entryDifference": { "title": "Punkt forskel", "associatedTo": "Etiket", "description": "Beregnet fra to værdier i Kumulativ serien. Er forskellen mellem en værdi og dens forrige værdi i serien. Når den forrige Kumulative værdi er fra en anden enhed eller værdien er rullet rundt mellem de to værdier forsøger beregningen at udregne den faktiske forskel.", "hint": "" },
         "periodDifference": { "title": "Periode forskel", "associatedTo": "Etiket", "description": "Beregnet fra to værdier i Kumulativ serien. Er forskellen mellem base værdien og en senere værdi i serien. Når base Kumulativ værdien er fra en anden enhed eller værdien er rullet rundt mellem de to værdier forsøger beregningen at udregne den faktiske forskel.", "hint": "" },
         "netEntryDifference": { "title": "Netto punkt forskel", "associatedTo": "Etiket", "description": "Beregnet fra to værdier i Punkt forskel serien. Er den positive forskel mellem importeret/forbrugt Punkt værdien og eksporteret/produceret Punkt værdien.", "hint": "" },
-        "hourlyPeriod": { "title": "Time Periode", "associatedTo": "Etiket", "description": "Time periode værdi gældende fra et start tidspunkt og 60 min frem. Flugter typisk med hele klokketimer.", "hint": "" }
+        "hourlyPeriod": { "title": "Time Periode", "associatedTo": "Etiket", "description": "Time periode værdi gældende fra et start tidspunkt og 60 min frem. Flugter typisk med hele klokketimer.", "hint": "" },
+        "deviation": { "title": "Afvigelse", "associatedTo": "Etiket", "description": "Tidstempler for beregnede værdier flugter nogle gange ikke med tidsperioder. Et sådan hul mellem et tidsstempl og en tidsperiode er en afvigelse. En afvigelse på tid/varighed kan konverteres til en afvigelse for en bereget værdi, og afvigelsen for den beregede værdi kan præsenteres.", "hint": "" }
       }
     }
     
