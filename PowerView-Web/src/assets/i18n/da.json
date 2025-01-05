@@ -326,7 +326,7 @@
           "placeholderVat": "Moms",
           "valErrors": {
             "max": "Maks værdi er {{ maxValue }}",
-            "maxLength_25": "Maksimum 25 tegn",
+            "maxLength_30": "Maksimum 30 tegn",
             "min": "Minimum værdi er {{ minValue }}",
             "minLength_1": "Minimum 1 tegn",
             "required": "Påkrævet"

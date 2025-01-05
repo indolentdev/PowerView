@@ -87,7 +87,7 @@ public class SettingsCostBreakdownsController : ControllerBase
     [HttpDelete("{title}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public ActionResult DeleteCostBreakdown(
-        [BindRequired, FromRoute, StringLength(25, MinimumLength = 1)] string title)
+        [BindRequired, FromRoute, StringLength(30, MinimumLength = 1)] string title)
     {
         costBreakdownRepository.DeleteCostBreakdown(title);
 
@@ -99,7 +99,7 @@ public class SettingsCostBreakdownsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public ActionResult PostCostBreakdownEntry(
-        [BindRequired, FromRoute, StringLength(25, MinimumLength = 1)] string title,
+        [BindRequired, FromRoute, StringLength(30, MinimumLength = 1)] string title,
         [BindRequired, FromBody] CostBreakdownEntryDto dto)
     {
         var costBreakdownEntry = new CostBreakdownEntry(dto.FromDate.Value, dto.ToDate.Value, dto.Name, dto.StartTime.Value, dto.EndTime.Value, dto.Amount.Value);
@@ -127,10 +127,10 @@ public class SettingsCostBreakdownsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public ActionResult PutCostBreakdownEntry(
-        [BindRequired, FromRoute, StringLength(25, MinimumLength = 1)] string title,
+        [BindRequired, FromRoute, StringLength(30, MinimumLength = 1)] string title,
         [BindRequired, FromRoute, UtcDateTime] DateTime? fromDate,
         [BindRequired, FromRoute, UtcDateTime] DateTime? toDate,
-        [BindRequired, FromRoute, StringLength(25, MinimumLength = 1)] string name,
+        [BindRequired, FromRoute, StringLength(30, MinimumLength = 1)] string name,
         [BindRequired, FromBody] CostBreakdownEntryDto dto)
     {
         var costBreakdownEntry = new CostBreakdownEntry(dto.FromDate.Value, dto.ToDate.Value, dto.Name, dto.StartTime.Value, dto.EndTime.Value, dto.Amount.Value);
@@ -157,10 +157,10 @@ public class SettingsCostBreakdownsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public ActionResult DeleteCostBreakdownEntry(
-        [BindRequired, FromRoute, StringLength(25, MinimumLength = 1)] string title,
+        [BindRequired, FromRoute, StringLength(30, MinimumLength = 1)] string title,
         [BindRequired, FromRoute, UtcDateTime] DateTime? fromDate,
         [BindRequired, FromRoute, UtcDateTime] DateTime? toDate,
-        [BindRequired, FromRoute, StringLength(25, MinimumLength = 1)] string name)
+        [BindRequired, FromRoute, StringLength(30, MinimumLength = 1)] string name)
     {
         try
         {

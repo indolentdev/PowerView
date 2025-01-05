@@ -161,7 +161,7 @@ public class SettingsCostBreakdownsControllerTest
         // Arrange
 
         // Act
-        var response = await httpClient.DeleteAsync($"api/settings/costbreakdowns/12345678901234567890123456");
+        var response = await httpClient.DeleteAsync($"api/settings/costbreakdowns/1234567890123456789012345678901");
 
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
@@ -196,7 +196,7 @@ public class SettingsCostBreakdownsControllerTest
     public async Task PostCostBreakdownEntryTitleParameterBad()
     {
         // Arrange
-        const string title = "12345678901234567890123456";
+        const string title = "1234567890123456789012345678901";
         var costBreakdownEntry = new CostBreakdownEntryDto
         {
             FromDate = new DateTime(2023, 10, 31, 23, 0, 0, DateTimeKind.Utc),
@@ -303,7 +303,7 @@ public class SettingsCostBreakdownsControllerTest
 
     [Test]
     [TestCase("", "2022-10-31T23:00:00Z", "2022-11-30T23:00:00Z", "oldName", HttpStatusCode.NotFound)]
-    [TestCase("12345678901234567890123456", "2022-10-31T23:00:00Z", "2022-11-30T23:00:00Z", "oldName", HttpStatusCode.BadRequest)]
+    [TestCase("1234567890123456789012345678901", "2022-10-31T23:00:00Z", "2022-11-30T23:00:00Z", "oldName", HttpStatusCode.BadRequest)]
     [TestCase("theTitle", "", "2022-11-30T23:00:00Z", "oldName", HttpStatusCode.NotFound)]
     [TestCase("theTitle", "2022-10-31T23:00:00", "2022-11-30T23:00:00Z", "oldName", HttpStatusCode.BadRequest)]
     [TestCase("theTitle", "BAD", "2022-11-30T23:00:00Z", "oldName", HttpStatusCode.BadRequest)]
@@ -311,7 +311,7 @@ public class SettingsCostBreakdownsControllerTest
     [TestCase("theTitle", "2022-10-31T23:00:00Z", "2022-11-30T23:00:00", "oldName", HttpStatusCode.BadRequest)]
     [TestCase("theTitle", "2022-10-31T23:00:00Z", "BAD", "oldName", HttpStatusCode.BadRequest)]
     [TestCase("theTitle", "2022-10-31T23:00:00Z", "2022-11-30T23:00:00Z", "", HttpStatusCode.NotFound)]
-    [TestCase("theTitle", "2022-10-31T23:00:00Z", "2022-11-30T23:00:00Z", "12345678901234567890123456", HttpStatusCode.BadRequest)]
+    [TestCase("theTitle", "2022-10-31T23:00:00Z", "2022-11-30T23:00:00Z", "1234567890123456789012345678901", HttpStatusCode.BadRequest)]
     public async Task PutCostBreakdownEntryRouteParameterBad(string title, string fromDate, string toDate, string name, HttpStatusCode statusCode)
     {
         // Arrange
@@ -422,7 +422,7 @@ public class SettingsCostBreakdownsControllerTest
 
     [Test]
     [TestCase("", "2022-10-31T23:00:00Z", "2022-11-30T23:00:00Z", "oldName", HttpStatusCode.NotFound)]
-    [TestCase("12345678901234567890123456", "2022-10-31T23:00:00Z", "2022-11-30T23:00:00Z", "oldName", HttpStatusCode.BadRequest)]
+    [TestCase("1234567890123456789012345678901", "2022-10-31T23:00:00Z", "2022-11-30T23:00:00Z", "oldName", HttpStatusCode.BadRequest)]
     [TestCase("theTitle", "", "2022-11-30T23:00:00Z", "oldName", HttpStatusCode.NotFound)]
     [TestCase("theTitle", "2022-10-31T23:00:00", "2022-11-30T23:00:00Z", "oldName", HttpStatusCode.BadRequest)]
     [TestCase("theTitle", "BAD", "2022-11-30T23:00:00Z", "oldName", HttpStatusCode.BadRequest)]
@@ -430,7 +430,7 @@ public class SettingsCostBreakdownsControllerTest
     [TestCase("theTitle", "2022-10-31T23:00:00Z", "2022-11-30T23:00:00", "oldName", HttpStatusCode.BadRequest)]
     [TestCase("theTitle", "2022-10-31T23:00:00Z", "BAD", "oldName", HttpStatusCode.BadRequest)]
     [TestCase("theTitle", "2022-10-31T23:00:00Z", "2022-11-30T23:00:00Z", "", HttpStatusCode.NotFound)]
-    [TestCase("theTitle", "2022-10-31T23:00:00Z", "2022-11-30T23:00:00Z", "12345678901234567890123456", HttpStatusCode.BadRequest)]
+    [TestCase("theTitle", "2022-10-31T23:00:00Z", "2022-11-30T23:00:00Z", "1234567890123456789012345678901", HttpStatusCode.BadRequest)]
     public async Task DeleteCostBreakdownEntryRouteParameterBad(string title, string fromDate, string toDate, string name, HttpStatusCode statusCode)
     {
         // Arrange

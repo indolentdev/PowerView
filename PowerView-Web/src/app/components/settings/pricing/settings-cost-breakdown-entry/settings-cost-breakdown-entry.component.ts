@@ -49,7 +49,7 @@ export class SettingsCostBreakdownEntryComponent {
     this.formGroup = new UntypedFormGroup({
       fromDate: new UntypedFormControl('', [Validators.required]),
       toDate: new UntypedFormControl('', [Validators.required]),
-      name: new UntypedFormControl('', [Validators.required, Validators.minLength(1), Validators.maxLength(25)]),
+      name: new UntypedFormControl('', [Validators.required, Validators.minLength(1), Validators.maxLength(30)]),
       startTime: new UntypedFormControl('', this.getStartTimeValidators()),
       endTime: new UntypedFormControl('', this.getEndTimeValidators()),
       amount: new UntypedFormControl('', [Validators.required, Validators.min(0), Validators.max(1000)])

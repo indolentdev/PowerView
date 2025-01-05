@@ -326,7 +326,7 @@
           "placeholderVat": "Vat",
           "valErrors": {
             "max": "Maximum value is {{ maxValue }}",
-            "maxLength_25": "Maximum 25 characters",
+            "maxLength_30": "Maximum 30 characters",
             "min": "Minimum value is {{ minValue }}",
             "minLength_1": "Minimum 1 characters",
             "required": "Required"

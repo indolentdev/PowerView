@@ -41,7 +41,7 @@ export class SettingsCostBreakdownComponent {
     this.costBreakdownEntryEdit = null;
 
     this.formGroup = new UntypedFormGroup({
-      title: new UntypedFormControl('', [Validators.required, Validators.minLength(1), Validators.maxLength(25)]),
+      title: new UntypedFormControl('', [Validators.required, Validators.minLength(1), Validators.maxLength(30)]),
       currency: new UntypedFormControl('', [Validators.required]),
       vat: new UntypedFormControl('', [Validators.required, Validators.min(0), Validators.max(100)]),
     });
