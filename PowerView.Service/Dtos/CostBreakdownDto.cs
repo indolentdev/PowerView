@@ -7,7 +7,7 @@ namespace PowerView.Service.Dtos
     public class CostBreakdownDto
     {
         [Required]
-        [StringLength(25, MinimumLength = 1)]
+        [StringLength(30, MinimumLength = 1)]
         public string Title { get; set; }
 
         [JsonConverter(typeof(JsonStringEnumConverter))]

@@ -36,7 +36,7 @@ namespace PowerView.Service.Test.Dto
         [TestCase("{\"FromDate\":\"2023-10-31T23:00:00Z\",\"ToDate\":\"2023-11-30T23:00:00Z\",\"StartTime\":2,\"EndTime\":21,\"Amount\":1.234567}", "Name absent")]
         [TestCase("{\"FromDate\":\"2023-10-31T23:00:00Z\",\"ToDate\":\"2023-11-30T23:00:00Z\",\"Name\":null,\"StartTime\":2,\"EndTime\":21,\"Amount\":1.234567}", "Name null")]
         [TestCase("{\"FromDate\":\"2023-10-31T23:00:00Z\",\"ToDate\":\"2023-11-30T23:00:00Z\",\"Name\":\"\",\"StartTime\":2,\"EndTime\":21,\"Amount\":1.234567}", "Name min length")]
-        [TestCase("{\"FromDate\":\"2023-10-31T23:00:00Z\",\"ToDate\":\"2023-11-30T23:00:00Z\",\"Name\":\"12345678901234567890123456\",\"StartTime\":2,\"EndTime\":21,\"Amount\":1.234567}", "Name max length")]
+        [TestCase("{\"FromDate\":\"2023-10-31T23:00:00Z\",\"ToDate\":\"2023-11-30T23:00:00Z\",\"Name\":\"1234567890123456789012345678901\",\"StartTime\":2,\"EndTime\":21,\"Amount\":1.234567}", "Name max length")]
         [TestCase("{\"FromDate\":\"2023-10-31T23:00:00Z\",\"ToDate\":\"2023-11-30T23:00:00Z\",\"Name\":\"TheName\",\"EndTime\":21,\"Amount\":1.234567}", "StartTime absent")]
         [TestCase("{\"FromDate\":\"2023-10-31T23:00:00Z\",\"ToDate\":\"2023-11-30T23:00:00Z\",\"Name\":\"TheName\",\"StartTime\":null,\"EndTime\":21,\"Amount\":1.234567}", "StartTime null")]
         [TestCase("{\"FromDate\":\"2023-10-31T23:00:00Z\",\"ToDate\":\"2023-11-30T23:00:00Z\",\"Name\":\"TheName\",\"StartTime\":-1,\"EndTime\":21,\"Amount\":1.234567}", "StartTime min value")]

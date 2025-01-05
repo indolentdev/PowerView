@@ -25,7 +25,7 @@ namespace PowerView.Service.Test.Dto
         [TestCase("{\"Currency\":\"DKK\",\"Vat\":25}", "Title absent")]
         [TestCase("{\"Title\":null,\"Currency\":\"DKK\",\"Vat\":25}", "Title null")]
         [TestCase("{\"Title\":\"\",\"Currency\":\"DKK\",\"Vat\":25}", "Title min length")]
-        [TestCase("{\"Title\":\"12345678901234567890123456\",\"Currency\":\"DKK\",\"Vat\":25}", "Title max length")]
+        [TestCase("{\"Title\":\"1234567890123456789012345678901\",\"Currency\":\"DKK\",\"Vat\":25}", "Title max length")]
         [TestCase("{\"Title\":\"TheTitle\",\"Vat\":25}", "Currency absent")]
         [TestCase("{\"Title\":\"TheTitle\",\"Currency\":null,\"Vat\":25}", "Currency null")]
         [TestCase("{\"Title\":\"TheTitle\",\"Currency\":\"DKK\"}", "Vat property absent")]

@@ -15,7 +15,7 @@ namespace PowerView.Service.Dtos
         public DateTime? ToDate { get; set; }
 
         [Required]
-        [StringLength(25, MinimumLength = 1)]
+        [StringLength(30, MinimumLength = 1)]
         public string Name { get; set; }
 
         [Required]
