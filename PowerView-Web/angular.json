@@ -18,6 +18,7 @@
             },
             "index": "src/index.html",
             "polyfills": [
+              "@angular/localize/init",
               "src/polyfills.ts"
             ],
             "tsConfig": "src/tsconfig.app.json",
