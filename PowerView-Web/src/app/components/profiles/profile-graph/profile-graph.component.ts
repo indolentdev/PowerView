@@ -14,9 +14,10 @@ import moment from 'moment';
 more(Highcharts);
 
 @Component({
-  selector: 'app-profile-graph',
-  templateUrl: './profile-graph.component.html',
-  styleUrls: ['./profile-graph.component.css']
+    selector: 'app-profile-graph',
+    templateUrl: './profile-graph.component.html',
+    styleUrls: ['./profile-graph.component.css'],
+    standalone: false
 })
 export class ProfileGraphComponent implements OnInit {
   Highcharts = Highcharts;

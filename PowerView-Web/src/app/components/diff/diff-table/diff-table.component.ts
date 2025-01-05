@@ -6,9 +6,10 @@ import { ObisTranslateService } from '../../../services/obis-translate.service';
 import { DiffValueSet } from '../../../model/diffValueSet';
 
 @Component({
-  selector: 'app-diff-table',
-  templateUrl: './diff-table.component.html',
-  styleUrls: ['./diff-table.component.css']
+    selector: 'app-diff-table',
+    templateUrl: './diff-table.component.html',
+    styleUrls: ['./diff-table.component.css'],
+    standalone: false
 })
 export class DiffTableComponent implements OnInit, OnChanges {
   displayedColumns = ['serie', 'from', 'to', 'value', 'unit'];

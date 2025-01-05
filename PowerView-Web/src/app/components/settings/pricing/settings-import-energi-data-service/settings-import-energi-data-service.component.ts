@@ -7,9 +7,10 @@ import { Moment } from 'moment'
 import moment from 'moment';
 
 @Component({
-  selector: 'app-settings-import-energi-data-service',
-  templateUrl: './settings-import-energi-data-service.component.html',
-  styleUrls: ['./settings-import-energi-data-service.component.css']
+    selector: 'app-settings-import-energi-data-service',
+    templateUrl: './settings-import-energi-data-service.component.html',
+    styleUrls: ['./settings-import-energi-data-service.component.css'],
+    standalone: false
 })
 export class SettingsImportEnergiDataServiceComponent {
   channels = [ 'DK1', 'DK2' ]; // TODO Get these from the server..

@@ -5,9 +5,10 @@ import { ObisTranslateService } from '../../../services/obis-translate.service';
 import { CrudeValue } from '../../../model/crudeValue';
 
 @Component({
-  selector: 'app-data-crude-table',
-  templateUrl: './data-crude-table.component.html',
-  styleUrls: ['./data-crude-table.component.css']
+    selector: 'app-data-crude-table',
+    templateUrl: './data-crude-table.component.html',
+    styleUrls: ['./data-crude-table.component.css'],
+    standalone: false
 })
 export class DataCrudeTableComponent implements OnInit, OnChanges {
 

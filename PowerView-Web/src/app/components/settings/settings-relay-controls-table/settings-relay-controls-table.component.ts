@@ -7,9 +7,10 @@ import { DisconnectRuleSet } from '../../../model/disconnectRuleSet';
 import { DisconnectRule } from '../../../model/disconnectRule';
 
 @Component({
-  selector: 'app-settings-relay-controls-table',
-  templateUrl: './settings-relay-controls-table.component.html',
-  styleUrls: ['./settings-relay-controls-table.component.css']
+    selector: 'app-settings-relay-controls-table',
+    templateUrl: './settings-relay-controls-table.component.html',
+    styleUrls: ['./settings-relay-controls-table.component.css'],
+    standalone: false
 })
 export class SettingsRelayControlsTableComponent implements OnInit, OnChanges {
   displayedColumns = ['nameSerie', 'evaluationSerie', 'durationMinutes', 'disconnectToConnectValue', 'connectToDisconnectValue', 'actions'];

@@ -17,12 +17,13 @@ export class MonthCustomMomentDateAdapter extends MomentDateAdapter {
 }
 
 @Component({
-  selector: 'app-profile-month',
-  templateUrl: './profile-month.component.html',
-  styleUrls: ['./profile-month.component.css'],
-  providers: [
-    { provide: DateAdapter, useClass: MonthCustomMomentDateAdapter }
-  ]
+    selector: 'app-profile-month',
+    templateUrl: './profile-month.component.html',
+    styleUrls: ['./profile-month.component.css'],
+    providers: [
+        { provide: DateAdapter, useClass: MonthCustomMomentDateAdapter }
+    ],
+    standalone: false
 })
 export class ProfileMonthComponent implements OnInit {
   dpMaxStartTime: Moment;

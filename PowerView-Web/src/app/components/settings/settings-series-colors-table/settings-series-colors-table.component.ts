@@ -6,9 +6,10 @@ import { ObisTranslateService } from '../../../services/obis-translate.service';
 import { SerieColorSet } from '../../../model/serieColorSet';
 
 @Component({
-  selector: 'app-settings-series-colors-table',
-  templateUrl: './settings-series-colors-table.component.html',
-  styleUrls: ['./settings-series-colors-table.component.css']
+    selector: 'app-settings-series-colors-table',
+    templateUrl: './settings-series-colors-table.component.html',
+    styleUrls: ['./settings-series-colors-table.component.css'],
+    standalone: false
 })
 export class SettingsSeriesColorsTableComponent implements OnInit, OnChanges {
   displayedColumns = ['serie', 'color'];

@@ -17,12 +17,13 @@ export class YearCustomMomentDateAdapter extends MomentDateAdapter {
 }
 
 @Component({
-  selector: 'app-profile-year',
-  templateUrl: './profile-year.component.html',
-  styleUrls: ['./profile-year.component.css'],
-  providers: [
-    { provide: DateAdapter, useClass: YearCustomMomentDateAdapter }
-  ]
+    selector: 'app-profile-year',
+    templateUrl: './profile-year.component.html',
+    styleUrls: ['./profile-year.component.css'],
+    providers: [
+        { provide: DateAdapter, useClass: YearCustomMomentDateAdapter }
+    ],
+    standalone: false
 })
 export class ProfileYearComponent implements OnInit {
   dpMaxStartTime: Moment;

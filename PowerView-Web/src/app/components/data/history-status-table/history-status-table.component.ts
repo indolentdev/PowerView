@@ -5,9 +5,10 @@ import { NGXLogger } from 'ngx-logger';
 import { HistoryStatus } from 'src/app/model/historyStatus';
 
 @Component({
-  selector: 'app-history-status-table',
-  templateUrl: './history-status-table.component.html',
-  styleUrls: ['./history-status-table.component.css']
+    selector: 'app-history-status-table',
+    templateUrl: './history-status-table.component.html',
+    styleUrls: ['./history-status-table.component.css'],
+    standalone: false
 })
 export class HistoryStatusTableComponent {
   displayedColumns = ['label', 'latestTimestamp'];

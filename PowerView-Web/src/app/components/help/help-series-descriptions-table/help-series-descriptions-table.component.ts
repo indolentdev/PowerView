@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
-  selector: 'app-help-series-descriptions-table',
-  templateUrl: './help-series-descriptions-table.component.html',
-  styleUrls: ['./help-series-descriptions-table.component.css']
+    selector: 'app-help-series-descriptions-table',
+    templateUrl: './help-series-descriptions-table.component.html',
+    styleUrls: ['./help-series-descriptions-table.component.css'],
+    standalone: false
 })
 export class HelpSeriesDescriptionsTableComponent implements OnInit {
   displayedColumns = ['name', 'measureKind', 'description', 'typicalUnits', 'hint'];

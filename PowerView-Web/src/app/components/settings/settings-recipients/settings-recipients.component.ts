@@ -10,9 +10,10 @@ import { EmailRecipient } from '../../../model/emailRecipient';
 import { EmailRecipientSet } from '../../../model/emailRecipientSet';
 
 @Component({
-  selector: 'app-settings-recipients',
-  templateUrl: './settings-recipients.component.html',
-  styleUrls: ['./settings-recipients.component.css']
+    selector: 'app-settings-recipients',
+    templateUrl: './settings-recipients.component.html',
+    styleUrls: ['./settings-recipients.component.css'],
+    standalone: false
 })
 export class SettingsRecipientsComponent implements OnInit {
   private snackBarRef:  MatSnackBarRef<SimpleSnackBar>;

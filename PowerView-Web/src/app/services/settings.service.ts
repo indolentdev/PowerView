@@ -65,7 +65,7 @@ export class SettingsService {
   public addCostBreakdown(costBreakdown: CostBreakdown): Observable<any> {
     return this.dataService.post(constLocal.costBreakdowns, costBreakdown)
       .pipe(catchError(error => {
-        return throwError(this.convertToAddCostBreakdownError(error));
+        return throwError(() => this.convertToAddCostBreakdownError(error));
       }));
   }
 
@@ -88,7 +88,7 @@ export class SettingsService {
   public deleteCostBreakdown(title: string): Observable<any> {
     return this.dataService.delete(constLocal.costBreakdowns + "/" + encodeURIComponent(title))
       .pipe(catchError(error => {
-        return throwError(this.convertToDeleteCostBreakdownError(error));
+        return throwError(() => this.convertToDeleteCostBreakdownError(error));
       }));
   }
 
@@ -107,7 +107,7 @@ export class SettingsService {
   public addCostBreakdownEntry(costBreakdownTitle: string, costBreakdownEntry: CostBreakdownEntry): Observable<any> {
     return this.dataService.post(constLocal.costBreakdowns + "/" + encodeURIComponent(costBreakdownTitle) + "/entries", costBreakdownEntry)
       .pipe(catchError(error => {
-        return throwError(this.convertToAddCostBreakdownEntryError(error));
+        return throwError(() => this.convertToAddCostBreakdownEntryError(error));
       }));
   }
 
@@ -131,7 +131,7 @@ export class SettingsService {
     return this.dataService.put(constLocal.costBreakdowns + "/" + encodeURIComponent(costBreakdownTitle) + "/entries/" +
         encodeURIComponent(fromDate) + "/" + encodeURIComponent(toDate) + "/" + encodeURIComponent(name), costBreakdownEntry)
       .pipe(catchError(error => {
-        return throwError(this.convertToUpdateCostBreakdownEntryError(error));
+        return throwError(() => this.convertToUpdateCostBreakdownEntryError(error));
       }));
   }
 
@@ -155,7 +155,7 @@ export class SettingsService {
     return this.dataService.delete(constLocal.costBreakdowns + "/" + encodeURIComponent(title) + "/entries/" +
         encodeURIComponent(fromDate) + "/" + encodeURIComponent(toDate) + "/" + encodeURIComponent(name))
       .pipe(catchError(error => {
-        return throwError(this.convertToDeleteCostBreakdownEntryError(error));
+        return throwError(() => this.convertToDeleteCostBreakdownEntryError(error));
       }));
   }
 
@@ -178,7 +178,7 @@ export class SettingsService {
   public addDisconnectRule(disconnectRule: DisconnectRule): Observable<any> {
     return this.dataService.post(constLocal.disconnectrules, disconnectRule)
     .pipe(catchError(error => {
-      return throwError(this.convertToAddDisconnectRuleError(error));
+      return throwError(() => this.convertToAddDisconnectRuleError(error));
     }));
   }
 
@@ -201,7 +201,7 @@ export class SettingsService {
   public deleteDisconnectRule(label: string, obisCode: string): Observable<any> {
     return this.dataService.delete(constLocal.disconnectrulesNames + "/" + encodeURIComponent(label) + "/" + encodeURIComponent(obisCode))
     .pipe(catchError(error => {
-      return throwError(this.convertToDeleteDisconnectRuleError(error));
+      return throwError(() => this.convertToDeleteDisconnectRuleError(error));
     }));
   }
 
@@ -230,7 +230,7 @@ export class SettingsService {
   public addEmailRecipient(emailRecipeint: EmailRecipient): Observable<any> {
     return this.dataService.post(constLocal.emailRecipients, emailRecipeint)
     .pipe(catchError(error => {
-      return throwError(this.convertToAddEmailRecipientError(error));
+      return throwError(() => this.convertToAddEmailRecipientError(error));
     }));
   }
 
@@ -253,7 +253,7 @@ export class SettingsService {
   public deleteEmailRecipient(emailAddress: string): Observable<any> {
     return this.dataService.delete(constLocal.emailRecipients + "/" + encodeURIComponent(emailAddress))
     .pipe(catchError(error => {
-      return throwError(this.convertToDeleteEmailRecipientError(error));
+      return throwError(() => this.convertToDeleteEmailRecipientError(error));
     }));
   }
 
@@ -272,7 +272,7 @@ export class SettingsService {
   public testEmailRecipient(emailAddress: string): Observable<any> {
     return this.dataService.put(constLocal.emailRecipients + "/" + encodeURIComponent(emailAddress) + "/test")
     .pipe(catchError(error => {
-      return throwError(this.convertToTestEmailRecipientError(error));
+      return throwError(() => this.convertToTestEmailRecipientError(error));
     }));
   }
 
@@ -303,7 +303,7 @@ export class SettingsService {
   public addGeneratorsSeries(generatorSeries: GeneratorSeries): Observable<any> {
     return this.dataService.post(constLocal.generatorsSeries, generatorSeries)
       .pipe(catchError(error => {
-        return throwError(this.convertToAddGeneratorSeriesError(error));
+        return throwError(() => this.convertToAddGeneratorSeriesError(error));
       }));
   }
 
@@ -326,7 +326,7 @@ export class SettingsService {
   public deleteGeneratorSeries(label: string, obisCode: string): Observable<any> {
     return this.dataService.delete(constLocal.generatorsSeries + "/" + encodeURIComponent(label) + "/" + encodeURIComponent(obisCode))
       .pipe(catchError(error => {
-        return throwError(this.convertToDeleteGeneratorSeriesError(error));
+        return throwError(() => this.convertToDeleteGeneratorSeriesError(error));
       }));
   }
 
@@ -353,7 +353,7 @@ export class SettingsService {
   public addImport(importCreate: ImportCreate): Observable<any> {
     return this.dataService.post(constLocal.imports, importCreate)
       .pipe(catchError(error => {
-        return throwError(this.convertToAddImportError(error));
+        return throwError(() => this.convertToAddImportError(error));
       }));
   }
 
@@ -376,7 +376,7 @@ export class SettingsService {
   public toggleImport(label: string, enabled: boolean): Observable<any> {
     return this.dataService.patch(constLocal.imports + "/" + encodeURIComponent(label), { enabled: enabled })
       .pipe(catchError(error => {
-        return throwError(this.convertToToggleImportError(error));
+        return throwError(() => this.convertToToggleImportError(error));
       }));
   }
 
@@ -399,7 +399,7 @@ export class SettingsService {
   public deleteImport(label: string): Observable<any> {
     return this.dataService.delete(constLocal.imports + "/" + encodeURIComponent(label))
       .pipe(catchError(error => {
-        return throwError(this.convertToDeleteImportError(error));
+        return throwError(() => this.convertToDeleteImportError(error));
       }));
   }
 
@@ -422,7 +422,7 @@ export class SettingsService {
   public addProfileGraph(profileGraph: ProfileGraph): Observable<any> {
     return this.dataService.post(constLocal.profileGraphs, profileGraph)
     .pipe(catchError(error => {
-      return throwError(this.convertToAddProfileGraphError(error));
+      return throwError(() => this.convertToAddProfileGraphError(error));
     }));
   }
 
@@ -446,7 +446,7 @@ export class SettingsService {
     var params = new HttpParams().set("period", period).set("page", page).set("title", title);
     return this.dataService.put(constLocal.profileGraphs, profileGraph, params)
     .pipe(catchError(error => {
-      return throwError(this.convertToUpdateProfileGraphError(error));
+      return throwError(() => this.convertToUpdateProfileGraphError(error));
     }));
   }
 
@@ -470,7 +470,7 @@ export class SettingsService {
     var params = new HttpParams().set("period", period).set("page", page).set("title1", title1).set("title2", title2);
     return this.dataService.put(constLocal.profileGraphsSwaprank, null, params)
     .pipe(catchError(error => {
-      return throwError(this.convertToSwapProfileGraphRankError(error));
+      return throwError(() => this.convertToSwapProfileGraphRankError(error));
     }));
   }
 
@@ -490,7 +490,7 @@ export class SettingsService {
     var params = new HttpParams().set("period", period).set("page", page).set("title", title);
     return this.dataService.delete(constLocal.profileGraphs, params)
     .pipe(catchError(error => {
-      return throwError(this.convertToDeleteProfileGraphError(error));
+      return throwError(() => this.convertToDeleteProfileGraphError(error));
     }));
   }
 
@@ -529,7 +529,7 @@ export class SettingsService {
   public saveMqttParams(mqttParams: MqttParams): Observable<any> {
     return this.dataService.put(constLocal.mqtt, mqttParams)
     .pipe(catchError(error => {
-      return throwError(this.convertToSaveMqttParamsError(error));
+      return throwError(() => this.convertToSaveMqttParamsError(error));
     }));
   }
 
@@ -550,7 +550,7 @@ export class SettingsService {
   public testMqttParams(mqttParams: MqttParams): Observable<any> {
     return this.dataService.put(constLocal.mqttTest, mqttParams)
     .pipe(catchError(error => {
-      return throwError(this.convertToTestMqttParamsError(error));
+      return throwError(() => this.convertToTestMqttParamsError(error));
     }));
   }
 
@@ -577,7 +577,7 @@ export class SettingsService {
   public saveSmtpParams(smtpParams: SmtpParams): Observable<any> {
     return this.dataService.put(constLocal.smtp, smtpParams)
     .pipe(catchError(error => {
-      return throwError(this.convertToSaveSmtpParamsError(error));
+      return throwError(() => this.convertToSaveSmtpParamsError(error));
     }));
   }
 

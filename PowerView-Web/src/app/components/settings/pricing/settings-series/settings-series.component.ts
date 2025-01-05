@@ -14,9 +14,10 @@ import { Moment } from 'moment'
 import * as moment from 'moment';
 
 @Component({
-  selector: 'app-settings-series',
-  templateUrl: './settings-series.component.html',
-  styleUrls: ['./settings-series.component.css']
+    selector: 'app-settings-series',
+    templateUrl: './settings-series.component.html',
+    styleUrls: ['./settings-series.component.css'],
+    standalone: false
 })
 export class SettingsSeriesComponent {
   private snackBarRef: MatSnackBarRef<SimpleSnackBar>;

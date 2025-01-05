@@ -4,9 +4,10 @@ import { GaugesService } from '../../../services/gauges.service';
 import { GaugeValueGroupSet } from '../../../model/gaugeValueGroupSet';
 
 @Component({
-  selector: 'app-guages-latest',
-  templateUrl: './gauges-latest.component.html',
-  styleUrls: ['./gauges-latest.component.css'],
+    selector: 'app-guages-latest',
+    templateUrl: './gauges-latest.component.html',
+    styleUrls: ['./gauges-latest.component.css'],
+    standalone: false
 })
 export class GaugesLatestComponent implements OnInit {
   gaugeValueGroupSet: GaugeValueGroupSet;

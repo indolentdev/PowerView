@@ -7,9 +7,10 @@ import { SettingsService, SaveSmtpParamsError } from '../../../services/settings
 import { SmtpParams } from '../../../model/smtpParams';
 
 @Component({
-  selector: 'app-settings-smtp',
-  templateUrl: './settings-smtp.component.html',
-  styleUrls: ['./settings-smtp.component.css']
+    selector: 'app-settings-smtp',
+    templateUrl: './settings-smtp.component.html',
+    styleUrls: ['./settings-smtp.component.css'],
+    standalone: false
 })
 export class SettingsSmtpComponent implements OnInit {
   private snackBarRef:  MatSnackBarRef<SimpleSnackBar>;

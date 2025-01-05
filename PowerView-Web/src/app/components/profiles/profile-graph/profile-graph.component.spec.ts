@@ -57,8 +57,9 @@ describe('ProfileGraphComponent', () => {
 
   @Component({
     selector: `host-component`,
-    template: `<app-profile-graph [profileGraph]="profileGraph" [timeFormat]="timeFormat"></app-profile-graph>`
-  })
+    template: `<app-profile-graph [profileGraph]="profileGraph" [timeFormat]="timeFormat"></app-profile-graph>`,
+    standalone: false
+})
   class TestHostComponent {
     profileGraph: Profile;
     timeFormat: string;

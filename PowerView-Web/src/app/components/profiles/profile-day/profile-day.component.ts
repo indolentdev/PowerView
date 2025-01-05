@@ -5,9 +5,10 @@ import { Moment } from 'moment'
 import moment from 'moment';
 
 @Component({
-  selector: 'app-profile-day',
-  templateUrl: './profile-day.component.html',
-  styleUrls: ['./profile-day.component.css']
+    selector: 'app-profile-day',
+    templateUrl: './profile-day.component.html',
+    styleUrls: ['./profile-day.component.css'],
+    standalone: false
 })
 export class ProfileDayComponent implements OnInit {
   dpMaxStartTime: Moment;

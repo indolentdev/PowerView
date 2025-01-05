@@ -5,9 +5,10 @@ import { NGXLogger } from 'ngx-logger';
 import { Import } from '../../../../model/import';
 
 @Component({
-  selector: 'app-settings-import-table',
-  templateUrl: './settings-import-table.component.html',
-  styleUrls: ['./settings-import-table.component.css']
+    selector: 'app-settings-import-table',
+    templateUrl: './settings-import-table.component.html',
+    styleUrls: ['./settings-import-table.component.css'],
+    standalone: false
 })
 export class SettingsImportTableComponent {
 

@@ -10,9 +10,10 @@ import { Moment } from 'moment'
 import moment from 'moment';
 
 @Component({
-  selector: 'app-export-diffs-hourly',
-  templateUrl: './export-diffs-hourly.component.html',
-  styleUrls: ['./export-diffs-hourly.component.css']
+    selector: 'app-export-diffs-hourly',
+    templateUrl: './export-diffs-hourly.component.html',
+    styleUrls: ['./export-diffs-hourly.component.css'],
+    standalone: false
 })
 export class ExportDiffsHourlyComponent implements OnInit {
 

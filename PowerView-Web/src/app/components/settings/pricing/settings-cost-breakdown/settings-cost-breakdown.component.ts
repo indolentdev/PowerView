@@ -11,9 +11,10 @@ import { CostBreakdownEntry } from '../../../../model/costBreakdownEntry';
 import { CostBreakdownWithPeriod } from '../../../../model/costBreakdownWithPeriod';
 
 @Component({
-  selector: 'app-settings-cost-breakdown',
-  templateUrl: './settings-cost-breakdown.component.html',
-  styleUrls: ['./settings-cost-breakdown.component.css']
+    selector: 'app-settings-cost-breakdown',
+    templateUrl: './settings-cost-breakdown.component.html',
+    styleUrls: ['./settings-cost-breakdown.component.css'],
+    standalone: false
 })
 export class SettingsCostBreakdownComponent {
   private snackBarRef: MatSnackBarRef<SimpleSnackBar>;

@@ -12,9 +12,10 @@ import { Moment } from 'moment'
 import * as moment from 'moment';
 
 @Component({
-  selector: 'app-history-status',
-  templateUrl: './history-status.component.html',
-  styleUrls: ['./history-status.component.css']
+    selector: 'app-history-status',
+    templateUrl: './history-status.component.html',
+    styleUrls: ['./history-status.component.css'],
+    standalone: false
 })
 export class HistoryStatusComponent {
 

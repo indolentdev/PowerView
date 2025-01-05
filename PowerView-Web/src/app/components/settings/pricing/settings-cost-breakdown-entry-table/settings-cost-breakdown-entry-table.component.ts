@@ -6,9 +6,10 @@ import { CostBreakdown } from '../../../../model/costBreakdown';
 import { CostBreakdownEntry } from '../../../../model/costBreakdownEntry';
 
 @Component({
-  selector: 'app-settings-cost-breakdown-entry-table',
-  templateUrl: './settings-cost-breakdown-entry-table.component.html',
-  styleUrls: ['./settings-cost-breakdown-entry-table.component.css']
+    selector: 'app-settings-cost-breakdown-entry-table',
+    templateUrl: './settings-cost-breakdown-entry-table.component.html',
+    styleUrls: ['./settings-cost-breakdown-entry-table.component.css'],
+    standalone: false
 })
 export class SettingsCostBreakdownEntryTableComponent {
   displayedColumns = ['fromDate', 'toDate', 'name', 'startTime', 'endTime', 'amount', 'actions'];

@@ -15,9 +15,10 @@ const toParam = "to";
 const decimalSeparatorParam = "decimalSeparator";
 
 @Component({
-  selector: 'app-export-cost-breakdown',
-  templateUrl: './export-cost-breakdown.component.html',
-  styleUrls: ['./export-cost-breakdown.component.css']
+    selector: 'app-export-cost-breakdown',
+    templateUrl: './export-cost-breakdown.component.html',
+    styleUrls: ['./export-cost-breakdown.component.css'],
+    standalone: false
 })
 export class ExportCostBreakdownComponent {
 

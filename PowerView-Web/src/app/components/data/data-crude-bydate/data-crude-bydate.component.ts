@@ -12,9 +12,10 @@ const labelParam = "label";
 const dateParam = "date";
 
 @Component({
-  selector: 'app-data-crude-bydate',
-  templateUrl: './data-crude-bydate.component.html',
-  styleUrls: ['./data-crude-bydate.component.css']
+    selector: 'app-data-crude-bydate',
+    templateUrl: './data-crude-bydate.component.html',
+    styleUrls: ['./data-crude-bydate.component.css'],
+    standalone: false
 })
 export class DataCrudeByDateComponent implements OnInit {
   minDate = moment("2010-01-01T00:00:00Z");

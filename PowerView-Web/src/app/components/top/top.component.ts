@@ -3,9 +3,10 @@ import { NGXLogger } from 'ngx-logger';
 import { MenuService } from '../../services/menu.service';
 
 @Component({
-  selector: 'app-top',
-  templateUrl: './top.component.html',
-  styleUrls: ['./top.component.css']
+    selector: 'app-top',
+    templateUrl: './top.component.html',
+    styleUrls: ['./top.component.css'],
+    standalone: false
 })
 export class TopComponent implements OnInit {
   dayProfilePages: string[];

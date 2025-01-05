@@ -15,9 +15,10 @@ const toParam = "to";
 const decimalSeparatorParam = "decimalSeparator";
 
 @Component({
-  selector: 'app-export',
-  templateUrl: './export.component.html',
-  styleUrls: ['./export.component.css']
+    selector: 'app-export',
+    templateUrl: './export.component.html',
+    styleUrls: ['./export.component.css'],
+    standalone: false
 })
 export class ExportComponent implements OnInit {
 

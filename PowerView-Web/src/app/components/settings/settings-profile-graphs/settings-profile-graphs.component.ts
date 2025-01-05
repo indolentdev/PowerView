@@ -10,9 +10,10 @@ import { ProfileGraph } from '../../../model/profileGraph';
 import { ProfileGraphSerieSet } from '../../../model/profileGraphSerieSet';
 
 @Component({
-  selector: 'app-settings-profile-graphs',
-  templateUrl: './settings-profile-graphs.component.html',
-  styleUrls: ['./settings-profile-graphs.component.css']
+    selector: 'app-settings-profile-graphs',
+    templateUrl: './settings-profile-graphs.component.html',
+    styleUrls: ['./settings-profile-graphs.component.css'],
+    standalone: false
 })
 export class SettingsProfileGraphsComponent implements OnInit {
   private snackBarRef:  MatSnackBarRef<SimpleSnackBar>;

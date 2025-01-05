@@ -10,9 +10,10 @@ import { Moment } from 'moment'
 import moment from 'moment';
 
 @Component({
-  selector: 'app-export-cost-breakdown-hourly',
-  templateUrl: './export-cost-breakdown-hourly.component.html',
-  styleUrls: ['./export-cost-breakdown-hourly.component.css']
+    selector: 'app-export-cost-breakdown-hourly',
+    templateUrl: './export-cost-breakdown-hourly.component.html',
+    styleUrls: ['./export-cost-breakdown-hourly.component.css'],
+    standalone: false
 })
 export class ExportCostBreakdownHourlyComponent {
 

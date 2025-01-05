@@ -6,9 +6,10 @@ import { SettingsService } from '../../../services/settings.service';
 import { SerieColorSet } from '../../../model/serieColorSet';
 
 @Component({
-  selector: 'app-settings-series-colors',
-  templateUrl: './settings-series-colors.component.html',
-  styleUrls: ['./settings-series-colors.component.css']
+    selector: 'app-settings-series-colors',
+    templateUrl: './settings-series-colors.component.html',
+    styleUrls: ['./settings-series-colors.component.css'],
+    standalone: false
 })
 export class SettingsSeriesColorsComponent implements OnInit {
   private snackBarRef:  MatSnackBarRef<SimpleSnackBar>;

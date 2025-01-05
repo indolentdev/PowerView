@@ -17,9 +17,10 @@ class CrossFieldErrorMatcher implements ErrorStateMatcher {
 }
 
 @Component({
-  selector: 'app-settings-relay-controls',
-  templateUrl: './settings-relay-controls.component.html',
-  styleUrls: ['./settings-relay-controls.component.css']
+    selector: 'app-settings-relay-controls',
+    templateUrl: './settings-relay-controls.component.html',
+    styleUrls: ['./settings-relay-controls.component.css'],
+    standalone: false
 })
 export class SettingsRelayControlsComponent implements OnInit {
   private snackBarRef:  MatSnackBarRef<SimpleSnackBar>;

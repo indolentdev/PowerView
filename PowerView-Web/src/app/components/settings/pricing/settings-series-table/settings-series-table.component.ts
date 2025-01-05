@@ -5,9 +5,10 @@ import { NGXLogger } from 'ngx-logger';
 import { GeneratorSeries } from '../../../../model/generatorSeries';
 
 @Component({
-  selector: 'app-settings-series-table',
-  templateUrl: './settings-series-table.component.html',
-  styleUrls: ['./settings-series-table.component.css']
+    selector: 'app-settings-series-table',
+    templateUrl: './settings-series-table.component.html',
+    styleUrls: ['./settings-series-table.component.css'],
+    standalone: false
 })
 export class SettingsSeriesTableComponent {
   displayedColumns = ['nameSeries', 'baseSeries', 'costBreakdownTitle', 'actions'];

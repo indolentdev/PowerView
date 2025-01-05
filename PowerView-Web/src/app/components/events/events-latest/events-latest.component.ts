@@ -4,9 +4,10 @@ import { EventsService } from '../../../services/events.service';
 import { EventSet } from '../../../model/eventSet';
 
 @Component({
-  selector: 'app-events-latest',
-  templateUrl: './events-latest.component.html',
-  styleUrls: ['./events-latest.component.css']
+    selector: 'app-events-latest',
+    templateUrl: './events-latest.component.html',
+    styleUrls: ['./events-latest.component.css'],
+    standalone: false
 })
 export class EventsLatestComponent implements OnInit {
 

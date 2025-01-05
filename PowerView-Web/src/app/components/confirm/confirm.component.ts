@@ -4,9 +4,10 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ConfirmParams } from './ConfirmParams';
 
 @Component({
-  selector: 'app-confirm',
-  templateUrl: './confirm.component.html',
-  styleUrls: ['./confirm.component.css']
+    selector: 'app-confirm',
+    templateUrl: './confirm.component.html',
+    styleUrls: ['./confirm.component.css'],
+    standalone: false
 })
 export class ConfirmComponent implements OnInit {
   userConfirm: string;

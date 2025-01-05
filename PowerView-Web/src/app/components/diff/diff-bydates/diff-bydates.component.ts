@@ -13,9 +13,10 @@ const fromParam = "from";
 const toParam = "to";
 
 @Component({
-  selector: 'app-diff-bydates',
-  templateUrl: './diff-bydates.component.html',
-  styleUrls: ['./diff-bydates.component.css']
+    selector: 'app-diff-bydates',
+    templateUrl: './diff-bydates.component.html',
+    styleUrls: ['./diff-bydates.component.css'],
+    standalone: false
 })
 export class DiffBydatesComponent implements OnInit {
   minDateFrom = moment("2010-01-01T00:00:00Z");

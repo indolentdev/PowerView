@@ -7,9 +7,10 @@ import { Import } from 'src/app/model/import';
 import { ImportCreate } from 'src/app/model/importCreate';
 
 @Component({
-  selector: 'app-settings-import',
-  templateUrl: './settings-import.component.html',
-  styleUrls: ['./settings-import.component.css']
+    selector: 'app-settings-import',
+    templateUrl: './settings-import.component.html',
+    styleUrls: ['./settings-import.component.css'],
+    standalone: false
 })
 export class SettingsImportComponent {
   private snackBarRef: MatSnackBarRef<SimpleSnackBar>;

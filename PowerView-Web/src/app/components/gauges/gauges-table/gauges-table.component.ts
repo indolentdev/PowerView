@@ -6,9 +6,10 @@ import { ObisTranslateService } from '../../../services/obis-translate.service';
 import { GaugeValueGroup } from '../../../model/gaugeValueGroup';
 
 @Component({
-  selector: 'app-gauges-table',
-  templateUrl: './gauges-table.component.html',
-  styleUrls: ['./gauges-table.component.css']
+    selector: 'app-gauges-table',
+    templateUrl: './gauges-table.component.html',
+    styleUrls: ['./gauges-table.component.css'],
+    standalone: false
 })
 export class GaugesTableComponent implements OnInit, OnChanges {
   displayedColumns = ['serie', 'timestamp', 'gaugeValue', 'unit', 'deviceId'];

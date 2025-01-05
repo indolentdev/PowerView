@@ -14,9 +14,10 @@ import { Moment } from 'moment'
 import * as moment from 'moment';
 
 @Component({
-  selector: 'app-data-crude-bydate-table',
-  templateUrl: './data-crude-bydate-table.component.html',
-  styleUrls: ['./data-crude-bydate-table.component.css']
+    selector: 'app-data-crude-bydate-table',
+    templateUrl: './data-crude-bydate-table.component.html',
+    styleUrls: ['./data-crude-bydate-table.component.css'],
+    standalone: false
 })
 export class DataCrudeBydateTableComponent implements OnInit, OnChanges {
   private snackBarRef: MatSnackBarRef<SimpleSnackBar>;

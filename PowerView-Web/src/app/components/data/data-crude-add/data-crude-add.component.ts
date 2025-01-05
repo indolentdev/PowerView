@@ -14,9 +14,10 @@ import { Moment } from 'moment'
 import * as moment from 'moment';
 
 @Component({
-  selector: 'app-data-crude-add',
-  templateUrl: './data-crude-add.component.html',
-  styleUrls: ['./data-crude-add.component.css']
+    selector: 'app-data-crude-add',
+    templateUrl: './data-crude-add.component.html',
+    styleUrls: ['./data-crude-add.component.css'],
+    standalone: false
 })
 export class DataCrudeAddComponent implements OnInit {
   private snackBarRef: MatSnackBarRef<SimpleSnackBar>;

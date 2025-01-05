@@ -20,12 +20,13 @@ export class DecadeCustomMomentDateAdapter extends MomentDateAdapter {
 }
 
 @Component({
-  selector: 'app-profile-decade',
-  templateUrl: './profile-decade.component.html',
-  styleUrls: ['./profile-decade.component.css'],
-  providers: [
-    { provide: DateAdapter, useClass: DecadeCustomMomentDateAdapter }
-  ]
+    selector: 'app-profile-decade',
+    templateUrl: './profile-decade.component.html',
+    styleUrls: ['./profile-decade.component.css'],
+    providers: [
+        { provide: DateAdapter, useClass: DecadeCustomMomentDateAdapter }
+    ],
+    standalone: false
 })
 export class ProfileDecadeComponent implements OnInit {
   dpMaxStartTime: Moment;

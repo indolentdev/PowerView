@@ -12,9 +12,10 @@ import moment from 'moment';
 const dateParam = "date";
 
 @Component({
-  selector: 'app-gauges-bydate',
-  templateUrl: './gauges-bydate.component.html',
-  styleUrls: ['./gauges-bydate.component.css']
+    selector: 'app-gauges-bydate',
+    templateUrl: './gauges-bydate.component.html',
+    styleUrls: ['./gauges-bydate.component.css'],
+    standalone: false
 })
 export class GaugesBydateComponent implements OnInit {
   minDate = moment("2010-01-01T00:00:00Z");

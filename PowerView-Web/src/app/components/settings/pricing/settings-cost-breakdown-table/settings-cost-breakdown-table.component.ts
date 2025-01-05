@@ -7,9 +7,10 @@ import { CostBreakdownPeriod } from 'src/app/model/costBreakdownPeriod';
 import { CostBreakdownWithPeriod } from 'src/app/model/costBreakdownWithPeriod';
 
 @Component({
-  selector: 'app-settings-cost-breakdown-table',
-  templateUrl: './settings-cost-breakdown-table.component.html',
-  styleUrls: ['./settings-cost-breakdown-table.component.css']
+    selector: 'app-settings-cost-breakdown-table',
+    templateUrl: './settings-cost-breakdown-table.component.html',
+    styleUrls: ['./settings-cost-breakdown-table.component.css'],
+    standalone: false
 })
 export class SettingsCostBreakdownTableComponent {
   displayedColumns = ['title', 'currency', 'vat', 'entries', 'actions'];

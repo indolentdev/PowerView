@@ -5,9 +5,10 @@ import { Moment } from 'moment'
 import moment from 'moment';
 
 @Component({
-  selector: 'app-profile-last12m',
-  templateUrl: './profile-last12m.component.html',
-  styleUrls: ['./profile-last12m.component.css']
+    selector: 'app-profile-last12m',
+    templateUrl: './profile-last12m.component.html',
+    styleUrls: ['./profile-last12m.component.css'],
+    standalone: false
 })
 export class ProfileLast12mComponent implements OnInit {
   maxStartTime: Moment;

@@ -4,9 +4,10 @@ import { SettingsService } from '../../services/settings.service';
 import { ApplicationProperties } from '../../model/applicationProperties';
 
 @Component({
-  selector: 'app-default',
-  templateUrl: './default.component.html',
-  styleUrls: ['./default.component.css']
+    selector: 'app-default',
+    templateUrl: './default.component.html',
+    styleUrls: ['./default.component.css'],
+    standalone: false
 })
 export class DefaultComponent implements OnInit {
   applicationProperties: ApplicationProperties;

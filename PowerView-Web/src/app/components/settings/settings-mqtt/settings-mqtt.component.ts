@@ -7,9 +7,10 @@ import { SettingsService, SaveMqttParamsError, TestMqttParamsError } from '../..
 import { MqttParams } from '../../../model/mqttParams';
 
 @Component({
-  selector: 'app-settings-mqtt',  
-  templateUrl: './settings-mqtt.component.html',
-  styleUrls: ['./settings-mqtt.component.css']
+    selector: 'app-settings-mqtt',
+    templateUrl: './settings-mqtt.component.html',
+    styleUrls: ['./settings-mqtt.component.css'],
+    standalone: false
 })
 export class SettingsMqttComponent implements OnInit {
   private snackBarRef:  MatSnackBarRef<SimpleSnackBar>;

@@ -6,9 +6,10 @@ import { ObisTranslateService } from '../../../services/obis-translate.service';
 import { ProfileTotalValue } from '../../../model/profileTotalValue';
 
 @Component({
-  selector: 'app-profile-total-table',
-  templateUrl: './profile-total-table.component.html',
-  styleUrls: ['./profile-total-table.component.css']
+    selector: 'app-profile-total-table',
+    templateUrl: './profile-total-table.component.html',
+    styleUrls: ['./profile-total-table.component.css'],
+    standalone: false
 })
 export class ProfileTotalTableComponent implements OnInit, OnChanges {
   displayedColumns = ['serie', 'value', 'unit'];

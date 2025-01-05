@@ -5,9 +5,10 @@ import { ObisTranslateService } from '../../../services/obis-translate.service';
 import { ProfileGraph } from '../../../model/profileGraph';
 
 @Component({
-  selector: 'app-settings-profile-graphs-table',
-  templateUrl: './settings-profile-graphs-table.component.html',
-  styleUrls: ['./settings-profile-graphs-table.component.css']
+    selector: 'app-settings-profile-graphs-table',
+    templateUrl: './settings-profile-graphs-table.component.html',
+    styleUrls: ['./settings-profile-graphs-table.component.css'],
+    standalone: false
 })
 export class SettingsProfileGraphsTableComponent implements OnInit, OnChanges {
   displayedColumns = ['title', 'interval', 'series', 'actions'];

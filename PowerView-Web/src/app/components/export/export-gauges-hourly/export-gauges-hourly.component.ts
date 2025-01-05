@@ -10,9 +10,10 @@ import { Moment } from 'moment'
 import moment from 'moment';
 
 @Component({
-  selector: 'app-export-gauges-hourly',
-  templateUrl: './export-gauges-hourly.component.html',
-  styleUrls: ['./export-gauges-hourly.component.css']
+    selector: 'app-export-gauges-hourly',
+    templateUrl: './export-gauges-hourly.component.html',
+    styleUrls: ['./export-gauges-hourly.component.css'],
+    standalone: false
 })
 export class ExportGaugesHourlyComponent implements OnInit {
 

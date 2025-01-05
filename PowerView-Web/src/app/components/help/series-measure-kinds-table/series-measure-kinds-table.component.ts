@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
-  selector: 'app-series-measure-kinds-table',
-  templateUrl: './series-measure-kinds-table.component.html',
-  styleUrls: ['./series-measure-kinds-table.component.css']
+    selector: 'app-series-measure-kinds-table',
+    templateUrl: './series-measure-kinds-table.component.html',
+    styleUrls: ['./series-measure-kinds-table.component.css'],
+    standalone: false
 })
 export class SeriesMeasureKindsTableComponent implements OnInit {
   displayedColumns = ['name', 'associatedTo', 'description', 'hint'];

@@ -13,9 +13,10 @@ import { Moment } from 'moment'
 import moment from 'moment';
 
 @Component({
-  selector: 'app-settings-cost-breakdown-entry',
-  templateUrl: './settings-cost-breakdown-entry.component.html',
-  styleUrls: ['./settings-cost-breakdown-entry.component.css']
+    selector: 'app-settings-cost-breakdown-entry',
+    templateUrl: './settings-cost-breakdown-entry.component.html',
+    styleUrls: ['./settings-cost-breakdown-entry.component.css'],
+    standalone: false
 })
 export class SettingsCostBreakdownEntryComponent {
   private snackBarRef: MatSnackBarRef<SimpleSnackBar>;

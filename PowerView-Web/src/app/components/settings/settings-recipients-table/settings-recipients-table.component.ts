@@ -7,9 +7,10 @@ import { EmailRecipientSet } from '../../../model/emailRecipientSet';
 import { EmailRecipient } from '../../../model/emailRecipient';
 
 @Component({
-  selector: 'app-settings-recipients-table',
-  templateUrl: './settings-recipients-table.component.html',
-  styleUrls: ['./settings-recipients-table.component.css']
+    selector: 'app-settings-recipients-table',
+    templateUrl: './settings-recipients-table.component.html',
+    styleUrls: ['./settings-recipients-table.component.css'],
+    standalone: false
 })
 export class SettingsRecipientsTableComponent implements OnInit, OnChanges {
   displayedColumns = ['name', 'emailAddress', 'actions'];

@@ -8,9 +8,10 @@ import { EventSet } from '../../../model/eventSet';
 import { EventAmplificationLeak } from '../../../model/eventAmplificationLeak';
 
 @Component({
-  selector: 'app-events-table',
-  templateUrl: './events-table.component.html',
-  styleUrls: ['./events-table.component.css']
+    selector: 'app-events-table',
+    templateUrl: './events-table.component.html',
+    styleUrls: ['./events-table.component.css'],
+    standalone: false
 })
 export class EventsTableComponent implements OnInit, OnChanges {
   displayedColumns = ['detectTimestamp', 'label', 'event', 'state', 'details' ];
