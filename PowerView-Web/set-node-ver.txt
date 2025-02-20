@@ -1,1 +1,1 @@
-nvm use 18
+nvm use 22

@@ -1,29 +1,44 @@
 #!/bin/bash
 
-# Make the build - i.e. compile and test
-echo Building and testing server
+echo Building and testing backend
+cd PowerView-Backend
 sh ./release.sh
 if [ $? -ne 0 ]
 then
-  echo release.sh returned $?
+  echo Backend release.sh returned $?
+  cd ..
   exit 1
 fi
+cd ..
 
-echo Building and testing web application
-sh ./release-web.sh
+echo Building and testing web
+cd PowerView-Web
+sh ./release.sh
 if [ $? -ne 0 ]
 then
-  echo release-web returned $?
+  echo Web release.sh returned $?
+  cd ..
+  exit 1
+fi
+cd ..
+
+echo Cleaning build folder
+if [ -d "build" ]
+then
+  rm -r "build"
+fi
+
+mkdir build
+
+echo Copying backend
+cp -r "PowerView-Backend/PowerView/bin/Release/net6.0/publish/." "build"
+if [ $? -ne 0 ]
+then
   exit 1
 fi
 
-if [ -d "PowerView/bin/Release/net6.0/publish/PowerView-Web" ]
-then
-  rm -r "PowerView/bin/Release/net6.0/publish/PowerView-Web"
-fi
-
-echo Copying web application
-cp -r "PowerView-Web/dist/PowerView-Web/browser" "PowerView/bin/Release/net6.0/publish/PowerView-Web"
+echo Copying web
+cp -r "PowerView-Web/dist/PowerView-Web/browser" "build/PowerView-Web"
 if [ $? -ne 0 ]
 then
   exit 1

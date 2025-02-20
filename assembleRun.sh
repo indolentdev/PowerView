@@ -1,14 +1,13 @@
 #!/bin/bash
 
-# Make the build - i.e. compile and test
-echo Building and testing server and web application
+echo Building and testing backend and web
 sh ./assemble.sh
 if [ $? -ne 0 ]
 then
   exit 1
 fi
 
-dotnet list package --outdated
+#dotnet list package --outdated
 
 echo Running
-dotnet PowerView/bin/Release/net6.0/publish/PowerView.dll
+dotnet build/PowerView.dll

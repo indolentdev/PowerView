@@ -1,6 +1,5 @@
 #!/bin/bash
 
-cd PowerView-Web
 #ng test
 #ng test --watch=false
 ng test --no-watch --no-progress
@@ -11,4 +10,3 @@ then
   exit 1
 fi
 
-cd ..

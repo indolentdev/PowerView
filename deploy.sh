@@ -20,7 +20,7 @@ fi
 echo Credentials OK
 
 # Make the build - i.e. compile and test
-echo Building and testing server and web application
+echo Building and testing backend and web
 sh ./assemble.sh
 retVal=$?
 if [ $retVal -ne 0 ]; then
@@ -28,21 +28,19 @@ if [ $retVal -ne 0 ]; then
   exit 1
 fi
 
-source=$component/bin/
-sourcecompile=$source
-sourcecompile+=Release/net6.0/publish/
+source=build/
 
 # Get the version number of the component
-executable=$sourcecompile$component.dll
+executable=$source$component.dll
 # Dont know how to get the assembly version number using pure dotnet command line
 # so here we still depend on mono command line
-monodisversion=$(monodis --assembly $executable | grep Version)
+monodisversion=$(strings $executable | egrep '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$')
 if [ $? -ne 0 ]
 then
   echo monidis failed. Unable to get assembly version.
   exit 1
 fi
-version=$(echo $monodisversion | sed -n 's/.*:\s*\([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\)\..*/\1/p')
+version=$(echo $monodisversion | sed -n 's/\s*\([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\)\..*/\1/p')
 if [ $? -ne 0 ]
 then
   echo sed failed. Unable to get assembly version.
@@ -51,8 +49,7 @@ fi
 
 name=$component-$version
 
-sourcename=$source
-sourcename+=$name
+sourcename=$name
 sourcename+=/
 
 # Rename the build output to match the component name and version.
@@ -62,7 +59,7 @@ if [ -d "$sourcename" ]; then
 fi
 
 echo Moving release output to $sourcename
-mv $sourcecompile $sourcename
+mv $source $sourcename
 if [ $? -ne 0 ]
 then
   echo Failed moving into $sourcename
@@ -76,9 +73,7 @@ then
   echo Removing existing $zipname
   rm $zipname
 fi
-cd $source
-zip -r ../../$zipname $name
-cd ../..
+zip -r $zipname $name
 md5name=$name-md5.txt
 if [ -f "$md5name" ]
 then
@@ -88,7 +83,7 @@ fi
 md5sum $zipname > $md5name
 
 # Uncomment next line to exit script after zipping the release
-# exit 1
+#exit 1
 
 # Prepare the folder on remote system
 echo Deleting temporary folder $name on remote system

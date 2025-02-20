@@ -1,13 +1,14 @@
 #!/bin/bash
 
-sh ./test-web.sh
+#nvm use 22
+
+sh ./test.sh
 if [ $? -ne 0 ]
 then
-  echo test-web.sh returned $?
+  echo test.sh returned $?
   exit 1
 fi
 
-cd PowerView-Web
 ng build --configuration production --aot --output-hashing=all --base-href /web/
 if [ $? -ne 0 ]
 then
@@ -16,4 +17,4 @@ then
   exit 1
 fi
 
-cd ..
+
