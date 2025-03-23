@@ -7,7 +7,7 @@ namespace PowerView.Model
   public class ProfileViewSetSource
   {
     private readonly ICollection<ProfileGraph> profileGraphs;
-    private readonly IDictionary<string, IList<DateTime>> intervalToCategories;
+    private readonly IDictionary<string, IReadOnlyList<DateTime>> intervalToCategories;
     private readonly IDictionary<string, IDictionary<SeriesName, IEnumerable<NormalizedDurationRegisterValue>>> intervalSeriesNameToValues;
 
     public ProfileViewSetSource(IEnumerable<ProfileGraph> profileGraphs, IList<ProfileGraphIntervalGroup> intervalGroups)
@@ -81,14 +81,12 @@ namespace PowerView.Model
           var firstValue = values.FirstOrDefault(x => x != null);
           if (firstValue == null) continue;
 
-          var valuesForCategories = values.Select(x => x == null ? null : (double?)x.UnitValue.Value);
+          var valuesForCategories = values.Select(x => x == null ? null : (DeviationValue?)x.GetDurationDeviationValue());
           var series = new Series(seriesName, firstValue.UnitValue.Unit, valuesForCategories);
           profileGraphSeries.Add(series);
         }
 
         if (profileGraphSeries.Count == 0) continue;
-
-
 
         var seriesSet = new SeriesSet(profileGraph.Title, categories, profileGraphSeries);
         seriesSets.Add(seriesSet);
@@ -99,7 +97,7 @@ namespace PowerView.Model
                                   .Where(x => x.SeriesName.ObisCode.IsPeriod)
                                   .GroupBy(x => x.SeriesName)
                                   .Select(x => x.First())
-                                  .Select(x => new NamedValue(x.SeriesName, new UnitValue((double)x.Values.Reverse().First(z => z != null), x.Unit)))
+                                  .Select(x => new NamedValue(x.SeriesName, new UnitValue((double)x.Values.Reverse().First(z => z != null).Value.Value, x.Unit)))
                                   .ToList();
 
       var profileViewSet = new ProfileViewSet(seriesSets, periodTotals);

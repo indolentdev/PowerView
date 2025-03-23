@@ -16,7 +16,7 @@ namespace PowerView.Model.Repository
     {
     }
 
-    public IList<CostBreakdownGeneratorSeries> GetCostBreakdownGeneratorSeries()
+    public IReadOnlyList<CostBreakdownGeneratorSeries> GetCostBreakdownGeneratorSeries()
     {
       const string sql = @"
       SELECT gs.Label, gs.ObisCode, bl.LabelName AS BaseLabel, bo.ObisCode AS BaseObisCode, gs.CostBreakdownTitle, cb.Id, cb.Title, cb.Currency, cb.Vat, cbe.CostBreakdownId, cbe.FromDate, cbe.ToDate, cbe.Name, cbe.StartTime, cbe.EndTime, cbe.Amount 

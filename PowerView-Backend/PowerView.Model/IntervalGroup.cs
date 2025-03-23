@@ -11,7 +11,7 @@ namespace PowerView.Model
     private readonly Func<DateTime, DateTime> timeDivider;
     private readonly Func<DateTime, DateTime> getNext;
 
-    public IntervalGroup(ILocationContext locationContext, DateTime start, string interval, TimeRegisterValueLabelSeriesSet labelSeriesSet, IList<CostBreakdownGeneratorSeries> costBreakdownGeneratorSeries)
+    public IntervalGroup(ILocationContext locationContext, DateTime start, string interval, TimeRegisterValueLabelSeriesSet labelSeriesSet, IReadOnlyList<CostBreakdownGeneratorSeries> costBreakdownGeneratorSeries)
     {
       this.locationContext = locationContext ?? throw new ArgumentNullException(nameof(locationContext));
 
@@ -24,11 +24,11 @@ namespace PowerView.Model
       CostBreakdownGeneratorSeries = costBreakdownGeneratorSeries ?? throw new ArgumentNullException(nameof(costBreakdownGeneratorSeries));
     }
 
-    public string Interval { get; private set; }
-    public TimeRegisterValueLabelSeriesSet LabelSeriesSet { get; private set; }
-    public IList<CostBreakdownGeneratorSeries> CostBreakdownGeneratorSeries { get; private set; }
+    public string Interval { get; }
+    public TimeRegisterValueLabelSeriesSet LabelSeriesSet { get; }
+    public IReadOnlyList<CostBreakdownGeneratorSeries> CostBreakdownGeneratorSeries { get; }
 
-    public IList<DateTime> Categories { get; private set; }
+    public IReadOnlyList<DateTime> Categories { get; private set; }
     public LabelSeriesSet<NormalizedTimeRegisterValue> NormalizedLabelSeriesSet { get; private set; }
     public LabelSeriesSet<NormalizedDurationRegisterValue> NormalizedDurationLabelSeriesSet { get; private set; }
 

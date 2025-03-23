@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace PowerView.Model
 {
@@ -25,6 +22,17 @@ namespace PowerView.Model
     public TimeSpan Duration => End - Start;
     public TimeSpan NormalizedDuration => NormalizedEnd - NormalizedStart;
 
+    public double DurationDeviationRatio 
+    { 
+      get 
+      {
+        var deviation = Duration - NormalizedDuration;
+        var durationDeviationRatio = deviation / NormalizedDuration;
+        return durationDeviationRatio;
+      }
+    }
+
+
     public NormalizedDurationRegisterValue(DateTime start, DateTime end, DateTime normalizedStart, DateTime normalizedEnd, UnitValue unitValue, params string[] deviceIds)
       : this(start, end, normalizedStart, normalizedEnd, unitValue, (IEnumerable<string>)deviceIds)
     {
@@ -48,25 +56,23 @@ namespace PowerView.Model
       this.deviceIds = DeviceId.DistinctDeviceIds(deviceIds);
     }
 
-    public double GetDurationDeviationRatio()
+    public DeviationValue GetDurationDeviationValue()
     {
-      var deviation = Duration - NormalizedDuration;
-      if (deviation < TimeSpan.Zero) deviation *= -1; // absolute deviation
+      double durationDeviationRatio = DurationDeviationRatio;
 
-      return deviation / NormalizedDuration;
-    }
+      if (durationDeviationRatio < 0)
+      {
+        var deviationValue1 = new DeviationValue(unitValue.Value, unitValue.Value, unitValue.Value + unitValue.Value * durationDeviationRatio * -1);
+        return deviationValue1;
+      }
+      else if (durationDeviationRatio > 0)
+      {
+        var deviationValue2 = new DeviationValue(unitValue.Value, unitValue.Value + unitValue.Value * durationDeviationRatio * -1, unitValue.Value);
+        return deviationValue2;
+      }
 
-    public double GetPointDeviationRatio()
-    {
-      var startDeviation = Start - NormalizedStart;
-      if (startDeviation < TimeSpan.Zero) startDeviation *= -1; // absolute deviation
-
-      var endDeviation = End - NormalizedEnd;
-      if (endDeviation < TimeSpan.Zero) endDeviation *= -1; // absolute deviation
-
-      var deviation = startDeviation + endDeviation;
-
-      return deviation / NormalizedDuration;
+      var deviationValue = new DeviationValue(unitValue.Value, unitValue.Value, unitValue.Value);
+      return deviationValue;
     }
 
     public NormalizedDurationRegisterValue SubtractNotNegative(NormalizedDurationRegisterValue baseValue)
@@ -91,7 +97,7 @@ namespace PowerView.Model
 
     public override string ToString()
     {
-      return string.Format(System.Globalization.CultureInfo.InvariantCulture, "[start={0}, end={1}, normalizedStart={2}, normalizedEnd={3}, unitValue={4}, deviceIds=[{5}]]", 
+      return string.Format(System.Globalization.CultureInfo.InvariantCulture, "[start={0}, end={1}, normalizedStart={2}, normalizedEnd={3}, unitValue={4}, deviceIds=[{5}]]",
         start.ToString("o"), end.ToString("o"), normalizedStart.ToString("o"), normalizedEnd.ToString("o"), unitValue, string.Join(", ", deviceIds));
     }
 

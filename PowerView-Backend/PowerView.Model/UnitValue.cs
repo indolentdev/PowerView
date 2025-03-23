@@ -30,8 +30,8 @@ namespace PowerView.Model
     public override bool Equals(object obj)
     {
       if (obj == null) return false;
-      if (obj.GetType() != typeof(TimeRegisterValue)) return false;
-      var other = (TimeRegisterValue)obj;
+      if (obj.GetType() != typeof(UnitValue)) return false;
+      var other = (UnitValue)obj;
       return Equals(other);
     }
 
@@ -43,7 +43,6 @@ namespace PowerView.Model
 
     public override int GetHashCode()
     {
-      var decValue = (decimal)value;
       unchecked
       {
         int hash = 17;

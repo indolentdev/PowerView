@@ -6,17 +6,18 @@ namespace PowerView.Model
 {
   public class Series
   {
-    public Series(SeriesName serieName, Unit unit, IEnumerable<double?> values)
+    public Series(SeriesName serieName, Unit unit, IEnumerable<DeviationValue?> values)
     {
-      if (serieName == null) throw new ArgumentNullException("serieName");
+      if (serieName == null) throw new ArgumentNullException(nameof(serieName));
+      if (values == null) throw new ArgumentNullException(nameof(values));
 
       SeriesName = serieName;
       Unit = unit;
-      Values = values.ToArray();
+      Values = values.ToList();
     }
 
-    public SeriesName SeriesName { get; private set; }
-    public Unit Unit { get; private set; }
-    public double?[] Values { get; private set; }
+    public SeriesName SeriesName { get; }
+    public Unit Unit { get; }
+    public IReadOnlyList<DeviationValue?> Values { get; }
   }
 }

@@ -55,6 +55,7 @@ namespace PowerView.Model.Test
 
       // Act & Assert
       Assert.That(t1, Is.EqualTo(t2));
+      Assert.That(t1, Is.EqualTo((object)t2));
       Assert.That(t1.GetHashCode(), Is.EqualTo(t2.GetHashCode()));
       Assert.That(t1, Is.Not.EqualTo(t3));
       Assert.That(t1.GetHashCode(), Is.Not.EqualTo(t3.GetHashCode()));
@@ -69,10 +70,12 @@ namespace PowerView.Model.Test
       var t1 = new UnitValue(1, Unit.Watt);
       var t2 = new UnitValue(1, Unit.Watt);
       var t3 = new UnitValue(2, Unit.Watt);
+      var t4 = new UnitValue(1, Unit.WattHour);
 
       // Act & Assert
       Assert.That(t1 == t2, Is.True);
       Assert.That(t1 == t3, Is.False);
+      Assert.That(t1 == t4, Is.False);
     }
 
     [Test]

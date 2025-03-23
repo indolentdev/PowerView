@@ -6,7 +6,7 @@ namespace PowerView.Model
 {
   public class ProfileGraphIntervalGroup : IntervalGroup
   {
-    public ProfileGraphIntervalGroup(ILocationContext locationContext, DateTime start, string interval, IList<ProfileGraph> profileGraphs, TimeRegisterValueLabelSeriesSet labelSeriesSet, IList<CostBreakdownGeneratorSeries> costBreakdownGeneratorSeries)
+    public ProfileGraphIntervalGroup(ILocationContext locationContext, DateTime start, string interval, IList<ProfileGraph> profileGraphs, TimeRegisterValueLabelSeriesSet labelSeriesSet, IReadOnlyList<CostBreakdownGeneratorSeries> costBreakdownGeneratorSeries)
       : base(locationContext, start, interval, labelSeriesSet, costBreakdownGeneratorSeries)
     {
       if (profileGraphs == null) throw new ArgumentNullException("profileGraphs");

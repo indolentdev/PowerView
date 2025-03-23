@@ -92,7 +92,7 @@ public class ProfileController : ControllerBase
         return Ok(r);
     }
 
-    private ProfileViewSet GetProfileViewSet(ICollection<ProfileGraph> profileGraphs, Func<DateTime, DateTime, DateTime, TimeRegisterValueLabelSeriesSet> getLabelSeriesSet, DateTime start, string period, IList<CostBreakdownGeneratorSeries> costBreakdownGeneratorSeries)
+    private ProfileViewSet GetProfileViewSet(ICollection<ProfileGraph> profileGraphs, Func<DateTime, DateTime, DateTime, TimeRegisterValueLabelSeriesSet> getLabelSeriesSet, DateTime start, string period, IReadOnlyList<CostBreakdownGeneratorSeries> costBreakdownGeneratorSeries)
     {
         // Distinct intervals
         var distinctIntervals = profileGraphs.GroupBy(x => x.Interval).ToList();
@@ -144,7 +144,14 @@ public class ProfileController : ControllerBase
             SerieType = serieMapper.MapToSerieType(x.SeriesName.ObisCode),
             SerieYAxis = serieMapper.MapToSerieYAxis(x.SeriesName.ObisCode),
             SerieColor = serieRepository.GetColorCached(x.SeriesName.Label, x.SeriesName.ObisCode),
-            Values = x.Values.Select(value => ValueAndUnitConverter.Convert(value, x.Unit)).ToList()
+            Values = x.Values.Select(deviationValue => ValueAndUnitConverter.Convert(deviationValue?.Value, x.Unit)).ToList(),
+            DeviationValues = x.Values
+              .Select(deviationValue => 
+              {
+                if (deviationValue == null) return null;
+                return new double?[] { ValueAndUnitConverter.Convert(deviationValue?.DurationBasedDeviationMinValue, x.Unit), ValueAndUnitConverter.Convert(deviationValue?.DurationBasedDeviationMaxValue, x.Unit) };
+              })
+              .ToList()
         });
 
         return new

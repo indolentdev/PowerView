@@ -59,7 +59,7 @@ namespace PowerView.Model.Test
       Assert.That(profileViewSet.SerieSets.First().Series.Count, Is.EqualTo(1));
       Assert.That(profileViewSet.SerieSets.First().Series.First().SeriesName, Is.EqualTo(profileGraph.SerieNames.First()));
       Assert.That(profileViewSet.SerieSets.First().Series.First().Unit, Is.EqualTo(unit));
-      var expectedValues = Enumerable.Range(2001, 24).Select(x => (double?)x).ToArray();
+      var expectedValues = Enumerable.Range(2001, 24).Select(x => (DeviationValue?)new DeviationValue(x, x, x)).ToArray();
       Assert.That(profileViewSet.SerieSets.First().Series.First().Values, Is.EqualTo(expectedValues));
       Assert.That(profileViewSet.PeriodTotals, Is.Empty);
     }
@@ -78,7 +78,7 @@ namespace PowerView.Model.Test
       // Assert
       Assert.That(profileViewSet.SerieSets.Count, Is.EqualTo(1));
       Assert.That(profileViewSet.SerieSets.First().Series.Count, Is.EqualTo(1));
-      var expectedValues = Enumerable.Range(2001, 12).Select(x => (double?)x).Concat(Enumerable.Repeat(default(double?), 12)).ToArray();
+      var expectedValues = Enumerable.Range(2001, 12).Select(x => (DeviationValue?)new DeviationValue(x, x, x)).Concat(Enumerable.Repeat(default(DeviationValue?), 12)).ToArray();
       Assert.That(profileViewSet.SerieSets.First().Series.First().Values, Is.EqualTo(expectedValues));
       Assert.That(profileViewSet.PeriodTotals, Is.Empty);
     }

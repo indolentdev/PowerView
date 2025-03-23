@@ -34,7 +34,7 @@ namespace PowerView.Service
             return actualSeriesNames;
         }
 
-        private IntervalGroup CreateIntervalGroup(IList<SeriesName> seriesNames, IList<CostBreakdownGeneratorSeries> costBreakdownGeneratorSeries)
+        private IntervalGroup CreateIntervalGroup(IList<SeriesName> seriesNames, IReadOnlyList<CostBreakdownGeneratorSeries> costBreakdownGeneratorSeries)
         {
             // Conjure some data to make the series generation work.
             var seriesNamesUnits = new Dictionary<SeriesName, Unit>();

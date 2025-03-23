@@ -48,6 +48,26 @@ namespace PowerView.Model.Test
     }
 
     [Test]
+    [TestCase(0, 0d)]
+    [TestCase(8, 8d / 3600d)]
+    [TestCase(-8, -8d / 3600d)]
+    public void DurationDeviationRatio(int secondsDeviation, double expectedDeviation)
+    {
+      // Arrange
+      var start = new DateTime(2024, 10, 13, 15, 0, 11, 0, DateTimeKind.Utc);
+      var end = start.AddHours(1).AddSeconds(secondsDeviation);
+      var normalizedStart = new DateTime(2024, 10, 13, 15, 0, 0, 0, DateTimeKind.Utc);
+      var normalizedEnd = normalizedStart.AddHours(1);
+      var target = new NormalizedDurationRegisterValue(start, end, normalizedStart, normalizedEnd, new UnitValue(1, 2, Unit.Joule), "d1");
+
+      // Act
+      var deviation = target.DurationDeviationRatio;
+
+      // Assert
+      Assert.That(deviation, Is.EqualTo(expectedDeviation).Within(0.0000001));
+    }
+
+    [Test]
     [TestCase("D1", "d1", "D1")]
     [TestCase("d1", "D1", "d1")]
     public void DuplicateDeviceIds(string dId1, string dId2, string expected)
@@ -67,51 +87,27 @@ namespace PowerView.Model.Test
       Assert.That(target.DeviceIds, Is.EqualTo(new [] { expected }));
     }
 
+
     [Test]
-    [TestCase(0, 0d)]
-    [TestCase(8, 8d / 3600d)]
-    [TestCase(-8, 8d / 3600d)]
-    public void GetDurationDeviationRatio(int secondsDeviation, double expectedDeviation)
+    [TestCase(0, 100, 100, 100)]
+    [TestCase(1800, 100, 50, 100)]
+    [TestCase(-900, 100, 100, 125)]
+    public void GetDurationDeviationValue(int secondsDeviation, double value, double min, double max)
     {
       // Arrange
       var start = new DateTime(2024, 10, 13, 15, 0, 11, 0, DateTimeKind.Utc);
       var end = start.AddHours(1).AddSeconds(secondsDeviation);
       var normalizedStart = new DateTime(2024, 10, 13, 15, 0, 0, 0, DateTimeKind.Utc);
       var normalizedEnd = normalizedStart.AddHours(1);
-      var target = new NormalizedDurationRegisterValue(start, end, normalizedStart, normalizedEnd, new UnitValue(1, 2, Unit.Joule), "d1");
+      var target = new NormalizedDurationRegisterValue(start, end, normalizedStart, normalizedEnd, new UnitValue(value, Unit.Joule), "d1");
 
       // Act
-      var deviation = target.GetDurationDeviationRatio();
+      var deviation = target.GetDurationDeviationValue();
 
       // Assert
-      Assert.That(deviation, Is.EqualTo(expectedDeviation).Within(0.0000001));
+      var expectedDeviation = new DeviationValue(value, min, max);
+      Assert.That(deviation, Is.EqualTo(expectedDeviation));
     }
-
-    [Test]
-    [TestCase(0, 0, 0d)]
-    [TestCase(-8, 0, 8d / 3600d)]
-    [TestCase(0, 8, 8d / 3600d)]
-    [TestCase(4, 4, 8d / 3600d)]
-    [TestCase(-4, 4, 8d / 3600d)]
-    [TestCase(4, -4, 8d / 3600d)]
-    [TestCase(-4, -4, 8d / 3600d)]
-    public void GetPointDeviationRatio(int startSecondsDeviation, int endSecondsDeviation, double expectedDeviation)
-    {
-      // Arrange
-      var origin = new DateTime(2024, 10, 13, 15, 0, 0, 0, DateTimeKind.Utc);
-      var start = origin.AddSeconds(startSecondsDeviation);
-      var end = origin.AddHours(1).AddSeconds(endSecondsDeviation);
-      var normalizedStart = new DateTime(2024, 10, 13, 15, 0, 0, 0, DateTimeKind.Utc);
-      var normalizedEnd = normalizedStart.AddHours(1);
-      var target = new NormalizedDurationRegisterValue(start, end, normalizedStart, normalizedEnd, new UnitValue(1, 2, Unit.Joule), "d1");
-
-      // Act
-      var deviation = target.GetPointDeviationRatio();
-
-      // Assert
-      Assert.That(deviation, Is.EqualTo(expectedDeviation).Within(0.0000001));
-    }
-
 
     [Test]
     public void SubtractNotNegative()
