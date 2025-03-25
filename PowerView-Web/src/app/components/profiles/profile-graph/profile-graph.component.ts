@@ -228,7 +228,7 @@ export class ProfileGraphComponent implements OnInit {
         var chartSerieDeviation = {
           id: chartSerie.id + '-deviation',
           type: 'errorbar',
-          name: this.translateService.instant("profileGraphs.yAxis.Deviation", { name: chartSerie.name }),
+          name: this.translateService.instant("profileGraphs.yAxis.EstimatedDeviation", { name: chartSerie.name }),
           color: chartSerie.color,
           yAxis: chartSerie.yAxis,
           unit: chartSerie.unit,

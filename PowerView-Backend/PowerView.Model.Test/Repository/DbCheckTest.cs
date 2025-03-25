@@ -4,6 +4,7 @@ using System.Linq;
 using NUnit.Framework;
 using PowerView.Model.Repository;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Data.Sqlite;
 
 namespace PowerView.Model.Test.Repository
 {
@@ -64,7 +65,14 @@ namespace PowerView.Model.Test.Repository
         }
         finally
         {
-          if (dbContext != null) dbContext.Dispose();
+          if (dbContext != null) 
+          {
+            try
+            {
+              dbContext.Dispose();
+            }
+            catch (SqliteException) {}
+          }
 
           if (File.Exists(corruptDbName))
           {

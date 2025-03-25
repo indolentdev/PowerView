@@ -519,7 +519,7 @@
       "Temperature": "Temperature",
       "RelativeHumidity": "Relative Humidity",
       "CurrencyAmount": "Amount",
-      "Deviation": "{{ name }} Deviation"
+      "EstimatedDeviation": "{{ name }} Estimated Deviation"
     }
   },
 

@@ -519,7 +519,7 @@
       "Temperature": "Temperatur",
       "RelativeHumidity": "Relativ Luftfugtighed",
       "CurrencyAmount": "Beløb",
-      "Deviation": "{{ name }} Afvigelse"
+      "EstimatedDeviation": "{{ name }} Estimeret Afvigelse"
     }
   },
 

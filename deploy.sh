@@ -30,22 +30,22 @@ fi
 
 source=build/
 
-# Get the version number of the component
+echo Extracting version number
 executable=$source$component.dll
-# Dont know how to get the assembly version number using pure dotnet command line
-# so here we still depend on mono command line
-monodisversion=$(strings $executable | egrep '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$')
+asmversion=$(strings $executable | egrep '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$')
 if [ $? -ne 0 ]
 then
-  echo monidis failed. Unable to get assembly version.
+  echo strings and egrep failed. Unable to get assembly version. $executable - $asmversion
   exit 1
 fi
-version=$(echo $monodisversion | sed -n 's/\s*\([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\)\..*/\1/p')
+version=$(echo $asmversion | sed -n 's/\s*\([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\)\..*/\1/p')
 if [ $? -ne 0 ]
 then
-  echo sed failed. Unable to get assembly version.
+  echo sed failed. Unable to get assembly version. $executable - $asmversion - $version
   exit 1
 fi
+
+echo Version: $version
 
 name=$component-$version
 
