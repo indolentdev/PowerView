@@ -1,0 +1,6 @@
+<Project>
+  <PropertyGroup>
+    <!-- Enable package.lock.json generation for all projects -->
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+  </PropertyGroup>
+</Project>
