@@ -13,7 +13,7 @@ namespace PowerView.Model.Test.Repository
       // Arrange
 
       // Act
-      Assert.That(() => MeterEventAmplificationSerializer.Serialize(null), Throws.TypeOf<ArgumentNullException>());
+      Assert.That(() => MeterEventAmplificationSerializer.Serialize<LeakMeterEventAmplification>(null), Throws.TypeOf<ArgumentNullException>());
     }
 
     [Test]
@@ -51,7 +51,7 @@ namespace PowerView.Model.Test.Repository
       {
       }
 
-      internal TestMeterEventAmplification(PowerView.Model.Repository.IEntityDeserializer serializer)
+      internal TestMeterEventAmplification(IEntityDeserializer serializer)
       {
         DoubleValue = serializer.GetValue<double>("DoubleValue");
         Nested = new Nesting();

@@ -59,7 +59,7 @@ namespace PowerView.Model.Repository
         }
 
 
-        private List<MeterEvent> ToMeterEvents(IEnumerable<RowLocal> resultSet)
+        private static List<MeterEvent> ToMeterEvents(IEnumerable<RowLocal> resultSet)
         {
             var meterEvents = new List<MeterEvent>();
 

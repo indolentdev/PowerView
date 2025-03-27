@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using PowerView.Model;
-using Newtonsoft.Json;
 using MQTTnet;
 
 namespace PowerView.Service.Mqtt
@@ -31,7 +32,7 @@ namespace PowerView.Service.Mqtt
       return pubs.ToArray();
     }
 
-    private IEnumerable<PublishItem> GetPublishItems(ICollection<Reading> liveReadings)
+    private static IEnumerable<PublishItem> GetPublishItems(ICollection<Reading> liveReadings)
     {
       foreach (var liveReading in liveReadings)
       {
@@ -121,7 +122,7 @@ namespace PowerView.Service.Mqtt
       var payload = new { Value = adjustedValue.ToString(CultureInfo.InvariantCulture), 
         Unit = unitAndFactor.Unit, Timestamp = pubItem.TimeRegisterValue.Timestamp.ToString("o") };
 
-      return JsonConvert.SerializeObject(payload);
+      return JsonSerializer.Serialize(payload);
     }
 
   }

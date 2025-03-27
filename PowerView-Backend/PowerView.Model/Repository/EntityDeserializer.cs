@@ -1,46 +1,50 @@
 ﻿using System;
 using System.Linq;
-using Newtonsoft.Json.Linq;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 
 namespace PowerView.Model.Repository
 {
   internal class EntityDeserializer : IEntityDeserializer
   {
-    private readonly JContainer jContainer;
+    private readonly JsonNode jsonNode;
 
-    public EntityDeserializer(JContainer jContainer)
+    public EntityDeserializer(JsonNode jsonNode)
     {
-      if (jContainer == null) throw new ArgumentNullException("jContainer");
+      if (jsonNode == null) throw new ArgumentNullException(nameof(jsonNode));
 
-      this.jContainer = jContainer;
+      this.jsonNode = jsonNode;
     }
 
     public TType GetValue<TType>(params string[] path)
     {
-      return GetValue<TType>(jContainer, 0, path);
+      return GetValue<TType>(jsonNode, 0, path);
     }
 
-    private static TType GetValue<TType>(JContainer jContainer, int position, string[] path)
+    private static TType GetValue<TType>(JsonNode node, int position, string[] path)
     {
-      if (path == null) throw new ArgumentNullException("path");
-      if (path.Length == 0) throw new EntitySerializationException("No valid path found. Path:" + string.Join(",", path) + ", Position:" + position + ". Object:" + jContainer);
+      if (path == null) throw new ArgumentNullException(nameof(path));
+      if (path.Length == 0) throw new EntitySerializationException("No valid path found. Path:" + string.Join(",", path) + ", Position:" + position + ". Object:" + node);
 
       var propertyName = path[position];
-      var property = jContainer.OfType<JProperty>().Where(p => string.Equals(propertyName, p.Name, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+      var property = node[propertyName];
       if (property == null)
       {
-        throw new EntitySerializationException("No valid path found. Path:" + string.Join(",", path) + ", Position:" + position + ". Object:" + jContainer);
+        throw new EntitySerializationException("No valid path found. Path:" + string.Join(",", path) + ", Position:" + position + ". Object:" + node);
       }
-      var value = property.Value as JValue;
-      if (value != null)
+
+      if (property is JsonValue jsonValue)
       {
-        return (TType)value.Value;
+        return jsonValue.GetValue<TType>();
       }
 
-      var obj = property.Value as JObject;
-      return GetValue<TType>(obj, position+1, path);
-    }
+      if (property is JsonObject jsonObject)
+      {
+        return GetValue<TType>(jsonObject, position + 1, path);
+      }
 
+      throw new EntitySerializationException("Unexpected node type encountered. Path:" + string.Join(",", path) + ", Position:" + position + ". Object:" + node);
+    }
   }
 }
 

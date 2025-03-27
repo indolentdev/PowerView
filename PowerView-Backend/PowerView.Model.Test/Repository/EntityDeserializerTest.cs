@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using NUnit.Framework;
 using PowerView.Model.Repository;
 
@@ -56,7 +58,7 @@ namespace PowerView.Model.Test.Repository
 
     private static EntityDeserializer CreateTarget(string json)
     {
-      var target = new EntityDeserializer((Newtonsoft.Json.Linq.JContainer)Newtonsoft.Json.JsonConvert.DeserializeObject(json));
+      var target = new EntityDeserializer(JsonNode.Parse(json));
       return target;
     }
 

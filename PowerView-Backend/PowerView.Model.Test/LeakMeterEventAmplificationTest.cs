@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using NUnit.Framework;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using PowerView.Model;
 using PowerView.Model.Repository;
 
@@ -46,8 +46,8 @@ namespace PowerView.Model.Test
       var start = DateTime.UtcNow-TimeSpan.FromDays(1);
       var end = DateTime.UtcNow;
       var unitValue = new UnitValue(1, Unit.Watt);
-      var json = JsonConvert.SerializeObject(new LeakMeterEventAmplification(start, end, unitValue));
-      var entityDeserializer = new EntityDeserializer((JContainer)JsonConvert.DeserializeObject(json));
+      var json = JsonSerializer.Serialize(new LeakMeterEventAmplification(start, end, unitValue));
+      var entityDeserializer = new EntityDeserializer(JsonNode.Parse(json));
 
       // Act
       var target = new LeakMeterEventAmplification(entityDeserializer);

@@ -156,7 +156,7 @@ namespace PowerView.Model.Test.Repository
             Assert.That(meterEvents.Count, Is.EqualTo(not ? 0 : 1));
         }
 
-        private Db.MeterEvent InsertMeterEvent(string label, DateTime detectTimestamp, bool flag, IMeterEventAmplification amplification)
+        private Db.MeterEvent InsertMeterEvent<TEvent>(string label, DateTime detectTimestamp, bool flag, TEvent amplification) where TEvent : class, IMeterEventAmplification
         {
             var ampString = MeterEventAmplificationSerializer.Serialize(amplification);
             var dbMeterEvent = new Db.MeterEvent

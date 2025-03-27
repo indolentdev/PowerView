@@ -6,7 +6,6 @@ using System.Linq;
 using System.Reflection;
 using System.Web;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using PowerView.Model;
 using PowerView.Service.Dtos;
 

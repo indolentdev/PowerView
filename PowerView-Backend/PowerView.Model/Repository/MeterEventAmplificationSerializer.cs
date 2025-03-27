@@ -3,26 +3,26 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters;
-using System.Runtime.Serialization.Formatters.Binary;
-using Newtonsoft.Json;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 
 namespace PowerView.Model.Repository
 {
   public static class MeterEventAmplificationSerializer
   {
-    public static string Serialize(IMeterEventAmplification amplification)
+    
+    public static string Serialize<T>(T amplification) where T : class, IMeterEventAmplification
     {
-      if (amplification == null) throw new ArgumentNullException("amplification");
+      if (amplification == null) throw new ArgumentNullException(nameof(amplification));
 
       try
       {
-        var amplificationJson = JsonConvert.SerializeObject(amplification);
+//        var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+        var amplificationJson = JsonSerializer.Serialize<T>(amplification/*, options*/);
         var envelope = new Envelope { TypeName = amplification.GetType().Name, Content = amplificationJson };
-        return JsonConvert.SerializeObject(envelope);
+        return JsonSerializer.Serialize(envelope/*, options*/);
       }
-      catch (JsonException e)
+      catch (Exception e) when (e is JsonException || e is NotSupportedException)
       {
         throw new EntitySerializationException("Failed serializing meter event amplification. Type:" + amplification.GetType().Name, e);
       }
@@ -30,16 +30,24 @@ namespace PowerView.Model.Repository
 
     public static IMeterEventAmplification Deserialize(string value)
     {
-      if (string.IsNullOrEmpty(value)) throw new ArgumentNullException("value");
+      if (string.IsNullOrEmpty(value)) throw new ArgumentNullException(nameof(value));
+
+
+//      var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
 
       Envelope envelope;
       try
       {
-        envelope = JsonConvert.DeserializeObject<Envelope>(value);
+        envelope = JsonSerializer.Deserialize<Envelope>(value/*, options*/);
       }
       catch (JsonException e)
       {
         throw new EntitySerializationException("Failed to deserialize envelope:" + value, e);
+      }
+
+      if (envelope == null)
+      {
+        throw new EntitySerializationException("Envelope deserialization returned null for value:" + value);
       }
 
       var type = GetType(envelope.TypeName);
@@ -52,30 +60,37 @@ namespace PowerView.Model.Repository
       {
         throw new EntitySerializationException("Content absent for envelope:" + value);
       }
-      object obj;
-      try 
+
+      JsonNode contentNode;
+      try
       {
-        obj = JsonConvert.DeserializeObject(envelope.Content);
+        contentNode = JsonNode.Parse(envelope.Content);
       }
       catch (JsonException e)
       {
         throw new EntitySerializationException("Failed to deserialize content for envelope:" + value, e);
       }
-      var jContainer = obj as Newtonsoft.Json.Linq.JContainer;
-      if (jContainer == null)
+      if (contentNode == null)
       {
-        throw new EntitySerializationException("Unable to handle content object:" + (obj != null ? obj.GetType().Name : "null") + " for envelope:" + value);
+        throw new EntitySerializationException("Content deserialization returned null for envelope:" + value);
       }
 
-      var constructor = type.GetConstructor(BindingFlags.NonPublic | BindingFlags.CreateInstance | BindingFlags.Instance, 
-        null, new[] { typeof(IEntityDeserializer) }, null);
+      var constructor = type.GetConstructor(BindingFlags.NonPublic | BindingFlags.CreateInstance | BindingFlags.Instance,
+          null, new[] { typeof(IEntityDeserializer) }, null);
       if (constructor == null)
       {
         throw new EntitySerializationException("Failed to find appropriate constructor for type:" + type.Name);
       }
-    
-      var serializer = new EntityDeserializer(jContainer);
-      return (IMeterEventAmplification)constructor.Invoke(new object[] { serializer });
+
+      var serializer = new EntityDeserializer(contentNode);
+      try
+      {
+        return (IMeterEventAmplification)constructor.Invoke(new object[] { serializer });
+      }
+      catch (TargetInvocationException e)
+      {
+        throw new EntitySerializationException($"Failed to invoke constructor for type:{envelope.TypeName}. Content:{envelope.Content}", e);
+      }
     }
 
     private static Type GetType(string name)
