@@ -14,7 +14,7 @@ namespace PowerView.Model.Test.Repository
         public override void SetUp()
         {
             base.SetUp();
-            target = new DbContext(Connection);
+            target = new DbContext(Connection, true);
         }
 
         [TearDown]
@@ -30,7 +30,7 @@ namespace PowerView.Model.Test.Repository
             // Arrange
 
             // Act & Assert
-            Assert.That(() => new DbContext(null), Throws.TypeOf<ArgumentNullException>());
+            Assert.That(() => new DbContext(null, true), Throws.TypeOf<ArgumentNullException>());
         }
 
         [Test]

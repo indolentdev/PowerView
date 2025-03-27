@@ -7,12 +7,14 @@ namespace PowerView.Model.Repository
     internal class DbContextFactory : IDbContextFactory
     {
         private readonly SqliteConnectionStringBuilder connectionStringBuilder;
+        private readonly bool optimizeOnClose;
 
         public DbContextFactory(IOptions<DatabaseOptions> options)
         {
             if (options == null) throw new ArgumentNullException(nameof(options));
             
             connectionStringBuilder = GetConnectionStringBuilder(options.Value.Name);
+            optimizeOnClose = options.Value.OptimizeOnClose;
         }
 
         internal static SqliteConnectionStringBuilder GetConnectionStringBuilder(string dataSource)
@@ -29,7 +31,7 @@ namespace PowerView.Model.Repository
 
         public IDbContext CreateContext()
         {
-            return new DbContext(GetConnection(connectionStringBuilder));
+            return new DbContext(GetConnection(connectionStringBuilder), optimizeOnClose);
         }
 
         internal static SqliteConnection GetConnection(SqliteConnectionStringBuilder builder)

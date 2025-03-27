@@ -48,7 +48,8 @@ namespace PowerView.Model.Test.Repository
         DbContext dbContext = null;
         try
         {
-          dbContext = (DbContext)new DbContextFactory(new DatabaseOptions { Name = corruptDbName }).CreateContext();
+          var optimizeOnClose = false; // Optimize on close causes "funny business". On linux causes exception at dispose. On windows causes the underlying file handle to linger preventing delete...
+          dbContext = (DbContext)new DbContextFactory(new DatabaseOptions { Name = corruptDbName, OptimizeOnClose = optimizeOnClose }).CreateContext();
           var target = CreateTarget(dbContext);
 
           // Act && Assert
@@ -58,7 +59,7 @@ namespace PowerView.Model.Test.Repository
           }
           catch (DataStoreCorruptException)
           {
-            return; // Corruption detected.. Test verified..
+            break; // Corruption detected.. Test verified..
           }
 
           // Cleanup
@@ -67,11 +68,7 @@ namespace PowerView.Model.Test.Repository
         {
           if (dbContext != null) 
           {
-            try
-            {
-              dbContext.Dispose();
-            }
-            catch (SqliteException) {}
+            dbContext.Dispose();
           }
 
           if (File.Exists(corruptDbName))
@@ -101,7 +98,7 @@ namespace PowerView.Model.Test.Repository
       }
     }
 
-    private DbCheck CreateTarget(DbContext dbContext)
+    private static DbCheck CreateTarget(DbContext dbContext)
     {
       return new DbCheck(new NullLogger<DbCheck>(), dbContext, new DatabaseCheckOptions { IntegrityCheckCommandTimeout = 30 });
     }

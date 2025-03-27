@@ -14,12 +14,14 @@ namespace PowerView.Model.Repository
         private const int CommandTimeout = 10;
 
         private readonly IDbConnection connection;
+        private readonly bool optimizeOnClose;
 
-        public DbContext(IDbConnection connection)
+        public DbContext(IDbConnection connection, bool optimizeOnClose)
         {
             if (connection == null) throw new ArgumentNullException("connection");
 
             this.connection = connection;
+            this.optimizeOnClose = optimizeOnClose;
         }
 
         public IDbConnection Connection { get { return connection; } }
@@ -151,8 +153,11 @@ namespace PowerView.Model.Repository
 
             if (disposing)
             {
-                connection.Execute("PRAGMA analysis_limit = 200;");
-                connection.Execute("PRAGMA optimize;");
+                if (optimizeOnClose)
+                {
+                    connection.Execute("PRAGMA analysis_limit = 200;");
+                    connection.Execute("PRAGMA optimize;");
+                }
 
                 connection.Close();
                 connection.Dispose();

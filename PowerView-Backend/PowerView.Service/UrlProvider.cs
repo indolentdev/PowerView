@@ -42,7 +42,7 @@ namespace PowerView.Service
             return baseUri;
         }
 
-        private string GetIPv4Address()
+        private static string GetIPv4Address()
         {
             string output = null;
             foreach (NetworkInterface item in NetworkInterface.GetAllNetworkInterfaces())

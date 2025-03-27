@@ -55,12 +55,9 @@ namespace PowerView.Service.Test.Mailer
     public void RequireTls(string siteName)
     {
       var password = "123456789";
-      using (var certificateGenerator = new CertificateGenerator())
-      {
-        var pfxCertificateBytes = certificateGenerator.GenerateCertificateForPersonalFileExchange(siteName, password);
-
-        certificate = new X509Certificate2(pfxCertificateBytes, password);
-      }
+      var certificateGenerator = new CertificateGenerator();
+      var pfxCertificateBytes = certificateGenerator.GenerateCertificateForPersonalFileExchange(siteName, password);
+      certificate = new X509Certificate2(pfxCertificateBytes, password);
     }
 
     public void RequireUser(string user, string password)
