@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using MQTTnet;
 using MQTTnet.Client;
-//using MQTTnet.Client.Options;
 using MQTTnet.Diagnostics;
 using MQTTnet.Exceptions;
 using PowerView.Model;
@@ -28,18 +23,7 @@ namespace PowerView.Service.Mqtt
       if (config == null) throw new ArgumentNullException("config");
       if (liveReadings == null) throw new ArgumentNullException("liveReadings");
 
-      try
-      {
-        PublishInner(config, liveReadings).Wait();
-      }
-      catch (AggregateException e)
-      {
-        if (e.InnerException is ConnectMqttException)
-        {
-          throw new ConnectMqttException("Publish failed. Could not connect", e);
-        }
-        throw new MqttException("Publish failed", e);
-      }
+      PublishInner(config, liveReadings).GetAwaiter().GetResult();
     }
 
     private void LogMqtt(MqttNetLogMessage logMessage)
@@ -80,6 +64,10 @@ namespace PowerView.Service.Mqtt
         {
           throw new ConnectMqttException("MQTT connect Failed", e);
         }
+        catch (OperationCanceledException e)
+        {
+          throw new ConnectMqttException("MQTT connect Failed", e);
+        }
 
         try
         {
@@ -95,9 +83,12 @@ namespace PowerView.Service.Mqtt
         {
           throw new MqttException("MQTT publish or disconnect Failed", e);
         }
+        catch (OperationCanceledException e)
+        {
+          throw new MqttException("MQTT publish or disconnect Failed", e);
+        }
       }
     }
-
 
   }
 

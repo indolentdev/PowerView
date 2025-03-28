@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Net;
@@ -97,7 +98,8 @@ public class EventControllerTest
     private static void AssertDictionaryEntry(IDictionary<string, object> d, string key, object value)
     {
         Assert.That(d.ContainsKey(key), Is.True);
-        Assert.That(d[key].ToString(), Is.EqualTo(value.ToString()));
+        var stringValue = value is IFormattable formattableValue ? formattableValue.ToString(null, CultureInfo.InvariantCulture) : value.ToString();
+        Assert.That(d[key].ToString(), Is.EqualTo(stringValue));
     }
 
     internal class TestEventsDto
