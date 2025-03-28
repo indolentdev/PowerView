@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo -e "\e[1m----------------------------------------"
-echo -e "\e[1m       ASP.NET Runtime 6 Installer"
+echo -e "\e[1m       ASP.NET Runtime 8 Installer"
 echo -e "\e[1m----------------------------------------"
 echo ""
 echo -e "\e[1mInstall scipt made based on work of Pete Codes / PJG Creations 2021"
@@ -52,7 +52,7 @@ fi
 #echo -e "\e[0m"
 
 
-dotnetver=6.0
+dotnetver=8.0
 
 #sdkfile=/tmp/dotnetsdk.tar.gz
 aspnetfile=/tmp/aspnetcore.tar.gz
@@ -68,7 +68,7 @@ download() {
 
 detectArch() {
     arch=arm32
-  
+
     if command -v uname > /dev/null; then
         machineCpu=$(uname -m)-$(uname -p)
 

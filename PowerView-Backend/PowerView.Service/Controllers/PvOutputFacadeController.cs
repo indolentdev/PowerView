@@ -147,7 +147,7 @@ public class PvOutputFacadeController : ControllerBase
             return;
         }
 
-        response.Add(header, forwardResponse.GetValues(header).ToArray());
+        response.Append(header, forwardResponse.GetValues(header).ToArray());
     }
 
     private static void CopyContent(HttpRequest request, HttpRequestMessage forwardRequest)

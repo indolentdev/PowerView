@@ -5,6 +5,7 @@ using NUnit.Framework;
 using PowerView.Model;
 using PowerView.Service.Mqtt;
 using MQTTnet.Protocol;
+using System.Buffers;
 
 namespace PowerView.Service.Test.Mqtt
 {
@@ -114,7 +115,7 @@ namespace PowerView.Service.Test.Mqtt
       var payload = string.Format(CultureInfo.InvariantCulture, payloadFormat, 
                                   "{", value * Math.Pow(10, factor), jsonUnit, dateTime.ToString("o"), "}");
 
-      Assert.That(System.Text.Encoding.UTF8.GetString(mqttMsqs[0].PayloadSegment), Is.EqualTo(payload));
+      Assert.That(System.Text.Encoding.UTF8.GetString(mqttMsqs[0].Payload.ToArray()), Is.EqualTo(payload));
     }
 
     [Test]

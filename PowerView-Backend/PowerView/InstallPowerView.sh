@@ -12,7 +12,16 @@ fi
 dotnet=$(dotnet --info)
 if [ $? -ne 0 ]
 then
-  echo dotnet is not installed or not accessible. Aborting install. 
+  echo dotnet is not installed or not accessible. Aborting install.
+  echo On Raspberry Pi install using InstallDotNet.sh
+  exit 1
+fi
+
+dotnet8=$(dotnet --info | grep "Microsoft.AspNetCore.App 8.")
+if [ $? -ne 0 ]
+then
+  echo dotnet asp core is not installed or not accessible. Aborting install.
+  echo On Raspberry Pi install using InstallDotNet.sh
   exit 1
 fi
 

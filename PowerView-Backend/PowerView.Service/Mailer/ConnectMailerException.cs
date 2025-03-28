@@ -20,17 +20,6 @@ namespace PowerView.Service.Mailer
       : base(message, inner)
     {
     }
-
-    protected ConnectMailerException(SerializationInfo info, StreamingContext context)
-      : base(info, context)
-    {
-    }
-
-    //    [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
-    //    public override void GetObjectData(SerializationInfo info, StreamingContext context)
-    //    {
-    //      base.GetObjectData(info, context);
-    //    }
   }
 }
 

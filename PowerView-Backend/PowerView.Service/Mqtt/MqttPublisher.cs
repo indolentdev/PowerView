@@ -4,8 +4,6 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using MQTTnet;
-using MQTTnet.Client;
-//using MQTTnet.Client.Options;
 using MQTTnet.Diagnostics;
 using MQTTnet.Exceptions;
 using PowerView.Model;
@@ -23,35 +21,13 @@ namespace PowerView.Service.Mqtt
       this.mqttMapper = mqttMapper ?? throw new ArgumentNullException(nameof(mqttMapper));
     }
 
+    // TODO: Change Publish to return Task.
     public void Publish(MqttConfig config, ICollection<Reading> liveReadings)
     {
       if (config == null) throw new ArgumentNullException("config");
       if (liveReadings == null) throw new ArgumentNullException("liveReadings");
 
-      try
-      {
-        PublishInner(config, liveReadings).Wait();
-      }
-      catch (AggregateException e)
-      {
-        if (e.InnerException is ConnectMqttException)
-        {
-          throw new ConnectMqttException("Publish failed. Could not connect", e);
-        }
-        throw new MqttException("Publish failed", e);
-      }
-    }
-
-    private void LogMqtt(MqttNetLogMessage logMessage)
-    {
-      if (logMessage.Level == MqttNetLogLevel.Error)
-      {
-        logger.LogWarning(logMessage.ToString()); 
-      }
-      else 
-      {
-        logger.LogDebug(logMessage.ToString());
-      }
+      PublishInner(config, liveReadings).GetAwaiter().GetResult();
     }
 
     private async Task PublishInner(MqttConfig config, ICollection<Reading> liveReadings)
@@ -65,9 +41,8 @@ namespace PowerView.Service.Mqtt
         .WithNoKeepAlive()
         .Build();
 
-      var mqttNetLogger = new MqttNetEventLogger();
-      mqttNetLogger.LogMessagePublished += (sender, e) => LogMqtt(e.LogMessage);
-      using (var mqttClient = new MqttFactory().CreateMqttClient(mqttNetLogger))
+      var mqttNetLogger = new MqttNetLogger(logger);
+      using (var mqttClient = new MqttClientFactory().CreateMqttClient(mqttNetLogger))
       {
         mqttClient.ConnectedAsync += e => { logger.LogDebug($"Connected to MQTT server {config.Server}:{config.Port}. ResultCode:{e.ConnectResult.ResultCode}"); return Task.CompletedTask; };
         mqttClient.DisconnectedAsync += e => { logger.LogDebug(e.Exception, "Disconnected MQTT server" + (e.Exception == null ? string.Empty : " with error") + ". WasConnected:" + e.ClientWasConnected); return Task.CompletedTask; };
@@ -77,6 +52,10 @@ namespace PowerView.Service.Mqtt
           await mqttClient.ConnectAsync(opts);
         }
         catch (MqttCommunicationException e)
+        {
+          throw new ConnectMqttException("MQTT connect Failed", e);
+        }
+        catch (OperationCanceledException e)
         {
           throw new ConnectMqttException("MQTT connect Failed", e);
         }
@@ -95,9 +74,12 @@ namespace PowerView.Service.Mqtt
         {
           throw new MqttException("MQTT publish or disconnect Failed", e);
         }
+        catch (OperationCanceledException e)
+        {
+          throw new MqttException("MQTT publish or disconnect Failed", e);
+        }
       }
     }
-
 
   }
 

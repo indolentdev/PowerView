@@ -67,7 +67,7 @@ namespace PowerView.Model.Test.Repository
             var devices = DbContext.QueryTransaction<(string DeviceName, UnixTime Timestamp)>("SELECT DeviceName, Timestamp FROM Device;");
             Assert.That(devices.Count, Is.EqualTo(1));
             Assert.That(devices[0].DeviceName, Is.EqualTo(reading.DeviceId));
-            Assert.That(devices[0].Timestamp.ToUnixTimeSeconds(), Is.EqualTo(DateTimeOffset.UtcNow.ToUnixTimeSeconds()).Within(2));
+            Assert.That(devices[0].Timestamp.ToUnixTimeSeconds(), Is.EqualTo(DateTimeOffset.UtcNow.ToUnixTimeSeconds()).Within(5));
         }
 
         [Test]

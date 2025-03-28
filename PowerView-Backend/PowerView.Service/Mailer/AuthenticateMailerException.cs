@@ -1,7 +1,4 @@
-﻿using System;
-using System.Runtime.Serialization;
-//using System.Security.Permissions;
-
+﻿
 namespace PowerView.Service.Mailer
 {
   [Serializable]
@@ -20,17 +17,6 @@ namespace PowerView.Service.Mailer
       : base(message, inner)
     {
     }
-
-    protected AuthenticateMailerException(SerializationInfo info, StreamingContext context)
-      : base(info, context)
-    {
-    }
-
-    //    [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
-    //    public override void GetObjectData(SerializationInfo info, StreamingContext context)
-    //    {
-    //      base.GetObjectData(info, context);
-    //    }
   }
 }
 
