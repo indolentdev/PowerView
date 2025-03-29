@@ -1,7 +1,4 @@
-﻿using System;
-using System.Globalization;
-using System.Linq;
-using System.Reflection;
+﻿using System.Globalization;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using System.Net.Http.Json;
@@ -40,7 +37,7 @@ namespace PowerView.Service.EventHub
                 return;
             }
 
-            logger.LogInformation($"Fetched regional information from {uri}. Saving to the database. Time zone:{timeZoneId} and culture info:{cultureInfoName}");
+            logger.LogInformation($"Fetched regional information from {uri} (time zone:{timeZoneId} and culture info:{cultureInfoName}). Saving to database.");
 
             if (!string.IsNullOrEmpty(timeZoneId))
             {
@@ -52,7 +49,7 @@ namespace PowerView.Service.EventHub
             }
         }
 
-        private string GetCultureInfoName(LocationDto locationDto)
+        private static string GetCultureInfoName(LocationDto locationDto)
         {
             var country = locationDto.country;
             if (string.IsNullOrEmpty(country))

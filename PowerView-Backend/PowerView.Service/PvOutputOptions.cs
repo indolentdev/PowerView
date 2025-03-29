@@ -1,13 +1,12 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.Extensions.Options;
 
-
 namespace PowerView.Service
 {
     public class PvOutputOptions : IOptions<PvOutputOptions>
     {
         [Required(AllowEmptyStrings = false)]
-        public Uri PvOutputAddStatusUrl { get; set; } = new Uri("http://pvoutput.org/service/r2/addstatus.jsp");
+        public Uri PvOutputAddStatusUrl { get; set; } = new Uri("https://pvoutput.org/service/r2/addstatus.jsp");
 
         [MinLength(1)]
         public string PvDeviceLabel { get; set; }
