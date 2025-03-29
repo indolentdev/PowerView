@@ -63,7 +63,7 @@ namespace PowerView.Service.Test.Mqtt
         .WithDefaultEndpointPort(Port)
         .Build();
 
-      mqttServer = new MqttFactory().CreateMqttServer(options);
+      mqttServer = new MqttServerFactory().CreateMqttServer(options);
       mqttServer.ValidatingConnectionAsync += e => { e.ReasonCode = MqttConnectReasonCode.Success; connections.Add(e); return Task.CompletedTask; };
       mqttServer.InterceptingPublishAsync += e => { published.Add(e); return Task.CompletedTask; };
       Assert.That(mqttServer.StartAsync().Wait(3000), Is.True, "MQTT Server failed to start");

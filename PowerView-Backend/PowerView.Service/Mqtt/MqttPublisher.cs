@@ -18,24 +18,13 @@ namespace PowerView.Service.Mqtt
       this.mqttMapper = mqttMapper ?? throw new ArgumentNullException(nameof(mqttMapper));
     }
 
+    // TODO: Change Publish to return Task.
     public void Publish(MqttConfig config, ICollection<Reading> liveReadings)
     {
       if (config == null) throw new ArgumentNullException("config");
       if (liveReadings == null) throw new ArgumentNullException("liveReadings");
 
       PublishInner(config, liveReadings).GetAwaiter().GetResult();
-    }
-
-    private void LogMqtt(MqttNetLogMessage logMessage)
-    {
-      if (logMessage.Level == MqttNetLogLevel.Error)
-      {
-        logger.LogWarning(logMessage.ToString()); 
-      }
-      else 
-      {
-        logger.LogDebug(logMessage.ToString());
-      }
     }
 
     private async Task PublishInner(MqttConfig config, ICollection<Reading> liveReadings)
@@ -49,9 +38,8 @@ namespace PowerView.Service.Mqtt
         .WithNoKeepAlive()
         .Build();
 
-      var mqttNetLogger = new MqttNetEventLogger();
-      mqttNetLogger.LogMessagePublished += (sender, e) => LogMqtt(e.LogMessage);
-      using (var mqttClient = new MqttFactory().CreateMqttClient(mqttNetLogger))
+      var mqttNetLogger = new MqttNetLogger(logger);
+      using (var mqttClient = new MqttClientFactory().CreateMqttClient(mqttNetLogger))
       {
         mqttClient.ConnectedAsync += e => { logger.LogDebug($"Connected to MQTT server {config.Server}:{config.Port}. ResultCode:{e.ConnectResult.ResultCode}"); return Task.CompletedTask; };
         mqttClient.DisconnectedAsync += e => { logger.LogDebug(e.Exception, "Disconnected MQTT server" + (e.Exception == null ? string.Empty : " with error") + ". WasConnected:" + e.ClientWasConnected); return Task.CompletedTask; };

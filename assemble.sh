@@ -31,7 +31,7 @@ fi
 mkdir build
 
 echo Copying backend
-cp -r "PowerView-Backend/PowerView/bin/Release/net6.0/publish/." "build"
+cp -r "PowerView-Backend/PowerView/bin/Release/net8.0/publish/." "build"
 if [ $? -ne 0 ]
 then
   exit 1

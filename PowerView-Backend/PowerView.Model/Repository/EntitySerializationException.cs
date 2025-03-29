@@ -17,16 +17,6 @@ namespace PowerView.Model.Repository
     public EntitySerializationException(string message, Exception e) : base(message, e)
     {
     }
-
-    protected EntitySerializationException(SerializationInfo info, StreamingContext context) 
-      : base(info, context)
-    {
-    }
-
-    public override void GetObjectData(SerializationInfo info, StreamingContext context)
-    {
-      base.GetObjectData(info, context);
-    }
   }
 }
 
