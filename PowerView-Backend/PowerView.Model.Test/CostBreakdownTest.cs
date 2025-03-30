@@ -33,7 +33,7 @@ public class CostBreakDownTest
         const string title = "theTitle";
         var currency = Unit.Eur;
         const int vat = 2;
-        var entries = new List<CostBreakdownEntry> { new CostBreakdownEntry(DateTime.UtcNow, DateTime.UtcNow.AddMinutes(4), "theName", 3, 21, 12.34) }; 
+        var entries = new List<CostBreakdownEntry> { new CostBreakdownEntry(DateTime.UtcNow, DateTime.UtcNow.AddMinutes(4), "theName", 3, 21, 12.34) };
 
         // Act
         var target = new CostBreakdown(title, currency, vat, entries);
@@ -84,7 +84,7 @@ public class CostBreakDownTest
 
         // Assert
         Assert.That(entriesPeriods.Count, Is.EqualTo(6));
-        AssertEntryGroup((t1, t2), new [] { e1a, e1b, e2 }, entriesPeriods);
+        AssertEntryGroup((t1, t2), new[] { e1a, e1b, e2 }, entriesPeriods);
         AssertEntryGroup((t2, t3), new[] { e1a, e1b, e2, e3 }, entriesPeriods);
         AssertEntryGroup((t3, t4), new[] { e1a, e1b, e2, e3, e4, e5 }, entriesPeriods);
         AssertEntryGroup((t4 + TimeSpan.FromDays(1), t5), new[] { e2, e3, e4, e5 }, entriesPeriods);
@@ -126,19 +126,19 @@ public class CostBreakDownTest
     {
         // Arrange
         var locationContext = TimeZoneHelper.GetDenmarkLocationContext();
-        var values = new [] { new NormalizedDurationRegisterValue(
+        var values = new[] { new NormalizedDurationRegisterValue(
             new DateTime(2024, 5, 20, 14, 0, 0, DateTimeKind.Utc), new DateTime(2024, 5, 20, 15, 0, 0, DateTimeKind.Utc),
             new DateTime(2024, 5, 20, 14, 0, 0, DateTimeKind.Utc), new DateTime(2024, 5, 20, 15, 0, 0, DateTimeKind.Utc),
             new UnitValue(12.34, Unit.Eur), "EnergiDataService" ) };
-        var entry = new CostBreakdownEntry(new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc), 
+        var entry = new CostBreakdownEntry(new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc),
           new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc), "entry", 3, 21, 12.34);
-        var target = new CostBreakdown("theTitle", Unit.Eur, 25, new [] { entry });
+        var target = new CostBreakdown("theTitle", Unit.Eur, 25, new[] { entry });
 
         // Act
         var result = target.Apply(locationContext, values);
 
         // Assert
-        Assert.That(result.Select(x => x.Value).ToList(), Is.EqualTo(new [] { new NormalizedDurationRegisterValue(
+        Assert.That(result.Select(x => x.Value).ToList(), Is.EqualTo(new[] { new NormalizedDurationRegisterValue(
             new DateTime(2024, 5, 20, 14, 0, 0, DateTimeKind.Utc), new DateTime(2024, 5, 20, 15, 0, 0, DateTimeKind.Utc),
             new DateTime(2024, 5, 20, 14, 0, 0, DateTimeKind.Utc), new DateTime(2024, 5, 20, 15, 0, 0, DateTimeKind.Utc),
             new UnitValue(12.34*2*1.25, Unit.Eur), "EnergiDataService", "theTitle" )

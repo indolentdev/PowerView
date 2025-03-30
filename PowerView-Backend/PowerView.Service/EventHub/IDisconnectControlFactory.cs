@@ -5,8 +5,8 @@ using PowerView.Model;
 
 namespace PowerView.Service.EventHub
 {
-  internal interface IDisconnectControlFactory
-  {
-    void Process(IServiceScope serviceScope, IList<Reading> liveReadings);
-  }
+    internal interface IDisconnectControlFactory
+    {
+        void Process(IServiceScope serviceScope, IList<Reading> liveReadings);
+    }
 }

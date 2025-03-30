@@ -45,19 +45,19 @@ public class SettingsCostBreakdownsControllerTest
         httpClient?.Dispose();
         application?.Dispose();
     }
-    
+
     [Test]
     public async Task GetCostBreakdowns()
     {
         // Arrange
         DateTime dateTime = new DateTime(2023, 9, 27, 19, 0, 3, DateTimeKind.Utc);
-        var costBreakdown1 = new CostBreakdown("Title1", Unit.Eur, 10, new [] { 
-            new CostBreakdownEntry(dateTime.AddDays(1), dateTime.AddDays(2), "N1-1", 2, 21, 1.2345678), 
+        var costBreakdown1 = new CostBreakdown("Title1", Unit.Eur, 10, new[] {
+            new CostBreakdownEntry(dateTime.AddDays(1), dateTime.AddDays(2), "N1-1", 2, 21, 1.2345678),
             new CostBreakdownEntry(dateTime.AddDays(1), dateTime.AddDays(2), "N1-2", 0, 23, 2.222222),
             new CostBreakdownEntry(dateTime.AddDays(3), dateTime.AddDays(4), "N1-3", 0, 18, 3.333)
         });
-        var costBreakdown2 = new CostBreakdown("Title2", Unit.Dkk, 25, new[] { 
-            new CostBreakdownEntry(dateTime, dateTime.AddDays(2), "N2-1", 3, 20, 2.345678) 
+        var costBreakdown2 = new CostBreakdown("Title2", Unit.Dkk, 25, new[] {
+            new CostBreakdownEntry(dateTime, dateTime.AddDays(2), "N2-1", 3, 20, 2.345678)
         });
         costBreakdownRepository.Setup(cbr => cbr.GetCostBreakdowns()).Returns(new[] { costBreakdown1, costBreakdown2 });
 
@@ -68,8 +68,8 @@ public class SettingsCostBreakdownsControllerTest
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         var json = await response.Content.ReadFromJsonAsync<TestCostBreakdownSetDto>();
         Assert.That(json.costBreakdowns.Length, Is.EqualTo(2));
-        AssertCostBreakdown(costBreakdown1, new [] { new [] { costBreakdown1.Entries[2] }, new [] { costBreakdown1.Entries[0], costBreakdown1.Entries[1] } }, json.costBreakdowns[0]);
-        AssertCostBreakdown(costBreakdown2, new [] { new [] { costBreakdown2.Entries[0] } }, json.costBreakdowns[1]);
+        AssertCostBreakdown(costBreakdown1, new[] { new[] { costBreakdown1.Entries[2] }, new[] { costBreakdown1.Entries[0], costBreakdown1.Entries[1] } }, json.costBreakdowns[0]);
+        AssertCostBreakdown(costBreakdown2, new[] { new[] { costBreakdown2.Entries[0] } }, json.costBreakdowns[1]);
         costBreakdownRepository.Verify(cbr => cbr.GetCostBreakdowns());
     }
 
@@ -177,7 +177,10 @@ public class SettingsCostBreakdownsControllerTest
         {
             FromDate = new DateTime(2023, 10, 31, 23, 0, 0, DateTimeKind.Utc),
             ToDate = new DateTime(2023, 11, 30, 23, 0, 0, DateTimeKind.Utc),
-            Name = "TheName", StartTime = 0, EndTime = 23, Amount = 12.345678
+            Name = "TheName",
+            StartTime = 0,
+            EndTime = 23,
+            Amount = 12.345678
         };
         var content = JsonContent.Create(costBreakdownEntry);
 
@@ -201,7 +204,10 @@ public class SettingsCostBreakdownsControllerTest
         {
             FromDate = new DateTime(2023, 10, 31, 23, 0, 0, DateTimeKind.Utc),
             ToDate = new DateTime(2023, 11, 30, 23, 0, 0, DateTimeKind.Utc),
-            Name = "TheName", StartTime = 0, EndTime = 23, Amount = 12.345678
+            Name = "TheName",
+            StartTime = 0,
+            EndTime = 23,
+            Amount = 12.345678
         };
         var content = JsonContent.Create(costBreakdownEntry);
 
@@ -238,7 +244,10 @@ public class SettingsCostBreakdownsControllerTest
         {
             FromDate = new DateTime(2023, 10, 31, 23, 0, 0, DateTimeKind.Utc),
             ToDate = new DateTime(2023, 11, 30, 23, 0, 0, DateTimeKind.Utc),
-            Name = "TheName", StartTime = 0, EndTime = 23, Amount = 12.345678
+            Name = "TheName",
+            StartTime = 0,
+            EndTime = 23,
+            Amount = 12.345678
         };
         var content = JsonContent.Create(costBreakdownEntry);
         costBreakdownRepository.Setup(x => x.AddCostBreakdownEntry(It.IsAny<string>(), It.IsAny<CostBreakdownEntry>()))
@@ -260,7 +269,10 @@ public class SettingsCostBreakdownsControllerTest
         {
             FromDate = new DateTime(2023, 10, 31, 23, 0, 0, DateTimeKind.Utc),
             ToDate = new DateTime(2023, 11, 30, 23, 0, 0, DateTimeKind.Utc),
-            Name = "TheName", StartTime = 0, EndTime = 23, Amount = 12.345678
+            Name = "TheName",
+            StartTime = 0,
+            EndTime = 23,
+            Amount = 12.345678
         };
         var content = JsonContent.Create(costBreakdownEntry);
         costBreakdownRepository.Setup(x => x.AddCostBreakdownEntry(It.IsAny<string>(), It.IsAny<CostBreakdownEntry>()))
@@ -285,7 +297,10 @@ public class SettingsCostBreakdownsControllerTest
         {
             FromDate = new DateTime(2023, 10, 31, 23, 0, 0, DateTimeKind.Utc),
             ToDate = new DateTime(2023, 11, 30, 23, 0, 0, DateTimeKind.Utc),
-            Name = "TheName", StartTime = 0, EndTime = 23, Amount = 12.345678
+            Name = "TheName",
+            StartTime = 0,
+            EndTime = 23,
+            Amount = 12.345678
         };
         var content = JsonContent.Create(costBreakdownEntry);
 
@@ -319,7 +334,10 @@ public class SettingsCostBreakdownsControllerTest
         {
             FromDate = new DateTime(2023, 10, 31, 23, 0, 0, DateTimeKind.Utc),
             ToDate = new DateTime(2023, 11, 30, 23, 0, 0, DateTimeKind.Utc),
-            Name = "TheName", StartTime = 0, EndTime = 23, Amount = 12.345678
+            Name = "TheName",
+            StartTime = 0,
+            EndTime = 23,
+            Amount = 12.345678
         };
         var content = JsonContent.Create(costBreakdownEntry);
 
@@ -364,7 +382,10 @@ public class SettingsCostBreakdownsControllerTest
         {
             FromDate = new DateTime(2023, 10, 31, 23, 0, 0, DateTimeKind.Utc),
             ToDate = new DateTime(2023, 11, 30, 23, 0, 0, DateTimeKind.Utc),
-            Name = "TheName", StartTime = 0, EndTime = 23, Amount = 12.345678
+            Name = "TheName",
+            StartTime = 0,
+            EndTime = 23,
+            Amount = 12.345678
         };
         var content = JsonContent.Create(costBreakdownEntry);
         costBreakdownRepository.Setup(cbr => cbr.UpdateCostBreakdownEntry(It.IsAny<string>(), It.IsAny<DateTime>(),
@@ -389,7 +410,10 @@ public class SettingsCostBreakdownsControllerTest
         {
             FromDate = new DateTime(2023, 10, 31, 23, 0, 0, DateTimeKind.Utc),
             ToDate = new DateTime(2023, 11, 30, 23, 0, 0, DateTimeKind.Utc),
-            Name = "TheName", StartTime = 0, EndTime = 23, Amount = 12.345678
+            Name = "TheName",
+            StartTime = 0,
+            EndTime = 23,
+            Amount = 12.345678
         };
         var content = JsonContent.Create(costBreakdownEntry);
         costBreakdownRepository.Setup(cbr => cbr.UpdateCostBreakdownEntry(It.IsAny<string>(), It.IsAny<DateTime>(),
@@ -473,7 +497,7 @@ public class SettingsCostBreakdownsControllerTest
             var expectedEntryPeriods = entryPeriods[ix];
             var actualEntryPeriod = dto.entryPeriods[ix];
             Assert.That(actualEntryPeriod.entries.Length, Is.EqualTo(expectedEntryPeriods.Length));
-            for ( var ix2 = 0; ix2 < expectedEntryPeriods.Length; ix2++)
+            for (var ix2 = 0; ix2 < expectedEntryPeriods.Length; ix2++)
             {
                 AssertCostBreakdownEntry(expectedEntryPeriods[ix2], actualEntryPeriod.entries[ix2]);
             }

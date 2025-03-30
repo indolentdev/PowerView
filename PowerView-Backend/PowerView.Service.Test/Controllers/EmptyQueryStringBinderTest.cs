@@ -67,5 +67,5 @@ public class EmptyQueryStringBinderTest
         return new EmptyQueryStringBinder();
     }
 
-    
+
 }

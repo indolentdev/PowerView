@@ -29,16 +29,16 @@ public class SettingsDisconnectRulesController : ControllerBase
         var disconnectRules = disconnectRuleRepository.GetDisconnectRules();
 
         var disconnectRuleDtos = disconnectRules.Select(disconnectRule => new
-            {
-                NameLabel = disconnectRule.Name.Label,
-                NameObisCode = disconnectRule.Name.ObisCode.ToString(),
-                EvaluationLabel = disconnectRule.EvaluationName.Label,
-                EvaluationObisCode = disconnectRule.EvaluationName.ObisCode.ToString(),
-                DurationMinutes = (int)disconnectRule.Duration.TotalMinutes,
-                DisconnectToConnectValue = disconnectRule.DisconnectToConnectValue,
-                ConnectToDisconnectValue = disconnectRule.ConnectToDisconnectValue,
-                Unit = ValueAndUnitConverter.Convert(disconnectRule.Unit, false)
-            })
+        {
+            NameLabel = disconnectRule.Name.Label,
+            NameObisCode = disconnectRule.Name.ObisCode.ToString(),
+            EvaluationLabel = disconnectRule.EvaluationName.Label,
+            EvaluationObisCode = disconnectRule.EvaluationName.ObisCode.ToString(),
+            DurationMinutes = (int)disconnectRule.Duration.TotalMinutes,
+            DisconnectToConnectValue = disconnectRule.DisconnectToConnectValue,
+            ConnectToDisconnectValue = disconnectRule.ConnectToDisconnectValue,
+            Unit = ValueAndUnitConverter.Convert(disconnectRule.Unit, false)
+        })
             .ToArray();
         var disconnectRuleSetDto = new { Items = disconnectRuleDtos };
 

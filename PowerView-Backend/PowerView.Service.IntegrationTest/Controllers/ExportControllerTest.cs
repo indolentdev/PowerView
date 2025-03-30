@@ -287,7 +287,7 @@ public class ExportControllerTest
         AssertPeriods(new[] { new ExportPeriod(t1 - skew, t2 - skew), new ExportPeriod(t2 - skew, t3 - skew) }, json.periods);
 
         Assert.That(json.series, Has.Length.EqualTo(1));
-        AssertExportDiffSeries(ls.Label, obisCode.ToDelta(), new dynamic[] 
+        AssertExportDiffSeries(ls.Label, obisCode.ToDelta(), new dynamic[]
         {
             new { From = t1, To = t2, Value = (double?)100, Unit = "m3" },
             new { From = t2, To = t3, Value = (double?)200, Unit = "m3" }
@@ -336,22 +336,22 @@ public class ExportControllerTest
         AssertPeriods(new[] { new ExportPeriod(t1 - skew, t2 - skew), new ExportPeriod(t2 - skew, t3 - skew) }, json.periods);
 
         Assert.That(json.series, Has.Length.EqualTo(4));
-        AssertExportDiffSeries(ls1.Label, a14.ToDelta(), new dynamic[] 
+        AssertExportDiffSeries(ls1.Label, a14.ToDelta(), new dynamic[]
         {
             new { From = t1, To = t2, Value = 5, Unit = "kWh" },
             new { From = t2, To = t3, Value = 3, Unit = "kWh" },
         }, json.series[0]);
-        AssertExportDiffSeries(ls1.Label, a23.ToDelta(), new dynamic[] 
+        AssertExportDiffSeries(ls1.Label, a23.ToDelta(), new dynamic[]
         {
             new { From = t1 + skew, To = t2 + skew, Value = 2, Unit = "kWh" },
             new { From = t2 + skew, To = t3 + skew, Value = 7, Unit = "kWh" },
         }, json.series[1]);
-        AssertExportDiffSeries(ls1.Label, ObisCode.ElectrActiveEnergyA14NetDelta, new dynamic[] 
+        AssertExportDiffSeries(ls1.Label, ObisCode.ElectrActiveEnergyA14NetDelta, new dynamic[]
         {
             new { From = t1, To = t2 + skew, Value = 3, Unit = "kWh" },
             new { From = t2, To = t3 + skew, Value = 0, Unit = "kWh" },
         }, json.series[2]);
-        AssertExportDiffSeries(ls1.Label, ObisCode.ElectrActiveEnergyA23NetDelta, new dynamic[] 
+        AssertExportDiffSeries(ls1.Label, ObisCode.ElectrActiveEnergyA23NetDelta, new dynamic[]
         {
             new { From = t1, To = t2 + skew, Value = 0, Unit = "kWh" },
             new { From = t2, To = t3 + skew, Value = 4, Unit = "kWh" },
@@ -389,11 +389,11 @@ public class ExportControllerTest
         AssertPeriods(new[] { new ExportPeriod(t1 - skew, t2 - skew) }, json.periods);
 
         Assert.That(json.series, Has.Length.EqualTo(2));
-        AssertExportDiffSeries(ls1.Label, obisCode.ToDelta(), new dynamic[] 
+        AssertExportDiffSeries(ls1.Label, obisCode.ToDelta(), new dynamic[]
         {
             new { From = t1, To = t2, Value = 100, Unit = "m3" },
         }, json.series[0]);
-        AssertExportDiffSeries(ls2.Label, obisCode.ToDelta(), new dynamic[] 
+        AssertExportDiffSeries(ls2.Label, obisCode.ToDelta(), new dynamic[]
         {
             new { From = t1 + skew, To = t2 + skew, Value = 2, Unit = "kWh" },
         }, json.series[1]);
@@ -428,7 +428,7 @@ public class ExportControllerTest
         AssertPeriods(new[] { new ExportPeriod(t1 - skew, t2 - skew), new ExportPeriod(t2 - skew, t3 - skew) }, json.periods);
 
         Assert.That(json.series, Has.Length.EqualTo(1));
-        AssertExportDiffSeries(ls.Label, obisCode.ToDelta(), new dynamic[] 
+        AssertExportDiffSeries(ls.Label, obisCode.ToDelta(), new dynamic[]
         {
             new { From = t1, To = t2, Value = 0, Unit = "kWh" },
             new { From = t2, To = t3, Value = 1, Unit = "kWh" },
@@ -610,7 +610,7 @@ public class ExportControllerTest
         AssertTimestamps(new[] { t1, t2, t3 }.Select(x => x - skew), json.timestamps);
 
         Assert.That(json.series, Has.Length.EqualTo(1));
-        AssertExportGaugeSeries(ls.Label, obisCode, new dynamic[] 
+        AssertExportGaugeSeries(ls.Label, obisCode, new dynamic[]
         {
             new { Timestamp = t1, Value = 200, Unit = "m3", DeviceId = "S1" },
             new { Timestamp = t2, Value = 300, Unit = "m3", DeviceId = "S1" },
@@ -656,12 +656,12 @@ public class ExportControllerTest
         var json = await response.Content.ReadFromJsonAsync<ExportGaugesRoot>();
 
         Assert.That(json.series, Has.Length.EqualTo(2));
-        AssertExportGaugeSeries(ls1.Label, obisCode1, new dynamic[] 
+        AssertExportGaugeSeries(ls1.Label, obisCode1, new dynamic[]
         {
         new { Timestamp = t1, Value = 2, Unit = "kWh", DeviceId = "S1" },
         new { Timestamp = t2, Value = 3, Unit = "kWh", DeviceId = "S1" },
         }, json.series[0]);
-        AssertExportGaugeSeries(ls1.Label, obisCode2, new dynamic[] 
+        AssertExportGaugeSeries(ls1.Label, obisCode2, new dynamic[]
         {
         new { Timestamp = t1 + skew, Value = 4, Unit = "kWh", DeviceId = "S2" },
         new { Timestamp = t2 + skew, Value = 6, Unit = "kWh", DeviceId = "S2" },
@@ -699,12 +699,12 @@ public class ExportControllerTest
         var json = await response.Content.ReadFromJsonAsync<ExportGaugesRoot>();
 
         Assert.That(json.series, Has.Length.EqualTo(2));
-        AssertExportGaugeSeries(ls1.Label, obisCode, new dynamic[] 
+        AssertExportGaugeSeries(ls1.Label, obisCode, new dynamic[]
         {
             new { Timestamp = t1, Value = 200, Unit = "m3", DeviceId = "S1" },
             new { Timestamp = t2, Value = 300, Unit = "m3", DeviceId = "S1" },
         }, json.series[0]);
-        AssertExportGaugeSeries(ls2.Label, obisCode, new dynamic[] 
+        AssertExportGaugeSeries(ls2.Label, obisCode, new dynamic[]
         {
             new { Timestamp = t1 + skew, Value = 4, Unit = "kWh", DeviceId = "S2" },
             new { Timestamp = t2 + skew, Value = 6, Unit = "kWh", DeviceId = "S2" },
@@ -746,7 +746,7 @@ public class ExportControllerTest
         var json = await response.Content.ReadFromJsonAsync<ExportGaugesRoot>();
 
         Assert.That(json.series, Has.Length.EqualTo(2));
-        AssertExportGaugeSeries(ls2.Label, obisCode, new dynamic[] 
+        AssertExportGaugeSeries(ls2.Label, obisCode, new dynamic[]
         {
             new { Timestamp = t1, Value = 4, Unit = "kWh", DeviceId = "S2" },
             new { Timestamp = (DateTime?)null, Value = (double?)null, Unit = (string)null, DeviceId = (string)null },
@@ -786,9 +786,9 @@ public class ExportControllerTest
     {
         Assert.That(
             actual.Select(x => new ExportPeriod(
-                DateTime.Parse(x.from, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind), 
+                DateTime.Parse(x.from, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind),
                 DateTime.Parse(x.to, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind)
-            )).ToArray(), 
+            )).ToArray(),
             Is.EqualTo(expected.ToArray())
         );
     }

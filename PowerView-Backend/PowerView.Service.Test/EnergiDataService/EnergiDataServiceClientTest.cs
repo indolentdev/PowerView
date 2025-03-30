@@ -169,8 +169,8 @@ public class EnergiDataServiceClientTest
     {
         var (httpMessageHandler, httpClient) = SetupHttpClientFactory();
         httpMessageHandler.Setup(x => x(It.IsAny<HttpRequestMessage>(), It.IsAny<CancellationToken>()))
-            .Returns(new HttpResponseMessage(HttpStatusCode.OK) 
-              { Content = new StringContent(responseContent, Encoding.UTF8, "application/json") } );
+            .Returns(new HttpResponseMessage(HttpStatusCode.OK)
+            { Content = new StringContent(responseContent, Encoding.UTF8, "application/json") });
 
         return (httpMessageHandler, httpClient);
     }

@@ -59,7 +59,7 @@ WHERE lbl.LabelName = @Label AND rea.Timestamp >= @From;";
                 .Select(x => new CrudeDataValue(x.Timestamp, x.ObisCode, x.Value, x.Scale, (Unit)x.Unit, x.DeviceId, x.Tags != null ? (RegisterValueTag)x.Tags : RegisterValueTag.None))
                 .ToList();
 
-            return new WithCount<ICollection<CrudeDataValue>>(totalCount, crudeDataValues);            
+            return new WithCount<ICollection<CrudeDataValue>>(totalCount, crudeDataValues);
         }
 
         private class RowLocal
@@ -170,7 +170,7 @@ DROP TABLE DeleteCrudeData;";
 
         private record ReadingInfo(long Id, string DeviceId, UnixTime Timestamp)
         {
-            public ReadingInfo() : this(0, string.Empty, new UnixTime(0)) {}
+            public ReadingInfo() : this(0, string.Empty, new UnixTime(0)) { }
         }
 
         private IEnumerable<ReadingInfo> GetReadingInfo(string label, ObisCode obisCode)

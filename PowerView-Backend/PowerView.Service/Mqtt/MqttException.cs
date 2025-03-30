@@ -4,22 +4,22 @@ using System.Runtime.Serialization;
 
 namespace PowerView.Service.Mqtt
 {
-  [Serializable]
-  public class MqttException : Exception
-  {
-    public MqttException()
+    [Serializable]
+    public class MqttException : Exception
     {
-    }
+        public MqttException()
+        {
+        }
 
-    public MqttException(string message)
-      : base(message)
-    {
-    }
+        public MqttException(string message)
+          : base(message)
+        {
+        }
 
-    public MqttException(string message, Exception inner)
-      : base(message, inner)
-    {
+        public MqttException(string message, Exception inner)
+          : base(message, inner)
+        {
+        }
     }
-  }
 }
 

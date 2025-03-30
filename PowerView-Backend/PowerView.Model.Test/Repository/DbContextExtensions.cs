@@ -27,7 +27,7 @@ namespace PowerView.Model.Test.Repository
         internal static (IList<string> Labels, IList<string> DeviceIds) Insert<TReading, TRegister, TRegisterTag>(this DbContext dbContext, TReading reading, TRegister[] registers, TRegisterTag[] registerTags = null)
   where TReading : class, IDbReading
   where TRegister : class, IDbRegister
-  where TRegisterTag: class, IDbRegisterTag
+  where TRegisterTag : class, IDbRegisterTag
         {
             var labelsAndDeviceIds = dbContext.InsertReadings(reading);
             foreach (var register in registers)
@@ -90,8 +90,8 @@ namespace PowerView.Model.Test.Repository
         {
             dbContext.ExecuteTransaction(@"
               INSERT INTO Label (LabelName, Timestamp) 
-              SELECT @LabelName, @Timestamp WHERE NOT EXISTS (SELECT 1 FROM Label WHERE LabelName = @LabelName);", 
-                labels.Select(x => new { LabelName = x, Timestamp = DateTime.UtcNow }) );
+              SELECT @LabelName, @Timestamp WHERE NOT EXISTS (SELECT 1 FROM Label WHERE LabelName = @LabelName);",
+                labels.Select(x => new { LabelName = x, Timestamp = DateTime.UtcNow }));
 
             var allLabels = dbContext.QueryTransaction<(byte Id, string LabelName)>("SELECT Id, LabelName FROM Label;");
 
@@ -147,7 +147,7 @@ namespace PowerView.Model.Test.Repository
         private static List<(byte Id, ObisCode ObisCode)> InsertObisCodes(DbContext dbContext, IDbRegister[] dbRegisters)
         {
             var obisCodes = dbRegisters.Select(x => x.ObisId).Distinct()
-                .Select(x => ( x, new ObisCode(Enumerable.Repeat(x, 6).ToArray()) )).ToArray();
+                .Select(x => (x, new ObisCode(Enumerable.Repeat(x, 6).ToArray()))).ToArray();
 
             return InsertObisCodes(dbContext, obisCodes);
         }
@@ -156,8 +156,8 @@ namespace PowerView.Model.Test.Repository
         {
             dbContext.ExecuteTransaction(@"
               INSERT INTO Obis (Id, ObisCode) 
-              SELECT @Id, @ObisCode WHERE NOT EXISTS (SELECT 1 FROM Obis WHERE Id = @Id);", 
-                  obisCodes.Select(x => new { x.Id, ObisCode = (long)x.ObisCode}).ToList());
+              SELECT @Id, @ObisCode WHERE NOT EXISTS (SELECT 1 FROM Obis WHERE Id = @Id);",
+                  obisCodes.Select(x => new { x.Id, ObisCode = (long)x.ObisCode }).ToList());
 
             var allObisCodes = dbContext.QueryTransaction<(byte Id, long ObisCode)>("SELECT Id, ObisCode FROM Obis;");
 
@@ -183,13 +183,13 @@ namespace PowerView.Model.Test.Repository
 
         public static void InsertLabelObisLive(this DbContext dbContext, params (byte LabelId, byte ObisId, UnixTime LatestTimestamp)[] lblOcLive)
         {
-            dbContext.ExecuteTransaction("INSERT INTO LabelObisLive (LabelId, ObisId, LatestTimestamp) VALUES (@LabelId, @ObisId, @LatestTimestamp);", 
+            dbContext.ExecuteTransaction("INSERT INTO LabelObisLive (LabelId, ObisId, LatestTimestamp) VALUES (@LabelId, @ObisId, @LatestTimestamp);",
               lblOcLive.Select(x => new { x.LabelId, x.ObisId, x.LatestTimestamp }));
         }
 
         public static void InsertStreamPosition(this DbContext dbContext, params (string StreamName, byte LabelId, long Position)[] streamPositions)
         {
-            dbContext.ExecuteTransaction("INSERT INTO StreamPosition (StreamName,LabelId,Position) VALUES (@StreamName,@LabelId,@Position);", 
+            dbContext.ExecuteTransaction("INSERT INTO StreamPosition (StreamName,LabelId,Position) VALUES (@StreamName,@LabelId,@Position);",
               streamPositions.Select(x => new { x.StreamName, x.LabelId, x.Position }));
         }
 

@@ -4,9 +4,9 @@ using PowerView.Model;
 
 namespace PowerView.Service.Dtos
 {
-  public class SerieColorSetDto
-  {
-    [Required]
-    public SerieColorDto[] Items { get; set; }
-  }
+    public class SerieColorSetDto
+    {
+        [Required]
+        public SerieColorDto[] Items { get; set; }
+    }
 }

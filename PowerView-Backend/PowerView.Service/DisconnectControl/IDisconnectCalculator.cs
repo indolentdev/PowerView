@@ -4,8 +4,8 @@ using PowerView.Model;
 
 namespace PowerView.Service.DisconnectControl
 {
-  internal interface IDisconnectCalculator
-  {
-    void SynchronizeAndCalculate(DateTime time, IDisconnectCache disconnectCache, IList<Reading> liveReadings);
-  }
+    internal interface IDisconnectCalculator
+    {
+        void SynchronizeAndCalculate(DateTime time, IDisconnectCache disconnectCache, IList<Reading> liveReadings);
+    }
 }

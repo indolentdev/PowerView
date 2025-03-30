@@ -4,8 +4,8 @@ using MQTTnet;
 
 namespace PowerView.Service.Mqtt
 {
-  public interface IMqttMapper
-  {
-    MqttApplicationMessage[] Map(ICollection<Reading> liveReadings);
-  }
+    public interface IMqttMapper
+    {
+        MqttApplicationMessage[] Map(ICollection<Reading> liveReadings);
+    }
 }

@@ -3,22 +3,22 @@ using System.Runtime.Serialization;
 
 namespace PowerView.Model.Repository
 {
-  [Serializable]
-  public class DataStoreCorruptException : DataStoreException
-  {
-    public DataStoreCorruptException()
+    [Serializable]
+    public class DataStoreCorruptException : DataStoreException
     {
-    }
-      
-    public DataStoreCorruptException(string message)
-      : base(message)
-    {
-    }
+        public DataStoreCorruptException()
+        {
+        }
 
-    public DataStoreCorruptException(string message, Exception inner)
-      : base(message, inner)
-    {
+        public DataStoreCorruptException(string message)
+          : base(message)
+        {
+        }
+
+        public DataStoreCorruptException(string message, Exception inner)
+          : base(message, inner)
+        {
+        }
     }
-  }
 }
 

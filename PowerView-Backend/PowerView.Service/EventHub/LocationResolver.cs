@@ -73,7 +73,7 @@ namespace PowerView.Service.EventHub
             LocationDto dto;
 
             using var request = new HttpRequestMessage(HttpMethod.Get, uri);
-            
+
             using var httpClient = httpClientFactory.CreateClient(nameof(LocationResolver));
             httpClient.Timeout = TimeSpan.FromSeconds(10);
 

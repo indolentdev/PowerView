@@ -55,7 +55,7 @@ public class ObisControllerTest
         var response = await httpClient.GetAsync($"api/obis/codes?label={label}");
 
         // Assert
-        liveReadingRepository.Verify(x => x.GetObisCodes(It.Is<string>(a => a == label), It.Is<DateTime>(a => (DateTime.UtcNow - a) - TimeSpan.FromDays(365) < TimeSpan.FromSeconds(2) )));
+        liveReadingRepository.Verify(x => x.GetObisCodes(It.Is<string>(a => a == label), It.Is<DateTime>(a => (DateTime.UtcNow - a) - TimeSpan.FromDays(365) < TimeSpan.FromSeconds(2))));
     }
 
     [Test]
@@ -70,7 +70,7 @@ public class ObisControllerTest
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         var json = await response.Content.ReadFromJsonAsync<ObisCodesDto>();
-        Assert.That(json.ObisCodes, Is.EqualTo(new [] { "1.2.3.4.5.6", "6.5.4.3.2.1" }));
+        Assert.That(json.ObisCodes, Is.EqualTo(new[] { "1.2.3.4.5.6", "6.5.4.3.2.1" }));
     }
 
     private void SetupLiveReadingRepositoryGetObisCodes(params ObisCode[] obisCodes)

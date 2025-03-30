@@ -59,7 +59,7 @@ namespace PowerView.Service
                 var label = labelToObisCodes.Key;
                 var fakeObisToTimeRegisterValues = labelToObisCodes
                   .Distinct()
-                  .ToDictionary(oc => oc, oc => CreateTimeRegisterValues(dt1, dt2, seriesNamesUnits[new SeriesName(label, oc)]) );
+                  .ToDictionary(oc => oc, oc => CreateTimeRegisterValues(dt1, dt2, seriesNamesUnits[new SeriesName(label, oc)]));
                 var labelS = new TimeRegisterValueLabelSeries(label, fakeObisToTimeRegisterValues);
                 labelSeries.Add(labelS);
             }

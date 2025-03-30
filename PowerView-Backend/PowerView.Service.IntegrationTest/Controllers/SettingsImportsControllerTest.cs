@@ -45,7 +45,7 @@ public class SettingsImportsControllerTest
         httpClient?.Dispose();
         application?.Dispose();
     }
-    
+
     [Test]
     public async Task GetImports()
     {

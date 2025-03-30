@@ -91,16 +91,16 @@ public class ReadingAccepterTest
         var hub = new Mock<IHub>();
         var target = new ReadingAccepter(liveReadingRepository.Object, hub.Object);
         var liveReadings = new[] { new Reading("lbl", "sn1", DateTime.UtcNow,
-                                                  new [] { 
+                                                  new [] {
                                                     new RegisterValue(ObisCode.ElectrActiveEnergyA14, 1, 0, Unit.WattHour),
-                                                    new RegisterValue(ObisCode.ElectrActiveEnergyA14Delta, 1, 0, Unit.WattHour) 
+                                                    new RegisterValue(ObisCode.ElectrActiveEnergyA14Delta, 1, 0, Unit.WattHour)
                                                   }) };
 
         // Act
         target.Accept(liveReadings);
 
         // Assert
-        liveReadingRepository.Verify(lrr => lrr.Add(It.Is<IList<Reading>>(p => p.Count == 1 && p.First().GetRegisterValues().Count == 1 && p.First().GetRegisterValues().First().ObisCode == ObisCode.ElectrActiveEnergyA14 )));
+        liveReadingRepository.Verify(lrr => lrr.Add(It.Is<IList<Reading>>(p => p.Count == 1 && p.First().GetRegisterValues().Count == 1 && p.First().GetRegisterValues().First().ObisCode == ObisCode.ElectrActiveEnergyA14)));
         hub.Verify(h => h.Signal(It.Is<IList<Reading>>(p => p.Count == 1 && p.First().GetRegisterValues().Count == 1 && p.First().GetRegisterValues().First().ObisCode == ObisCode.ElectrActiveEnergyA14)));
     }
 

@@ -70,12 +70,12 @@ public class DeviceReadingControllerTest
         var liveReadingDto = GetLiveReadingDto();
 
         // Act
-        var response = await httpClient.PostAsync("api/devices/livereadings", JsonContent.Create(new LiveReadingSetDto { Items = new [] { liveReadingDto } } ));
+        var response = await httpClient.PostAsync("api/devices/livereadings", JsonContent.Create(new LiveReadingSetDto { Items = new[] { liveReadingDto } }));
 
         // Assert
         readingAccepter.Verify(ra => ra.Accept(It.Is<IList<Reading>>(x => x.Count == 1 &&
             x[0].Label == liveReadingDto.Label && x[0].DeviceId == liveReadingDto.DeviceId && x[0].Timestamp == liveReadingDto.Timestamp &&
-            x[0].GetRegisterValues().Count == 1 && 
+            x[0].GetRegisterValues().Count == 1 &&
             x[0].GetRegisterValues()[0].ObisCode == liveReadingDto.RegisterValues[0].ObisCode &&
             x[0].GetRegisterValues()[0].Value == liveReadingDto.RegisterValues[0].Value &&
             x[0].GetRegisterValues()[0].Scale == liveReadingDto.RegisterValues[0].Scale &&
@@ -126,7 +126,7 @@ public class DeviceReadingControllerTest
         // Arrange
 
         var count = 0;
-        readingAccepter.Setup(ra => ra.Accept(It.IsAny<IList<Reading>>())).Callback(() => 
+        readingAccepter.Setup(ra => ra.Accept(It.IsAny<IList<Reading>>())).Callback(() =>
         {
             count++;
             if (count == 1) throw new DataStoreBusyException();

@@ -2,12 +2,12 @@
 
 namespace PowerView.Model.SeriesGenerators
 {
-  public interface IMultiInputSeriesGenerator
-  {
-    bool IsSatisfiedBy(IDictionary<ObisCode, ICollection<NormalizedDurationRegisterValue>> values);
+    public interface IMultiInputSeriesGenerator
+    {
+        bool IsSatisfiedBy(IDictionary<ObisCode, ICollection<NormalizedDurationRegisterValue>> values);
 
-    void CalculateNext(IDictionary<ObisCode, NormalizedDurationRegisterValue> obisCodeRegisterValues);
+        void CalculateNext(IDictionary<ObisCode, NormalizedDurationRegisterValue> obisCodeRegisterValues);
 
-    IList<NormalizedDurationRegisterValue> GetGenerated();
-  }
+        IList<NormalizedDurationRegisterValue> GetGenerated();
+    }
 }

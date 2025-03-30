@@ -7,29 +7,29 @@ using PowerView.Service.Mqtt;
 
 namespace PowerView.Service.EventHub
 {
-  internal class MqttPublisherFactory : IMqttPublisherFactory
-  {
-    public void Publish(IServiceScope serviceScope, IList<Reading> liveReadings)
+    internal class MqttPublisherFactory : IMqttPublisherFactory
     {
-      if (serviceScope == null) throw new ArgumentNullException(nameof(serviceScope));
-      if (liveReadings == null) throw new ArgumentNullException("liveReadings");
+        public void Publish(IServiceScope serviceScope, IList<Reading> liveReadings)
+        {
+            if (serviceScope == null) throw new ArgumentNullException(nameof(serviceScope));
+            if (liveReadings == null) throw new ArgumentNullException("liveReadings");
 
-      if (liveReadings.Count == 0)
-      {
-        return;
-      }
+            if (liveReadings.Count == 0)
+            {
+                return;
+            }
 
-      MqttConfig mqttConfig;
-      var settingsRepository = serviceScope.ServiceProvider.GetRequiredService<ISettingRepository>();
-      mqttConfig = settingsRepository.GetMqttConfig();
+            MqttConfig mqttConfig;
+            var settingsRepository = serviceScope.ServiceProvider.GetRequiredService<ISettingRepository>();
+            mqttConfig = settingsRepository.GetMqttConfig();
 
-      if (!mqttConfig.PublishEnabled)
-      {
-        return;
-      }
+            if (!mqttConfig.PublishEnabled)
+            {
+                return;
+            }
 
-      var mqttPublisher = serviceScope.ServiceProvider.GetRequiredService<IMqttPublisher>();
-      mqttPublisher.Publish(mqttConfig, liveReadings);
+            var mqttPublisher = serviceScope.ServiceProvider.GetRequiredService<IMqttPublisher>();
+            mqttPublisher.Publish(mqttConfig, liveReadings);
+        }
     }
-  }
 }

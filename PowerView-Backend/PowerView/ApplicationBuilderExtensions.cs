@@ -35,7 +35,7 @@ namespace PowerView
             }
             else
             {
-                if ( string.Equals(env.EnvironmentName, "Production", StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(env.EnvironmentName, "Production", StringComparison.OrdinalIgnoreCase))
                 {
                     throw new ApplicationException($"WebRootPath does not exist. {env.WebRootPath}");
                 }

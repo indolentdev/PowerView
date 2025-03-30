@@ -25,7 +25,7 @@ namespace PowerView.Model
             {
                 var duplicateObisCodesString = string.Join(", ", duplicateObisCodes.Select(x => x.ObisCode));
                 throw new ModelException($"Duplicate obis codes. Label:{label}, Timestamp:{timestamp.ToString("o")}, ObisCodes:{duplicateObisCodesString}");
-            }              
+            }
 
             this.label = label;
             this.deviceId = deviceId;

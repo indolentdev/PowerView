@@ -8,13 +8,13 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace PowerView.Model
 {
-  public static class Extensions
-  {
-    public static T Sum<T>(this IEnumerable<T> source)
+    public static class Extensions
     {
-      return source.Aggregate((x, y) => (dynamic)x + (dynamic)y);
+        public static T Sum<T>(this IEnumerable<T> source)
+        {
+            return source.Aggregate((x, y) => (dynamic)x + (dynamic)y);
+        }
     }
-  }
 
 }
 

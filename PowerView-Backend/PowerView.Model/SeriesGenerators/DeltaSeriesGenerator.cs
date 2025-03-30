@@ -3,46 +3,46 @@ using System.Collections.Generic;
 
 namespace PowerView.Model.SeriesGenerators
 {
-  public class DeltaSeriesGenerator : ISingleInputSeriesGenerator
-  {
-    private readonly List<NormalizedDurationRegisterValue> generatedValues;
-    private NormalizedTimeRegisterValue previous;
-
-    public DeltaSeriesGenerator()
+    public class DeltaSeriesGenerator : ISingleInputSeriesGenerator
     {
-      generatedValues = new List<NormalizedDurationRegisterValue>(300);
-    }
+        private readonly List<NormalizedDurationRegisterValue> generatedValues;
+        private NormalizedTimeRegisterValue previous;
 
-    public void CalculateNext(NormalizedTimeRegisterValue timeRegisterValue)
-    {
-      NormalizedDurationRegisterValue generatedValue;
-      if (generatedValues.Count == 0)
-      {
-        generatedValue = timeRegisterValue.SubtractAccommodateWrap(timeRegisterValue);
-      }
-      else
-      {
-        var minutend = timeRegisterValue;
-        var substrahend = previous;
-        if (!minutend.DeviceIdEquals(substrahend))
+        public DeltaSeriesGenerator()
         {
-          generatedValue = new NormalizedDurationRegisterValue(substrahend.TimeRegisterValue.Timestamp, minutend.TimeRegisterValue.Timestamp,
-            substrahend.NormalizedTimestamp, minutend.NormalizedTimestamp, new UnitValue(0, minutend.TimeRegisterValue.UnitValue.Unit),
-            substrahend.TimeRegisterValue.DeviceId, minutend.TimeRegisterValue.DeviceId, substrahend.TimeRegisterValue.DeviceId);
+            generatedValues = new List<NormalizedDurationRegisterValue>(300);
         }
-        else
+
+        public void CalculateNext(NormalizedTimeRegisterValue timeRegisterValue)
         {
-          generatedValue = minutend.SubtractAccommodateWrap(substrahend);
+            NormalizedDurationRegisterValue generatedValue;
+            if (generatedValues.Count == 0)
+            {
+                generatedValue = timeRegisterValue.SubtractAccommodateWrap(timeRegisterValue);
+            }
+            else
+            {
+                var minutend = timeRegisterValue;
+                var substrahend = previous;
+                if (!minutend.DeviceIdEquals(substrahend))
+                {
+                    generatedValue = new NormalizedDurationRegisterValue(substrahend.TimeRegisterValue.Timestamp, minutend.TimeRegisterValue.Timestamp,
+                      substrahend.NormalizedTimestamp, minutend.NormalizedTimestamp, new UnitValue(0, minutend.TimeRegisterValue.UnitValue.Unit),
+                      substrahend.TimeRegisterValue.DeviceId, minutend.TimeRegisterValue.DeviceId, substrahend.TimeRegisterValue.DeviceId);
+                }
+                else
+                {
+                    generatedValue = minutend.SubtractAccommodateWrap(substrahend);
+                }
+            }
+
+            previous = timeRegisterValue;
+            generatedValues.Add(generatedValue);
         }
-      }
 
-      previous = timeRegisterValue;
-      generatedValues.Add(generatedValue);
+        public IList<NormalizedDurationRegisterValue> GetGeneratedDurations()
+        {
+            return generatedValues.AsReadOnly();
+        }
     }
-
-    public IList<NormalizedDurationRegisterValue> GetGeneratedDurations()
-    {
-      return generatedValues.AsReadOnly();
-    }
-  }
 }

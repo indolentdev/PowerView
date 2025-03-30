@@ -36,9 +36,9 @@ namespace PowerView.Model.Test.Repository
                 new Db.LiveRegister { ObisId = 111, Value = 101, Scale = 1, Unit = 1 });
 
             var dtB = dtA.AddSeconds(44);
-            DbContext.Insert(new Db.LiveReading { LabelId = 1, DeviceId = 10, Timestamp = dtB }, 
-                new [] { new Db.LiveRegister { ObisId = 111, Value = 201, Scale = 1, Unit = 1 }, new Db.LiveRegister { ObisId = 112, Value = 202, Scale = 1, Unit = 1 } },
-                new [] { new Db.LiveRegisterTag { ObisId = 111, Tags = 1 } });
+            DbContext.Insert(new Db.LiveReading { LabelId = 1, DeviceId = 10, Timestamp = dtB },
+                new[] { new Db.LiveRegister { ObisId = 111, Value = 201, Scale = 1, Unit = 1 }, new Db.LiveRegister { ObisId = 112, Value = 202, Scale = 1, Unit = 1 } },
+                new[] { new Db.LiveRegisterTag { ObisId = 111, Tags = 1 } });
             DbContext.Insert(new Db.LiveReading { LabelId = 99, DeviceId = 99, Timestamp = dtB },
                 new Db.LiveRegister { ObisId = 99, Value = 99, Scale = 1, Unit = 1 });
 
@@ -53,14 +53,14 @@ namespace PowerView.Model.Test.Repository
             var target = CreateTarget();
 
             // Act
-            var values1 = target.GetCrudeData(labels.First(), dtB, 0, 1 );
+            var values1 = target.GetCrudeData(labels.First(), dtB, 0, 1);
 
             // Assert
             Assert.That(values1.TotalCount, Is.EqualTo(5));
 
             Assert.That(values1.Result.Count, Is.EqualTo(1));
             Assert.That(values1.Result.First().DateTime, Is.EqualTo(dtB));
-            Assert.That(values1.Result.First().ObisCode, Is.EqualTo(new ObisCode(new byte[] {111, 111, 111, 111, 111, 111})));
+            Assert.That(values1.Result.First().ObisCode, Is.EqualTo(new ObisCode(new byte[] { 111, 111, 111, 111, 111, 111 })));
             Assert.That(values1.Result.First().Value, Is.EqualTo(201));
             Assert.That(values1.Result.First().Scale, Is.EqualTo(1));
             Assert.That(values1.Result.First().Unit, Is.EqualTo(Unit.WattHour));
@@ -116,7 +116,7 @@ namespace PowerView.Model.Test.Repository
 
             var dtB = dtA.AddSeconds(44);
             DbContext.Insert(new Db.LiveReading { LabelId = 1, DeviceId = 10, Timestamp = dtB },
-                new [] { new Db.LiveRegister { ObisId = 111, Value = 201, Scale = 1, Unit = 1 }, new Db.LiveRegister { ObisId = 112, Value = 202, Scale = 1, Unit = 1 } });
+                new[] { new Db.LiveRegister { ObisId = 111, Value = 201, Scale = 1, Unit = 1 }, new Db.LiveRegister { ObisId = 112, Value = 202, Scale = 1, Unit = 1 } });
             var target = CreateTarget();
 
             // Act
@@ -160,7 +160,7 @@ namespace PowerView.Model.Test.Repository
 
             // Assert
             var registerCount = DbContext.QueryTransaction<long>("SELECT Count(*) FROM LiveRegister;");
-            Assert.That(registerCount, Is.EqualTo(new [] { 1 }));
+            Assert.That(registerCount, Is.EqualTo(new[] { 1 }));
         }
 
         [Test]
@@ -211,8 +211,8 @@ namespace PowerView.Model.Test.Repository
             var obis = DbContext.InsertObisCodes((111, "1.1.1.1.1.1"), (112, "1.1.2.1.1.2"));
             var dtA = new DateTime(2017, 2, 27, 12, 0, 0, DateTimeKind.Utc);
             (var labels, var deviceIds) = DbContext.Insert(new Db.LiveReading { LabelId = 1, DeviceId = 10, Timestamp = dtA },
-                new [] { new Db.LiveRegister { ObisId = obis.First().Id, Value = 101, Scale = 1, Unit = 1 }, new Db.LiveRegister { ObisId = obis.Last().Id, Value = 102, Scale = 1, Unit = 1 } },
-                new [] { new Db.LiveRegisterTag { ObisId = obis.First().Id, Tags = 1 }, new Db.LiveRegisterTag { ObisId = obis.Last().Id, Tags = 1 } }
+                new[] { new Db.LiveRegister { ObisId = obis.First().Id, Value = 101, Scale = 1, Unit = 1 }, new Db.LiveRegister { ObisId = obis.Last().Id, Value = 102, Scale = 1, Unit = 1 } },
+                new[] { new Db.LiveRegisterTag { ObisId = obis.First().Id, Tags = 1 }, new Db.LiveRegisterTag { ObisId = obis.Last().Id, Tags = 1 } }
                 );
 
             var target = CreateTarget();

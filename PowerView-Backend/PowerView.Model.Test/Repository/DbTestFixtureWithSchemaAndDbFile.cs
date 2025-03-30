@@ -9,61 +9,61 @@ using Microsoft.Extensions.Logging.Abstractions;
 
 namespace PowerView.Model.Test.Repository
 {
-  public class DbTestFixtureWithSchemaAndDbFile
-  {
-    public DbTestFixtureWithSchemaAndDbFile()
+    public class DbTestFixtureWithSchemaAndDbFile
     {
-      DbName = DateTime.Now.ToString("yyyyMMddHHmmss") + "_" + Guid.NewGuid() + ".sqlite3";
-    }
-
-    public string DbName { get; protected set; }
-    private DbContextFactory dbContextFactory;
-
-    internal DbContext DbContext { get; private set; }
-    protected IDbConnection Connection { get { return DbContext.Connection; } }
-
-    [OneTimeSetUp]
-    public void TestFixtureSetUp()
-    {
-      dbContextFactory = new DbContextFactory(new DatabaseOptions { Name = DbName });
-      DbContext = (DbContext)dbContextFactory.CreateContext();
-
-      new DbUpgrade(new NullLogger<DbUpgrade>(), DbContext).ApplyUpdates();
-    }
-
-    [SetUp]
-    public void SetUp()
-    {
-      Connection.Execute("PRAGMA foreign_keys = OFF");
-
-      var userTablesResult = Connection.Query("SELECT name AS Name FROM sqlite_master WHERE type='table';").ToArray();
-      foreach (dynamic table in userTablesResult)
-      {
-        if (table.Name == "Version")
+        public DbTestFixtureWithSchemaAndDbFile()
         {
-          continue;
+            DbName = DateTime.Now.ToString("yyyyMMddHHmmss") + "_" + Guid.NewGuid() + ".sqlite3";
         }
-        string deleteTableSql = "DELETE FROM " + table.Name;
-        Connection.Execute(deleteTableSql);
-      }
 
-      Connection.Execute("PRAGMA foreign_keys = ON");
+        public string DbName { get; protected set; }
+        private DbContextFactory dbContextFactory;
+
+        internal DbContext DbContext { get; private set; }
+        protected IDbConnection Connection { get { return DbContext.Connection; } }
+
+        [OneTimeSetUp]
+        public void TestFixtureSetUp()
+        {
+            dbContextFactory = new DbContextFactory(new DatabaseOptions { Name = DbName });
+            DbContext = (DbContext)dbContextFactory.CreateContext();
+
+            new DbUpgrade(new NullLogger<DbUpgrade>(), DbContext).ApplyUpdates();
+        }
+
+        [SetUp]
+        public void SetUp()
+        {
+            Connection.Execute("PRAGMA foreign_keys = OFF");
+
+            var userTablesResult = Connection.Query("SELECT name AS Name FROM sqlite_master WHERE type='table';").ToArray();
+            foreach (dynamic table in userTablesResult)
+            {
+                if (table.Name == "Version")
+                {
+                    continue;
+                }
+                string deleteTableSql = "DELETE FROM " + table.Name;
+                Connection.Execute(deleteTableSql);
+            }
+
+            Connection.Execute("PRAGMA foreign_keys = ON");
+        }
+
+        [OneTimeTearDown]
+        public void TestFixtureTearDown()
+        {
+            DbContext?.Dispose();
+
+            if (File.Exists(DbName))
+            {
+                File.Delete(DbName);
+            }
+            if (File.Exists(DbName + "-journal"))
+            {
+                File.Delete(DbName + "-journal");
+            }
+        }
+
     }
-
-    [OneTimeTearDown]
-    public void TestFixtureTearDown()
-    {
-      DbContext?.Dispose();
-
-      if (File.Exists(DbName))
-      {
-        File.Delete(DbName);
-      }
-      if (File.Exists(DbName+"-journal"))
-      {
-        File.Delete(DbName+"-journal");
-      }
-    }
-
-  }
 }

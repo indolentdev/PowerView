@@ -85,7 +85,7 @@ public class SettingsSmtpControllerTest
     public async Task PutSettings()
     {
         // Arrange
-        var smtpConfigDto = new  TestSmtpConfigDto { server = "theServer", port = 1234, user = "theUser", auth = "theAuth", email = "a@b.com" };
+        var smtpConfigDto = new TestSmtpConfigDto { server = "theServer", port = 1234, user = "theUser", auth = "theAuth", email = "a@b.com" };
         var content = JsonContent.Create(smtpConfigDto);
 
         // Act

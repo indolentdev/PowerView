@@ -18,7 +18,7 @@ namespace PowerView.Model.Test
             const string deviceId = "123";
 
             // Act & Assert
-            Assert.That(() => new CrudeDataValue(DateTime.Now, oc, val,  scale, unit, deviceId), Throws.TypeOf<ArgumentOutOfRangeException>());
+            Assert.That(() => new CrudeDataValue(DateTime.Now, oc, val, scale, unit, deviceId), Throws.TypeOf<ArgumentOutOfRangeException>());
             Assert.That(() => new CrudeDataValue(dt, oc, val, scale, unit, string.Empty), Throws.TypeOf<ArgumentOutOfRangeException>());
             Assert.That(() => new CrudeDataValue(dt, oc, val, scale, unit, null), Throws.ArgumentNullException);
         }

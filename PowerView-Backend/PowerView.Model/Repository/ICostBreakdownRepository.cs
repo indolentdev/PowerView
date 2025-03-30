@@ -11,19 +11,19 @@ namespace PowerView.Model.Repository;
 
 public interface ICostBreakdownRepository
 {
-  ICollection<string> GetCostBreakdownTitles();
+    ICollection<string> GetCostBreakdownTitles();
 
-  CostBreakdown GetCostBreakdown(string title);
+    CostBreakdown GetCostBreakdown(string title);
 
-  ICollection<CostBreakdown> GetCostBreakdowns();
+    ICollection<CostBreakdown> GetCostBreakdowns();
 
-  void AddCostBreakdown(CostBreakdown costBreakdown);
+    void AddCostBreakdown(CostBreakdown costBreakdown);
 
-  void DeleteCostBreakdown(string title);
+    void DeleteCostBreakdown(string title);
 
-  void AddCostBreakdownEntry(string title, CostBreakdownEntry costBreakdownEntry);
+    void AddCostBreakdownEntry(string title, CostBreakdownEntry costBreakdownEntry);
 
-  void UpdateCostBreakdownEntry(string title, DateTime fromDate, DateTime toDate, string name, CostBreakdownEntry costBreakdownEntry);
+    void UpdateCostBreakdownEntry(string title, DateTime fromDate, DateTime toDate, string name, CostBreakdownEntry costBreakdownEntry);
 
-  void DeleteCostBreakdownEntry(string title, DateTime fromDate, DateTime toDate, string name);
+    void DeleteCostBreakdownEntry(string title, DateTime fromDate, DateTime toDate, string name);
 }

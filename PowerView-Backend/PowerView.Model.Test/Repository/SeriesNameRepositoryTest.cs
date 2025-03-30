@@ -17,7 +17,7 @@ namespace PowerView.Model.Test.Repository
             // Act & Assert
             Assert.That(() => new SeriesNameRepository(null), Throws.TypeOf<ArgumentNullException>());
         }
-        
+
         [Test]
         public void GetSerieNames()
         {

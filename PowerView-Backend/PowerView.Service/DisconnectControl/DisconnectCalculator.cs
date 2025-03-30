@@ -6,25 +6,25 @@ using PowerView.Model.Repository;
 
 namespace PowerView.Service.DisconnectControl
 {
-  internal class DisconnectCalculator : IDisconnectCalculator
-  {
-    private readonly IDisconnectRuleRepository disconnectRuleRepository;
-
-    public DisconnectCalculator(IDisconnectRuleRepository disconnectRuleRepository)
+    internal class DisconnectCalculator : IDisconnectCalculator
     {
-      if (disconnectRuleRepository == null) throw new ArgumentNullException("disconnectRuleRepository");
+        private readonly IDisconnectRuleRepository disconnectRuleRepository;
 
-      this.disconnectRuleRepository = disconnectRuleRepository;
+        public DisconnectCalculator(IDisconnectRuleRepository disconnectRuleRepository)
+        {
+            if (disconnectRuleRepository == null) throw new ArgumentNullException("disconnectRuleRepository");
+
+            this.disconnectRuleRepository = disconnectRuleRepository;
+        }
+
+        public void SynchronizeAndCalculate(DateTime time, IDisconnectCache disconnectCache, IList<Reading> liveReadings)
+        {
+            var disconnectRules = disconnectRuleRepository.GetDisconnectRules();
+            disconnectCache.SynchronizeRules(disconnectRules.OfType<IDisconnectRule>().ToList());
+
+            disconnectCache.Add(liveReadings);
+            disconnectCache.Calculate(time);
+        }
+
     }
-
-    public void SynchronizeAndCalculate(DateTime time, IDisconnectCache disconnectCache, IList<Reading> liveReadings)
-    {
-      var disconnectRules = disconnectRuleRepository.GetDisconnectRules();
-      disconnectCache.SynchronizeRules(disconnectRules.OfType<IDisconnectRule>().ToList());
-
-      disconnectCache.Add(liveReadings);
-      disconnectCache.Calculate(time);
-    }
-
-  }
 }

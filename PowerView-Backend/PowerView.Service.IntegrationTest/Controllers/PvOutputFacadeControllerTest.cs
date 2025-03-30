@@ -209,7 +209,7 @@ public class PvOutputFacadeControllerTest
         // Assert
         var ms = new MemoryStream();
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-        httpMessageHandler.Verify(x => x(It.Is<HttpRequestMessage>(p => p.Content.Headers.ContentType.Equals(content.Headers.ContentType)), 
+        httpMessageHandler.Verify(x => x(It.Is<HttpRequestMessage>(p => p.Content.Headers.ContentType.Equals(content.Headers.ContentType)),
             It.IsAny<CancellationToken>()));
         Assert.That(response.Content.Headers.ContentType.MediaType, Is.EqualTo(responseContentType));
         Assert.That(await response.Content.ReadAsByteArrayAsync(), Is.EqualTo(responseBody));
@@ -235,7 +235,7 @@ public class PvOutputFacadeControllerTest
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         httpMessageHandler.Verify(x => x(
-            It.Is<HttpRequestMessage>(p => 
+            It.Is<HttpRequestMessage>(p =>
                 new StringValues(p.Headers.GetValues("x-pvoutput-apikey").ToArray()) == "whatnot" &&
                 new StringValues(p.Headers.GetValues("X-PVOUTPUT-SYSTEMID").ToArray()) == "whatelsenot"),
             It.IsAny<CancellationToken>()));
@@ -328,7 +328,7 @@ public class PvOutputFacadeControllerTest
     {
         var response = new HttpResponseMessage(statusCode);
 
-        if (! string.IsNullOrEmpty(contentType) && responseBodyContent != null)
+        if (!string.IsNullOrEmpty(contentType) && responseBodyContent != null)
         {
             var content = new ByteArrayContent(responseBodyContent);
             content.Headers.ContentType = MediaTypeHeaderValue.Parse(contentType);

@@ -2,9 +2,9 @@
 
 namespace PowerView.Model.Repository
 {
-  internal interface IEntityDeserializer
-  {
-    TType GetValue<TType>(params string[] path);
-  }
+    internal interface IEntityDeserializer
+    {
+        TType GetValue<TType>(params string[] path);
+    }
 }
 

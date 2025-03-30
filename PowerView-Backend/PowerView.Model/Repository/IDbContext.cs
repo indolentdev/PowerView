@@ -2,8 +2,8 @@ using System;
 
 namespace PowerView.Model.Repository
 {
-  public interface IDbContext : IDisposable
-  {
-  }
+    public interface IDbContext : IDisposable
+    {
+    }
 }
 

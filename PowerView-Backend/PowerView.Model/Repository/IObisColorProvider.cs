@@ -2,9 +2,9 @@
 
 namespace PowerView.Model.Repository
 {
-  public interface IObisColorProvider
-  {
-    string GetColor(ObisCode obisCode);
-  }
+    public interface IObisColorProvider
+    {
+        string GetColor(ObisCode obisCode);
+    }
 }
 

@@ -22,30 +22,30 @@ internal class TestProgram
         var startup = new TestStartup(builder.Configuration);
         startup.ConfigureServices(builder.Services);
         var app = builder.Build();
-/*
-        app.MapGet("/debug/routes", (IEnumerable<EndpointDataSource> endpointSources) =>
-        {
-            var sb = new StringBuilder();
-            var endpoints = endpointSources.SelectMany(es => es.Endpoints);
-            foreach (var endpoint in endpoints)
-            {
-                if (endpoint is RouteEndpoint routeEndpoint)
+        /*
+                app.MapGet("/debug/routes", (IEnumerable<EndpointDataSource> endpointSources) =>
                 {
-                    _ = routeEndpoint.RoutePattern.RawText;
-                    _ = routeEndpoint.RoutePattern.PathSegments;
-                    _ = routeEndpoint.RoutePattern.Parameters;
-                    _ = routeEndpoint.RoutePattern.InboundPrecedence;
-                    _ = routeEndpoint.RoutePattern.OutboundPrecedence;
-                }
+                    var sb = new StringBuilder();
+                    var endpoints = endpointSources.SelectMany(es => es.Endpoints);
+                    foreach (var endpoint in endpoints)
+                    {
+                        if (endpoint is RouteEndpoint routeEndpoint)
+                        {
+                            _ = routeEndpoint.RoutePattern.RawText;
+                            _ = routeEndpoint.RoutePattern.PathSegments;
+                            _ = routeEndpoint.RoutePattern.Parameters;
+                            _ = routeEndpoint.RoutePattern.InboundPrecedence;
+                            _ = routeEndpoint.RoutePattern.OutboundPrecedence;
+                        }
 
-                var routeNameMetadata = endpoint.Metadata.OfType<Microsoft.AspNetCore.Routing.RouteNameMetadata>().FirstOrDefault();
-                _ = routeNameMetadata?.RouteName;
+                        var routeNameMetadata = endpoint.Metadata.OfType<Microsoft.AspNetCore.Routing.RouteNameMetadata>().FirstOrDefault();
+                        _ = routeNameMetadata?.RouteName;
 
-                var httpMethodsMetadata = endpoint.Metadata.OfType<HttpMethodMetadata>().FirstOrDefault();
-                _ = httpMethodsMetadata?.HttpMethods; // [GET, POST, ...]
-            }
-        });
-*/
+                        var httpMethodsMetadata = endpoint.Metadata.OfType<HttpMethodMetadata>().FirstOrDefault();
+                        _ = httpMethodsMetadata?.HttpMethods; // [GET, POST, ...]
+                    }
+                });
+        */
         startup.Configure(app, app.Environment);
         app.Run();
     }

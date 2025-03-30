@@ -4,22 +4,22 @@ using System.Runtime.Serialization;
 
 namespace PowerView.Service.Mailer
 {
-  [Serializable]
-  public class MailerException : Exception
-  {
-    public MailerException()
+    [Serializable]
+    public class MailerException : Exception
     {
-    }
+        public MailerException()
+        {
+        }
 
-    public MailerException(string message)
-      : base(message)
-    {
-    }
+        public MailerException(string message)
+          : base(message)
+        {
+        }
 
-    public MailerException(string message, Exception inner)
-      : base(message, inner)
-    {
+        public MailerException(string message, Exception inner)
+          : base(message, inner)
+        {
+        }
     }
-  }
 }
 

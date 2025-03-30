@@ -30,6 +30,6 @@ public class ElSpotPriceRecordDto
             AmountDkk = SpotPriceDkk.Value / 1000,
             AmountEur = SpotPriceEur.Value / 1000
 
-    };
+        };
     }
 }

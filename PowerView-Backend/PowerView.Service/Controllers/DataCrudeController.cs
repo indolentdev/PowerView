@@ -30,12 +30,13 @@ public class CrudeDataController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public ActionResult Get(
         [BindRequired, FromQuery, MinLength(1)] string label,
-        [BindRequired, FromQuery, UtcDateTime] DateTime from 
+        [BindRequired, FromQuery, UtcDateTime] DateTime from
         )
     {
         var crudeData = crudeDataRepository.GetCrudeData(label, from);
 
-        var r = new {
+        var r = new
+        {
             Label = label,
             TotalCount = crudeData.TotalCount,
             Values = crudeData.Result.Select(MapCrudeValue).ToList()
@@ -80,12 +81,12 @@ public class CrudeDataController : ControllerBase
 
     internal static IEnumerable<RegisterValueTag> GetFlags(RegisterValueTag input)
     {
-        foreach (var value in Enum.GetValues<RegisterValueTag>()) 
+        foreach (var value in Enum.GetValues<RegisterValueTag>())
         {
             if (value == RegisterValueTag.None) continue;
-            
+
             if (input.HasFlag(value)) yield return value;
-        }            
+        }
     }
 
     [HttpDelete("values/{label}/{timestamp}/{obisCode}")]

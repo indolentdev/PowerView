@@ -1,8 +1,8 @@
 ﻿
 namespace PowerView.Model.Repository
 {
-  public interface IDbCheck
-  {
-    void CheckDatabase();
-  }
+    public interface IDbCheck
+    {
+        void CheckDatabase();
+    }
 }

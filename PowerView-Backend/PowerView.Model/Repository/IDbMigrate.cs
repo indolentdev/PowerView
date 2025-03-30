@@ -1,9 +1,9 @@
 ﻿
 namespace PowerView.Model.Repository
 {
-  public interface IDbMigrate
-  {
-    void Migrate();
-  }
+    public interface IDbMigrate
+    {
+        void Migrate();
+    }
 }
 

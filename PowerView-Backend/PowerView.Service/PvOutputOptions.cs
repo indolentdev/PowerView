@@ -12,7 +12,7 @@ namespace PowerView.Service
         public string PvDeviceLabel { get; set; }
 
         [MinLength(1)]
-        public string PvDeviceId { get; set;}
+        public string PvDeviceId { get; set; }
 
         [MinLength(1)]
         public string PvDeviceIdParam { get; set; } = "v12";

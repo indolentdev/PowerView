@@ -64,7 +64,7 @@ public class SettingsProfileGraphsController : ControllerBase
         var r = new
         {
             Items = profileGraphs
-                .Select(p => new 
+                .Select(p => new
                 {
                     Title = p.Title,
                     Page = p.Page,
@@ -138,9 +138,9 @@ public class SettingsProfileGraphsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public ActionResult SwapProfileGraphRank(
-        [BindRequired, FromQuery, StringLength(20, MinimumLength = 1)] string period, 
-        [BindRequired, FromQuery, StringLength(32, MinimumLength = 0)] string page, 
-        [BindRequired, FromQuery, StringLength(32, MinimumLength = 1)] string title1, 
+        [BindRequired, FromQuery, StringLength(20, MinimumLength = 1)] string period,
+        [BindRequired, FromQuery, StringLength(32, MinimumLength = 0)] string page,
+        [BindRequired, FromQuery, StringLength(32, MinimumLength = 1)] string title1,
         [BindRequired, FromQuery, StringLength(32, MinimumLength = 1)] string title2)
     {
         try

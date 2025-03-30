@@ -45,8 +45,8 @@ public class ExportController : ControllerBase
     [HttpGet("diffs/hourly")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public ActionResult GetHourlyDiffsExport(
-        [BindRequired, FromQuery, UtcDateTime] DateTime from, 
-        [BindRequired, FromQuery, UtcDateTime] DateTime to, 
+        [BindRequired, FromQuery, UtcDateTime] DateTime from,
+        [BindRequired, FromQuery, UtcDateTime] DateTime to,
         [BindRequired, FromQuery, MinLength(1)] string[] label)
     {
         if (from >= to) return BadRequest("to must be greater than from");
@@ -70,8 +70,11 @@ public class ExportController : ControllerBase
         var seriesGroups = falttened.GroupBy(x => new SeriesName(x.Label, x.ObisCode), x => x.NormalizedValue);
         var exportSeries = GetExportDiffSeries(periods, seriesGroups);
 
-        var r = new { Periods = periods.Select(p => new { From = DateTimeMapper.Map(p.From), To = DateTimeMapper.Map(p.To) }).ToList(), 
-          Series = exportSeries };
+        var r = new
+        {
+            Periods = periods.Select(p => new { From = DateTimeMapper.Map(p.From), To = DateTimeMapper.Map(p.To) }).ToList(),
+            Series = exportSeries
+        };
         return Ok(r);
     }
 

@@ -270,7 +270,7 @@ public class DataCrudeControllerTest
 
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-        crudeDataRepository.Verify(cdr => cdr.GetCrudeDataBy(It.Is<string>(p => p == "lbl"), 
+        crudeDataRepository.Verify(cdr => cdr.GetCrudeDataBy(It.Is<string>(p => p == "lbl"),
           It.Is<DateTime>(p => p == today && p.Kind == today.Kind), It.Is<ObisCode>(p => p == (ObisCode)"1.2.3.4.5.6")));
     }
 
@@ -431,8 +431,8 @@ public class DataCrudeControllerTest
 
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
-        crudeDataRepository.Verify(cdr => cdr.DeleteCrudeData(It.Is<string>(p => p == "lbl"), 
-          It.Is<DateTime>(p => p == today && p.Kind == today.Kind), It.Is<ObisCode>(p => p == (ObisCode)"1.2.3.4.5.6") ));
+        crudeDataRepository.Verify(cdr => cdr.DeleteCrudeData(It.Is<string>(p => p == "lbl"),
+          It.Is<DateTime>(p => p == today && p.Kind == today.Kind), It.Is<ObisCode>(p => p == (ObisCode)"1.2.3.4.5.6")));
         readingHistoryRepository.Verify(rhr => rhr.ClearDayMonthYearHistory());
     }
 

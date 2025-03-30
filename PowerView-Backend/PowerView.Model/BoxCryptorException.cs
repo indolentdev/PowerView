@@ -2,20 +2,20 @@
 
 namespace PowerView.Model
 {
-  public class BoxCryptorException : DataException
-  {
-    public BoxCryptorException()
+    public class BoxCryptorException : DataException
     {
-    }
-      
-    public BoxCryptorException(string message)
-      : base(message)
-    {
-    }
+        public BoxCryptorException()
+        {
+        }
 
-    public BoxCryptorException(string message, Exception inner)
-      : base(message, inner)
-    {
+        public BoxCryptorException(string message)
+          : base(message)
+        {
+        }
+
+        public BoxCryptorException(string message, Exception inner)
+          : base(message, inner)
+        {
+        }
     }
-  }
 }

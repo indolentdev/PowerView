@@ -43,7 +43,7 @@ public class SettingsGeneratorsSeriesController : ControllerBase
                 })
                 .ToList()
         };
-        
+
         return Ok(r);
     }
 

@@ -30,11 +30,12 @@ public class DataController : ControllerBase
     {
         var readingHistoryStatus = readingHistoryRepository.GetReadingHistoryStatus();
 
-        var r = new {
-            Items = readingHistoryStatus.Select(x => new 
+        var r = new
+        {
+            Items = readingHistoryStatus.Select(x => new
             {
                 Interval = x.Interval,
-                LabelTimestamps = x.Status.Select(y => new 
+                LabelTimestamps = x.Status.Select(y => new
                 {
                     Label = y.Label,
                     LatestTimestamp = y.LatestTimestamp.ToString("o")

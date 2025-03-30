@@ -87,7 +87,7 @@ public class UnixTimeTest
         // Assert
         Assert.That(compare, Is.EqualTo(result));
     }
-    
+
 
     [Test]
     public void ImplicitOperatorsDateTime()

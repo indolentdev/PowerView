@@ -303,7 +303,7 @@ public class EnergiDataServiceImporterTest
         Assert.That(value, Is.EqualTo(expectedValue));
         Assert.That(scale, Is.EqualTo(expectedScale));
     }
- 
+
     private Import[] SetupImportRepositoryGetImports(params Import[] imports)
     {
         importRepository.Setup(x => x.GetImports()).Returns(imports);

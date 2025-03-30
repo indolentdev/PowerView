@@ -6,7 +6,7 @@ namespace PowerView.Model
     public class DatabaseRegionOptions : IOptions<DatabaseRegionOptions>
     {
         [MinLength(1)]
-        public string TimeZone { get; set;}
+        public string TimeZone { get; set; }
 
         [MinLength(1)]
         public string CultureInfo { get; set; }

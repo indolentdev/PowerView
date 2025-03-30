@@ -69,7 +69,7 @@ public class EnergiDataServiceClient : IEnergiDataServiceClient
             {
                 throw new EnergiDataServiceClientException($"Energi Data Service response deserialization failed. {request}", e);
             }
-       }
+        }
     }
 
     private void Validate(ElSpotPricesDto dto)

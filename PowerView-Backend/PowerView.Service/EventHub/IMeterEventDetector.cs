@@ -2,9 +2,9 @@
 
 namespace PowerView.Service.EventHub
 {
-  public interface IMeterEventDetector
-  {
-    void DetectMeterEvents(DateTime timestamp);
-  }
+    public interface IMeterEventDetector
+    {
+        void DetectMeterEvents(DateTime timestamp);
+    }
 }
 

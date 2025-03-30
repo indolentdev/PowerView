@@ -2,14 +2,14 @@
 
 namespace PowerView.Service.Dtos
 {
-  public class DisconnectRuleSetDto
-  {
-    public DisconnectRuleSetDto()
+    public class DisconnectRuleSetDto
     {
-      Items = new DisconnectRuleDto[0];
-    }
+        public DisconnectRuleSetDto()
+        {
+            Items = new DisconnectRuleDto[0];
+        }
 
-    [Required]
-    public DisconnectRuleDto[] Items { get; set; }
-  }
+        [Required]
+        public DisconnectRuleDto[] Items { get; set; }
+    }
 }

@@ -4,81 +4,81 @@ using System.Linq;
 
 namespace PowerView.Model.Repository
 {
-  internal class EmailRecipientRepository : RepositoryBase, IEmailRecipientRepository
-  {
-    public EmailRecipientRepository(IDbContext dbContext)
-      : base(dbContext)
+    internal class EmailRecipientRepository : RepositoryBase, IEmailRecipientRepository
     {
-    }
+        public EmailRecipientRepository(IDbContext dbContext)
+          : base(dbContext)
+        {
+        }
 
-    public EmailRecipient GetEmailRecipient(string emailAddress)
-    {
-      return DbContext.QueryTransaction<Db.EmailRecipient>(
-          "SELECT Id, Name, EmailAddress FROM EmailRecipient WHERE EmailAddress = @emailAddress;", new { emailAddress })
-        .Select(ToEmailRecipient)
-        .FirstOrDefault();
-    }
+        public EmailRecipient GetEmailRecipient(string emailAddress)
+        {
+            return DbContext.QueryTransaction<Db.EmailRecipient>(
+                "SELECT Id, Name, EmailAddress FROM EmailRecipient WHERE EmailAddress = @emailAddress;", new { emailAddress })
+              .Select(ToEmailRecipient)
+              .FirstOrDefault();
+        }
 
-    public IList<EmailRecipient> GetEmailRecipients()
-    {
-      return DbContext
-        .QueryTransaction<Db.EmailRecipient>("SELECT Id, Name, EmailAddress FROM EmailRecipient ORDER BY Id LIMIT 50;")
-        .Select(ToEmailRecipient)
-        .ToList();
-    }
+        public IList<EmailRecipient> GetEmailRecipients()
+        {
+            return DbContext
+              .QueryTransaction<Db.EmailRecipient>("SELECT Id, Name, EmailAddress FROM EmailRecipient ORDER BY Id LIMIT 50;")
+              .Select(ToEmailRecipient)
+              .ToList();
+        }
 
-    private EmailRecipient ToEmailRecipient(Db.EmailRecipient dbEmailRecipient)
-    {
-      return ToEmailRecipient(dbEmailRecipient.Name, dbEmailRecipient.EmailAddress);
-    }
+        private EmailRecipient ToEmailRecipient(Db.EmailRecipient dbEmailRecipient)
+        {
+            return ToEmailRecipient(dbEmailRecipient.Name, dbEmailRecipient.EmailAddress);
+        }
 
-    private static EmailRecipient ToEmailRecipient(string name, string emailAddress)
-    {
-      return new EmailRecipient(name, emailAddress);
-    }
+        private static EmailRecipient ToEmailRecipient(string name, string emailAddress)
+        {
+            return new EmailRecipient(name, emailAddress);
+        }
 
-    public void AddEmailRecipient(EmailRecipient emailRecipient)
-    {
-      ArgumentNullException.ThrowIfNull(emailRecipient);
+        public void AddEmailRecipient(EmailRecipient emailRecipient)
+        {
+            ArgumentNullException.ThrowIfNull(emailRecipient);
 
-      const string sql = @"
+            const string sql = @"
       INSERT INTO [EmailRecipient] ([Name],[EmailAddress]) VALUES (@name, @emailAddress);
 
       INSERT INTO [EmailRecipientMeterEventPosition] ([EmailRecipientId],[MeterEventId]) 
       SELECT last_insert_rowid() AS [EmailRecipientId], [Id] AS [MeterEventId] FROM [MeterEvent] ORDER By [Id] DESC LIMIT 1;";
 
-      DbContext.ExecuteTransaction(sql, new { name = emailRecipient.Name, emailAddress = emailRecipient.EmailAddress });
-    }
+            DbContext.ExecuteTransaction(sql, new { name = emailRecipient.Name, emailAddress = emailRecipient.EmailAddress });
+        }
 
-    public void DeleteEmailRecipient(string emailAddress)
-    {
-      const string sql = @"
+        public void DeleteEmailRecipient(string emailAddress)
+        {
+            const string sql = @"
       DELETE FROM [EmailRecipientMeterEventPosition] WHERE [EmailRecipientId] IN (SELECT [Id] FROM [EmailRecipient] WHERE [EmailAddress]=@emailAddress);
       DELETE FROM [EmailRecipient] WHERE [EmailAddress]=@emailAddress;";
-      DbContext.ExecuteTransaction(sql, new { emailAddress });
-    }
+            DbContext.ExecuteTransaction(sql, new { emailAddress });
+        }
 
-    public IDictionary<EmailRecipient, long?> GetEmailRecipientsMeterEventPosition()
-    {
-      const string sql = @"
+        public IDictionary<EmailRecipient, long?> GetEmailRecipientsMeterEventPosition()
+        {
+            const string sql = @"
       SELECT [Name],[EmailAddress],[MeterEventId]
       FROM [EmailRecipient] 
       LEFT JOIN [EmailRecipientMeterEventPosition] ON [EmailRecipientId]=[EmailRecipient].[Id];";
 
-      var rows = DbContext.QueryTransaction<dynamic>(sql);
-      var result = new Dictionary<EmailRecipient, long?>(rows.Count);
-      foreach (dynamic row in rows)
-      {
-        var emailRecipient = ToEmailRecipient(row.Name, row.EmailAddress);
-        long? meterEventId = row.MeterEventId;
-        result.Add(emailRecipient, meterEventId);
-      }
-      return result;
-    }
+            var rows = DbContext.QueryTransaction<dynamic>(sql);
+            var result = new Dictionary<EmailRecipient, long?>(rows.Count);
+            foreach (dynamic row in rows)
+            {
+                var emailRecipient = ToEmailRecipient(row.Name, row.EmailAddress);
+                long? meterEventId = row.MeterEventId;
+                result.Add(emailRecipient, meterEventId);
+            }
+            return result;
+        }
 
-    public void SetEmailRecipientMeterEventPosition(string emailAddress, long meterEventId)
-    {
-      const string sql = @"
+        public void SetEmailRecipientMeterEventPosition(string emailAddress, long meterEventId)
+        {
+            const string sql = @"
       UPDATE [EmailRecipientMeterEventPosition] 
       SET [MeterEventId]=@meterEventId 
       WHERE [EmailRecipientId] IN (SELECT [Id] FROM [EmailRecipient] WHERE [EmailAddress]=@emailAddress);
@@ -86,8 +86,8 @@ namespace PowerView.Model.Repository
       INSERT INTO [EmailRecipientMeterEventPosition] ([EmailRecipientId],[MeterEventId]) 
       SELECT [Id] AS [EmailRecipientId], @meterEventId AS [MeterEventId] FROM [EmailRecipient] WHERE [EmailAddress]=@emailAddress AND changes() = 0;";
 
-      DbContext.ExecuteTransaction(sql, new { emailAddress, meterEventId });
-    }
+            DbContext.ExecuteTransaction(sql, new { emailAddress, meterEventId });
+        }
 
-  }
+    }
 }

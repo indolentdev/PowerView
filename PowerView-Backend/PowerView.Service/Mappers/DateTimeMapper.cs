@@ -4,21 +4,21 @@ using PowerView.Model;
 
 namespace PowerView.Service.Mappers
 {
-  internal static class DateTimeMapper
-  {
-    public static string Map(DateTime timestamp)
+    internal static class DateTimeMapper
     {
-      ArgCheck.ThrowIfNotUtc(timestamp);
+        public static string Map(DateTime timestamp)
+        {
+            ArgCheck.ThrowIfNotUtc(timestamp);
 
-      return timestamp.ToString("yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture);
+            return timestamp.ToString("yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture);
+        }
+
+        public static string Map(DateTime? timestamp)
+        {
+            if (timestamp == null) return null;
+
+            return Map(timestamp.Value);
+        }
     }
-
-    public static string Map(DateTime? timestamp)
-    {
-      if (timestamp == null) return null;
-
-      return Map(timestamp.Value);
-    }
-  }
 }
 

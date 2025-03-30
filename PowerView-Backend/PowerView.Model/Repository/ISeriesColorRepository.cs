@@ -2,13 +2,13 @@
 
 namespace PowerView.Model.Repository
 {
-  public interface ISeriesColorRepository
-  {
-    string GetColorCached(string label, ObisCode obisCode);
+    public interface ISeriesColorRepository
+    {
+        string GetColorCached(string label, ObisCode obisCode);
 
-    ICollection<SeriesColor> GetSeriesColors();
+        ICollection<SeriesColor> GetSeriesColors();
 
-    void SetSeriesColors(IEnumerable<SeriesColor> seriesColors);
-  }
+        void SetSeriesColors(IEnumerable<SeriesColor> seriesColors);
+    }
 }
 

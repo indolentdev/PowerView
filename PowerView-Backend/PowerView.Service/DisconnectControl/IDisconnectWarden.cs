@@ -4,8 +4,8 @@ using PowerView.Model;
 
 namespace PowerView.Service.DisconnectControl
 {
-  internal interface IDisconnectWarden : IDisposable
-  {
-    void Process(IList<Reading> liveReadings);
-  }
+    internal interface IDisconnectWarden : IDisposable
+    {
+        void Process(IList<Reading> liveReadings);
+    }
 }

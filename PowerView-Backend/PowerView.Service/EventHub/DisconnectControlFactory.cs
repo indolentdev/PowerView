@@ -6,20 +6,20 @@ using PowerView.Service.DisconnectControl;
 
 namespace PowerView.Service.EventHub
 {
-  internal class DisconnectControlFactory : IDisconnectControlFactory
-  {
-
-    public void Process(IServiceScope serviceScope, IList<Reading> liveReadings)
+    internal class DisconnectControlFactory : IDisconnectControlFactory
     {
-      if (serviceScope == null) throw new ArgumentNullException(nameof(serviceScope));
-      if (liveReadings == null) throw new ArgumentNullException("liveReadings");
-      if (liveReadings.Count == 0)
-      {
-        return;
-      }
 
-      var disconnectWarden = serviceScope.ServiceProvider.GetRequiredService<IDisconnectWarden>();
-      disconnectWarden.Process(liveReadings);
+        public void Process(IServiceScope serviceScope, IList<Reading> liveReadings)
+        {
+            if (serviceScope == null) throw new ArgumentNullException(nameof(serviceScope));
+            if (liveReadings == null) throw new ArgumentNullException("liveReadings");
+            if (liveReadings.Count == 0)
+            {
+                return;
+            }
+
+            var disconnectWarden = serviceScope.ServiceProvider.GetRequiredService<IDisconnectWarden>();
+            disconnectWarden.Process(liveReadings);
+        }
     }
-  }
 }

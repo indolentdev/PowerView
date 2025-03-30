@@ -2,18 +2,18 @@
 
 namespace PowerView.Model.Repository
 {
-  public interface IEmailRecipientRepository
-  {
-    EmailRecipient GetEmailRecipient(string emailAddress);
+    public interface IEmailRecipientRepository
+    {
+        EmailRecipient GetEmailRecipient(string emailAddress);
 
-    IList<EmailRecipient> GetEmailRecipients();
+        IList<EmailRecipient> GetEmailRecipients();
 
-    void AddEmailRecipient(EmailRecipient emailRecipient);
+        void AddEmailRecipient(EmailRecipient emailRecipient);
 
-    void DeleteEmailRecipient(string emailAddress);
+        void DeleteEmailRecipient(string emailAddress);
 
-    IDictionary<EmailRecipient, long?> GetEmailRecipientsMeterEventPosition();
+        IDictionary<EmailRecipient, long?> GetEmailRecipientsMeterEventPosition();
 
-    void SetEmailRecipientMeterEventPosition(string emailAddress, long meterEventId);
-  }
+        void SetEmailRecipientMeterEventPosition(string emailAddress, long meterEventId);
+    }
 }

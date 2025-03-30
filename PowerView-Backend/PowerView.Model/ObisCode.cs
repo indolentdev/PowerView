@@ -204,7 +204,7 @@ namespace PowerView.Model
 
             var groups = s.Split('.');
             if (groups.Length != 6) return false;
-            
+
             var bytes = groups
                 .Select(g =>
                     {

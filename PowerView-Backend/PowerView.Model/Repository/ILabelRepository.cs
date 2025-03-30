@@ -1,9 +1,9 @@
 ﻿
 namespace PowerView.Model.Repository
 {
-  public interface ILabelRepository
-  {
-    IList<string> GetLabelsByTimestamp();
-  }
+    public interface ILabelRepository
+    {
+        IList<string> GetLabelsByTimestamp();
+    }
 }
 

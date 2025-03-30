@@ -278,7 +278,7 @@ namespace PowerView.Model.Test.Repository
             var obisCodes = target.GetObisCodes(labels.First(), dt);
 
             // Assert
-            Assert.That(obisCodes, Is.EqualTo(new [] { (ObisCode)"111.111.111.111.111.111", (ObisCode)"114.114.114.114.114.114", (ObisCode)"112.112.112.112.112.112" }));
+            Assert.That(obisCodes, Is.EqualTo(new[] { (ObisCode)"111.111.111.111.111.111", (ObisCode)"114.114.114.114.114.114", (ObisCode)"112.112.112.112.112.112" }));
         }
 
         private LiveReadingRepository CreateTarget()
@@ -293,7 +293,7 @@ namespace PowerView.Model.Test.Repository
             Assert.That(rd.Count, Is.EqualTo(1));
 
             var reg = DbContext.QueryTransaction<dynamic>("SELECT o.ObisCode,reg.Scale,reg.Unit,Reg.Value FROM LiveRegister reg JOIN Obis o ON reg.ObisId=o.Id WHERE ReadingId = @ReadingId;", new { ReadingId = rd.First() });
-            var registerValues = reading.GetRegisterValues();            
+            var registerValues = reading.GetRegisterValues();
             Assert.That(reg.Count, Is.EqualTo(registerValues.Count));
             var expectedRegisters = registerValues.Select(x => new { ObisCode = (long)x.ObisCode, x.Scale, Unit = (byte)x.Unit, x.Value }).ToArray();
             var actualRegisters = reg.Select(x => new { ObisCode = (long)x.ObisCode, Scale = (short)x.Scale, Unit = (byte)x.Unit, Value = (int)x.Value }).ToArray();

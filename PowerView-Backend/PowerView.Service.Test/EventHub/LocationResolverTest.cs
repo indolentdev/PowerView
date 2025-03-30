@@ -187,8 +187,8 @@ namespace PowerView.Service.Test.EventHub
         {
             var httpMessageHandler = SetupHttpClientFactory();
             httpMessageHandler.Setup(x => x(It.IsAny<HttpRequestMessage>(), It.IsAny<CancellationToken>()))
-                .Returns(new HttpResponseMessage(System.Net.HttpStatusCode.OK) 
-                  { Content = new StringContent(responseContent, Encoding.UTF8, "application/json") } );
+                .Returns(new HttpResponseMessage(System.Net.HttpStatusCode.OK)
+                { Content = new StringContent(responseContent, Encoding.UTF8, "application/json") });
         }
 
         private Mock<Func<HttpRequestMessage, CancellationToken, HttpResponseMessage>> SetupHttpClientFactory()

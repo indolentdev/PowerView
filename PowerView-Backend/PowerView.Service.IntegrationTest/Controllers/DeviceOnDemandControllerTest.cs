@@ -80,7 +80,7 @@ public class DeviceOnDemandControllerTest
         Assert.That(json.items[1].label, Is.EqualTo("lbl"));
         Assert.That(json.items[1].obisCode, Is.EqualTo("0.2.96.3.10.255"));
         Assert.That(json.items[1].kind, Is.EqualTo("Method"));
-        Assert.That(json.items[1].index, Is.EqualTo(1));    
+        Assert.That(json.items[1].index, Is.EqualTo(1));
     }
 
     internal class TestOnDemandSetDto

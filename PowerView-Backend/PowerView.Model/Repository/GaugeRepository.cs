@@ -119,7 +119,7 @@ ORDER BY rea.Timestamp DESC;";
         private (ObisCode ObisCode, RowLocal Row) GetObisCode(RowLocal row)
         {
             var obisCode = (ObisCode)row.ObisCode;
-            return  (obisCode, row);
+            return (obisCode, row);
         }
 
         private GaugeValue ToGaugeValue((ObisCode ObisCode, RowLocal Row) r)

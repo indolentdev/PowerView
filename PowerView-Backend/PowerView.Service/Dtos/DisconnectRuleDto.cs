@@ -23,7 +23,7 @@ namespace PowerView.Service.Dtos
         public string EvaluationObisCode { get; set; }
 
         [Required]
-        [Range(15, 6*60)]
+        [Range(15, 6 * 60)]
         public int? DurationMinutes { get; set; }
 
         [Required]

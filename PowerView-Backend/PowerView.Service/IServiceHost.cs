@@ -2,9 +2,9 @@
 
 namespace PowerView.Service
 {
-  public interface IServiceHost : IDisposable
-  {
-    void Start();
-  }
+    public interface IServiceHost : IDisposable
+    {
+        void Start();
+    }
 }
 

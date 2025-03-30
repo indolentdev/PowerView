@@ -67,7 +67,7 @@ public class LabelsControllerTest
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         var json = await response.Content.ReadFromJsonAsync<string[]>();
-        Assert.That(json, Is.EqualTo(new [] { "lbl1", "lbl2" }));
+        Assert.That(json, Is.EqualTo(new[] { "lbl1", "lbl2" }));
     }
 
     private void SetupLabelRepositoryGetLabelsByTimestamp(params string[] labels)

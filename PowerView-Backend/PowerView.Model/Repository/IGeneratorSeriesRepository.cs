@@ -4,14 +4,14 @@ using System.Data;
 
 namespace PowerView.Model.Repository
 {
-  public interface IGeneratorSeriesRepository
-  {
-    ICollection<GeneratorSeries> GetGeneratorSeries();
+    public interface IGeneratorSeriesRepository
+    {
+        ICollection<GeneratorSeries> GetGeneratorSeries();
 
-    void AddGeneratorSeries(GeneratorSeries generatorSeries);
+        void AddGeneratorSeries(GeneratorSeries generatorSeries);
 
-    void DeleteGeneratorSeries(ISeriesName series);
+        void DeleteGeneratorSeries(ISeriesName series);
 
-    ICollection<(SeriesName BaseSeries, DateTime LatestTimestamp)> GetBaseSeries();
-  }
+        ICollection<(SeriesName BaseSeries, DateTime LatestTimestamp)> GetBaseSeries();
+    }
 }

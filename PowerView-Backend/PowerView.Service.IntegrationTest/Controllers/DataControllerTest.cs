@@ -74,7 +74,7 @@ public class DataControllerTest
         var dayLabel1Ts = (Label: label1, LatestTimestamp: baseTime);
         var dayLabel2Ts = (Label: label2, LatestTimestamp: baseTime.AddHours(1));
         var monthLabel1Ts = (Label: label1, LatestTimestamp: baseTime.AddDays(-4));
-        SetupReadingHistoryRepositoryGetHistoryStatus(("Day", new [] { dayLabel1Ts, dayLabel2Ts }), ("Month", new [] { monthLabel1Ts }));
+        SetupReadingHistoryRepositoryGetHistoryStatus(("Day", new[] { dayLabel1Ts, dayLabel2Ts }), ("Month", new[] { monthLabel1Ts }));
 
         // Act
         var response = await httpClient.GetAsync("api/data/history/status");
@@ -86,12 +86,12 @@ public class DataControllerTest
 
         var item = json.items.FirstOrDefault(x => x.interval == "Day");
         Assert.That(item, Is.Not.Null);
-        Assert.That(item.labelTimestamps.Select(x => (Label:x.label, LatestTimestamp:DateTime.Parse(x.latestTimestamp, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind))).ToList(), 
-          Is.EquivalentTo(new [] { dayLabel1Ts, dayLabel2Ts }));
+        Assert.That(item.labelTimestamps.Select(x => (Label: x.label, LatestTimestamp: DateTime.Parse(x.latestTimestamp, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind))).ToList(),
+          Is.EquivalentTo(new[] { dayLabel1Ts, dayLabel2Ts }));
 
         item = json.items.FirstOrDefault(x => x.interval == "Month");
         Assert.That(item, Is.Not.Null);
-        Assert.That(item.labelTimestamps.Select(x => (Label: x.label, LatestTimestamp: DateTime.Parse(x.latestTimestamp, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind))).ToList(), 
+        Assert.That(item.labelTimestamps.Select(x => (Label: x.label, LatestTimestamp: DateTime.Parse(x.latestTimestamp, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind))).ToList(),
           Is.EquivalentTo(new[] { monthLabel1Ts }));
     }
 

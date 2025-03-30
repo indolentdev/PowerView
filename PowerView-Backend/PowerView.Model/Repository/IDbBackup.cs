@@ -1,9 +1,9 @@
 
 namespace PowerView.Model.Repository
 {
-  public interface IDbBackup
-  {
-    void BackupDatabaseAsNeeded(bool force);
-  }
+    public interface IDbBackup
+    {
+        void BackupDatabaseAsNeeded(bool force);
+    }
 }
 

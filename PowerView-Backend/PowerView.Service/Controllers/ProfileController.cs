@@ -146,10 +146,10 @@ public class ProfileController : ControllerBase
             SerieColor = serieRepository.GetColorCached(x.SeriesName.Label, x.SeriesName.ObisCode),
             Values = x.Values.Select(deviationValue => ValueAndUnitConverter.Convert(deviationValue?.Value, x.Unit)).ToList(),
             DeviationValues = x.Values
-              .Select(deviationValue => 
+              .Select(deviationValue =>
               {
-                if (deviationValue == null) return null;
-                return new double?[] { ValueAndUnitConverter.Convert(deviationValue?.DurationBasedDeviationMinValue, x.Unit), ValueAndUnitConverter.Convert(deviationValue?.DurationBasedDeviationMaxValue, x.Unit) };
+                  if (deviationValue == null) return null;
+                  return new double?[] { ValueAndUnitConverter.Convert(deviationValue?.DurationBasedDeviationMinValue, x.Unit), ValueAndUnitConverter.Convert(deviationValue?.DurationBasedDeviationMaxValue, x.Unit) };
               })
               .ToList()
         });

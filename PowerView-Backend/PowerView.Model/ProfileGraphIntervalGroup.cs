@@ -4,17 +4,17 @@ using System.Collections.ObjectModel;
 
 namespace PowerView.Model
 {
-  public class ProfileGraphIntervalGroup : IntervalGroup
-  {
-    public ProfileGraphIntervalGroup(ILocationContext locationContext, DateTime start, string interval, IList<ProfileGraph> profileGraphs, TimeRegisterValueLabelSeriesSet labelSeriesSet, IReadOnlyList<CostBreakdownGeneratorSeries> costBreakdownGeneratorSeries)
-      : base(locationContext, start, interval, labelSeriesSet, costBreakdownGeneratorSeries)
+    public class ProfileGraphIntervalGroup : IntervalGroup
     {
-      ArgumentNullException.ThrowIfNull(profileGraphs);
+        public ProfileGraphIntervalGroup(ILocationContext locationContext, DateTime start, string interval, IList<ProfileGraph> profileGraphs, TimeRegisterValueLabelSeriesSet labelSeriesSet, IReadOnlyList<CostBreakdownGeneratorSeries> costBreakdownGeneratorSeries)
+          : base(locationContext, start, interval, labelSeriesSet, costBreakdownGeneratorSeries)
+        {
+            ArgumentNullException.ThrowIfNull(profileGraphs);
 
-      ProfileGraphs = new ReadOnlyCollection<ProfileGraph>(profileGraphs);
+            ProfileGraphs = new ReadOnlyCollection<ProfileGraph>(profileGraphs);
+        }
+
+        public ICollection<ProfileGraph> ProfileGraphs { get; private set; }
+
     }
-
-    public ICollection<ProfileGraph> ProfileGraphs { get; private set; }
-
-  }
 }

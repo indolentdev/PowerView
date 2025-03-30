@@ -195,7 +195,7 @@ public class PvOutputFacadeController : ControllerBase
         var liveReading = liveReadingMapper.MapPvOutputArgs(url, request.Headers.ContentType, request.Body,
           options.PvDeviceLabel, options.PvDeviceId, options.PvDeviceIdParam,
           options.ActualPowerP23L1Param, options.ActualPowerP23L2Param, options.ActualPowerP23L3Param);
-          
+
         if (liveReading == null)
         {
             return;

@@ -3,11 +3,11 @@ using PowerView.Model;
 
 namespace PowerView.Service.Mappers
 {
-  public interface ISerieMapper
-  {
-    string MapToSerieType(ObisCode obisCode);
+    public interface ISerieMapper
+    {
+        string MapToSerieType(ObisCode obisCode);
 
-    string MapToSerieYAxis(ObisCode obisCode);
-  }
+        string MapToSerieYAxis(ObisCode obisCode);
+    }
 }
 

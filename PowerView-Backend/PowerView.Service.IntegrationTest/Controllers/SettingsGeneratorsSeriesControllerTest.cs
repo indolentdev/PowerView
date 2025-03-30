@@ -204,7 +204,7 @@ public class SettingsGeneratorsSeriesControllerTest
         // Arrange
         var dateTime = DateTime.UtcNow;
         var baseSeries = (new SeriesName("b", "6.5.4.3.2.1"), dateTime);
-        generatorSeriesRepository.Setup(x => x.GetBaseSeries()).Returns(new [] { baseSeries });
+        generatorSeriesRepository.Setup(x => x.GetBaseSeries()).Returns(new[] { baseSeries });
 
         // Act
         var response = await httpClient.GetAsync($"api/settings/generators/bases/series");

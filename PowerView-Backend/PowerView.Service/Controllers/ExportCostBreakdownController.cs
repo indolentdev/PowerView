@@ -39,12 +39,12 @@ public class ExportCostBreakdownController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public ActionResult GetHourlyCostBreakdownExport(
-        [BindRequired, FromQuery, UtcDateTime] DateTime from, 
-        [BindRequired, FromQuery, UtcDateTime] DateTime to, 
+        [BindRequired, FromQuery, UtcDateTime] DateTime from,
+        [BindRequired, FromQuery, UtcDateTime] DateTime to,
         [BindRequired, FromQuery] string title)
     {
         if (from >= to) return BadRequest("to must be greater than from");
-        
+
         var costBreakdown = costBreakdownRepository.GetCostBreakdown(title);
         if (costBreakdown == null) return NoContent();
 
@@ -52,9 +52,14 @@ public class ExportCostBreakdownController : ControllerBase
         var costBreakdownEntries = costBreakdown.Entries.Where(e => e.IntersectsWith(from, to)).ToList();
         var exportCostBreakdown = GetExportCostBreakdown(periods, costBreakdownEntries);
 
-        var r = new { Title = costBreakdown.Title, Currency = costBreakdown.Currency.ToString().ToUpperInvariant(), Vat = costBreakdown.Vat,
-          Periods = periods.Select(p => new { From = DateTimeMapper.Map(p.From), To = DateTimeMapper.Map(p.To) }).ToList(), 
-          Entries = exportCostBreakdown };
+        var r = new
+        {
+            Title = costBreakdown.Title,
+            Currency = costBreakdown.Currency.ToString().ToUpperInvariant(),
+            Vat = costBreakdown.Vat,
+            Periods = periods.Select(p => new { From = DateTimeMapper.Map(p.From), To = DateTimeMapper.Map(p.To) }).ToList(),
+            Entries = exportCostBreakdown
+        };
         return Ok(r);
     }
 
@@ -85,7 +90,7 @@ public class ExportCostBreakdownController : ControllerBase
                 entry.Name,
                 Values = periods.Select((p, i) =>
                 {
-                    if (entry.AppliesToDates(p.From, p.To) && 
+                    if (entry.AppliesToDates(p.From, p.To) &&
                       entry.AppliesToTime(TimeOnly.FromDateTime(locationContext.ConvertTimeFromUtc(p.From))))
                     {
                         return new

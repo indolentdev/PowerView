@@ -89,9 +89,9 @@ namespace PowerView.Model.Repository
                     oneToMany = new OneToMany<TOne, TMany>(parent);
                     cache.Add(parent.Id, oneToMany);
                 }
-                
+
                 if (child != null) oneToMany.Children.Add(child);
-                
+
                 return oneToMany;
             };
 

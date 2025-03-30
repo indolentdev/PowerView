@@ -2,9 +2,9 @@
 
 namespace PowerView.Model.Repository
 {
-  internal class ObisColorProvider : IObisColorProvider
-  {
-    private readonly Dictionary<ObisCode, string> colorMap = new Dictionary<ObisCode, string> 
+    internal class ObisColorProvider : IObisColorProvider
+    {
+        private readonly Dictionary<ObisCode, string> colorMap = new Dictionary<ObisCode, string>
     {
       { ObisCode.ElectrActualPowerP14, "#FFCC00" },
       { ObisCode.ElectrActualPowerP14Average, "#FFCC00" },
@@ -18,7 +18,7 @@ namespace PowerView.Model.Repository
       { ObisCode.ElectrActiveEnergyA23NetDelta, "#FFFF00" },
       { ObisCode.ColdWaterFlow1, "#330066" },
       { ObisCode.ColdWaterFlow1Average, "#330066" },
-      { ObisCode.ColdWaterVolume1Delta, "#330066" }, 
+      { ObisCode.ColdWaterVolume1Delta, "#330066" },
       { ObisCode.ColdWaterVolume1Period, "#99CCFF" },
       { ObisCode.HotWaterFlow1, "#33CCCC" },
       { ObisCode.HotWaterFlow1Average, "#33CCCC" },
@@ -38,16 +38,16 @@ namespace PowerView.Model.Repository
       { ObisCode.RoomRelativeHumidity, "#E600E6" },
     };
 
-    public string GetColor(ObisCode obisCode)
-    {
-      if (colorMap.TryGetValue(obisCode, out var color))
-      {
-        return color;
-      }
+        public string GetColor(ObisCode obisCode)
+        {
+            if (colorMap.TryGetValue(obisCode, out var color))
+            {
+                return color;
+            }
 
-      return "#000000"; 
+            return "#000000";
+        }
+
     }
-
-  }
 }
 

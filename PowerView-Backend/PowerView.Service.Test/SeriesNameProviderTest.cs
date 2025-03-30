@@ -49,7 +49,7 @@ public class SeriesNameProviderTest
         ObisCode obisCode1 = "1.2.3.4.5.6";
         ObisCode obisCode2 = "6.5.4.3.2.1";
         ObisCode obisCode3 = "3.4.3.4.3.4";
-        var seriesNames = new[] { new SeriesName(label1, obisCode1), new SeriesName(label2, obisCode2), 
+        var seriesNames = new[] { new SeriesName(label1, obisCode1), new SeriesName(label2, obisCode2),
           new SeriesName(label1, obisCode3), new SeriesName(label2, obisCode3) };
         seriesNameRepository.Setup(x => x.GetSeriesNames()).Returns(seriesNames);
         costBreakdownGeneratorSeriesRepository.Setup(x => x.GetCostBreakdownGeneratorSeries()).Returns(Array.Empty<CostBreakdownGeneratorSeries>());
@@ -93,13 +93,13 @@ public class SeriesNameProviderTest
         seriesNameRepository.Setup(x => x.GetSeriesNames()).Returns(seriesNames);
         var utcNow = DateTime.UtcNow;
         var costBreakdownGeneratorSeries = new CostBreakdownGeneratorSeries(
-            new CostBreakdown("CbTitle", unit, 25, new [] 
-            { 
-                new CostBreakdownEntry(utcNow - TimeSpan.FromDays(2), utcNow + TimeSpan.FromDays(2), "entry name", 0, 23, 2) 
+            new CostBreakdown("CbTitle", unit, 25, new[]
+            {
+                new CostBreakdownEntry(utcNow - TimeSpan.FromDays(2), utcNow + TimeSpan.FromDays(2), "entry name", 0, 23, 2)
             }),
             new GeneratorSeries(new SeriesName(label, ObisCode.ElectrActiveEnergyKwhIncomeExpenseInclVat), new SeriesName(label, ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat), "CbTitle")
         );
-        costBreakdownGeneratorSeriesRepository.Setup(x => x.GetCostBreakdownGeneratorSeries()).Returns(new [] { costBreakdownGeneratorSeries } );
+        costBreakdownGeneratorSeriesRepository.Setup(x => x.GetCostBreakdownGeneratorSeries()).Returns(new[] { costBreakdownGeneratorSeries });
 
         // Act
         var serieNames = target.GetSeriesNames();

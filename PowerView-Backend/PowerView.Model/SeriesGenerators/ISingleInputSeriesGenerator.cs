@@ -2,10 +2,10 @@
 
 namespace PowerView.Model.SeriesGenerators
 {
-  public interface ISingleInputSeriesGenerator
-  {
-    void CalculateNext(NormalizedTimeRegisterValue timeRegisterValue);
+    public interface ISingleInputSeriesGenerator
+    {
+        void CalculateNext(NormalizedTimeRegisterValue timeRegisterValue);
 
-    IList<NormalizedDurationRegisterValue> GetGeneratedDurations();
-  }
+        IList<NormalizedDurationRegisterValue> GetGeneratedDurations();
+    }
 }

@@ -95,10 +95,10 @@ namespace PowerView.Service.EventHub
                 var channel = group.Key.Channel;
                 var positionTimestamp = group.Key.PositionTimestamp;
                 var timeSpan = positionTimestamp < (timestamp - TimeSpan.FromDays(3)) ? TimeSpan.FromDays(3) : TimeSpan.FromHours(6);
-                var importGroup = new ImportGroup 
-                { 
-                    Channel = channel, 
-                    PositionTimestamp = positionTimestamp, 
+                var importGroup = new ImportGroup
+                {
+                    Channel = channel,
+                    PositionTimestamp = positionTimestamp,
                     TimeSpan = timeSpan,
                     Imports = group.Select(x => x.Import).ToList()
                 };
@@ -137,7 +137,7 @@ namespace PowerView.Service.EventHub
         internal static (int Value, short Scale) LossyToRegisterValue(double amount)
         {
             var amountIntegral = (int)Math.Truncate(amount);
-            var amountDecimal = amount - amountIntegral;    
+            var amountDecimal = amount - amountIntegral;
             short iterations = 0;
             while (amountDecimal != 0 && iterations < 7)
             {

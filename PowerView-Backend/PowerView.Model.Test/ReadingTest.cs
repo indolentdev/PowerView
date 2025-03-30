@@ -25,7 +25,7 @@ public class ReadingTest
         Assert.That(() => new Reading(label, deviceId, DateTime.Now, values), Throws.TypeOf<ModelException>());
         Assert.That(() => new Reading(label, deviceId, timestamp, null), Throws.TypeOf<ModelException>());
         Assert.That(() => new Reading(label, deviceId, timestamp, Array.Empty<RegisterValue>()), Throws.TypeOf<ModelException>());
-        Assert.That(() => new Reading(label, deviceId, timestamp, new [] { value, value }), Throws.TypeOf<ModelException>());
+        Assert.That(() => new Reading(label, deviceId, timestamp, new[] { value, value }), Throws.TypeOf<ModelException>());
     }
 
     [Test]

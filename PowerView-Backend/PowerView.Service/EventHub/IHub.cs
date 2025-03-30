@@ -4,8 +4,8 @@ using PowerView.Model;
 
 namespace PowerView.Service.EventHub
 {
-  public interface IHub : IDisposable
-  {
-    void Signal(IList<Reading> liveReadings);
-  }
+    public interface IHub : IDisposable
+    {
+        void Signal(IList<Reading> liveReadings);
+    }
 }
