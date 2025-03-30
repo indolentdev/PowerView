@@ -11,20 +11,21 @@ namespace PowerView.Model
 
     public LabelSeries(string label, IDictionary<ObisCode, IEnumerable<T>> timeRegisterValuesByObisCode)
     {
-      if (string.IsNullOrEmpty(label)) throw new ArgumentOutOfRangeException("label", "Must not be null or empty");
-      if (timeRegisterValuesByObisCode == null) throw new ArgumentNullException("timeRegisterValuesByObisCode");
+      ArgCheck.ThrowIfNullOrEmpty(label);
+      ArgumentNullException.ThrowIfNull(timeRegisterValuesByObisCode);
+
       Label = label;
       obisCodeSets = new Dictionary<ObisCode, IList<T>>(5);
 
       foreach (var obisCodeValueSet in timeRegisterValuesByObisCode)
       {
-        if (obisCodeValueSet.Value == null) throw new ArgumentOutOfRangeException("label", obisCodeValueSet.Key + " has null value");
+        if (obisCodeValueSet.Value == null) throw new ArgumentOutOfRangeException(nameof(label), obisCodeValueSet.Key + " has null value");
 
         obisCodeSets.Add(obisCodeValueSet.Key, GetOrderedReadOnlyList(obisCodeValueSet.Value));
       }
     }
 
-    private static IList<T> GetOrderedReadOnlyList(IEnumerable<T> values)
+    private static ReadOnlyCollection<T> GetOrderedReadOnlyList(IEnumerable<T> values)
     {
       return new ReadOnlyCollection<T>(values.OrderBy(sv => sv.OrderProperty).ToList());
     }
@@ -40,7 +41,7 @@ namespace PowerView.Model
     {
       get
       {
-        return obisCodeSets.ContainsKey(obisCode) ? obisCodeSets[obisCode] : new T[0];
+        return obisCodeSets.TryGetValue(obisCode, out var val) ? val : Array.Empty<T>();
       }
     }
 

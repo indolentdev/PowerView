@@ -38,7 +38,7 @@ namespace PowerView.Model.Test.Repository
 
       // Act & Assert
       Assert.That(() => target.GetColorCached(null, obisCode), Throws.TypeOf<ArgumentNullException>());
-      Assert.That(() => target.GetColorCached(string.Empty, obisCode), Throws.TypeOf<ArgumentNullException>());
+      Assert.That(() => target.GetColorCached(string.Empty, obisCode), Throws.TypeOf<ArgumentOutOfRangeException>());
     }
 
     [Test]

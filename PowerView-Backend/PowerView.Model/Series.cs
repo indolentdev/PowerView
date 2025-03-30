@@ -8,8 +8,8 @@ namespace PowerView.Model
   {
     public Series(SeriesName serieName, Unit unit, IEnumerable<DeviationValue?> values)
     {
-      if (serieName == null) throw new ArgumentNullException(nameof(serieName));
-      if (values == null) throw new ArgumentNullException(nameof(values));
+      ArgumentNullException.ThrowIfNull(serieName);
+      ArgumentNullException.ThrowIfNull(values);
 
       SeriesName = serieName;
       Unit = unit;

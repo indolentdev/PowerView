@@ -35,7 +35,7 @@ JOIN Obis bo ON gs.BaseObisId = bo.Id;";
 
     public void AddGeneratorSeries(GeneratorSeries generatorSeries)
     {
-      if (generatorSeries == null) throw new ArgumentNullException(nameof(generatorSeries));
+      ArgumentNullException.ThrowIfNull(generatorSeries);
 
       var baseLabelId = DbContext.QueryTransaction<byte?>("SELECT Id FROM Label WHERE LabelName=@Label;", generatorSeries.BaseSeries)
         .FirstOrDefault();
@@ -58,7 +58,7 @@ JOIN Obis bo ON gs.BaseObisId = bo.Id;";
 
     public void DeleteGeneratorSeries(ISeriesName series)
     {
-      if (series == null) throw new ArgumentNullException(nameof(series));
+      ArgumentNullException.ThrowIfNull(series);
 
       const string sql = "DELETE FROM GeneratorSeries WHERE Label = @Label AND ObisCode = @ObisCode;";
       DbContext.ExecuteTransaction(sql, new { series.Label, ObisCode = (long)series.ObisCode });
@@ -85,7 +85,7 @@ JOIN Obis bo ON gs.BaseObisId = bo.Id;";
       public UnixTime LatestTimestamp { get; set; }
     }
 
-    private IEnumerable<(SeriesName Series, DateTime LatestTimestamp)> ToSeriesAndTimestamp(IEnumerable<RowLocal> rows)
+    private static IEnumerable<(SeriesName Series, DateTime LatestTimestamp)> ToSeriesAndTimestamp(IEnumerable<RowLocal> rows)
     {
       foreach (var row in rows)
       {

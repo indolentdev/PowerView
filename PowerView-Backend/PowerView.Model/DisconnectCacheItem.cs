@@ -12,7 +12,7 @@ namespace PowerView.Model
 
     public DisconnectCacheItem(IDisconnectRule rule)
     {
-      if (rule == null) throw new ArgumentNullException("rule");
+      ArgumentNullException.ThrowIfNull(rule);
 
       this.rule = rule;
       registerValues = new List<TimeRegisterValue>();
@@ -36,7 +36,7 @@ namespace PowerView.Model
 
     public void Calculate(DateTime time)
     {
-      if (time.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("time", time, "Must be UTC");
+      ArgCheck.ThrowIfNotUtc(time);
 
       CleanupRegisterValues(time);
 

@@ -43,13 +43,13 @@ namespace PowerView.Model.Test
 
       // Act & Assert
       Assert.That(() => new ProfileGraph(null, page, title, interval, rank, serieNames), Throws.TypeOf<ArgumentNullException>());
-      Assert.That(() => new ProfileGraph("", page, title, interval, rank, serieNames), Throws.TypeOf<ArgumentNullException>());
+      Assert.That(() => new ProfileGraph("", page, title, interval, rank, serieNames), Throws.TypeOf<ArgumentOutOfRangeException>());
       Assert.That(() => new ProfileGraph("something", page, title, interval, rank, serieNames), Throws.TypeOf<ArgumentOutOfRangeException>());
       Assert.That(() => new ProfileGraph(period, null, title, interval, rank, serieNames), Throws.TypeOf<ArgumentNullException>());
       Assert.That(() => new ProfileGraph(period, page, null, interval, rank, serieNames), Throws.TypeOf<ArgumentNullException>());
-      Assert.That(() => new ProfileGraph(period, page, "", interval, rank, serieNames), Throws.TypeOf<ArgumentNullException>());
+      Assert.That(() => new ProfileGraph(period, page, "", interval, rank, serieNames), Throws.TypeOf<ArgumentOutOfRangeException>());
       Assert.That(() => new ProfileGraph(period, page, title, null, rank, serieNames), Throws.TypeOf<ArgumentNullException>());
-      Assert.That(() => new ProfileGraph(period, page, title, "", rank, serieNames), Throws.TypeOf<ArgumentNullException>());
+      Assert.That(() => new ProfileGraph(period, page, title, "", rank, serieNames), Throws.TypeOf<ArgumentOutOfRangeException>());
       Assert.That(() => new ProfileGraph(period, page, title, interval, rank, null), Throws.TypeOf<ArgumentNullException>());
       Assert.That(() => new ProfileGraph(period, page, title, interval, rank, new SeriesName[] { }), Throws.TypeOf<ArgumentException>());
       Assert.That(() => new ProfileGraph(period, page, title, interval, rank, new SeriesName[] { null }), Throws.TypeOf<ArgumentNullException>());

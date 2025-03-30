@@ -17,9 +17,9 @@ namespace PowerView.Model.Test
       var unitValue = new UnitValue(1, Unit.CubicMetre);
 
       // Act & Assert
-      Assert.That(() => new GaugeValue(string.Empty, deviceId, dt, oc, unitValue), Throws.TypeOf<ArgumentNullException>());
+      Assert.That(() => new GaugeValue(string.Empty, deviceId, dt, oc, unitValue), Throws.TypeOf<ArgumentOutOfRangeException>());
       Assert.That(() => new GaugeValue(null, deviceId, dt, oc, unitValue), Throws.TypeOf<ArgumentNullException>());
-      Assert.That(() => new GaugeValue(label, string.Empty, dt, oc, unitValue), Throws.TypeOf<ArgumentNullException>());
+      Assert.That(() => new GaugeValue(label, string.Empty, dt, oc, unitValue), Throws.TypeOf<ArgumentOutOfRangeException>());
       Assert.That(() => new GaugeValue(label, null, dt, oc, unitValue), Throws.TypeOf<ArgumentNullException>());
       Assert.That(() => new GaugeValue(label, deviceId, DateTime.Now, oc, unitValue), Throws.TypeOf<ArgumentOutOfRangeException>());
     }

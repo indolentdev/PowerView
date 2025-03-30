@@ -18,7 +18,7 @@ namespace PowerView.Model.Test
 
       // Act & Assert
       Assert.That(() => new MeterEvent(null, detectTimestamp, flag, amplification), Throws.TypeOf<ArgumentNullException>());
-      Assert.That(() => new MeterEvent(string.Empty, detectTimestamp, flag, amplification), Throws.TypeOf<ArgumentNullException>());
+      Assert.That(() => new MeterEvent(string.Empty, detectTimestamp, flag, amplification), Throws.TypeOf<ArgumentOutOfRangeException>());
       Assert.That(() => new MeterEvent(label, DateTime.Now, flag, amplification), Throws.TypeOf<ArgumentOutOfRangeException>());
       Assert.That(() => new MeterEvent(label, detectTimestamp, flag, null), Throws.TypeOf<ArgumentNullException>());
     }

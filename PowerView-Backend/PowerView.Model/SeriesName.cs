@@ -7,7 +7,7 @@ namespace PowerView.Model
   {
     public SeriesName(string label, ObisCode obisCode)
     {
-      if (string.IsNullOrEmpty(label)) throw new ArgumentNullException("label");
+      ArgCheck.ThrowIfNullOrEmpty(label);
 
       Label = label;
       ObisCode = obisCode;
@@ -31,13 +31,15 @@ namespace PowerView.Model
     {
       if (ReferenceEquals(null, other)) return false;
       if (ReferenceEquals(this, other)) return true;
+#pragma warning disable CA1309 // Use ordinal string comparison      
       return string.Equals(Label, other.Label, StringComparison.InvariantCulture) &&
                    ObisCode.Equals(other.ObisCode);
+#pragma warning restore CA1309 // Use ordinal string comparison                   
     }
 
-    public bool Equals(ISeriesName obj)
+    public bool Equals(ISeriesName other)
     {
-      return Equals((object)obj);
+      return Equals((object)other);
     }
 
     public override int GetHashCode()

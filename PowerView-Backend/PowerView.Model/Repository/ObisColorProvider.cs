@@ -4,7 +4,7 @@ namespace PowerView.Model.Repository
 {
   internal class ObisColorProvider : IObisColorProvider
   {
-    private readonly IDictionary<ObisCode, string> colorMap = new Dictionary<ObisCode, string> 
+    private readonly Dictionary<ObisCode, string> colorMap = new Dictionary<ObisCode, string> 
     {
       { ObisCode.ElectrActualPowerP14, "#FFCC00" },
       { ObisCode.ElectrActualPowerP14Average, "#FFCC00" },
@@ -40,9 +40,9 @@ namespace PowerView.Model.Repository
 
     public string GetColor(ObisCode obisCode)
     {
-      if (colorMap.ContainsKey(obisCode))
+      if (colorMap.TryGetValue(obisCode, out var color))
       {
-        return colorMap[obisCode];
+        return color;
       }
 
       return "#000000"; 

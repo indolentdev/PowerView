@@ -18,7 +18,7 @@ namespace PowerView.Model
 
     public bool SupportsInterval(string interval)
     {
-      if (BaseSeries.ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat && Series.ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpenseInclVat && 
+      if (BaseSeries.ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat && Series.ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpenseInclVat &&
         interval == "60-minutes")
       {
         return true;
@@ -30,7 +30,7 @@ namespace PowerView.Model
     public bool SupportsDurations(IEnumerable<NormalizedDurationRegisterValue> values)
     {
       if (BaseSeries.ObisCode != ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat) return false;
-      
+
       foreach (var value in values)
       {
         var timestamp = value.Start;
@@ -49,7 +49,9 @@ namespace PowerView.Model
     {
       if (ReferenceEquals(null, other)) return false;
       if (ReferenceEquals(this, other)) return true;
-      return Series.Equals(other.Series) && BaseSeries.Equals(other.BaseSeries) && CostBreakdownTitle.Equals(other.CostBreakdownTitle);
+#pragma warning disable CA1309 // Use ordinal string comparison
+      return Series.Equals(other.Series) && BaseSeries.Equals(other.BaseSeries) && CostBreakdownTitle.Equals(other.CostBreakdownTitle, StringComparison.InvariantCulture);
+#pragma warning restore CA1309 // Use ordinal string comparison
     }
 
     public override int GetHashCode()

@@ -23,7 +23,7 @@ namespace PowerView.Model.Test.Repository
 
       // Act
       Assert.That(() => MeterEventAmplificationSerializer.Deserialize(null), Throws.TypeOf<ArgumentNullException>());
-      Assert.That(() => MeterEventAmplificationSerializer.Deserialize(string.Empty), Throws.TypeOf<ArgumentNullException>());
+      Assert.That(() => MeterEventAmplificationSerializer.Deserialize(string.Empty), Throws.TypeOf<ArgumentOutOfRangeException>());
       Assert.That(() => MeterEventAmplificationSerializer.Deserialize("BadEnvelope"), Throws.TypeOf<EntitySerializationException>());
       Assert.That(() => MeterEventAmplificationSerializer.Deserialize("{ \"TypeName\":\"BogusTypeName\" }"), Throws.TypeOf<EntitySerializationException>());
       Assert.That(() => MeterEventAmplificationSerializer.Deserialize("{ \"TypeName\":\"TestMeterEventAmplification\", \"Content\":\"\" }"), Throws.TypeOf<EntitySerializationException>());

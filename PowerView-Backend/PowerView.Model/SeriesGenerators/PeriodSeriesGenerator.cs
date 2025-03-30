@@ -17,21 +17,21 @@ namespace PowerView.Model.SeriesGenerators
       generatedValues = new List<NormalizedDurationRegisterValue>(300);
     }
 
-    public void CalculateNext(NormalizedTimeRegisterValue normalizedTimeRegisterValue)
+    public void CalculateNext(NormalizedTimeRegisterValue timeRegisterValue)
     {
       if (snReferenceValues.Count == 0)
       {
-        snReferenceValues.Add(normalizedTimeRegisterValue);
+        snReferenceValues.Add(timeRegisterValue);
       }
 
       var reference = snReferenceValues[snReferenceValues.Count - 1];
-      if (!reference.DeviceIdEquals(normalizedTimeRegisterValue))
+      if (!reference.DeviceIdEquals(timeRegisterValue))
       {
-        snReferenceValues.Add(normalizedTimeRegisterValue);
-        reference = normalizedTimeRegisterValue;
+        snReferenceValues.Add(timeRegisterValue);
+        reference = timeRegisterValue;
       }
 
-      var value = normalizedTimeRegisterValue.SubtractAccommodateWrap(reference);
+      var value = timeRegisterValue.SubtractAccommodateWrap(reference);
       snTransitionValues[GetTransitionKey(reference)] = value;
 
       var generatedValue = Sum(snTransitionValues.Values);
@@ -45,7 +45,7 @@ namespace PowerView.Model.SeriesGenerators
 
     private static string GetTransitionKey(NormalizedTimeRegisterValue normalizedTimeRegisterValue)
     {
-      return string.Format("SN:{0}-RefTime:{1}", normalizedTimeRegisterValue.TimeRegisterValue.DeviceId, normalizedTimeRegisterValue.TimeRegisterValue.Timestamp.ToString("o"));
+      return $"SN:{normalizedTimeRegisterValue.TimeRegisterValue.DeviceId}-RefTime:{normalizedTimeRegisterValue.TimeRegisterValue.Timestamp.ToString("o")}";
     }
 
     private static NormalizedDurationRegisterValue Sum(ICollection<NormalizedDurationRegisterValue> normalizedTimeRegisterValues)

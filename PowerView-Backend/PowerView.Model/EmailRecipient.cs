@@ -7,8 +7,8 @@ namespace PowerView.Model
   {
     public EmailRecipient(string name, string emailAddress)
     {
-      if (string.IsNullOrEmpty(name)) throw new ArgumentNullException("name");
-      if (string.IsNullOrEmpty(emailAddress)) throw new ArgumentNullException("emailAddress");
+      ArgCheck.ThrowIfNullOrEmpty(name);
+      ArgCheck.ThrowIfNullOrEmpty(emailAddress);
       ValidateEmailAddress(emailAddress);
 
       Name = name;

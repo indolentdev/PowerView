@@ -13,16 +13,16 @@ namespace PowerView.Model.SeriesGenerators
       generatedValues = new List<NormalizedDurationRegisterValue>(300);
     }
 
-    public void CalculateNext(NormalizedTimeRegisterValue normalizedTimeRegisterValue)
+    public void CalculateNext(NormalizedTimeRegisterValue timeRegisterValue)
     {
       NormalizedDurationRegisterValue generatedValue;
       if (generatedValues.Count == 0)
       {
-        generatedValue = normalizedTimeRegisterValue.SubtractAccommodateWrap(normalizedTimeRegisterValue);
+        generatedValue = timeRegisterValue.SubtractAccommodateWrap(timeRegisterValue);
       }
       else
       {
-        var minutend = normalizedTimeRegisterValue;
+        var minutend = timeRegisterValue;
         var substrahend = previous;
         if (!minutend.DeviceIdEquals(substrahend))
         {
@@ -36,7 +36,7 @@ namespace PowerView.Model.SeriesGenerators
         }
       }
 
-      previous = normalizedTimeRegisterValue;
+      previous = timeRegisterValue;
       generatedValues.Add(generatedValue);
     }
 

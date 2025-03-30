@@ -6,9 +6,9 @@ namespace PowerView.Model
   {
     public SeriesColor(SeriesName seriesName, string color)
     {
-      if (seriesName == null) throw new ArgumentNullException("seriesName");
-      if (string.IsNullOrEmpty(color)) throw new ArgumentNullException("color");
-      if (!IsColorValid(color)) throw new ArgumentOutOfRangeException("color", color, "Not a HTML color");
+      ArgumentNullException.ThrowIfNull(seriesName);
+      ArgCheck.ThrowIfNullOrEmpty(color);
+      if (!IsColorValid(color)) throw new ArgumentOutOfRangeException(nameof(color), color, "Not a HTML color");
 
       SeriesName = seriesName;
       Color = color;

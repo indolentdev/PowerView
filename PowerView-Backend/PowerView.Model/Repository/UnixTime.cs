@@ -9,7 +9,7 @@ internal struct UnixTime : IComparable<UnixTime>
 
     public UnixTime(DateTime dateTime)
     {
-        if (dateTime.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException(nameof(dateTime), dateTime.Kind, "Must be UTC");
+        ArgCheck.ThrowIfNotUtc(dateTime);
         if (dateTime < DateTime.UnixEpoch) throw new ArgumentOutOfRangeException(nameof(dateTime), dateTime, "Must be equal to or after unix epoch");
 
         this.dateTime = dateTime;

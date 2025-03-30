@@ -66,11 +66,11 @@ namespace PowerView.Model
       foreach (var labelSeries in labelSeriesSet)
       {
         var label = labelSeries.Label;
-        if (!result.ContainsKey(label))
+        if (!result.TryGetValue(label, out var obisDurationValues))
         {
-          result.Add(label, new Dictionary<ObisCode, ICollection<NormalizedDurationRegisterValue>>());
+          obisDurationValues = new Dictionary<ObisCode, ICollection<NormalizedDurationRegisterValue>>();
+          result.Add(label, obisDurationValues);
         }
-        var obisDurationValues = result[label];
 
         // Transform non-cumulative series to normalized non-cumulative series.
         var nonCumulativeLabelSeries = labelSeries.GetNonCumulativeSeries();
@@ -105,11 +105,12 @@ namespace PowerView.Model
               }
               else
               {
-                if (!result.ContainsKey(generatedSeriesName.Label))
+                if (!result.TryGetValue(generatedSeriesName.Label, out var labelValues))
                 {
-                  result.Add(generatedSeriesName.Label, new Dictionary<ObisCode, ICollection<NormalizedDurationRegisterValue>>());
+                  labelValues = new Dictionary<ObisCode, ICollection<NormalizedDurationRegisterValue>>();
+                  result.Add(generatedSeriesName.Label, labelValues);
                 }
-                result[generatedSeriesName.Label].Add(generatedSeriesName.ObisCode, generatedValues);
+                labelValues.Add(generatedSeriesName.ObisCode, generatedValues);
               }
             }
             catch (DataMisalignedException)
@@ -119,11 +120,10 @@ namespace PowerView.Model
         }
 
         // Transform cumulative series by generating "spin-off" normalized non-cumulative series.
-        var generator = new SeriesFromCumulativeGenerator();
         var cumulativeLabelSeries = labelSeries.GetCumulativeSeries();
         if (cumulativeLabelSeries.Count > 0)
         {
-          var durationValues = generator.Generate(cumulativeLabelSeries);
+          var durationValues = SeriesFromCumulativeGenerator.Generate(cumulativeLabelSeries);
           foreach (var item in durationValues)
           {
             obisDurationValues.Add(item.Key, item.Value);

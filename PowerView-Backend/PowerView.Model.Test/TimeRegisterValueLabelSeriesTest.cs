@@ -18,7 +18,7 @@ namespace PowerView.Model.Test
       };
 
       // Act & Assert
-      Assert.That(() => new TimeRegisterValueLabelSeries(null, timeRegisterValues), Throws.TypeOf<ArgumentOutOfRangeException>());
+      Assert.That(() => new TimeRegisterValueLabelSeries(null, timeRegisterValues), Throws.ArgumentNullException);
       Assert.That(() => new TimeRegisterValueLabelSeries(string.Empty, timeRegisterValues), Throws.TypeOf<ArgumentOutOfRangeException>());
       Assert.That(() => new TimeRegisterValueLabelSeries(label, null), Throws.TypeOf<ArgumentNullException>());
       Assert.That(() => new TimeRegisterValueLabelSeries(label, 

@@ -12,8 +12,10 @@ namespace PowerView.Model.Repository
         }
 
         public void AddDisconnectRule(DisconnectRule disconnectRule)
-        { // INSERT (..) ON CONFLICT (..) not supported on the used sqlite3.. Added in 3.24
-            if (disconnectRule == null) throw new ArgumentNullException("disconnectRule");
+        {
+            ArgumentNullException.ThrowIfNull(disconnectRule);
+
+            // TODO: INSERT (..) ON CONFLICT (..) not supported on the used sqlite3.. Added in 3.24
 
             using var transaction = DbContext.BeginTransaction();
             try
@@ -47,7 +49,7 @@ namespace PowerView.Model.Repository
 
         public void DeleteDisconnectRule(ISeriesName name)
         {
-            if (name == null) throw new ArgumentNullException("name");
+            ArgumentNullException.ThrowIfNull(name);
 
             const string sql = "DELETE FROM DisconnectRule WHERE Label=@Label AND ObisCode=@ObisCode;";
             DbContext.ExecuteTransaction(sql, new { name.Label, ObisCode = (long)name.ObisCode });
@@ -80,7 +82,7 @@ namespace PowerView.Model.Repository
 
         public IDictionary<ISeriesName, Unit> GetLatestSerieNames(DateTime dateTime)
         {
-            if (dateTime.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("dateTime");
+            if (dateTime.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException(nameof(dateTime));
 
             var latestLive = GetLatestRegisters<Db.LiveReading, Db.LiveRegister>(dateTime, 2);
             var latestDay = GetLatestRegisters<Db.DayReading, Db.DayRegister>(dateTime, 7);

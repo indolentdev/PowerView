@@ -13,7 +13,7 @@ namespace PowerView.Model
 
     public LabelSeriesSet<NormalizedTimeRegisterValue> Normalize(Func<DateTime, DateTime> timeDivider)
     {
-      if (timeDivider == null) throw new ArgumentNullException("timeDivider");
+      ArgumentNullException.ThrowIfNull(timeDivider);
 
       var timeRegisterValueLabelSeries = this.Select(x => (TimeRegisterValueLabelSeries)x).ToList();
 

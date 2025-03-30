@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace PowerView.Model
 {
@@ -29,7 +30,7 @@ namespace PowerView.Model
 
     internal TimeRegisterValue(string deviceId, DateTime timestamp, UnitValue unitValue)
     {
-      if (timestamp.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("timestamp", "Must be UTC");
+      ArgCheck.ThrowIfNotUtc(timestamp);
 
       this.deviceId = deviceId;
       this.timestamp = timestamp;
@@ -38,7 +39,7 @@ namespace PowerView.Model
 
     public NormalizedTimeRegisterValue Normalize(Func<DateTime, DateTime> timeDivider)
     {
-      if (timeDivider == null) throw new ArgumentNullException("timeDivider");
+      ArgumentNullException.ThrowIfNull(timeDivider);
 
       return new NormalizedTimeRegisterValue(this, timeDivider(Timestamp));
     }
@@ -50,7 +51,7 @@ namespace PowerView.Model
 
       if (!DeviceIdEquals(baseValue))
       {
-        var msg = string.Format("A calculation of a subtracted value was not possible. The values originate from different devices (device ids). Minuend:{0}, Subtrahend:{1}",
+        var msg = string.Format(CultureInfo.InvariantCulture, "A calculation of a subtracted value was not possible. The values originate from different devices (device ids). Minuend:{0}, Subtrahend:{1}",
           this, baseValue);
         throw new DataMisalignedException(msg);
       }
@@ -68,7 +69,7 @@ namespace PowerView.Model
         }
         else
         {
-          var msg = string.Format("A calculation of a subtracted value resulted in a negative result. Minuend:{0}, Subtrahend:{1}",
+          var msg = string.Format(CultureInfo.InvariantCulture, "A calculation of a subtracted value resulted in a negative result. Minuend:{0}, Subtrahend:{1}",
             this, baseValue);
           throw new DataMisalignedException(msg);
         }
@@ -101,12 +102,12 @@ namespace PowerView.Model
       return Equals(value);
     }
 
-    public bool Equals(TimeRegisterValue value)
+    public bool Equals(TimeRegisterValue other)
     {
-      return value != null &&
-             DeviceIdEquals(value) &&
-             timestamp == value.timestamp &&
-             unitValue.Equals(value.unitValue);
+      return other != null &&
+             DeviceIdEquals(other) &&
+             timestamp == other.timestamp &&
+             unitValue.Equals(other.unitValue);
     }
 
     public override int GetHashCode()

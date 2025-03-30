@@ -40,7 +40,7 @@ namespace PowerView.Model
 
     internal MqttConfig(ICollection<KeyValuePair<string, string>> mqttSettings)
     {
-      if (mqttSettings == null) throw new ArgumentNullException("mqttSettings");
+      ArgumentNullException.ThrowIfNull(mqttSettings);
 
       var server = defaultServer;
       var port = defaultPort;
@@ -60,9 +60,8 @@ namespace PowerView.Model
       {
         ushort.TryParse(portString, NumberStyles.Integer, CultureInfo.InvariantCulture, out port);
       }
-      if (!string.IsNullOrEmpty(enabledString))
+      if (!string.IsNullOrEmpty(enabledString) && bool.TryParse(enabledString, out enabled))
       {
-        bool.TryParse(enabledString, out enabled);
       }
       if (!string.IsNullOrEmpty(clientIdString))
       {

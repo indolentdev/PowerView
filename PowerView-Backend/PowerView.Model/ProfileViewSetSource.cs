@@ -8,25 +8,25 @@ namespace PowerView.Model
   {
     private readonly ICollection<ProfileGraph> profileGraphs;
     private readonly IDictionary<string, IReadOnlyList<DateTime>> intervalToCategories;
-    private readonly IDictionary<string, IDictionary<SeriesName, IEnumerable<NormalizedDurationRegisterValue>>> intervalSeriesNameToValues;
+    private readonly Dictionary<string, IDictionary<SeriesName, IEnumerable<NormalizedDurationRegisterValue>>> intervalSeriesNameToValues;
 
     public ProfileViewSetSource(IEnumerable<ProfileGraph> profileGraphs, IList<ProfileGraphIntervalGroup> intervalGroups)
     {
-      if (profileGraphs == null) throw new ArgumentNullException("profileGraphs");
-      if (intervalGroups == null) throw new ArgumentNullException("intervalGroups");
+      ArgumentNullException.ThrowIfNull(profileGraphs);
+      ArgumentNullException.ThrowIfNull(intervalGroups);
 
       this.profileGraphs = profileGraphs.ToList();
 
       var groupProfileGraphs = intervalGroups.SelectMany(x => x.ProfileGraphs).ToList();
       if (this.profileGraphs.Count != groupProfileGraphs.Count)
       {
-        throw new ArgumentOutOfRangeException("intervalGroups", "Must contain all instances of profileGraphs argument");
+        throw new ArgumentOutOfRangeException(nameof(intervalGroups), "Must contain all instances of profileGraphs argument");
       }
       foreach (var profileGraph in profileGraphs)
       {
         if (!groupProfileGraphs.Contains(profileGraph))
         {
-          throw new ArgumentOutOfRangeException("intervalGroups", "Must contain all instances of profileGraphs argument");
+          throw new ArgumentOutOfRangeException(nameof(intervalGroups), "Must contain all instances of profileGraphs argument");
         }
       }
 
@@ -64,10 +64,8 @@ namespace PowerView.Model
         var profileGraphSeries = new List<Series>(profileGraph.SerieNames.Count);
         foreach (var seriesName in profileGraph.SerieNames)
         {
-          if (!intervalSeriesNameToValues.ContainsKey(profileGraph.Interval) || !intervalSeriesNameToValues[profileGraph.Interval].ContainsKey(seriesName))
-          {
-            continue;
-          }
+          if (!intervalSeriesNameToValues.TryGetValue(profileGraph.Interval, out var profileGraphIntervalSeriesNamesValues)) continue;
+          if (!profileGraphIntervalSeriesNamesValues.ContainsKey(seriesName)) continue;
 
           var normalizedDurationRegisterValues = intervalSeriesNameToValues[profileGraph.Interval][seriesName];
           var values = 

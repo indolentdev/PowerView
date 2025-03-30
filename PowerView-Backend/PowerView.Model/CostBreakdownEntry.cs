@@ -7,8 +7,8 @@ namespace PowerView.Model
   {
     public CostBreakdownEntry(DateTime fromDate, DateTime toDate, string name, int startTime, int endTime, double amount)
     {
-      if (fromDate.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException(nameof(fromDate), $"Must be UTC. Was:{fromDate.Kind}");
-      if (toDate.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException(nameof(toDate), $"Must be UTC. Was:{toDate.Kind}");
+      ArgCheck.ThrowIfNotUtc(fromDate);
+      ArgCheck.ThrowIfNotUtc(toDate);
       if (toDate <= fromDate) throw new ArgumentOutOfRangeException(nameof(toDate), "Must be greater than fromDate");
       if (string.IsNullOrEmpty(name)) throw new ArgumentOutOfRangeException(nameof(name), "Must not be null or empty");
       if (startTime < 0 || startTime > 22) throw new ArgumentOutOfRangeException(nameof(startTime), $"Must be between 0 and 22. Was:{startTime}");
@@ -32,16 +32,16 @@ namespace PowerView.Model
 
     public bool IntersectsWith(DateTime from, DateTime to)
     {
-      if (from.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException(nameof(from), $"Must be UTC. Was:{from.Kind}");
-      if (to.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException(nameof(to), $"Must be UTC. Was:{to.Kind}");
+      ArgCheck.ThrowIfNotUtc(from);
+      ArgCheck.ThrowIfNotUtc(to);
 
       return (from < FromDate && to > FromDate && to <= ToDate) || (from >= FromDate && to <= ToDate) || (from >= FromDate && from < ToDate && to > ToDate);
     }
 
     public bool AppliesToDates(DateTime from, DateTime to)
     {
-      if (from.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException(nameof(from), $"Must be UTC. Was:{from.Kind}");
-      if (to.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException(nameof(to), $"Must be UTC. Was:{to.Kind}");
+      ArgCheck.ThrowIfNotUtc(from);
+      ArgCheck.ThrowIfNotUtc(to);
 
       return from >= FromDate && to <= ToDate;
     }

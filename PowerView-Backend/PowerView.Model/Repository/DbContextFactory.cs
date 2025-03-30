@@ -11,7 +11,7 @@ namespace PowerView.Model.Repository
 
         public DbContextFactory(IOptions<DatabaseOptions> options)
         {
-            if (options == null) throw new ArgumentNullException(nameof(options));
+            ArgumentNullException.ThrowIfNull(options);
             
             connectionStringBuilder = GetConnectionStringBuilder(options.Value.Name);
             optimizeOnClose = options.Value.OptimizeOnClose;

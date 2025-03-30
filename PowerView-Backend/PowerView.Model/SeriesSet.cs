@@ -8,9 +8,9 @@ namespace PowerView.Model
   {
     public SeriesSet(string title, IEnumerable<DateTime> categories, ICollection<Series> series)
     {
-      if (string.IsNullOrEmpty(title)) throw new ArgumentNullException("title");
-      if (categories == null) throw new ArgumentNullException("categories");
-      if (series == null) throw new ArgumentNullException("series");
+      ArgCheck.ThrowIfNullOrEmpty(title);
+      ArgumentNullException.ThrowIfNull(categories);
+      ArgumentNullException.ThrowIfNull(series);
 
       Title = title;
       Categories = categories.ToArray();

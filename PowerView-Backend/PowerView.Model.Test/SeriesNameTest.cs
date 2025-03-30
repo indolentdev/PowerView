@@ -28,7 +28,7 @@ namespace PowerView.Model.Test
 
       // Act & Assert
       Assert.That(() => new SeriesName(null, new ObisCode()), Throws.TypeOf<ArgumentNullException>());
-      Assert.That(() => new SeriesName(string.Empty, new ObisCode()), Throws.TypeOf<ArgumentNullException>());
+      Assert.That(() => new SeriesName(string.Empty, new ObisCode()), Throws.TypeOf<ArgumentOutOfRangeException>());
     }
 
     [Test]

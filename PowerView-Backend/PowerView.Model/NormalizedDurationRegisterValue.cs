@@ -41,12 +41,12 @@ namespace PowerView.Model
 
     public NormalizedDurationRegisterValue(DateTime start, DateTime end, DateTime normalizedStart, DateTime normalizedEnd, UnitValue unitValue, IEnumerable<string> deviceIds)
     {
-      if (start.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("start", "Must be UTC");
-      if (end.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("end", "Must be UTC");
-      if (start > end) throw new ArgumentOutOfRangeException("end", "Must be after startTimetamp");
-      if (normalizedStart.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("normalizedStart", "Must be UTC");
-      if (normalizedEnd.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("normalizedEnd", "Must be UTC");
-      if (normalizedStart > normalizedEnd) throw new ArgumentOutOfRangeException("normalizedEnd", "Must be after startTimetamp");
+      ArgCheck.ThrowIfNotUtc(start);
+      ArgCheck.ThrowIfNotUtc(end);
+      if (start > end) throw new ArgumentOutOfRangeException(nameof(end), "Must be after startTimetamp");
+      ArgCheck.ThrowIfNotUtc(normalizedStart);
+      ArgCheck.ThrowIfNotUtc(normalizedEnd);
+      if (normalizedStart > normalizedEnd) throw new ArgumentOutOfRangeException(nameof(normalizedEnd), "Must be after startTimetamp");
 
       this.start = start;
       this.end = end;
@@ -107,15 +107,15 @@ namespace PowerView.Model
       return Equals(value);
     }
 
-    public bool Equals(NormalizedDurationRegisterValue value)
+    public bool Equals(NormalizedDurationRegisterValue other)
     {
-      return value != null &&
-             start == value.start &&
-             end == value.end &&
-             normalizedStart == value.normalizedStart &&
-             normalizedEnd == value.normalizedEnd &&
-             unitValue.Equals(value.unitValue) &&
-             deviceIds.SequenceEqual(value.deviceIds);
+      return other != null &&
+             start == other.start &&
+             end == other.end &&
+             normalizedStart == other.normalizedStart &&
+             normalizedEnd == other.normalizedEnd &&
+             unitValue.Equals(other.unitValue) &&
+             deviceIds.SequenceEqual(other.deviceIds);
     }
 
     public override int GetHashCode()

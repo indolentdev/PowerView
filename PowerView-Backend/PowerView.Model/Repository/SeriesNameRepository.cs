@@ -48,7 +48,7 @@ namespace PowerView.Model.Repository
       }
     }
 
-    private IList<dynamic> GetRecent<TReading, TRegister>(IDbTransaction transaction, int cutoffDays) where TReading : IDbReading where TRegister : IDbRegister
+    private List<dynamic> GetRecent<TReading, TRegister>(IDbTransaction transaction, int cutoffDays) where TReading : IDbReading where TRegister : IDbRegister
     {
       UnixTime cutoffDateTime = DateTime.UtcNow - TimeSpan.FromDays(cutoffDays);
 

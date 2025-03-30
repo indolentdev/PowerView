@@ -5,6 +5,7 @@ using System.Net;
 using System.Text.Json;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Json;
+using PowerView.Model;
 
 namespace PowerView.Service.EnergiDataService;
 
@@ -24,7 +25,7 @@ public class EnergiDataServiceClient : IEnergiDataServiceClient
 
     public async Task<IList<KwhAmount>> GetElectricityAmounts(DateTime start, TimeSpan timeSpan, string priceArea)
     {
-        if (start.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException(nameof(start), "Must be UTC");
+        ArgCheck.ThrowIfNotUtc(start);
         if (timeSpan <= TimeSpan.Zero) throw new ArgumentOutOfRangeException(nameof(timeSpan), "Must not be negative or zero");
         if (timeSpan > TimeSpan.FromDays(7)) throw new ArgumentOutOfRangeException(nameof(timeSpan), "Must not be greater than 7 days");
         if (priceArea == null) throw new ArgumentNullException(nameof(priceArea));

@@ -8,9 +8,9 @@ public record MissingDate
 
     public MissingDate(DateTime timestamp, DateTime previousTimestamp, DateTime nextTimestamp)
     {
-        if (timestamp.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException(nameof(timestamp), $"Must be UTC. Was:{timestamp.Kind}");
-        if (previousTimestamp.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException(nameof(previousTimestamp), $"Must be UTC. Was:{previousTimestamp.Kind}");
-        if (nextTimestamp.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException(nameof(nextTimestamp), $"Must be UTC. Was:{nextTimestamp.Kind}");
+        ArgCheck.ThrowIfNotUtc(timestamp);
+        ArgCheck.ThrowIfNotUtc(previousTimestamp);
+        ArgCheck.ThrowIfNotUtc(nextTimestamp);
 
         Timestamp = timestamp;
         PreviousTimestamp = previousTimestamp;

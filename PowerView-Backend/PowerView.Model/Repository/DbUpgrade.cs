@@ -53,7 +53,7 @@ namespace PowerView.Model.Repository
                     var newVersion = new { Number = long.MaxValue, Timestamp = (UnixTime)DateTime.UtcNow };
                     DbContext.ExecuteTransaction("INSERT INTO Version (Number, Timestamp) VALUES (@Number, @Timestamp);", newVersion);
 
-                    logger.LogInformation($"Applying database schema update for version {dbUpgradeResource.Version}");
+                    logger.LogInformation("Applying database schema update for version {Version}", dbUpgradeResource.Version);
                     ApplyDdlScript(dbUpgradeResource.ResourceName, ddlResourceReader.ReadToEnd());
 
                     DbContext.ExecuteTransaction("UPDATE Version SET Number = @NewNumber WHERE Number = @OldNumber AND Timestamp = @Timestamp;",
@@ -127,7 +127,7 @@ namespace PowerView.Model.Repository
             var applicationExpectedVersion = resources.Last().Version;
             if (currentVersion > applicationExpectedVersion)
             {
-                logger.LogWarning($"Database schema version greater than expected. Was:{currentVersion}. Expected:{applicationExpectedVersion}. PowerView may not function. It may help upgrading to a newer PowerView version.");
+                logger.LogWarning("Database schema version greater than expected. Was:{CurrentVersion}. Expected:{ExpectedVersion}. PowerView may not function. It may help upgrading to a newer PowerView version.", currentVersion, applicationExpectedVersion);
             }
             return resources.Where(i => i.Version > currentVersion);
         }
@@ -136,18 +136,18 @@ namespace PowerView.Model.Repository
         {
             var type = MethodBase.GetCurrentMethod().DeclaringType;
             var startResourceName = type.Namespace + ".DbVersion";
-            var resourceNameVersionIndex = startResourceName.Split(new[] { '.' }).Length;
+            var resourceNameVersionIndex = startResourceName.Split('.').Length;
             var resourceNames = type.Assembly.GetManifestResourceNames();
 
             foreach (var resourceName in resourceNames.Where(rn => rn.StartsWith(startResourceName, StringComparison.InvariantCulture)))
             {
-                var resourceNameElements = resourceName.Split(new[] { '.' });
+                var resourceNameElements = resourceName.Split('.');
                 var versionElement = resourceNameElements[resourceNameVersionIndex];
                 versionElement = versionElement.Replace("_", string.Empty);
                 long version;
                 if (!long.TryParse(versionElement, NumberStyles.Integer, CultureInfo.InvariantCulture, out version))
                 {
-                    logger.LogWarning($"Unable to parse db version element from resource upgrade name. Skipping resource. ResourceName:{resourceName}, VersionElement:{versionElement}");
+                    logger.LogWarning("Unable to parse db version element from resource upgrade name. Skipping resource. ResourceName:{ResourceName}, VersionElement:{VersionElement}", resourceName, versionElement);
                     continue;
                 }
                 yield return new DbUpgradeResource(version, resourceName);
@@ -158,7 +158,7 @@ namespace PowerView.Model.Repository
         {
             public DbUpgradeResource(long version, string resourceName)
             {
-                if (string.IsNullOrEmpty(resourceName)) throw new ArgumentNullException("resourceName");
+                ArgCheck.ThrowIfNullOrEmpty(resourceName);
 
                 Version = version;
                 ResourceName = resourceName;

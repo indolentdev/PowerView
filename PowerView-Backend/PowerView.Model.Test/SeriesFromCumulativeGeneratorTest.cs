@@ -14,10 +14,9 @@ namespace PowerView.Model.Test
       var obisCode = ObisCode.ElectrActualPowerP14;
       var utcNow = DateTime.UtcNow;
       var normalizedTimeRegisterValues = new[] { Normalize(new TimeRegisterValue("sn1", utcNow, 14, Unit.Watt)), Normalize(new TimeRegisterValue("sn1", utcNow + TimeSpan.FromHours(1), 11, Unit.Watt)) };
-      var target = new SeriesFromCumulativeGenerator();
 
       // Act
-      var result = target.Generate(new Dictionary<ObisCode, IList<NormalizedTimeRegisterValue>> { { obisCode, normalizedTimeRegisterValues } });
+      var result = SeriesFromCumulativeGenerator.Generate(new Dictionary<ObisCode, IList<NormalizedTimeRegisterValue>> { { obisCode, normalizedTimeRegisterValues } });
 
       // Assert
       Assert.That(result, Is.Empty);
@@ -30,10 +29,9 @@ namespace PowerView.Model.Test
       var obisCode = ObisCode.ElectrActiveEnergyA14;
       var utcNow = DateTime.UtcNow;
       var normalizedTimeRegisterValues = new[] { Normalize(new TimeRegisterValue("sn1", utcNow, 14, Unit.WattHour)), Normalize(new TimeRegisterValue("sn1", utcNow + TimeSpan.FromHours(1), 18, Unit.WattHour)) };
-      var target = new SeriesFromCumulativeGenerator();
 
       // Act
-      var result = target.Generate(new Dictionary<ObisCode, IList<NormalizedTimeRegisterValue>> { { obisCode, normalizedTimeRegisterValues } });
+      var result = SeriesFromCumulativeGenerator.Generate(new Dictionary<ObisCode, IList<NormalizedTimeRegisterValue>> { { obisCode, normalizedTimeRegisterValues } });
 
       // Assert
       Assert.That(result.Keys, Is.EquivalentTo(new ObisCode[] { ObisCode.ElectrActiveEnergyA14Delta, ObisCode.ElectrActiveEnergyA14Period, ObisCode.ElectrActualPowerP14Average }));
@@ -51,10 +49,9 @@ namespace PowerView.Model.Test
       // Arrange
       var utcNow = DateTime.UtcNow;
       var normalizedTimeRegisterValues = new[] { Normalize(new TimeRegisterValue("sn1", utcNow, 14, Unit.WattHour)), Normalize(new TimeRegisterValue("sn1", utcNow + TimeSpan.FromHours(1), 11, Unit.WattHour)) };
-      var target = new SeriesFromCumulativeGenerator();
 
       // Act
-      var result = target.Generate(new Dictionary<ObisCode, IList<NormalizedTimeRegisterValue>> { { obisCode, normalizedTimeRegisterValues } });
+      var result = SeriesFromCumulativeGenerator.Generate(new Dictionary<ObisCode, IList<NormalizedTimeRegisterValue>> { { obisCode, normalizedTimeRegisterValues } });
 
       // Assert
       Assert.That(result.Keys, Contains.Item((ObisCode)expectedAverage));
@@ -73,10 +70,9 @@ namespace PowerView.Model.Test
         { ObisCode.ElectrActiveEnergyA23, new[] { Normalize(new TimeRegisterValue("sn1", utcNow, 2, Unit.WattHour)),
             Normalize(new TimeRegisterValue("sn1", utcNow + oneHour, 4, Unit.WattHour)), Normalize(new TimeRegisterValue("sn1", utcNow + oneHour+ oneHour, 5, Unit.WattHour)) } }
       };
-      var target = new SeriesFromCumulativeGenerator();
 
       // Act
-      var result = target.Generate(dict);
+      var result = SeriesFromCumulativeGenerator.Generate(dict);
 
       // Assert
       Assert.That(result.Keys, Contains.Item(ObisCode.ElectrActiveEnergyA14NetDelta));

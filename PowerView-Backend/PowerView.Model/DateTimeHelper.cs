@@ -10,8 +10,8 @@ namespace PowerView.Model
 
     public DateTimeHelper(ILocationContext locationContext, DateTime origin)
     {
-      if (locationContext == null) throw new ArgumentNullException(nameof(locationContext));
-      if (origin.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException(nameof(origin), "Must be UTC");
+      ArgumentNullException.ThrowIfNull(locationContext);
+      ArgCheck.ThrowIfNotUtc(origin);
 
       this.locationContext = locationContext;
       this.origin = origin;
@@ -19,8 +19,8 @@ namespace PowerView.Model
 
     public DateTime GetPeriodEnd(string period)
     {
-      if (period == null) throw new ArgumentNullException("period");
-      if (period != "day" && period != "month" && period != "year" && period != "decade") throw new ArgumentOutOfRangeException("period", "Must be: day, month, year or decade. Was:" + period);
+      ArgumentNullException.ThrowIfNull(period);
+      if (period != "day" && period != "month" && period != "year" && period != "decade") throw new ArgumentOutOfRangeException(nameof(period), "Must be: day, month, year or decade. Was:" + period);
 
       DateTime end;
       switch (period)
@@ -76,7 +76,7 @@ namespace PowerView.Model
       {
         case "minutes":
           var minutes = TimeSpan.FromMinutes(ToDouble(intervalElements[0]));
-          if (minutes.TotalHours > 1 || (minutes.Hours == 0 && minutes.Minutes == 0) || minutes.Milliseconds != 0) throw new ArgumentOutOfRangeException("interval", interval, "Minute part invalid");
+          if (minutes.TotalHours > 1 || (minutes.Hours == 0 && minutes.Minutes == 0) || minutes.Milliseconds != 0) throw new ArgumentOutOfRangeException(nameof(interval), interval, "Minute part invalid");
           return dt => 
           {
             var next = dt.Add(minutes);
@@ -84,7 +84,7 @@ namespace PowerView.Model
           };
 
         case "days":
-          if (ToInt32(intervalElements[0]) != 1) throw new ArgumentOutOfRangeException("interval", interval, "Day part invalid");
+          if (ToInt32(intervalElements[0]) != 1) throw new ArgumentOutOfRangeException(nameof(interval), interval, "Day part invalid");
           return dt =>
           {
             var next = dt.AddDays(1);
@@ -92,7 +92,7 @@ namespace PowerView.Model
           };
 
         case "months":
-          if (ToInt32(intervalElements[0]) != 1) throw new ArgumentOutOfRangeException("interval", interval, "Month part invalid");
+          if (ToInt32(intervalElements[0]) != 1) throw new ArgumentOutOfRangeException(nameof(interval), interval, "Month part invalid");
           return dt =>
           {
             var next = NextMonth(dt);
@@ -100,7 +100,7 @@ namespace PowerView.Model
           };
 
         case "years":
-          if (ToInt32(intervalElements[0]) != 1) throw new ArgumentOutOfRangeException("interval", interval, "Year part invalid");
+          if (ToInt32(intervalElements[0]) != 1) throw new ArgumentOutOfRangeException(nameof(interval), interval, "Year part invalid");
           return dt =>
           {
             var next = dt.AddYears(1);
@@ -120,24 +120,24 @@ namespace PowerView.Model
       {
         case "minutes":
           var minutes = TimeSpan.FromMinutes(ToDouble(intervalElements[0]));
-          if (minutes.TotalHours > 1 || (minutes.Hours == 0 && minutes.Minutes == 0) || minutes.Milliseconds != 0) throw new ArgumentOutOfRangeException("interval", interval, "Minute part invalid");
+          if (minutes.TotalHours > 1 || (minutes.Hours == 0 && minutes.Minutes == 0) || minutes.Milliseconds != 0) throw new ArgumentOutOfRangeException(nameof(interval), interval, "Minute part invalid");
           return dt => DivideMinutes(minutes, dt);
 
         case "days":
           var days = TimeSpan.FromDays(ToDouble(intervalElements[0]));
-          if ((int)days.TotalDays != 1) throw new ArgumentOutOfRangeException("interval", interval, "Day part invalid");
+          if ((int)days.TotalDays != 1) throw new ArgumentOutOfRangeException(nameof(interval), interval, "Day part invalid");
           return dt => DivideDays(days, dt);
 
         case "months":
-          if (ToInt32(intervalElements[0]) != 1) throw new ArgumentOutOfRangeException("interval", interval, "Month part invalid");
+          if (ToInt32(intervalElements[0]) != 1) throw new ArgumentOutOfRangeException(nameof(interval), interval, "Month part invalid");
           return DivideMonths;
 
         case "years":
-          if (ToInt32(intervalElements[0]) != 1) throw new ArgumentOutOfRangeException("interval", interval, "Year part invalid");
+          if (ToInt32(intervalElements[0]) != 1) throw new ArgumentOutOfRangeException(nameof(interval), interval, "Year part invalid");
           return DivideYears;
 
         default:
-          throw new ArgumentOutOfRangeException("interval", interval, "Unknown interval");
+          throw new ArgumentOutOfRangeException(nameof(interval), interval, "Unknown interval");
       }
     }
 
@@ -216,14 +216,14 @@ namespace PowerView.Model
 
     private static string[] SplitInterval(string interval)
     {
-      if (interval == null) throw new ArgumentNullException("interval");
+      ArgCheck.ThrowIfNullOrEmpty(interval);
 
-      var intervalElements = interval.Split(new[] { '-' }, StringSplitOptions.None);
-      if (intervalElements.Length != 2) throw new ArgumentOutOfRangeException("interval", interval, "Unknown interval");
+      var intervalElements = interval.Split('-', StringSplitOptions.None);
+      if (intervalElements.Length != 2) throw new ArgumentOutOfRangeException(nameof(interval), interval, "Unknown interval");
 
       if (intervalElements[1] != "minutes" && intervalElements[1] != "days" && intervalElements[1] != "months" && intervalElements[1] != "years")
       {
-        throw new ArgumentOutOfRangeException("interval", interval, "Unknown interval");
+        throw new ArgumentOutOfRangeException(nameof(interval), interval, "Unknown interval");
       }
 
       return intervalElements;

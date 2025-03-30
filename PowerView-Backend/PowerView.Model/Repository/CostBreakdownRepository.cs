@@ -26,7 +26,7 @@ FROM CostBreakdown cb;";
 
     public CostBreakdown GetCostBreakdown(string title)
     {
-      if (title == null) throw new ArgumentNullException(nameof(title));
+      ArgumentNullException.ThrowIfNull(title);
 
       const string sql = @"
 SELECT cb.Id, cb.Title, cb.Currency, cb.Vat, cbe.CostBreakdownId, cbe.FromDate, cbe.ToDate, cbe.Name, cbe.StartTime, cbe.EndTime, cbe.Amount 
@@ -60,7 +60,7 @@ ORDER BY cb.Id, cbe.FromDate, cbe.ToDate, cbe.Name;";
 
     public void AddCostBreakdown(CostBreakdown costBreakdown)
     {
-      if (costBreakdown == null) throw new ArgumentNullException(nameof(costBreakdown));
+      ArgumentNullException.ThrowIfNull(costBreakdown);
 
       using var transaction = DbContext.BeginTransaction();
       try
@@ -91,7 +91,7 @@ ORDER BY cb.Id, cbe.FromDate, cbe.ToDate, cbe.Name;";
 
     public void DeleteCostBreakdown(string title)
     {
-      if (title == null) throw new ArgumentNullException(nameof(title));
+      ArgumentNullException.ThrowIfNull(title);
 
       var sql = @"
         DELETE FROM CostBreakdownEntry
@@ -106,8 +106,8 @@ ORDER BY cb.Id, cbe.FromDate, cbe.ToDate, cbe.Name;";
 
     public void AddCostBreakdownEntry(string title, CostBreakdownEntry costBreakdownEntry)
     {
-      if (title == null) throw new ArgumentNullException(nameof(title));
-      if (costBreakdownEntry == null) throw new ArgumentNullException(nameof(costBreakdownEntry));
+      ArgumentNullException.ThrowIfNull(title);
+      ArgumentNullException.ThrowIfNull(costBreakdownEntry);
 
       using var transaction = DbContext.BeginTransaction();
       try
@@ -131,11 +131,11 @@ ORDER BY cb.Id, cbe.FromDate, cbe.ToDate, cbe.Name;";
 
     public void UpdateCostBreakdownEntry(string title, DateTime fromDate, DateTime toDate, string name, CostBreakdownEntry costBreakdownEntry)
     {
-      if (title == null) throw new ArgumentNullException(nameof(title));
-      if (fromDate.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException(nameof(fromDate), $"Must be UTC. Was:{fromDate.Kind}");
-      if (fromDate.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException(nameof(toDate), $"Must be UTC. Was:{fromDate.Kind}");
-      if (name == null) throw new ArgumentNullException(nameof(name));
-      if (costBreakdownEntry == null) throw new ArgumentNullException(nameof(costBreakdownEntry));
+      ArgumentNullException.ThrowIfNull(title);
+      ArgCheck.ThrowIfNotUtc(fromDate);
+      ArgCheck.ThrowIfNotUtc(toDate);
+      ArgumentNullException.ThrowIfNull(name);
+      ArgumentNullException.ThrowIfNull(costBreakdownEntry);
 
       using var transaction = DbContext.BeginTransaction();
       try
@@ -161,10 +161,10 @@ ORDER BY cb.Id, cbe.FromDate, cbe.ToDate, cbe.Name;";
 
     public void DeleteCostBreakdownEntry(string title, DateTime fromDate, DateTime toDate, string name)
     {
-      if (title == null) throw new ArgumentNullException(nameof(title));
-      if (fromDate.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException(nameof(fromDate), $"Must be UTC. Was:{fromDate.Kind}");
-      if (fromDate.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException(nameof(toDate), $"Must be UTC. Was:{fromDate.Kind}");
-      if (name == null) throw new ArgumentNullException(nameof(name));
+      ArgumentNullException.ThrowIfNull(title);
+      ArgCheck.ThrowIfNotUtc(fromDate);
+      ArgCheck.ThrowIfNotUtc(toDate);
+      ArgumentNullException.ThrowIfNull(name);
 
       using var transaction = DbContext.BeginTransaction();
       try

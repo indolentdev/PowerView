@@ -33,7 +33,7 @@ FROM Import i;";
 
     public void AddImport(Import import)
     {
-      if (import == null) throw new ArgumentNullException(nameof(import));
+      ArgumentNullException.ThrowIfNull(import);
 
       using var transaction = DbContext.BeginTransaction();
       try
@@ -68,7 +68,7 @@ FROM Import i;";
 
     public void DeleteImport(string label)
     {
-      if (label == null) throw new ArgumentNullException(nameof(label));
+      ArgumentNullException.ThrowIfNull(label);
 
       const string sql = "DELETE FROM Import WHERE Label=@label;";
       DbContext.ExecuteTransaction(sql, new { label });
@@ -76,7 +76,7 @@ FROM Import i;";
 
     public void SetEnabled(string label, bool enabled)
     {
-      if (label == null) throw new ArgumentNullException(nameof(label));
+      ArgumentNullException.ThrowIfNull(label);
 
       const string sql = "UPDATE Import SET Enabled=@enabled WHERE Label=@label;";
       DbContext.ExecuteTransaction(sql, new { label, enabled });
@@ -84,8 +84,8 @@ FROM Import i;";
 
     public void SetCurrentTimestamp(string label, DateTime currentTimestamp)
     {
-      if (label == null) throw new ArgumentNullException(nameof(label));
-      if (currentTimestamp.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException(nameof(currentTimestamp), $"Must be UTC. Was:{currentTimestamp.Kind}");
+      ArgumentNullException.ThrowIfNull(label);
+      ArgCheck.ThrowIfNotUtc(currentTimestamp);
 
       const string sql = "UPDATE Import SET CurrentTimestamp=@currentTimestamp WHERE Label=@label;";
       DbContext.ExecuteTransaction(sql, new { label, currentTimestamp = (UnixTime)currentTimestamp });

@@ -36,9 +36,9 @@ namespace PowerView.Model.Repository
 
     private TimeRegisterValueLabelSeriesSet GetLabelSeriesSet(DateTime preStart, DateTime start, DateTime end, string readingTable, string registerTable)
     {
-      if (preStart.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("preStart", "Must be UTC");
-      if (start.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("start", "Must be UTC");
-      if (end.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("end", "Must be UTC");
+      ArgCheck.ThrowIfNotUtc(preStart);
+      ArgCheck.ThrowIfNotUtc(start);
+      ArgCheck.ThrowIfNotUtc(end);
 
       var sqlQuery = @"
 SELECT lbl.LabelName AS Label,dev.DeviceName AS DeviceId,rea.Timestamp,o.ObisCode,reg.Value,reg.Scale,reg.Unit 

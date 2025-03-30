@@ -8,10 +8,10 @@ namespace PowerView.Model
   {
     public ProfileViewSet(ICollection<SeriesSet> serieSets, ICollection<NamedValue> interimTotals)
     {
-      if (serieSets == null) throw new ArgumentNullException("serieSets");
-      if (serieSets.Where(x => x == null).Any()) throw new ArgumentOutOfRangeException("serieSets");
-      if (interimTotals == null) throw new ArgumentNullException("interimTotals");
-      if (interimTotals.Where(x => x == null).Any()) throw new ArgumentOutOfRangeException("interimTotals");
+      ArgumentNullException.ThrowIfNull(serieSets);
+      if (serieSets.Where(x => x == null).Any()) throw new ArgumentOutOfRangeException(nameof(serieSets));
+      ArgumentNullException.ThrowIfNull(interimTotals);
+      if (interimTotals.Where(x => x == null).Any()) throw new ArgumentOutOfRangeException(nameof(interimTotals));
 
       SerieSets = serieSets;
       PeriodTotals = interimTotals;

@@ -8,10 +8,10 @@ namespace PowerView.Model
 {
   public class BoxCryptor
   {
-    public string Encrypt(string plainText, DateTime ivDateTime)
+    public static string Encrypt(string plainText, DateTime ivDateTime)
     {
-      if (string.IsNullOrEmpty(plainText)) throw new ArgumentNullException("plaintText");
-      if (ivDateTime.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("ivDateTime", "Must be UTC. Was:" + ivDateTime.Kind);
+      ArgCheck.ThrowIfNullOrEmpty(plainText);
+      ArgCheck.ThrowIfNotUtc(ivDateTime);
 
       using (var aes = Aes.Create())
       {
@@ -33,10 +33,10 @@ namespace PowerView.Model
       }
     }
 
-    public string Decrypt(string cipherTextBase64, DateTime ivDateTime)
+    public static string Decrypt(string cipherTextBase64, DateTime ivDateTime)
     {
-      if (string.IsNullOrEmpty(cipherTextBase64)) throw new ArgumentNullException("plaintText");
-      if (ivDateTime.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("ivDateTime", "Must be UTC. Was:" + ivDateTime.Kind);
+      ArgCheck.ThrowIfNullOrEmpty(cipherTextBase64);
+      ArgCheck.ThrowIfNotUtc(ivDateTime);
 
       byte[] cipherText;
       try

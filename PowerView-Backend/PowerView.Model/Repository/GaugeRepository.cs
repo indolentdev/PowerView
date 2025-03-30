@@ -14,7 +14,7 @@ namespace PowerView.Model.Repository
 
         public ICollection<GaugeValueSet> GetLatest(DateTime dateTime)
         {
-            if (dateTime.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("dateTime");
+            if (dateTime.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException(nameof(dateTime));
 
             var result = new List<GaugeValueSet>(4);
 
@@ -68,7 +68,7 @@ ORDER BY rea.Timestamp DESC;";
 
         public ICollection<GaugeValueSet> GetCustom(DateTime dateTime)
         {
-            if (dateTime.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("dateTime");
+            if (dateTime.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException(nameof(dateTime));
 
             var result = new List<GaugeValueSet>(4);
 

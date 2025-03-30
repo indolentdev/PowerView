@@ -101,8 +101,8 @@ namespace PowerView.Model
 
         public ObisCode(byte[] bytes)
         {
-            if (bytes == null) throw new ArgumentNullException("bytes");
-            if (bytes.Length != 6) throw new ArgumentOutOfRangeException("bytes", "Must be 6 bytes");
+            ArgumentNullException.ThrowIfNull(bytes);
+            if (bytes.Length != 6) throw new ArgumentOutOfRangeException(nameof(bytes), "Must be 6 bytes");
 
             a = bytes[0];
             b = bytes[1];
@@ -198,7 +198,7 @@ namespace PowerView.Model
 
         public static bool TryParse(string s, out ObisCode obisCode)
         {
-            if (s == null) throw new ArgumentNullException(nameof(s));
+            ArgumentNullException.ThrowIfNull(s);
 
             obisCode = new ObisCode();
 
@@ -224,7 +224,7 @@ namespace PowerView.Model
 
         public static implicit operator ObisCode(string s)
         {
-            if (s == null) throw new ArgumentNullException();
+            ArgumentNullException.ThrowIfNull(s);
             var groups = s.Split('.');
             return new ObisCode(groups.Select(str =>
             {

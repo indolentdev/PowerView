@@ -8,9 +8,9 @@ namespace PowerView.Model
   {
     public GaugeValueSet(GaugeSetName name, ICollection<GaugeValue> gaugeValues)
     {
-      if (!Enum.IsDefined(typeof(GaugeSetName), name)) throw new ArgumentOutOfRangeException("name");
-      if (gaugeValues == null) throw new ArgumentNullException("gaugeValues");
-      if (gaugeValues.Any(gv => gv == null)) throw new ArgumentNullException("gaugeValues", "Items must not be null");
+      if (!Enum.IsDefined(typeof(GaugeSetName), name)) throw new ArgumentOutOfRangeException(nameof(name));
+      ArgumentNullException.ThrowIfNull(gaugeValues);
+      if (gaugeValues.Any(gv => gv == null)) throw new ArgumentNullException(nameof(gaugeValues), "Items must not be null");
 
       Name = name;
       GaugeValues = gaugeValues;

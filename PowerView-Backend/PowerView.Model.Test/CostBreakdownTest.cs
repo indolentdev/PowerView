@@ -18,7 +18,7 @@ public class CostBreakDownTest
         var entries = new List<CostBreakdownEntry>();
 
         // Act & Assert
-        Assert.That(() => new CostBreakdown(null, curency, vat, entries), Throws.TypeOf<ArgumentOutOfRangeException>());
+        Assert.That(() => new CostBreakdown(null, curency, vat, entries), Throws.ArgumentNullException);
         Assert.That(() => new CostBreakdown(string.Empty, curency, vat, entries), Throws.TypeOf<ArgumentOutOfRangeException>());
         Assert.That(() => new CostBreakdown(title, Unit.Watt, vat, entries), Throws.TypeOf<ArgumentOutOfRangeException>());
         Assert.That(() => new CostBreakdown(title, curency, -1, entries), Throws.TypeOf<ArgumentOutOfRangeException>());

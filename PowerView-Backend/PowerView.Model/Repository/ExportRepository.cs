@@ -19,10 +19,10 @@ namespace PowerView.Model.Repository
         private TimeRegisterValueLabelSeriesSet GetLabelSeriesSet(DateTime from, DateTime to, IList<string> labels, string readingTable,
           string registerTable, Func<ObisCode, bool> includeObisCode)
         {
-            if (from.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException(nameof(from), $"Must be UTC. Was:{from.Kind}");
-            if (from.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException(nameof(to), $"Must be UTC. Was:{to.Kind}");
-            if (labels == null) throw new ArgumentNullException("labels");
-            if (labels.Count == 0) throw new ArgumentOutOfRangeException("labels", "Must not be emtpy");
+            ArgCheck.ThrowIfNotUtc(from);
+            ArgCheck.ThrowIfNotUtc(to);
+            ArgumentNullException.ThrowIfNull(labels);
+            ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(labels.Count, 0, nameof(labels));
 
             var sqlQuery = @"
 SELECT lbl.LabelName AS Label,dev.DeviceName AS DeviceId,rea.Timestamp,o.ObisCode,reg.Value,reg.Scale,reg.Unit 

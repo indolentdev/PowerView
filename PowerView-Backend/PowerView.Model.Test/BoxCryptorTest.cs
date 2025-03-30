@@ -10,27 +10,25 @@ namespace PowerView.Model.Test
     public void EncryptThrows()
     {
       // Arrange
-      var target = new BoxCryptor();
       const string plainText = "This is the plain text";
       var ivDateTime = DateTime.UtcNow;
 
       // Act & Assert
-      Assert.That(() => target.Encrypt(null, ivDateTime), Throws.ArgumentNullException);
-      Assert.That(() => target.Encrypt(string.Empty, ivDateTime), Throws.ArgumentNullException);
-      Assert.That(() => target.Encrypt(plainText, DateTime.Now), Throws.TypeOf<ArgumentOutOfRangeException>());
-      Assert.That(() => target.Encrypt(plainText, new DateTime()), Throws.TypeOf<ArgumentOutOfRangeException>());
+      Assert.That(() => BoxCryptor.Encrypt(null, ivDateTime), Throws.ArgumentNullException);
+      Assert.That(() => BoxCryptor.Encrypt(string.Empty, ivDateTime), Throws.TypeOf<ArgumentOutOfRangeException>());
+      Assert.That(() => BoxCryptor.Encrypt(plainText, DateTime.Now), Throws.TypeOf<ArgumentOutOfRangeException>());
+      Assert.That(() => BoxCryptor.Encrypt(plainText, new DateTime()), Throws.TypeOf<ArgumentOutOfRangeException>());
     }
 
     [Test]
     public void Encrypt()
     {
       // Arrange
-      var target = new BoxCryptor();
       const string plainText = "This is the plain text";
       var ivDateTime = DateTime.UtcNow;
 
       // Act
-      var cipherText = target.Encrypt(plainText, ivDateTime);
+      var cipherText = BoxCryptor.Encrypt(plainText, ivDateTime);
 
       // Assert
       Assert.That(cipherText, Is.Not.EqualTo(plainText));
@@ -40,15 +38,14 @@ namespace PowerView.Model.Test
     public void DecryptThrows()
     {
       // Arrange
-      var target = new BoxCryptor();
       const string cipherText = "dummy cipher";
       var ivDateTime = DateTime.UtcNow;
 
       // Act & Assert
-      Assert.That(() => target.Decrypt(null, ivDateTime), Throws.ArgumentNullException);
-      Assert.That(() => target.Decrypt(string.Empty, ivDateTime), Throws.ArgumentNullException);
-      Assert.That(() => target.Decrypt(cipherText, DateTime.Now), Throws.TypeOf<ArgumentOutOfRangeException>());
-      Assert.That(() => target.Decrypt(cipherText, new DateTime()), Throws.TypeOf<ArgumentOutOfRangeException>());
+      Assert.That(() => BoxCryptor.Decrypt(null, ivDateTime), Throws.ArgumentNullException);
+      Assert.That(() => BoxCryptor.Decrypt(string.Empty, ivDateTime), Throws.TypeOf<ArgumentOutOfRangeException>());
+      Assert.That(() => BoxCryptor.Decrypt(cipherText, DateTime.Now), Throws.TypeOf<ArgumentOutOfRangeException>());
+      Assert.That(() => BoxCryptor.Decrypt(cipherText, new DateTime()), Throws.TypeOf<ArgumentOutOfRangeException>());
     }
 
     [Test]
@@ -59,11 +56,10 @@ namespace PowerView.Model.Test
     public void DecryptThrows2(string cipherText, Type exceptionType)
     {
       // Arrange
-      var target = new BoxCryptor();
       var ivDateTime = DateTime.UtcNow;
 
       // Act & Assert
-      Assert.That(() => target.Decrypt(cipherText, ivDateTime), Throws.TypeOf(exceptionType));
+      Assert.That(() => BoxCryptor.Decrypt(cipherText, ivDateTime), Throws.TypeOf(exceptionType));
     }
 
 
@@ -71,13 +67,12 @@ namespace PowerView.Model.Test
     public void EncryptIvDependent()
     {
       // Arrange
-      var target = new BoxCryptor();
       const string plainText = "This is the plain text";
       var ivDateTime = DateTime.UtcNow;
 
       // Act
-      var cipherText1 = target.Encrypt(plainText, ivDateTime);
-      var cipherText2 = target.Encrypt(plainText, ivDateTime + TimeSpan.FromDays(1));
+      var cipherText1 = BoxCryptor.Encrypt(plainText, ivDateTime);
+      var cipherText2 = BoxCryptor.Encrypt(plainText, ivDateTime + TimeSpan.FromDays(1));
 
       // Assert
       Assert.That(cipherText2, Is.Not.EqualTo(cipherText1));
@@ -87,13 +82,12 @@ namespace PowerView.Model.Test
     public void EncryptDecrypt()
     {
       // Arrange
-      var target = new BoxCryptor();
       const string plainText = "This is the plain text";
       var ivDateTime = DateTime.UtcNow;
 
       // Act
-      var cipherText = target.Encrypt(plainText, ivDateTime);
-      var decryptedPlainText = target.Decrypt(cipherText, ivDateTime);
+      var cipherText = BoxCryptor.Encrypt(plainText, ivDateTime);
+      var decryptedPlainText = BoxCryptor.Decrypt(cipherText, ivDateTime);
 
       // Assert
       Assert.That(decryptedPlainText, Is.EqualTo(plainText));

@@ -7,7 +7,7 @@ namespace PowerView.Model
 {
   public class SeriesFromCumulativeGenerator
   {
-    internal IDictionary<ObisCode, ICollection<NormalizedDurationRegisterValue>> Generate(IDictionary<ObisCode, IList<NormalizedTimeRegisterValue>> cumulativeLabelSeries)
+    internal static IDictionary<ObisCode, ICollection<NormalizedDurationRegisterValue>> Generate(IDictionary<ObisCode, IList<NormalizedTimeRegisterValue>> cumulativeLabelSeries)
     {
       var result = new Dictionary<ObisCode, ICollection<NormalizedDurationRegisterValue>>();
 
@@ -44,7 +44,7 @@ namespace PowerView.Model
       }
     }
 
-    private void GenerateMultiInputSeries(Dictionary<ObisCode, ICollection<NormalizedDurationRegisterValue>> result)
+    private static void GenerateMultiInputSeries(Dictionary<ObisCode, ICollection<NormalizedDurationRegisterValue>> result)
     {
       var activeEnergyA14NetDeltaGenerator = new
       {
@@ -61,7 +61,7 @@ namespace PowerView.Model
 
       var satisfiedGenerators = generators.Where(x => x.Generator.IsSatisfiedBy(result)).ToList();
 
-      if (!satisfiedGenerators.Any())
+      if (satisfiedGenerators.Count == 0)
       {
         return;
       }

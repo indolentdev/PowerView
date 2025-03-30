@@ -6,8 +6,6 @@ namespace PowerView.Model.Repository
 {
   internal class EmailRecipientRepository : RepositoryBase, IEmailRecipientRepository
   {
-    //    private static ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
     public EmailRecipientRepository(IDbContext dbContext)
       : base(dbContext)
     {
@@ -34,14 +32,14 @@ namespace PowerView.Model.Repository
       return ToEmailRecipient(dbEmailRecipient.Name, dbEmailRecipient.EmailAddress);
     }
 
-    private EmailRecipient ToEmailRecipient(string name, string emailAddress)
+    private static EmailRecipient ToEmailRecipient(string name, string emailAddress)
     {
       return new EmailRecipient(name, emailAddress);
     }
 
     public void AddEmailRecipient(EmailRecipient emailRecipient)
     {
-      if (emailRecipient == null) throw new ArgumentNullException("emailRecipient");
+      ArgumentNullException.ThrowIfNull(emailRecipient);
 
       const string sql = @"
       INSERT INTO [EmailRecipient] ([Name],[EmailAddress]) VALUES (@name, @emailAddress);

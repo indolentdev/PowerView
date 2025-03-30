@@ -11,7 +11,7 @@ namespace PowerView.Model.Repository
 
     public EntityDeserializer(JsonNode jsonNode)
     {
-      if (jsonNode == null) throw new ArgumentNullException(nameof(jsonNode));
+      ArgumentNullException.ThrowIfNull(jsonNode);
 
       this.jsonNode = jsonNode;
     }
@@ -23,7 +23,7 @@ namespace PowerView.Model.Repository
 
     private static TType GetValue<TType>(JsonNode node, int position, string[] path)
     {
-      if (path == null) throw new ArgumentNullException(nameof(path));
+      ArgumentNullException.ThrowIfNull(path);
       if (path.Length == 0) throw new EntitySerializationException("No valid path found. Path:" + string.Join(",", path) + ", Position:" + position + ". Object:" + node);
 
       var propertyName = path[position];

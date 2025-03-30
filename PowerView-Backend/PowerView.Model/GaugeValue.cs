@@ -6,9 +6,9 @@ namespace PowerView.Model
 
     public GaugeValue(string label, string deviceId, DateTime dateTime, ObisCode obisCode, UnitValue unitValue)
     {
-      if (string.IsNullOrEmpty(label)) throw new ArgumentNullException("label");
-      if (string.IsNullOrEmpty(deviceId)) throw new ArgumentNullException("deviceId");
-      if (dateTime.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("dateTime", "Must be UTC");
+      ArgCheck.ThrowIfNullOrEmpty(label);
+      ArgCheck.ThrowIfNullOrEmpty(deviceId);
+      ArgCheck.ThrowIfNotUtc(dateTime);
 
       Label = label;
       DeviceId = deviceId;

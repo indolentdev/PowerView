@@ -13,13 +13,13 @@ namespace PowerView.Model
 
     public DisconnectRule(ISeriesName name, ISeriesName evaluationName, TimeSpan duration, int disconnectToConnectValue, int connectToDisconnectValue, Unit unit)
     {
-      if (name == null) throw new ArgumentNullException("name");
-      if (evaluationName == null) throw new ArgumentNullException("evaluationName");
-      if (duration.TotalMinutes < 15 || duration.TotalMinutes > 6 * 60) throw new ArgumentOutOfRangeException("duration", duration, "Must be between 2 mins and 6 hours");
-      if (disconnectToConnectValue < 1) throw new ArgumentOutOfRangeException("disconnectToConnectValue", disconnectToConnectValue, "Must be greater than zero");
-      if (connectToDisconnectValue < 1) throw new ArgumentOutOfRangeException("connectToDisconnectValue", connectToDisconnectValue, "Must be greater than zero");
-      if (disconnectToConnectValue <= connectToDisconnectValue) throw new ArgumentOutOfRangeException("connectToDisconnectValue", connectToDisconnectValue, "Must be greater than disconnectToConnectValue");
-      if (!Enum.IsDefined(typeof(Unit), unit)) throw new ArgumentOutOfRangeException("unit", unit, "Must be a valid unit");
+      ArgumentNullException.ThrowIfNull(name);
+      ArgumentNullException.ThrowIfNull(evaluationName);
+      if (duration.TotalMinutes < 15 || duration.TotalMinutes > 6 * 60) throw new ArgumentOutOfRangeException(nameof(duration), duration, "Must be between 2 mins and 6 hours");
+      if (disconnectToConnectValue < 1) throw new ArgumentOutOfRangeException(nameof(disconnectToConnectValue), disconnectToConnectValue, "Must be greater than zero");
+      if (connectToDisconnectValue < 1) throw new ArgumentOutOfRangeException(nameof(connectToDisconnectValue), connectToDisconnectValue, "Must be greater than zero");
+      if (disconnectToConnectValue <= connectToDisconnectValue) throw new ArgumentOutOfRangeException(nameof(connectToDisconnectValue), connectToDisconnectValue, "Must be greater than disconnectToConnectValue");
+      if (!Enum.IsDefined(typeof(Unit), unit)) throw new ArgumentOutOfRangeException(nameof(unit), unit, "Must be a valid unit");
 
       this.name = name;
       this.evaluationName = evaluationName;

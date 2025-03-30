@@ -32,7 +32,7 @@ namespace PowerView.Model
 
         internal SmtpConfig(ICollection<KeyValuePair<string, string>> smtpSettings)
         {
-            if (smtpSettings == null) throw new ArgumentNullException("smtpSettings");
+            ArgumentNullException.ThrowIfNull(smtpSettings);
 
             var serverString = GetValue(smtpSettings, SmtpServer);
             var portString = GetValue(smtpSettings, SmtpPort);
@@ -64,10 +64,10 @@ namespace PowerView.Model
             {
                 throw new DomainConstraintException("Auth iv must be a date time (roundtrip). Was:" + authIvString);
             }
-            var boxCrypto = new BoxCryptor();
+
             try
             {
-                Auth = boxCrypto.Decrypt(authCryptString, ivDateTime);
+                Auth = BoxCryptor.Decrypt(authCryptString, ivDateTime);
             }
             catch (BoxCryptorException e)
             {
@@ -90,15 +90,13 @@ namespace PowerView.Model
 
         internal ICollection<KeyValuePair<string, string>> GetSettings()
         {
-            var boxCrypto = new BoxCryptor();
-
             var ivDateTime = DateTime.UtcNow;
             var settings = new List<KeyValuePair<string, string>>
             {
               new KeyValuePair<string, string>(SmtpServer, Server),
               new KeyValuePair<string, string>(SmtpPort, Port.ToString(CultureInfo.InvariantCulture)),
               new KeyValuePair<string, string>(SmtpUser, User),
-              new KeyValuePair<string, string>(SmtpAuthCrypt, boxCrypto.Encrypt(Auth, ivDateTime)),
+              new KeyValuePair<string, string>(SmtpAuthCrypt, BoxCryptor.Encrypt(Auth, ivDateTime)),
               new KeyValuePair<string, string>(SmtpAuthIv, ivDateTime.ToString("o")),
               new KeyValuePair<string, string>(SmtpEmail, Email),
             };

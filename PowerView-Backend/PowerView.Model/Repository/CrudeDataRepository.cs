@@ -15,8 +15,8 @@ namespace PowerView.Model.Repository
 
         public WithCount<ICollection<CrudeDataValue>> GetCrudeData(string label, DateTime from, int skip = 0, int take = 10000)
         {
-            if (label == null) throw new ArgumentNullException(nameof(label));
-            if (from.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException(nameof(from), $"Must be UTC. Was:{from.Kind}");
+            ArgumentNullException.ThrowIfNull(label);
+            ArgCheck.ThrowIfNotUtc(from);
             if (skip < 0) throw new ArgumentOutOfRangeException(nameof(skip), $"Must be zero or greater. Was:{skip}");
             if (take < 1 || take > 25000) throw new ArgumentOutOfRangeException(nameof(take), $"Must be between 1 and 10000. Was:{take}");
 
@@ -75,8 +75,8 @@ WHERE lbl.LabelName = @Label AND rea.Timestamp >= @From;";
 
         public CrudeDataValue GetCrudeDataBy(string label, DateTime timestamp, ObisCode obisCode)
         {
-            if (label == null) throw new ArgumentNullException(nameof(label));
-            if (timestamp.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException(nameof(timestamp), $"Must be UTC. Was:{timestamp.Kind}");
+            ArgumentNullException.ThrowIfNull(label);
+            ArgCheck.ThrowIfNotUtc(timestamp);
 
             var sql = @"
 SELECT rea.Timestamp,o.ObisCode,reg.Value,reg.Scale,reg.Unit,dev.DeviceName AS DeviceId,regTag.Tags
@@ -99,8 +99,8 @@ WHERE lbl.LabelName = @Label AND rea.Timestamp = @Timestamp AND o.ObisCode = @Ob
 
         public void DeleteCrudeData(string label, DateTime timestamp, ObisCode obisCode)
         {
-            if (label == null) throw new ArgumentNullException(nameof(label));
-            if (timestamp.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException(nameof(timestamp), $"Must be UTC. Was:{timestamp.Kind}");
+            ArgumentNullException.ThrowIfNull(label);
+            ArgCheck.ThrowIfNotUtc(timestamp);
 
             var sql = @"
 CREATE TEMP TABLE DeleteCrudeData AS 
@@ -119,7 +119,7 @@ DROP TABLE DeleteCrudeData;";
 
         public IList<MissingDate> GetMissingDays(string label, ObisCode obisCode)
         {
-            if (label == null) throw new ArgumentNullException(nameof(label));
+            ArgumentNullException.ThrowIfNull(label);
 
             var readingInfo = GetReadingInfo(label, obisCode);
             var dayReadingInfo = readingInfo

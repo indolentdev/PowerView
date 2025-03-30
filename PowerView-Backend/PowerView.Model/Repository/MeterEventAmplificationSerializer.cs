@@ -13,11 +13,10 @@ namespace PowerView.Model.Repository
     
     public static string Serialize<T>(T amplification) where T : class, IMeterEventAmplification
     {
-      if (amplification == null) throw new ArgumentNullException(nameof(amplification));
+      ArgumentNullException.ThrowIfNull(amplification);
 
       try
       {
-//        var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
         var amplificationJson = JsonSerializer.Serialize<T>(amplification/*, options*/);
         var envelope = new Envelope { TypeName = amplification.GetType().Name, Content = amplificationJson };
         return JsonSerializer.Serialize(envelope/*, options*/);
@@ -30,10 +29,7 @@ namespace PowerView.Model.Repository
 
     public static IMeterEventAmplification Deserialize(string value)
     {
-      if (string.IsNullOrEmpty(value)) throw new ArgumentNullException(nameof(value));
-
-
-//      var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+      ArgCheck.ThrowIfNullOrEmpty(value);
 
       Envelope envelope;
       try

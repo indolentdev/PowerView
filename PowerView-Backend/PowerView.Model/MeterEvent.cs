@@ -6,9 +6,9 @@ namespace PowerView.Model
   {
     public MeterEvent(string label, DateTime detectTimestamp, bool flag, IMeterEventAmplification amplification)
     {
-      if (string.IsNullOrEmpty(label)) throw new ArgumentNullException("label");
-      if (detectTimestamp.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("detectTimestamp", "Must be UTC. Was:" + detectTimestamp.Kind);
-      if (amplification == null) throw new ArgumentNullException("amplification");
+      ArgCheck.ThrowIfNullOrEmpty(label);
+      ArgCheck.ThrowIfNotUtc(detectTimestamp);
+      ArgumentNullException.ThrowIfNull(amplification);
 
       Label = label;
       DetectTimestamp = detectTimestamp;

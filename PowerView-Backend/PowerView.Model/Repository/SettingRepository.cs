@@ -23,7 +23,7 @@ internal class SettingRepository : RepositoryBase, ISettingRepository
 
     public void Upsert(ICollection<KeyValuePair<string, string>> items)
     {
-        if (items == null) throw new ArgumentNullException(nameof(items));
+        ArgumentNullException.ThrowIfNull(items);
         if (items.Any(x => string.IsNullOrEmpty(x.Key) || string.IsNullOrEmpty(x.Value))) throw new ArgumentNullException(nameof(items));
 
         DbContext.ExecuteTransaction("INSERT INTO Setting (Name, Value) VALUES (@Key, @Value) ON CONFLICT (Name) DO UPDATE SET Value = excluded.Value;", items);
@@ -53,7 +53,7 @@ internal class SettingRepository : RepositoryBase, ISettingRepository
 
     public void UpsertMqttConfig(MqttConfig mqttConfig)
     {
-        if (mqttConfig == null) throw new ArgumentNullException(nameof(mqttConfig));
+        ArgumentNullException.ThrowIfNull(mqttConfig);
 
         Upsert(mqttConfig.GetSettings());
     }
@@ -65,7 +65,7 @@ internal class SettingRepository : RepositoryBase, ISettingRepository
 
     public void UpsertSmtpConfig(SmtpConfig smtpConfig)
     {
-        if (smtpConfig == null) throw new ArgumentNullException(nameof(smtpConfig));
+        ArgumentNullException.ThrowIfNull(smtpConfig);
 
         Upsert(smtpConfig.GetSettings());
     }

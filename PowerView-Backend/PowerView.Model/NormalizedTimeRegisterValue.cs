@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace PowerView.Model
 {
@@ -15,7 +16,7 @@ namespace PowerView.Model
 
     internal NormalizedTimeRegisterValue(TimeRegisterValue timeRegisterValue, DateTime normalizedTimestamp)
     {
-      if (normalizedTimestamp.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("normalizedTimestamp", "Must be UTC");
+      ArgCheck.ThrowIfNotUtc(normalizedTimestamp);
 
       this.timeRegisterValue = timeRegisterValue;
       this.normalizedTimestamp = normalizedTimestamp;
@@ -25,7 +26,7 @@ namespace PowerView.Model
     {
       if (!DeviceIdEquals(baseValue))
       {
-        var msg = string.Format("A calculation of a subtracted value was not possible. The values originate from different devices (device ids). Minuend:{0}, Subtrahend:{1}",
+        var msg = string.Format(CultureInfo.InvariantCulture, "A calculation of a subtracted value was not possible. The values originate from different devices (device ids). Minuend:{0}, Subtrahend:{1}",
           this, baseValue);
         throw new DataMisalignedException(msg);
       }
@@ -79,7 +80,7 @@ namespace PowerView.Model
       }
       else
       {
-        var msg = string.Format("A calculation of a subtracted value resulted in a negative result. Minuend:{0}, Subtrahend:{1}",
+        var msg = string.Format(CultureInfo.InvariantCulture, "A calculation of a subtracted value resulted in a negative result. Minuend:{0}, Subtrahend:{1}",
           this, baseValue);
         throw new DataMisalignedException(msg);
       }
@@ -110,11 +111,11 @@ namespace PowerView.Model
       return Equals(value);
     }
 
-    public bool Equals(NormalizedTimeRegisterValue value)
+    public bool Equals(NormalizedTimeRegisterValue other)
     {
-      return value != null &&
-             EqualityComparer<TimeRegisterValue>.Default.Equals(timeRegisterValue, value.timeRegisterValue) &&
-             normalizedTimestamp == value.normalizedTimestamp;
+      return other != null &&
+             EqualityComparer<TimeRegisterValue>.Default.Equals(timeRegisterValue, other.timeRegisterValue) &&
+             normalizedTimestamp == other.normalizedTimestamp;
     }
 
     public override int GetHashCode()

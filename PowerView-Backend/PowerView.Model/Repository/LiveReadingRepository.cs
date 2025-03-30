@@ -11,13 +11,14 @@ namespace PowerView.Model.Repository
         public LiveReadingRepository(ILogger<LiveReadingRepository> logger, IDbContext dbContext)
           : base(dbContext)
         {
-            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            ArgumentNullException.ThrowIfNull(logger);
+            this.logger = logger;
         }
 
         public void Add(IList<Reading> liveReadings)
         {
-            if (liveReadings == null) throw new ArgumentNullException("liveReadings");
-            if (liveReadings.Any(lr => lr == null)) throw new ArgumentOutOfRangeException("liveReadings", "Must not contain nulls");
+            ArgumentNullException.ThrowIfNull(liveReadings);
+            if (liveReadings.Any(lr => lr == null)) throw new ArgumentOutOfRangeException(nameof(liveReadings), "Must not contain nulls");
 
             if (liveReadings.Count == 0)
             {
@@ -106,7 +107,7 @@ namespace PowerView.Model.Repository
                     details.AppendLine(string.Empty).Append("Label:").Append(item.Reading.Label).Append(", Timestamp:")
                       .Append(item.Reading.Timestamp.ToString("o")).Append(", ObisCodes:").Append(string.Join(", ", item.DbRegisters.Select(x => obisIds.FirstOrDefault(o => o.Value == x.ObisId).Key)));
                 }
-                logger.LogInformation($"{ignoredRegisters.Count} register(s) and associated tag(s) were ignored during insert to database due to duplicate constraints.{details.ToString()}");
+                logger.LogInformation("{Count} register(s) and associated tag(s) were ignored during insert to database due to duplicate constraints.{Details}", ignoredRegisters.Count, details);
             }
         }
 
@@ -145,8 +146,8 @@ namespace PowerView.Model.Repository
 
         public IList<ObisCode> GetObisCodes(string label, DateTime cutoff)
         {
-            if (label == null) throw new ArgumentNullException(nameof(label));
-            if (cutoff.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException(nameof(cutoff), $"Must be UTC. Was:{cutoff.Kind}");
+            ArgumentNullException.ThrowIfNull(label);
+            ArgCheck.ThrowIfNotUtc(cutoff);
 
             var sql = @"
 WITH distinctObis AS 

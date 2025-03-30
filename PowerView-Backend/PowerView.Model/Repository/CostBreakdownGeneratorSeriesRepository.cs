@@ -31,12 +31,12 @@ namespace PowerView.Model.Repository
       Func<Db.GeneratorSeriesEx, Db.CostBreakdown, Db.CostBreakdownEntry, (Db.GeneratorSeriesEx GeneratorSeries, Db.CostBreakdown CostBreakdown, List<Db.CostBreakdownEntry> CostBreakdownEntries)> map = (gs, cb, cbe) =>
       {
         var seriesName = new SeriesName(gs.Label, gs.ObisCode);
-        if (!cache.ContainsKey(seriesName))
+        if (!cache.TryGetValue(seriesName, out var cacheItem))
         {
-          cache.Add(seriesName, (gs, cb, new List<Db.CostBreakdownEntry>()));
+          cacheItem =(gs, cb, new List<Db.CostBreakdownEntry>());
+          cache.Add(seriesName, cacheItem);
         }
 
-        var cacheItem = cache[seriesName];
         if (cbe != null) cacheItem.CostBreakdownEntries.Add(cbe);
 
         return cacheItem;

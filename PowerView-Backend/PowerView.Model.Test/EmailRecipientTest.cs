@@ -15,9 +15,9 @@ namespace PowerView.Model.Test
 
       // Act & Assert
       Assert.That(() => new EmailRecipient(null, emailAddress), Throws.TypeOf<ArgumentNullException>());
-      Assert.That(() => new EmailRecipient(string.Empty, emailAddress), Throws.TypeOf<ArgumentNullException>());
+      Assert.That(() => new EmailRecipient(string.Empty, emailAddress), Throws.TypeOf<ArgumentOutOfRangeException>());
       Assert.That(() => new EmailRecipient(name, null), Throws.TypeOf<ArgumentNullException>());
-      Assert.That(() => new EmailRecipient(name, string.Empty), Throws.TypeOf<ArgumentNullException>());
+      Assert.That(() => new EmailRecipient(name, string.Empty), Throws.TypeOf<ArgumentOutOfRangeException>());
       Assert.That(() => new EmailRecipient(name, "WrongEmailAddressStructure"), Throws.TypeOf<FormatException>());
     }
 

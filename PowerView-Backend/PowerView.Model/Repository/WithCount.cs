@@ -6,7 +6,7 @@ namespace PowerView.Model.Repository
   {
     public WithCount(int totalCount, TResult result)
     {
-      if (result == null) throw new ArgumentNullException("result");
+      ArgumentNullException.ThrowIfNull(result);
 
       TotalCount = totalCount;
       Result = result;

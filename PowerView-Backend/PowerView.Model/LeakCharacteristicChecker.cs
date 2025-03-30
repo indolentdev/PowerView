@@ -22,11 +22,11 @@ namespace PowerView.Model
 
     public UnitValue? GetLeakCharacteristic(LabelSeries<NormalizedDurationRegisterValue> labelSeries, ObisCode obisCode, DateTime start, DateTime end, Func<NormalizedDurationRegisterValue, int> timeGroupFunc, int minGroups = 5)
     {
-      if (labelSeries == null) throw new ArgumentNullException("labelSeries");
-      if (!obisCode.IsDelta) throw new ArgumentOutOfRangeException("obisCode", "Must be a delta obis code");
-      if (start.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("start", "Must be UTC");
-      if (end.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("end", "Must be UTC");
-      if (timeGroupFunc == null) throw new ArgumentNullException("timeGroupFunc");
+      ArgumentNullException.ThrowIfNull(labelSeries);
+      if (!obisCode.IsDelta) throw new ArgumentOutOfRangeException(nameof(obisCode), "Must be a delta obis code");
+      ArgCheck.ThrowIfNotUtc(start);
+      ArgCheck.ThrowIfNotUtc(end);
+      ArgumentNullException.ThrowIfNull(timeGroupFunc);
 
       var obisCodeValues = labelSeries[obisCode];
       var values = obisCodeValues.Where(x => x.End > start && x.End < end).ToList();

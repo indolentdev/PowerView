@@ -5,7 +5,7 @@ namespace PowerView.Model
   {
     public NamedValue(SeriesName serieName, UnitValue unitValue)
     {
-      if (serieName == null) throw new ArgumentNullException("serieName");
+      ArgumentNullException.ThrowIfNull(serieName);
 
       SerieName = serieName;
       UnitValue = unitValue;

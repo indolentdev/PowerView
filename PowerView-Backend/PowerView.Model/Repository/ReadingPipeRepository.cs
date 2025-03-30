@@ -17,29 +17,29 @@ namespace PowerView.Model.Repository
     internal ReadingPipeRepository(IDbContext dbContext, ILocationContext locationContext, int readingsPerLabel)
       : base(dbContext)
     {
-      if (locationContext == null) throw new ArgumentNullException("locationContext");
+            ArgumentNullException.ThrowIfNull(locationContext);
 
-      this.locationContext = locationContext;
+            this.locationContext = locationContext;
       this.readingsPerLabel = readingsPerLabel;
     }
 
     public bool PipeLiveReadingsToDayReadings(DateTime maximumDateTime)
     {
-      if (maximumDateTime.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("maximumDateTime", "Must be UTC time");
+      ArgCheck.ThrowIfNotUtc(maximumDateTime);
 
       return PipeReadings<Db.LiveReading, Db.DayReading>(maximumDateTime);
     }
 
     public bool PipeDayReadingsToMonthReadings(DateTime maximumDateTime)
     {
-      if (maximumDateTime.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("maximumDateTime", "Must be UTC time");
+      ArgCheck.ThrowIfNotUtc(maximumDateTime);
 
       return PipeReadings<Db.DayReading, Db.MonthReading>(maximumDateTime);
     }
 
     public void PipeMonthReadingsToYearReadings(DateTime maximumDateTime)
     {
-      if (maximumDateTime.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("maximumDateTime", "Must be UTC time");
+      ArgCheck.ThrowIfNotUtc(maximumDateTime);
 
       PipeReadings<Db.MonthReading, Db.YearReading>(maximumDateTime);
     }
@@ -59,7 +59,7 @@ namespace PowerView.Model.Repository
       return pipedSomething;
     }
 
-    private IDictionary<byte, long> GetStreamPositions<TDstReading>()
+    private Dictionary<byte, long> GetStreamPositions<TDstReading>()
       where TDstReading : class, IDbReading
     {
       var streamName = GetTableName<TDstReading>();
@@ -69,7 +69,7 @@ namespace PowerView.Model.Repository
       return resultSet.ToDictionary(sp => sp.LabelId, sp => sp.Position);
     }
       
-    private IDictionary<byte, DateTime> GetLabelIdMaxTimestamps<TDstReading>()
+    private Dictionary<byte, DateTime> GetLabelIdMaxTimestamps<TDstReading>()
       where TDstReading : class, IDbReading
     {
       var tableName = GetTableName<TDstReading>();
@@ -92,7 +92,7 @@ namespace PowerView.Model.Repository
       public UnixTime MaxTimestamp { get; set; }
     }
 
-    private IDictionary<byte, IList<TSrcReading>> GetReadingsByLabelId<TSrcReading>(IDictionary<byte, long> streamPositions)
+    private Dictionary<byte, IList<TSrcReading>> GetReadingsByLabelId<TSrcReading>(Dictionary<byte, long> streamPositions)
       where TSrcReading : class, IDbReading
     {
       var labelIds = GetLabelIds<TSrcReading>();
@@ -102,9 +102,9 @@ namespace PowerView.Model.Repository
       foreach (var labelId in labelIds)
       {
         long position = 0;
-        if (streamPositions.ContainsKey(labelId))
+        if (streamPositions.TryGetValue(labelId, out var labelIdPosition))
         {
-          position = streamPositions[labelId];
+          position = labelIdPosition;
         }
         
         var readings = GetReadings<TSrcReading>(labelId, position, readingsPerLabel);
@@ -114,7 +114,7 @@ namespace PowerView.Model.Repository
       return resultSet;
     }
 
-    private ICollection<byte> GetLabelIds<TSrcReading>()
+    private List<byte> GetLabelIds<TSrcReading>()
       where TSrcReading : class, IDbReading
     {
       var labels = new List<byte>(5);
@@ -146,7 +146,7 @@ namespace PowerView.Model.Repository
       return resultSet;
     }
 
-    private IDictionary<byte, IEnumerable<TSrcReading>> GetReadingsToPipeByLabelId<TSrcReading, TDstReading>(DateTime maximumDateTime, IDictionary<byte, DateTime> existingLabelIdToTimeStamp, IDictionary<byte, IList<TSrcReading>> readingsByLabelId)
+    private Dictionary<byte, IEnumerable<TSrcReading>> GetReadingsToPipeByLabelId<TSrcReading, TDstReading>(DateTime maximumDateTime, Dictionary<byte, DateTime> existingLabelIdToTimeStamp, IDictionary<byte, IList<TSrcReading>> readingsByLabelId)
       where TSrcReading : class, IDbReading
       where TDstReading : class, IDbReading
     {
@@ -155,9 +155,9 @@ namespace PowerView.Model.Repository
       {
         var labelId = labelGrouping.Key;
         var minimumDateTime = DateTime.MinValue.ToUniversalTime();
-        if (existingLabelIdToTimeStamp.ContainsKey(labelId))
+        if (existingLabelIdToTimeStamp.TryGetValue(labelId, out var labelIdDateTime))
         {
-          minimumDateTime = existingLabelIdToTimeStamp[labelId];
+          minimumDateTime = labelIdDateTime;
         }
         var reducedLabelReadings = Reduce<TSrcReading, TDstReading>(labelGrouping.Value, minimumDateTime, maximumDateTime);
         readingsToPipe.Add(labelId, reducedLabelReadings);
@@ -301,7 +301,7 @@ namespace PowerView.Model.Repository
       return result;
     }
 
-    private IList<IDbRegister> GetRegisters<TSrcReading, TSrcRegister>(byte labelId, IEnumerable<TSrcReading> readingsToPipe)
+    private List<IDbRegister> GetRegisters<TSrcReading, TSrcRegister>(byte labelId, IEnumerable<TSrcReading> readingsToPipe)
       where TSrcReading : class, IDbReading
       where TSrcRegister : class, IDbRegister
     {

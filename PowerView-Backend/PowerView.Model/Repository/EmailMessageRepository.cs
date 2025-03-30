@@ -11,10 +11,10 @@ namespace PowerView.Model.Repository
 
     public void AddEmailMessage(EmailRecipient frm, EmailRecipient to, string subject, string body)
     {
-      if (frm == null) throw new ArgumentNullException("frm");
-      if (to == null) throw new ArgumentNullException("to");
-      if (subject == null) throw new ArgumentNullException("subject");
-      if (body == null) throw new ArgumentNullException("body");
+      ArgumentNullException.ThrowIfNull(frm);
+      ArgumentNullException.ThrowIfNull(to);
+      ArgumentNullException.ThrowIfNull(subject);
+      ArgumentNullException.ThrowIfNull(body);
 
       var dbEmailMessage = new Db.EmailMessage
       {

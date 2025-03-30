@@ -15,9 +15,9 @@ namespace PowerView.Model
 
     internal LabelSeriesSet(DateTime start, DateTime end, int estimatedLabelSeriesCount, IEnumerable<LabelSeries<T>> labelSeries)
     {
-      if (start.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("start", "Must be UTC");
-      if (end.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("end", "Must be UTC");
-      if (labelSeries == null) throw new ArgumentNullException("labelSeries");
+      ArgCheck.ThrowIfNotUtc(start);
+      ArgCheck.ThrowIfNotUtc(end);
+      ArgumentNullException.ThrowIfNull(labelSeries);
 
       Start = start;
       End = end;

@@ -21,8 +21,8 @@ namespace PowerView.Model
 
     private void Init(DateTime start, DateTime end, UnitValue unitValue)
     {
-      if (start.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("start", "Must be UTC");
-      if (end.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("end", "Must be UTC");
+      ArgCheck.ThrowIfNotUtc(start);
+      ArgCheck.ThrowIfNotUtc(end);
 
       Start = start;
       End = end;

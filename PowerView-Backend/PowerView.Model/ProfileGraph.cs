@@ -6,17 +6,19 @@ namespace PowerView.Model
 {
   public class ProfileGraph
   {
+        private static readonly string[] periodNames = new[] { "day", "month", "year", "decade" };
+
     public ProfileGraph(string period, string page, string title, string interval, long rank, IList<SeriesName> serieNames)
     {
-      if (string.IsNullOrEmpty(period)) throw new ArgumentNullException("period");
-      if (!(new[] { "day", "month", "year", "decade" }.Contains(period))) throw new ArgumentOutOfRangeException("period", period, "Invalid period");
-      if (page == null) throw new ArgumentNullException("page");
-      if (string.IsNullOrEmpty(title)) throw new ArgumentNullException("title");
-      if (string.IsNullOrEmpty(interval)) throw new ArgumentNullException("interval");
-      if (serieNames == null) throw new ArgumentNullException("serieNames");
-      if (serieNames.Any(gv => gv == null)) throw new ArgumentNullException("serieNames", "Items must not be null");
-      if (serieNames.Count == 0) throw new ArgumentException("Must have at least one serie", "serieNames");
-      if (serieNames.Count != serieNames.Distinct().Count()) throw new ArgumentException("Must not have duplicate serie entries", "serieNames");
+      ArgCheck.ThrowIfNullOrEmpty(period);
+      if (!periodNames.Contains(period)) throw new ArgumentOutOfRangeException(nameof(period), period, "Invalid period");
+      ArgumentNullException.ThrowIfNull(page);
+      ArgCheck.ThrowIfNullOrEmpty(title);
+      ArgCheck.ThrowIfNullOrEmpty(interval);
+      ArgumentNullException.ThrowIfNull(serieNames);
+      if (serieNames.Any(gv => gv == null)) throw new ArgumentNullException(nameof(serieNames), "Items must not be null");
+      if (serieNames.Count == 0) throw new ArgumentException("Must have at least one serie", nameof(serieNames));
+      if (serieNames.Count != serieNames.Distinct().Count()) throw new ArgumentException("Must not have duplicate serie entries", nameof(serieNames));
 
       Period = period;
       Page = page;
@@ -32,7 +34,6 @@ namespace PowerView.Model
     public string Interval { get; private set; }
     public long Rank { get; private set; }
     public IList<SeriesName> SerieNames { get; private set; }
-
   }
 }
 

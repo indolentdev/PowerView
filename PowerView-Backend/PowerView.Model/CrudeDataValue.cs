@@ -6,8 +6,8 @@ namespace PowerView.Model
 
         public CrudeDataValue(DateTime dateTime, ObisCode obisCode, int value, short scale, Unit unit, string deviceId, RegisterValueTag tag = RegisterValueTag.None)
         {
-            if (dateTime.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("dateTime", "Must be UTC");
-            if (string.IsNullOrEmpty(deviceId)) throw new ArgumentNullException("deviceId");
+            ArgCheck.ThrowIfNotUtc(dateTime);
+            ArgCheck.ThrowIfNullOrEmpty(deviceId);
 
             DateTime = dateTime;
             ObisCode = obisCode;

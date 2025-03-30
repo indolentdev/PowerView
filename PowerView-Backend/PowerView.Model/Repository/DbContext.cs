@@ -18,7 +18,7 @@ namespace PowerView.Model.Repository
 
         public DbContext(IDbConnection connection, bool optimizeOnClose)
         {
-            if (connection == null) throw new ArgumentNullException("connection");
+            ArgumentNullException.ThrowIfNull(connection);
 
             this.connection = connection;
             this.optimizeOnClose = optimizeOnClose;
@@ -31,7 +31,7 @@ namespace PowerView.Model.Repository
             return connection.BeginTransaction(IsolationLevel.ReadCommitted);
         }
 
-        public DateTime GetDateTime(long fieldValue)
+        public static DateTime GetDateTime(long fieldValue)
         {
             return dateTimeEpoch.AddSeconds(fieldValue);
         }
@@ -84,13 +84,12 @@ namespace PowerView.Model.Repository
             Dictionary<long, OneToMany<TOne, TMany>> cache = new Dictionary<long, OneToMany<TOne, TMany>>();
             Func<TOne, TMany, OneToMany<TOne, TMany>> map = (parent, child) =>
             {
-                if (!cache.ContainsKey(parent.Id))
+                if (!cache.TryGetValue(parent.Id, out var oneToMany))
                 {
-                    cache.Add(parent.Id, new OneToMany<TOne, TMany>(parent));
+                    oneToMany = new OneToMany<TOne, TMany>(parent);
+                    cache.Add(parent.Id, oneToMany);
                 }
                 
-                var oneToMany = cache[parent.Id];
-
                 if (child != null) oneToMany.Children.Add(child);
                 
                 return oneToMany;
@@ -117,7 +116,7 @@ namespace PowerView.Model.Repository
             }
         }
 
-        private TReturn NoTransaction<TReturn>(Func<TReturn> dbFunc)
+        private static TReturn NoTransaction<TReturn>(Func<TReturn> dbFunc)
         {
             try
             {

@@ -23,7 +23,7 @@ namespace PowerView.Model
     /// </remarks>
     public LabelSeries<NormalizedTimeRegisterValue> Normalize(Func<DateTime, DateTime> timeDivider)
     {
-      if (timeDivider == null) throw new ArgumentNullException("timeDivider");
+      ArgumentNullException.ThrowIfNull(timeDivider);
 
       var normalized = new Dictionary<ObisCode, IEnumerable<NormalizedTimeRegisterValue>>();
       foreach (var obisCode in this)

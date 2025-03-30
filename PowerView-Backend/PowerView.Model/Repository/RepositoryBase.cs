@@ -15,9 +15,9 @@ namespace PowerView.Model.Repository
 
     private static DbContext ValidateDbContext(IDbContext dbContext)
     {
-      if ( dbContext == null ) throw new ArgumentNullException("dbContext");
+      ArgumentNullException.ThrowIfNull(dbContext);
       var concreteDbContext = dbContext as DbContext;
-      if ( concreteDbContext == null ) throw new ArgumentOutOfRangeException("dbContext", "Must be of type DbContext");
+      if ( concreteDbContext == null ) throw new ArgumentOutOfRangeException(nameof(dbContext), "Must be of type DbContext");
       return concreteDbContext;
     }
 

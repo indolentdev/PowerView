@@ -19,8 +19,8 @@ namespace PowerView.Model.Test
 
             // Act & Assert
             Assert.That(() => new CrudeDataValue(DateTime.Now, oc, val,  scale, unit, deviceId), Throws.TypeOf<ArgumentOutOfRangeException>());
-            Assert.That(() => new CrudeDataValue(dt, oc, val, scale, unit, string.Empty), Throws.TypeOf<ArgumentNullException>());
-            Assert.That(() => new CrudeDataValue(dt, oc, val, scale, unit, null), Throws.TypeOf<ArgumentNullException>());
+            Assert.That(() => new CrudeDataValue(dt, oc, val, scale, unit, string.Empty), Throws.TypeOf<ArgumentOutOfRangeException>());
+            Assert.That(() => new CrudeDataValue(dt, oc, val, scale, unit, null), Throws.ArgumentNullException);
         }
 
         [Test]

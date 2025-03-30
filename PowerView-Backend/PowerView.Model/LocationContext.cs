@@ -7,8 +7,8 @@ namespace PowerView.Model
     {
         public void Setup(TimeZoneInfo timeZoneInfo, CultureInfo cultureInfo)
         {
-            if (timeZoneInfo == null) throw new ArgumentNullException("timeZoneInfo");
-            if (cultureInfo == null) throw new ArgumentNullException("cultureInfo");
+            ArgumentNullException.ThrowIfNull(timeZoneInfo);
+            ArgumentNullException.ThrowIfNull(cultureInfo);
 
             TimeZoneInfo = timeZoneInfo;
             CultureInfo = cultureInfo;
@@ -24,21 +24,21 @@ namespace PowerView.Model
 
         public DateTime ConvertTimeFromUtc(DateTime dateTime)
         {
-            if (dateTime.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("dateTime", "Must be UTC. Was:" + dateTime.Kind);
+            ArgCheck.ThrowIfNotUtc(dateTime);
 
             return TimeZoneInfo.ConvertTimeFromUtc(dateTime, TimeZoneInfo);
         }
 
         public DateTime ConvertTimeToUtc(DateTime dateTime)
         {
-            if (dateTime.Kind != DateTimeKind.Unspecified) throw new ArgumentOutOfRangeException("dateTime", "Must be Unspecified");
+            if (dateTime.Kind != DateTimeKind.Unspecified) throw new ArgumentOutOfRangeException(nameof(dateTime), "Must be Unspecified");
 
             return TimeZoneInfo.ConvertTimeToUtc(dateTime, TimeZoneInfo);
         }
 
         public bool IsDaylightSavingTime(DateTime dateTime)
         {
-            if (dateTime.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException("dateTime", "Must be UTC. Was:" + dateTime.Kind);
+            ArgCheck.ThrowIfNotUtc(dateTime);
 
             return TimeZoneInfo.IsDaylightSavingTime(dateTime);
         }

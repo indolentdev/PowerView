@@ -28,7 +28,7 @@ namespace PowerView.Service.EventHub
 
         public async Task Import(DateTime timestamp)
         {
-            if (timestamp.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException(nameof(timestamp), "Must be UTC");
+            ArgCheck.ThrowIfNotUtc(timestamp);
 
             var enabledImportGroups = GetImportGroups(timestamp, importRepository.GetImports());
 

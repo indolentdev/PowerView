@@ -9,24 +9,24 @@ namespace PowerView.Model.Repository
   internal class SeriesColorRepository : RepositoryBase, ISeriesColorRepository
   {
     private readonly IObisColorProvider obisColorProvider;
-    private IDictionary<SeriesName, string> seriesColorCache;
+    private Dictionary<SeriesName, string> seriesColorCache;
 
     public SeriesColorRepository(IDbContext dbContext, IObisColorProvider obisColorProvider)
       : base(dbContext)
     {
-      if (obisColorProvider == null) throw new ArgumentNullException("obisColorProvider");
+      ArgumentNullException.ThrowIfNull(obisColorProvider);
 
       this.obisColorProvider = obisColorProvider;
     }
 
     public string GetColorCached(string label, ObisCode obisCode)
     {
-      if (string.IsNullOrEmpty(label)) throw new ArgumentNullException("label");
+      ArgCheck.ThrowIfNullOrEmpty(label);
 
       PopulateCacheAsNeeded();
 
       var key = new SeriesName(label, obisCode);
-      return seriesColorCache.ContainsKey(key) ? seriesColorCache[key] : obisColorProvider.GetColor(obisCode);
+      return seriesColorCache.TryGetValue(key, out var color) ? color : obisColorProvider.GetColor(obisCode);
     }
 
     public ICollection<SeriesColor> GetSeriesColors()
@@ -39,7 +39,7 @@ namespace PowerView.Model.Repository
 
     public void SetSeriesColors(IEnumerable<SeriesColor> seriesColors)
     {
-      if (seriesColors == null) throw new ArgumentNullException("seriesColors");
+      ArgumentNullException.ThrowIfNull(seriesColors);
 
       seriesColorCache = null;
 

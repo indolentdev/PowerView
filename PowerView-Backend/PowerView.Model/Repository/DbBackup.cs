@@ -64,7 +64,7 @@ namespace PowerView.Model.Repository
         {
             if (force || TimeForBackup(dbFile, backupPath))
             {
-                logger.LogInformation($"Backing up database to {backupPath.FullName}");
+                logger.LogInformation("Backing up database to file:{Name}", backupPath.FullName);
                 var dt = DateTime.Now;
                 var backupTime = dt.ToString("yyyyMMdd", CultureInfo.InvariantCulture);
                 foreach (var sourceFile in new DirectoryInfo(dbPath).GetFiles(dbFile + "*", SearchOption.TopDirectoryOnly))
@@ -102,7 +102,7 @@ namespace PowerView.Model.Repository
                 .OrderBy(x => x.DateTime)
                 .ToList();
 
-            return !managedBackupFiles.Any() || DateTime.Now - managedBackupFiles.Last().DateTime > bckOptions.Value.MinimumInterval;
+            return managedBackupFiles.Count == 0 || DateTime.Now - managedBackupFiles.Last().DateTime > bckOptions.Value.MinimumInterval;
         }
 
         private static bool TryGetDateTimeFromFileName(string backupFileName, out DateTime dateTime)
@@ -118,7 +118,7 @@ namespace PowerView.Model.Repository
                 var obsoleteBackup = backupFilesAscending.First();
                 foreach (var backupFile in new DirectoryInfo(obsoleteBackup.DirectoryName).GetFiles(obsoleteBackup.Name + "*", SearchOption.TopDirectoryOnly))
                 {
-                    logger.LogDebug($"Removing obsolete database backup file:{backupFile.FullName}");
+                    logger.LogDebug("Removing obsolete database backup file:{Name}", backupFile.FullName);
                     try
                     {
                         backupFile.Delete();

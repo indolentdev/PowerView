@@ -23,7 +23,7 @@ namespace PowerView.Service.EventHub
 
     public void DetectMeterEvents(DateTime timestamp)
     {
-      if (timestamp.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException(nameof(timestamp), "Must be UTC");
+      ArgCheck.ThrowIfNotUtc(timestamp);
 
       var dateLocal = locationContext.ConvertTimeFromUtc(timestamp);
       var localMidnightAsUtc = dateLocal.Date.ToUniversalTime();

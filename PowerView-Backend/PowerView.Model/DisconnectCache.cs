@@ -22,7 +22,7 @@ namespace PowerView.Model
 
     internal void SynchronizeRules(ICollection<IDisconnectRule> rules, Func<IDisconnectRule, IDisconnectCacheItem> cacheItemFactory)
     {
-      if (rules == null) throw new ArgumentNullException("rules");
+      ArgumentNullException.ThrowIfNull(rules);
 
       var obsoleteKeys = cacheItems.Keys.Except(rules.Select(x => x.EvaluationName)).ToList();
       foreach (var key in obsoleteKeys)

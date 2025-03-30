@@ -16,7 +16,7 @@ namespace PowerView.Model.Test
       // Act & Assert
       Assert.That(() => new SeriesColor(null, color), Throws.TypeOf<ArgumentNullException>());
       Assert.That(() => new SeriesColor(seriesName, null), Throws.TypeOf<ArgumentNullException>());
-      Assert.That(() => new SeriesColor(seriesName, string.Empty), Throws.TypeOf<ArgumentNullException>());
+      Assert.That(() => new SeriesColor(seriesName, string.Empty), Throws.TypeOf<ArgumentOutOfRangeException>());
       Assert.That(() => new SeriesColor(seriesName, "#12"), Throws.TypeOf<ArgumentOutOfRangeException>());
       Assert.That(() => new SeriesColor(seriesName, "1234567"), Throws.TypeOf<ArgumentOutOfRangeException>());
     }

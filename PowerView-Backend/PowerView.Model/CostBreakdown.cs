@@ -8,10 +8,10 @@ namespace PowerView.Model
   {
     public CostBreakdown(string title, Unit currency, int vat, IList<CostBreakdownEntry> entries)
     {
-      if (string.IsNullOrEmpty(title)) throw new ArgumentOutOfRangeException(nameof(title));
+      ArgCheck.ThrowIfNullOrEmpty(title);
       if (currency != Unit.Eur && currency != Unit.Dkk) throw new ArgumentOutOfRangeException(nameof(currency), $"Must be Eur or Dkk. Was:{currency}");
       if (vat < 0 || vat > 100) throw new ArgumentOutOfRangeException(nameof(vat), $"Must be betwen 0 and 100. Was:{vat}");
-      if (entries == null) throw new ArgumentNullException(nameof(entries));
+      ArgumentNullException.ThrowIfNull(entries);
       if (entries.Any(e => e == null)) throw new ArgumentNullException(nameof(entries), "Items must not be null");
 
       Title = title;
@@ -84,8 +84,8 @@ namespace PowerView.Model
 
     public IEnumerable<(NormalizedDurationRegisterValue Value, ICollection<CostBreakdownEntry> Entries)> Apply(ILocationContext locationContext, IEnumerable<NormalizedDurationRegisterValue> values)
     {
-      if (locationContext == null) throw new ArgumentNullException(nameof(locationContext));
-      if (values == null) throw new ArgumentNullException(nameof(values));
+      ArgumentNullException.ThrowIfNull(locationContext);
+      ArgumentNullException.ThrowIfNull(values);
 
       return ApplyInternal(locationContext, values).ToList();
     }

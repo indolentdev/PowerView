@@ -10,8 +10,8 @@ namespace PowerView.Model
       if (string.IsNullOrEmpty(label)) throw new ArgumentOutOfRangeException(nameof(label), "Must not be null or empty");
       if (string.IsNullOrEmpty(channel)) throw new ArgumentOutOfRangeException(nameof(channel), "Must not be null or empty");
       if (currency != Unit.Eur && currency != Unit.Dkk) throw new ArgumentOutOfRangeException(nameof(currency), $"Must be Eur or Dkk. Was:{currency}");
-      if (fromTimestamp.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException(nameof(fromTimestamp), $"Must be UTC. Was:{fromTimestamp.Kind}");
-      if (currentTimestamp != null && currentTimestamp.Value.Kind != DateTimeKind.Utc) throw new ArgumentOutOfRangeException(nameof(currentTimestamp), $"Must be UTC. Was:{currentTimestamp.Value.Kind}");
+      ArgCheck.ThrowIfNotUtc(fromTimestamp);
+      if (currentTimestamp != null) ArgCheck.ThrowIfNotUtc(currentTimestamp.Value);
 
       Label = label;
       Channel = channel;

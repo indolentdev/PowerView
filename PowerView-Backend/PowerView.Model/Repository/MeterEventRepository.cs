@@ -74,7 +74,7 @@ namespace PowerView.Model.Repository
 
         public void AddMeterEvents(IEnumerable<MeterEvent> newMeterEvents)
         {
-            if (newMeterEvents == null) throw new ArgumentNullException("newMeterEvents");
+            ArgumentNullException.ThrowIfNull(newMeterEvents);
 
             var dbEntities = newMeterEvents.OrderBy(me => me.DetectTimestamp).Select(ToDbEntity);
             DbContext.ExecuteTransaction(

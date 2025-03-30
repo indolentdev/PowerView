@@ -9,7 +9,7 @@ namespace PowerView.Model
     public ProfileGraphIntervalGroup(ILocationContext locationContext, DateTime start, string interval, IList<ProfileGraph> profileGraphs, TimeRegisterValueLabelSeriesSet labelSeriesSet, IReadOnlyList<CostBreakdownGeneratorSeries> costBreakdownGeneratorSeries)
       : base(locationContext, start, interval, labelSeriesSet, costBreakdownGeneratorSeries)
     {
-      if (profileGraphs == null) throw new ArgumentNullException("profileGraphs");
+      ArgumentNullException.ThrowIfNull(profileGraphs);
 
       ProfileGraphs = new ReadOnlyCollection<ProfileGraph>(profileGraphs);
     }

@@ -51,7 +51,7 @@ namespace PowerView.Model.Test.Repository
             const long unixTimestamp = 1472502100;
 
             // Act
-            var dateTime = target.GetDateTime(unixTimestamp);
+            var dateTime = DbContext.GetDateTime(unixTimestamp);
 
             // Assert
             Assert.That(dateTime, Is.EqualTo(new DateTime(2016, 08, 29, 20, 21, 40)));
