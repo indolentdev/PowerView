@@ -6,8 +6,8 @@ namespace PowerView.Model
 {
     public class ProfileViewSetSource
     {
-        private readonly ICollection<ProfileGraph> profileGraphs;
-        private readonly IDictionary<string, IReadOnlyList<DateTime>> intervalToCategories;
+        private readonly List<ProfileGraph> profileGraphs;
+        private readonly Dictionary<string, IReadOnlyList<DateTime>> intervalToCategories;
         private readonly Dictionary<string, IDictionary<SeriesName, IEnumerable<NormalizedDurationRegisterValue>>> intervalSeriesNameToValues;
 
         public ProfileViewSetSource(IEnumerable<ProfileGraph> profileGraphs, IList<ProfileGraphIntervalGroup> intervalGroups)

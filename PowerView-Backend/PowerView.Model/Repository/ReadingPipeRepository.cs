@@ -146,7 +146,7 @@ namespace PowerView.Model.Repository
             return resultSet;
         }
 
-        private Dictionary<byte, IEnumerable<TSrcReading>> GetReadingsToPipeByLabelId<TSrcReading, TDstReading>(DateTime maximumDateTime, Dictionary<byte, DateTime> existingLabelIdToTimeStamp, IDictionary<byte, IList<TSrcReading>> readingsByLabelId)
+        private Dictionary<byte, IEnumerable<TSrcReading>> GetReadingsToPipeByLabelId<TSrcReading, TDstReading>(DateTime maximumDateTime, Dictionary<byte, DateTime> existingLabelIdToTimeStamp, Dictionary<byte, IList<TSrcReading>> readingsByLabelId)
           where TSrcReading : class, IDbReading
           where TDstReading : class, IDbReading
         {

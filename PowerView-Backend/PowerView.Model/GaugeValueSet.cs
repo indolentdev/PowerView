@@ -8,7 +8,7 @@ namespace PowerView.Model
     {
         public GaugeValueSet(GaugeSetName name, ICollection<GaugeValue> gaugeValues)
         {
-            if (!Enum.IsDefined(typeof(GaugeSetName), name)) throw new ArgumentOutOfRangeException(nameof(name));
+            if (!Enum.IsDefined(name)) throw new ArgumentOutOfRangeException(nameof(name));
             ArgumentNullException.ThrowIfNull(gaugeValues);
             if (gaugeValues.Any(gv => gv == null)) throw new ArgumentNullException(nameof(gaugeValues), "Items must not be null");
 

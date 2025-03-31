@@ -111,7 +111,7 @@ namespace PowerView.Model.Repository
             }
         }
 
-        private static IEnumerable<(Db.LiveRegister DbLiveRegister, Db.LiveReading DbLiveReading)> GetDbLiveRegisters(IDictionary<Db.LiveReading, Reading> dbLiveReadingsMap, IDictionary<ObisCode, byte> obisIds)
+        private static IEnumerable<(Db.LiveRegister DbLiveRegister, Db.LiveReading DbLiveReading)> GetDbLiveRegisters(Dictionary<Db.LiveReading, Reading> dbLiveReadingsMap, Dictionary<ObisCode, byte> obisIds)
         {
             foreach (var entry in dbLiveReadingsMap)
             {
@@ -122,7 +122,7 @@ namespace PowerView.Model.Repository
             }
         }
 
-        private static IEnumerable<Db.LiveRegisterTag> GetDbLiveRegisterTags(IDictionary<Db.LiveReading, Reading> dbLiveReadingsMap, IDictionary<ObisCode, byte> obisIds)
+        private static IEnumerable<Db.LiveRegisterTag> GetDbLiveRegisterTags(IDictionary<Db.LiveReading, Reading> dbLiveReadingsMap, Dictionary<ObisCode, byte> obisIds)
         {
             foreach (var entry in dbLiveReadingsMap)
             {
@@ -133,7 +133,7 @@ namespace PowerView.Model.Repository
             }
         }
 
-        private static IEnumerable<(Db.LabelObisLive LabelObisLive, long ReadingId)> GetDbLabelObisLive(IDictionary<Db.LiveReading, Reading> dbLiveReadingsMap, IDictionary<ObisCode, byte> obisIds)
+        private static IEnumerable<(Db.LabelObisLive LabelObisLive, long ReadingId)> GetDbLabelObisLive(IDictionary<Db.LiveReading, Reading> dbLiveReadingsMap, Dictionary<ObisCode, byte> obisIds)
         {
             foreach (var entry in dbLiveReadingsMap)
             {

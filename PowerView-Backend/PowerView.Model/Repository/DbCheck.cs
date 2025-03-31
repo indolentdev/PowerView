@@ -22,7 +22,7 @@ namespace PowerView.Model.Repository
 
             logger.LogInformation("Performing database integrity check.");
 
-            IList<dynamic> integrityCheckResult;
+            List<dynamic> integrityCheckResult;
             try
             {
                 integrityCheckResult = DbContext.QueryNoTransaction<dynamic>("PRAGMA integrity_check;", commandTimeout: commandTimeout).ToList();

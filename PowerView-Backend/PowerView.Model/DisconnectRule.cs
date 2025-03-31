@@ -19,7 +19,7 @@ namespace PowerView.Model
             if (disconnectToConnectValue < 1) throw new ArgumentOutOfRangeException(nameof(disconnectToConnectValue), disconnectToConnectValue, "Must be greater than zero");
             if (connectToDisconnectValue < 1) throw new ArgumentOutOfRangeException(nameof(connectToDisconnectValue), connectToDisconnectValue, "Must be greater than zero");
             if (disconnectToConnectValue <= connectToDisconnectValue) throw new ArgumentOutOfRangeException(nameof(connectToDisconnectValue), connectToDisconnectValue, "Must be greater than disconnectToConnectValue");
-            if (!Enum.IsDefined(typeof(Unit), unit)) throw new ArgumentOutOfRangeException(nameof(unit), unit, "Must be a valid unit");
+            if (!Enum.IsDefined(unit)) throw new ArgumentOutOfRangeException(nameof(unit), unit, "Must be a valid unit");
 
             this.name = name;
             this.evaluationName = evaluationName;
