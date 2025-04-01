@@ -12,9 +12,9 @@ namespace PowerView.Service.Mailer
 
         public MailMediator(IMailer mailer, ISettingRepository settingRepository, IEmailMessageRepository emailMessageRepository)
         {
-            if (mailer == null) throw new ArgumentNullException("mailer");
-            if (settingRepository == null) throw new ArgumentNullException("settingRepository");
-            if (emailMessageRepository == null) throw new ArgumentNullException("emailMessageRepository");
+            ArgumentNullException.ThrowIfNull(mailer);
+            ArgumentNullException.ThrowIfNull(settingRepository);
+            ArgumentNullException.ThrowIfNull(emailMessageRepository);
 
             this.mailer = mailer;
             this.settingRepository = settingRepository;

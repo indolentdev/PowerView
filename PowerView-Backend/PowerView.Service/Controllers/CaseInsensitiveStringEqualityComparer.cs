@@ -9,12 +9,14 @@ public class CaseInsensitiveStringEqualityComparer : IEqualityComparer<string>
 
     public bool Equals(string x, string y)
     {
+#pragma warning disable CA1309 // Use ordinal string comparison
         return x.Equals(y, StringComparison.InvariantCultureIgnoreCase);
+#pragma warning restore CA1309 // Use ordinal string comparison
     }
 
-    public int GetHashCode(string s)
+    public int GetHashCode(string obj)
     {
-        return s.GetHashCode();
+        return obj.GetHashCode();
     }
 
     #endregion IEqualityComparer implementation

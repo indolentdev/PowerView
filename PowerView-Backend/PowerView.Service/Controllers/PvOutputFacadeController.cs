@@ -29,7 +29,7 @@ public class PvOutputFacadeController : ControllerBase
 
     public PvOutputFacadeController(ILogger<PvOutputFacadeController> logger, IReadingAccepter readingAccepter, ILiveReadingMapper liveReadingMapper, IOptions<PvOutputOptions> options, IHttpClientFactory httpClientFactory)
     {
-        if (options == null) throw new ArgumentNullException(nameof(options));
+        ArgumentNullException.ThrowIfNull(options);
 
         this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         this.readingAccepter = readingAccepter ?? throw new ArgumentNullException(nameof(readingAccepter));
@@ -54,7 +54,7 @@ public class PvOutputFacadeController : ControllerBase
         }
         catch (TaskCanceledException e)
         {
-            logger.LogInformation(e, $"Experienced timeout forwarding request to PVOutput. Request:{MaskHeaders(forwardRequest)}");
+            logger.LogInformation(e, "Experienced timeout forwarding request to PVOutput. Request:{Request}", MaskHeaders(forwardRequest));
 
             forwardResponse?.Dispose();
             Response.StatusCode = 504;
@@ -62,7 +62,7 @@ public class PvOutputFacadeController : ControllerBase
         }
         catch (HttpRequestException e)
         {
-            logger.LogInformation(e, $"Experienced error forwarding request to PVOutput. Request:{MaskHeaders(forwardRequest)}");
+            logger.LogInformation(e, "Experienced error forwarding request to PVOutput. Request:{Request}", MaskHeaders(forwardRequest));
 
             forwardResponse?.Dispose();
             Response.StatusCode = 500;
@@ -75,7 +75,7 @@ public class PvOutputFacadeController : ControllerBase
         }
         catch (HttpRequestException httpRequestException)
         {
-            logger.LogInformation(httpRequestException, $"Experienced error processing response from PVOutput. Request:{MaskHeaders(forwardRequest)}, Response:{forwardResponse}");
+            logger.LogInformation(httpRequestException, "Experienced error processing response from PVOutput. Request:{Request}, Response:{Response}", Request, forwardResponse);
 
             SetResponse(forwardResponse);
             forwardResponse.Dispose();
@@ -89,7 +89,7 @@ public class PvOutputFacadeController : ControllerBase
         return new EmptyResult();
     }
 
-    private HttpRequestMessage CreateForwardRequest(HttpRequest request, Uri pvOutputAddStatus)
+    private static HttpRequestMessage CreateForwardRequest(HttpRequest request, Uri pvOutputAddStatus)
     {
         var method = new HttpMethod(request.Method);
         var pvOutputAddStatusUrl = new Uri(pvOutputAddStatus, request.QueryString.ToString());
@@ -132,11 +132,11 @@ public class PvOutputFacadeController : ControllerBase
 
     private static void CopyHeader(string header, HttpRequest request, HttpRequestMessage forwardRequest)
     {
-        if (!request.Headers.ContainsKey(header))
+        if (!request.Headers.TryGetValue(header, out var headerValuesLocal))
         {
             return;
         }
-        IEnumerable<string> headerValues = request.Headers[header];
+        IEnumerable<string> headerValues = headerValuesLocal;
         forwardRequest.Headers.Add(header, headerValues);
     }
 
@@ -200,7 +200,7 @@ public class PvOutputFacadeController : ControllerBase
         {
             return;
         }
-        logger.LogTrace($"Received {liveReading.GetRegisterValues().Count} values through pv output facade api");
+        logger.LogTrace("Received {Count} values through pv output facade api", liveReading.GetRegisterValues().Count);
         readingAccepter.Accept(new Reading[] { liveReading });
     }
 

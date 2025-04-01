@@ -23,32 +23,32 @@ namespace PowerView.Service.Mappers
         public Reading MapPvOutputArgs(Uri requestUrl, string contentType, Stream body, string deviceLabel, string deviceId, string deviceIdParam,
                                            string actualPowerP23L1Param, string actualPowerP23L2Param, string actualPowerP23L3Param)
         {
-            if (requestUrl == null) throw new ArgumentNullException("requestUrl");
-            if (string.IsNullOrEmpty(contentType)) throw new ArgumentNullException("contentType");
-            if (body == null) throw new ArgumentNullException("body");
-            if (string.IsNullOrEmpty(deviceLabel)) throw new ArgumentNullException("deviceLabel");
-            if (string.IsNullOrEmpty(deviceIdParam)) throw new ArgumentNullException("deviceIdParam");
+            ArgumentNullException.ThrowIfNull(requestUrl);
+            ArgCheck.ThrowIfNullOrEmpty(contentType);
+            ArgumentNullException.ThrowIfNull(body);
+            ArgCheck.ThrowIfNullOrEmpty(deviceLabel);
+            ArgCheck.ThrowIfNullOrEmpty(deviceIdParam);
 
             var pvArgString = GetPvArgs(requestUrl, contentType, body);
-            var pvArgsArray = pvArgString.Split(new[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
+            var pvArgsArray = pvArgString.Split('&', StringSplitOptions.RemoveEmptyEntries);
             var pvArgs = GetPvArgValues(pvArgsArray);
 
-            if (!pvArgs.ContainsKey("d") || !pvArgs.ContainsKey("t") ||
+            if (!pvArgs.TryGetValue("d", out var dArgs) || !pvArgs.TryGetValue("t", out var tArgs) ||
                 ((!pvArgs.ContainsKey("v1") || !pvArgs.ContainsKey("c1") || pvArgs["c1"][0] != "1") && !pvArgs.ContainsKey("v2")))
             {
-                logger.LogInformation($"Unable to extract PV data from PVOutput.org parameters. Needed parameters not present. Expected parameters d and t with v2 and/or v1 and c1=1. Params:{pvArgString}");
+                logger.LogInformation("Unable to extract PV data from PVOutput.org parameters. Needed parameters not present. Expected parameters d and t with v2 and/or v1 and c1=1. Params:{Args}", pvArgString);
                 return null;
             }
 
             var resolvedDeviceId = GetDeviceId(deviceId, pvArgs, deviceIdParam);
             if (resolvedDeviceId == null)
             {
-                logger.LogInformation($"Failed to extract PV device id from configuration or PV data. DeviceIdParam:{deviceIdParam}, Params:{pvArgString}");
+                logger.LogInformation("Failed to extract PV device id from configuration or PV data. DeviceIdParam:{Param}, Params:{Args}", deviceIdParam, pvArgString);
                 return null;
             }
 
-            var d = pvArgs["d"][0];
-            var t = pvArgs["t"][0];
+            var d = dArgs[0];
+            var t = tArgs[0];
             var timestamp = DateTime.ParseExact((d + t).Replace(":", string.Empty), "yyyyMMddHHmm",
               CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal | DateTimeStyles.NoCurrentDateDefault).ToUniversalTime();
 
@@ -65,7 +65,7 @@ namespace PowerView.Service.Mappers
 
         private static string GetPvArgs(Uri requestUrl, string contentType, Stream body)
         {
-            if (!string.IsNullOrEmpty(contentType) && contentType.ToLowerInvariant().Contains("application/x-www-form-urlencoded"))
+            if (!string.IsNullOrEmpty(contentType) && contentType.Contains("application/x-www-form-urlencoded", StringComparison.OrdinalIgnoreCase))
             {
                 using (var sr = new StreamReader(body, System.Text.Encoding.UTF8))
                 {
@@ -79,58 +79,59 @@ namespace PowerView.Service.Mappers
             return string.Empty;
         }
 
-        private IDictionary<string, IList<string>> GetPvArgValues(string[] pvArgs)
+        private Dictionary<string, IList<string>> GetPvArgValues(string[] pvArgs)
         {
             var result = new Dictionary<string, IList<string>>(pvArgs.Length);
             foreach (var pvArg in pvArgs)
             {
-                var pvArgValue = pvArg.Split(new[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
+                var pvArgValue = pvArg.Split('=', StringSplitOptions.RemoveEmptyEntries);
                 if (pvArgValue.Length != 2)
                 {
-                    logger.LogDebug($"Failed to map pv arg:{pvArg}");
+                    logger.LogDebug("Failed to map pv arg:{Arg}", pvArg);
                     continue;
                 }
 
                 var key = pvArgValue[0].ToLowerInvariant();
-                if (!result.ContainsKey(key))
+                if (!result.TryGetValue(key, out var args))
                 {
-                    result.Add(key, new List<string>(2));
+                    args = new List<string>(2);
+                    result.Add(key, args);
                 }
 
                 var value = HttpUtility.UrlDecode(pvArgValue[1]);
-                result[key].Add(value);
+                args.Add(value);
             }
             return result;
         }
 
-        private static string GetDeviceId(string deviceId, IDictionary<string, IList<string>> pvArgs, string deviceIdParam)
+        private static string GetDeviceId(string deviceId, Dictionary<string, IList<string>> pvArgs, string deviceIdParam)
         {
             if (deviceId != null)
             {
                 return deviceId;
             }
 
-            if (!pvArgs.ContainsKey(deviceIdParam))
+            if (!pvArgs.TryGetValue(deviceIdParam, out var deviceIdFromParam))
             {
                 return null;
             }
 
-            return pvArgs[deviceIdParam][0];
+            return deviceIdFromParam[0];
         }
 
-        private RegisterValue? GetRegisterValue(IDictionary<string, IList<string>> pvArgs, string param, ObisCode obisCode, Unit unit)
+        private RegisterValue? GetRegisterValue(Dictionary<string, IList<string>> pvArgs, string param, ObisCode obisCode, Unit unit)
         {
             if (string.IsNullOrEmpty(param))
             {
                 return null;
             }
 
-            if (!pvArgs.ContainsKey(param))
+            if (!pvArgs.TryGetValue(param, out var pvParams))
             {
                 return null;
             }
 
-            var valueString = pvArgs[param][0];
+            var valueString = pvParams[0];
             if (valueString == null)
             {
                 return null;
@@ -139,7 +140,7 @@ namespace PowerView.Service.Mappers
             int value;
             if (!int.TryParse(valueString, NumberStyles.Integer, CultureInfo.InvariantCulture, out value))
             {
-                logger.LogWarning($"Failed to parse PvOutput numeric value {valueString}.");
+                logger.LogWarning("Failed to parse PvOutput numeric value {Value}.", valueString);
                 return null;
             }
             return new RegisterValue(obisCode, value, 0, unit);

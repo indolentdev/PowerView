@@ -20,8 +20,8 @@ namespace PowerView.Service.Mqtt
         // TODO: Change Publish to return Task.
         public void Publish(MqttConfig config, ICollection<Reading> liveReadings)
         {
-            if (config == null) throw new ArgumentNullException("config");
-            if (liveReadings == null) throw new ArgumentNullException("liveReadings");
+            ArgumentNullException.ThrowIfNull(config);
+            ArgumentNullException.ThrowIfNull(liveReadings);
 
             PublishInner(config, liveReadings).GetAwaiter().GetResult();
         }
@@ -40,8 +40,8 @@ namespace PowerView.Service.Mqtt
             var mqttNetLogger = new MqttNetLogger(logger);
             using (var mqttClient = new MqttClientFactory().CreateMqttClient(mqttNetLogger))
             {
-                mqttClient.ConnectedAsync += e => { logger.LogDebug($"Connected to MQTT server {config.Server}:{config.Port}. ResultCode:{e.ConnectResult.ResultCode}"); return Task.CompletedTask; };
-                mqttClient.DisconnectedAsync += e => { logger.LogDebug(e.Exception, "Disconnected MQTT server" + (e.Exception == null ? string.Empty : " with error") + ". WasConnected:" + e.ClientWasConnected); return Task.CompletedTask; };
+                mqttClient.ConnectedAsync += e => { logger.LogDebug("Connected to MQTT server {Server}:{Port}. ResultCode:{ResultCode}", config.Server, config.Port, e.ConnectResult.ResultCode); return Task.CompletedTask; };
+                mqttClient.DisconnectedAsync += e => { logger.LogDebug(e.Exception, "Disconnected MQTT server. WasConnected:{WasConnected}", e.ClientWasConnected); return Task.CompletedTask; };
 
                 try
                 {
@@ -62,7 +62,7 @@ namespace PowerView.Service.Mqtt
                     foreach (var mqttMessage in mqttMessages)
                     {
                         var publishResult = await mqttClient.PublishAsync(mqttMessage);
-                        logger.LogDebug("Published MQTT message. PacketIdentifier:{0}, ReasonCode:{1}", publishResult.PacketIdentifier, publishResult.ReasonCode);
+                        logger.LogDebug("Published MQTT message. PacketIdentifier:{PacketIdentifier}, ReasonCode:{ReasonCode}", publishResult.PacketIdentifier, publishResult.ReasonCode);
                     }
                     await mqttClient.DisconnectAsync();
                 }

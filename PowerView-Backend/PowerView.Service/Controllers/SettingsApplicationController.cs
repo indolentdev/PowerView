@@ -12,7 +12,7 @@ public class SettingsApplicationController : ControllerBase
 
     public SettingsApplicationController(ILocationContext locationContext)
     {
-        this.locationContext = locationContext ?? throw new ArgumentNullException("locationContext");
+        this.locationContext = locationContext ?? throw new ArgumentNullException(nameof(locationContext));
     }
 
     [HttpGet("")]

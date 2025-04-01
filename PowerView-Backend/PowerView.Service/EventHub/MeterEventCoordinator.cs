@@ -20,14 +20,14 @@ namespace PowerView.Service.EventHub
 
         public void DetectAndNotify(IServiceScope serviceScope, DateTime dateTime)
         {
-            if (serviceScope == null) throw new ArgumentNullException(nameof(serviceScope));
+            ArgumentNullException.ThrowIfNull(serviceScope);
 
             if (!intervalTrigger.IsTriggerTime(dateTime))
             {
                 return;
             }
 
-            logger.LogDebug("Trigger time occurred. Running Detector. {0}", dateTime.ToString("O"));
+            logger.LogDebug("Trigger time occurred. Running Detector. {DateTime}", dateTime.ToString("O"));
 
             var meterEventDetector = serviceScope.ServiceProvider.GetRequiredService<IMeterEventDetector>();
             meterEventDetector.DetectMeterEvents(dateTime);

@@ -44,7 +44,7 @@ namespace PowerView.Service
             }
             foreach (var seriesName in seriesNames)
             {
-                if (!seriesNamesUnits.ContainsKey(seriesName)) seriesNamesUnits.Add(seriesName, Unit.Joule);
+                seriesNamesUnits.TryAdd(seriesName, Unit.Joule);
             }
 
             var nowLocal = locationcontext.ConvertTimeFromUtc(DateTime.UtcNow);
@@ -59,7 +59,7 @@ namespace PowerView.Service
                 var label = labelToObisCodes.Key;
                 var fakeObisToTimeRegisterValues = labelToObisCodes
                   .Distinct()
-                  .ToDictionary(oc => oc, oc => CreateTimeRegisterValues(dt1, dt2, seriesNamesUnits[new SeriesName(label, oc)]));
+                  .ToDictionary(oc => oc, oc => (IEnumerable<TimeRegisterValue>)CreateTimeRegisterValues(dt1, dt2, seriesNamesUnits[new SeriesName(label, oc)]));
                 var labelS = new TimeRegisterValueLabelSeries(label, fakeObisToTimeRegisterValues);
                 labelSeries.Add(labelS);
             }
@@ -69,7 +69,7 @@ namespace PowerView.Service
             return intervalGroup;
         }
 
-        private static IEnumerable<TimeRegisterValue> CreateTimeRegisterValues(DateTime dt1, DateTime dt2, Unit unit)
+        private static TimeRegisterValue[] CreateTimeRegisterValues(DateTime dt1, DateTime dt2, Unit unit)
         {
             var fakeTimeRegisterValues = new TimeRegisterValue[]
             {

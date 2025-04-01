@@ -34,7 +34,7 @@ namespace PowerView.Service.EventHub
 
             if (enabledImportGroups.Count == 0) return;
 
-            logger.LogTrace($"EnergiDataService import. {enabledImportGroups.Sum(x => x.Imports.Count)} enabled imports.");
+            logger.LogTrace("EnergiDataService import. {Count} enabled imports.", enabledImportGroups.Sum(x => x.Imports.Count));
 
             foreach (var importGroup in enabledImportGroups)
             {
@@ -52,7 +52,7 @@ namespace PowerView.Service.EventHub
                         logException = e;
                         hint = string.Empty;
                     }
-                    logger.LogInformation(logException, $"Could not import income/expense values. Web request for EnergiDataService failed. Import will be retried later.{hint}");
+                    logger.LogInformation(logException, "Could not import income/expense values. Web request for EnergiDataService failed. Import will be retried later.{Hint}", hint);
                     continue;
                 }
 
@@ -63,18 +63,17 @@ namespace PowerView.Service.EventHub
                     var amountReadings = ToReadings(kwhAmounts, import.Label, "EnergiDataService", import.Currency);
                     try
                     {
-                        logger.LogDebug($"Importing {amountReadings.Sum(x => x.GetRegisterValues().Count)} values from Energi Data Service for label {import.Label}");
+                        logger.LogDebug("Importing {Count} values from Energi Data Service for label {Label}", amountReadings.Sum(x => x.GetRegisterValues().Count), import.Label);
                         readingAccepter.Accept(amountReadings);
                     }
                     catch (DataStoreBusyException e)
                     {
-                        var msg = $"Unable to add imported readings for label:{import.Label}. Data store busy. Going to retry on next trigger.";
                         Exception ex = null;
                         if (logger.IsEnabled(LogLevel.Debug))
                         {
                             ex = e;
                         }
-                        logger.LogInformation(ex, msg);
+                        logger.LogInformation(ex, "Unable to add imported readings for label:{Label}. Data store busy. Going to retry on next trigger.", import.Label);
                         return;
                     }
                     importRepository.SetCurrentTimestamp(import.Label, kwhAmounts.Select(x => x.Start).Max().AddHours(1));
@@ -82,7 +81,7 @@ namespace PowerView.Service.EventHub
             }
         }
 
-        private List<ImportGroup> GetImportGroups(DateTime timestamp, ICollection<Import> imports)
+        private static List<ImportGroup> GetImportGroups(DateTime timestamp, ICollection<Import> imports)
         {
             var groups = imports
               .Where(x => x.Enabled)
@@ -107,14 +106,14 @@ namespace PowerView.Service.EventHub
             return importGroups;
         }
 
-        private IList<Reading> ToReadings(IList<KwhAmount> kwhAmounts, string label, string deviceId, Unit currency)
+        private static List<Reading> ToReadings(IList<KwhAmount> kwhAmounts, string label, string deviceId, Unit currency)
         {
             return kwhAmounts
               .Select(x => new Reading(label, deviceId, x.Start, new[] { GetRegisterValue(x, currency) }))
               .ToList();
         }
 
-        private RegisterValue GetRegisterValue(KwhAmount kwhAmount, Unit currency)
+        private static RegisterValue GetRegisterValue(KwhAmount kwhAmount, Unit currency)
         {
             double amount;
             switch (currency)

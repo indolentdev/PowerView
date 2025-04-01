@@ -82,16 +82,16 @@ public class SettingsDisconnectRulesController : ControllerBase
         }
         catch (DataStoreUniqueConstraintException e)
         {
-            logger.LogWarning(e, $"Add disconnect rule failed. Unique constraint violation.");
+            logger.LogWarning(e, "Add disconnect rule failed. Unique constraint violation.");
             return StatusCode(StatusCodes.Status409Conflict, new { Description = "Disconnect rule unique constraint violation" });
         }
 
-        logger.LogInformation($"Inserted/Updated DisconnectRule; Label:{disconnectRule.Name.Label},ObisCode:{disconnectRule.Name.ObisCode}");
+        logger.LogInformation("Inserted/Updated DisconnectRule; Label:{Label},ObisCode:{ObisCode}", disconnectRule.Name.Label, disconnectRule.Name.ObisCode);
 
         return NoContent();
     }
 
-    public DisconnectRule MapFromDto(DisconnectRuleDto dto)
+    public static DisconnectRule MapFromDto(DisconnectRuleDto dto)
     {
         var name = new SeriesName(dto.NameLabel, dto.NameObisCode);
         var evaluation = new SeriesName(dto.EvaluationLabel, dto.EvaluationObisCode);
@@ -100,7 +100,7 @@ public class SettingsDisconnectRulesController : ControllerBase
                                   ToUnit(dto.Unit.Value));
     }
 
-    private Unit ToUnit(DisconnectRuleUnit disconnectRuleUnit)
+    private static Unit ToUnit(DisconnectRuleUnit disconnectRuleUnit)
     {
         switch (disconnectRuleUnit)
         {
@@ -121,7 +121,7 @@ public class SettingsDisconnectRulesController : ControllerBase
 
         disconnectRuleRepository.DeleteDisconnectRule(name);
 
-        logger.LogInformation($"Deleted DisconnectRule; Label:{name.Label},ObisCode:{name.ObisCode}");
+        logger.LogInformation("Deleted DisconnectRule; Label:{Label},ObisCode:{ObisCode}", name.Label, name.ObisCode);
 
         return NoContent();
     }

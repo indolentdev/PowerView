@@ -6,7 +6,7 @@ namespace PowerView.Service.Dtos
     {
         public DisconnectRuleSetDto()
         {
-            Items = new DisconnectRuleDto[0];
+            Items = Array.Empty<DisconnectRuleDto>();
         }
 
         [Required]

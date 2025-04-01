@@ -15,7 +15,7 @@ namespace PowerView.Service.DisconnectControl
         private readonly ILogger logger;
         private readonly IServiceProvider serviceProvider;
         private readonly IEventQueue eventQueue;
-        private readonly IDisconnectCache disconnectCache;
+        private readonly DisconnectCache disconnectCache;
         private volatile IDictionary<ISeriesName, bool> statusReadCopy;
 
         public DisconnectWarden(ILogger<DisconnectWarden> logger, IServiceProvider serviceProvider, IEventQueue eventQueue)
@@ -30,9 +30,11 @@ namespace PowerView.Service.DisconnectControl
         public IDictionary<ISeriesName, bool> GetOutputStatus(string label)
         { // Purposely do not use the event queue.
             var statusReadCopyLocal = statusReadCopy; // locking free multithreading
+#pragma warning disable CA1309 // Use ordinal string comparison
             var filtered = statusReadCopyLocal
               .Where(x => string.Equals(x.Key.Label, label, StringComparison.InvariantCultureIgnoreCase))
               .ToDictionary(x => x.Key, x => x.Value);
+#pragma warning restore CA1309 // Use ordinal string comparison
             return filtered;
         }
 
@@ -52,7 +54,7 @@ namespace PowerView.Service.DisconnectControl
             var changes = newStatus.Except(statusReadCopyLocal).ToList();
             if (changes.Count > 0)
             {
-                logger.LogInformation("Disconnect control changes:{0}", string.Join(", ", changes.Select(x => string.Format(CultureInfo.InvariantCulture, "{0}-{1}:{2}", x.Key.Label, x.Key.ObisCode, x.Value))));
+                logger.LogInformation("Disconnect control changes:{Changes}", string.Join(", ", changes.Select(x => string.Format(CultureInfo.InvariantCulture, "{0}-{1}:{2}", x.Key.Label, x.Key.ObisCode, x.Value))));
             }
             statusReadCopy = newStatus; // locking free multithreading
         }

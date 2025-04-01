@@ -21,8 +21,8 @@ namespace PowerView.Service.Mailer
 
         public EmailRecipient Send(SmtpConfig smtpConfig, EmailRecipient emailRecipient, string subject, string message)
         {
-            if (smtpConfig == null) throw new ArgumentNullException("smtpConfig");
-            if (emailRecipient == null) throw new ArgumentNullException("emailRecipient");
+            ArgumentNullException.ThrowIfNull(smtpConfig);
+            ArgumentNullException.ThrowIfNull(emailRecipient);
 
             var toMailbox = ToMailbox(emailRecipient.Name, emailRecipient.EmailAddress);
 
@@ -38,19 +38,19 @@ namespace PowerView.Service.Mailer
                     foreach (var element in chain.ChainElements)
                     {
                         if (chainDigest.Length > 0) chainDigest.Append(", ");
-                        chainDigest.Append(element.Certificate.Subject).Append("(");
+                        chainDigest.Append(element.Certificate.Subject).Append('(');
                         chainDigest.Append(string.Join(",", element.ChainElementStatus.Select(x => $"{x.StatusInformation}[{x.Status}]")));
-                        chainDigest.Append(")");
+                        chainDigest.Append(')');
                     }
 
                     if (certificate.Subject.Contains("CN=" + smtpConfig.Server.ToLowerInvariant()))
                     {
-                        logger.LogDebug("Accepting smtp server certificate with subject '{0}' and policy error(s):{1}. Chain digest:{2}",
+                        logger.LogDebug("Accepting smtp server certificate with subject '{Subject}' and policy error(s):{Errors}. Chain digest:{Digest}",
                                certificate.Subject, sslPolicyErrors, chainDigest);
                         return true;
                     }
 
-                    logger.LogError("Could not validate smtp mail server certificate. Certificate Subject:{0}, Error(s):{1}. Chain digest:{2}",
+                    logger.LogError("Could not validate smtp mail server certificate. Certificate Subject:{Subject}, Error(s):{Errors}. Chain digest:{Digest}",
                             certificate, sslPolicyErrors, chainDigest);
                     return false;
                 };
@@ -81,7 +81,7 @@ namespace PowerView.Service.Mailer
             }
         }
 
-        private MimeMessage GetMessage(SmtpConfig smtpConfig, string subject, string message, MailboxAddress toMailbox)
+        private static MimeMessage GetMessage(SmtpConfig smtpConfig, string subject, string message, MailboxAddress toMailbox)
         {
             var mimeMessage = new MimeMessage();
             mimeMessage.From.Add(new MailboxAddress("PowerView", smtpConfig.Email));
@@ -99,7 +99,7 @@ namespace PowerView.Service.Mailer
 
         private void Connect(SmtpConfig smtpConfig, SmtpClient client, SecureSocketOptions secureSocketOptions)
         {
-            logger.LogDebug($"Connecting smtp client. {smtpConfig.Server}:{smtpConfig.Port}. {secureSocketOptions}");
+            logger.LogDebug("Connecting smtp client. {Server}:{Port}. {Options}", smtpConfig.Server, smtpConfig.Port, secureSocketOptions);
 
             try
             {

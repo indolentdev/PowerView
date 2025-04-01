@@ -79,7 +79,7 @@ public class ExportCostBreakdownController : ControllerBase
         return hours;
     }
 
-    private IList<object> GetExportCostBreakdown(IList<ExportPeriod> periods, IReadOnlyList<CostBreakdownEntry> costBreakdownEntries)
+    private List<object> GetExportCostBreakdown(IList<ExportPeriod> periods, IReadOnlyList<CostBreakdownEntry> costBreakdownEntries)
     {
         var exportCostBreakdownEntries = new List<object>(); // matches dto
 

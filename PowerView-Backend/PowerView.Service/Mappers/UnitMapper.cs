@@ -37,7 +37,7 @@ namespace PowerView.Service.Mappers
 
         public static Unit Map(string unit)
         {
-            if (unit == null) throw new ArgumentNullException(nameof(unit));
+            ArgumentNullException.ThrowIfNull(unit);
 
             switch (unit)
             {
@@ -65,7 +65,7 @@ namespace PowerView.Service.Mappers
                     return Unit.NoUnit;
 
                 default:
-                    throw new ArgumentOutOfRangeException("unit", unit, "Unable to map unit:" + unit);
+                    throw new ArgumentOutOfRangeException(nameof(unit), unit, "Unable to map unit:" + unit);
             }
         }
     }

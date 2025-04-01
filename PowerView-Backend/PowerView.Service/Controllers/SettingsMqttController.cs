@@ -62,12 +62,12 @@ public class SettingsMqttController : ControllerBase
 
         try
         {
-            mqttPublisher.Publish(mqttConfig, new Reading[0]);
+            mqttPublisher.Publish(mqttConfig, Array.Empty<Reading>());
             return NoContent();
         }
         catch (MqttException e)
         {
-            logger.LogInformation(e, $"Test mqtt configuration failed. Server:{mqttConfig.Server}, Port:{mqttConfig.Port}");
+            logger.LogInformation(e, "Test mqtt configuration failed. Server:{Server}, Port:{Port}", mqttConfig.Server, mqttConfig.Port);
             return StatusCode(StatusCodes.Status503ServiceUnavailable);
         }
     }

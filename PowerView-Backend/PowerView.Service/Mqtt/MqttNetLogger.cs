@@ -17,7 +17,9 @@ internal class MqttNetLogger : IMqttNetLogger
 
     public void Publish(MqttNetLogLevel logLevel, string source, string message, object[] parameters, Exception exception)
     {
+#pragma warning disable CA2254 // Template should be a static expression
         logger.Log(MapLevel(logLevel), exception, message, parameters);
+#pragma warning restore CA2254 // Template should be a static expression
     }
 
     private static LogLevel MapLevel(MqttNetLogLevel level)

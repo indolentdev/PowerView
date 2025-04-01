@@ -108,7 +108,7 @@ public class ProfileController : ControllerBase
         sw.Start();
         var labelSeriesSet = getLabelSeriesSet(preStart, start, end);
         sw.Stop();
-        logger.LogDebug($"GetProfile timing - GetLabelSeriesSet: {sw.ElapsedMilliseconds}ms");
+        logger.LogDebug("GetProfile timing - GetLabelSeriesSet: {Elapsed}ms", sw.ElapsedMilliseconds);
 
         // group by interval and generate additional series
         var intervalGroups = new List<ProfileGraphIntervalGroup>(distinctIntervals.Count);
@@ -123,13 +123,13 @@ public class ProfileController : ControllerBase
             intervalGroups.Add(intervalGroup);
         }
         sw.Stop();
-        logger.LogDebug($"GetProfile timing - Group by intervals and generate: {sw.ElapsedMilliseconds}ms");
+        logger.LogDebug("GetProfile timing - Group by intervals and generate: {Elapsed}ms", sw.ElapsedMilliseconds);
 
         sw.Restart();
         var profileViewSetSource = new ProfileViewSetSource(profileGraphs, intervalGroups);
         var viewSet = profileViewSetSource.GetProfileViewSet();
         sw.Stop();
-        logger.LogDebug($"GetProfile timing - GetProfileViewSet: {sw.ElapsedMilliseconds}ms");
+        logger.LogDebug("GetProfile timing - GetProfileViewSet: {Elapsed}ms", sw.ElapsedMilliseconds);
 
         return viewSet;
     }

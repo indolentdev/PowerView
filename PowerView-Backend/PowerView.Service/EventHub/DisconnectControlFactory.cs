@@ -11,8 +11,8 @@ namespace PowerView.Service.EventHub
 
         public void Process(IServiceScope serviceScope, IList<Reading> liveReadings)
         {
-            if (serviceScope == null) throw new ArgumentNullException(nameof(serviceScope));
-            if (liveReadings == null) throw new ArgumentNullException("liveReadings");
+            ArgumentNullException.ThrowIfNull(serviceScope);
+            ArgumentNullException.ThrowIfNull(liveReadings);
             if (liveReadings.Count == 0)
             {
                 return;

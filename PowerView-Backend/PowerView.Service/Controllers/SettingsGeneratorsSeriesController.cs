@@ -61,7 +61,7 @@ public class SettingsGeneratorsSeriesController : ControllerBase
         }
         catch (DataStoreUniqueConstraintException e)
         {
-            logger.LogWarning(e, $"Add generator series failed. Label:{dto.NameLabel}, ObisCode:{dto.NameObisCode}");
+            logger.LogWarning(e, "Add generator series failed. Label:{Label}, ObisCode:{ObisCode}", dto.NameLabel, dto.NameObisCode);
             return StatusCode(StatusCodes.Status409Conflict, "Generator series label and obis code already exists");
         }
 

@@ -12,7 +12,7 @@ namespace PowerView.Service.DisconnectControl
 
         public DisconnectCalculator(IDisconnectRuleRepository disconnectRuleRepository)
         {
-            if (disconnectRuleRepository == null) throw new ArgumentNullException("disconnectRuleRepository");
+            ArgumentNullException.ThrowIfNull(disconnectRuleRepository);
 
             this.disconnectRuleRepository = disconnectRuleRepository;
         }

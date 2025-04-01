@@ -51,7 +51,7 @@ public class EnergiDataServiceClientTest
         Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => target.GetElectricityAmounts(dateTime, TimeSpan.FromMilliseconds(-1), priceArea));
         Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => target.GetElectricityAmounts(dateTime, TimeSpan.FromDays(7).Add(TimeSpan.FromMilliseconds(1)), priceArea));
         Assert.ThrowsAsync<ArgumentNullException>(() => target.GetElectricityAmounts(dateTime, timeSpan, null));
-        Assert.ThrowsAsync<ArgumentException>(() => target.GetElectricityAmounts(dateTime, timeSpan, string.Empty));
+        Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => target.GetElectricityAmounts(dateTime, timeSpan, string.Empty));
     }
 
     [Test]

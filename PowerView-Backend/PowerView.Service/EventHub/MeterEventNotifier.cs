@@ -44,12 +44,14 @@ namespace PowerView.Service.EventHub
                 try
                 {
                     mailMediator.SendEmail(emailRecipient, subject, message);
-                    logger.LogInformation($"Sent new events to email recipient. Name:{emailRecipient.Name}, EmailAddress:{emailRecipient.EmailAddress}. Subject:{subject}");
+                    logger.LogInformation("Sent new events to email recipient. Name:{Name}, EmailAddress:{EmailAddress}, Subject:{Subject}", 
+                        emailRecipient.Name, emailRecipient.EmailAddress, subject);
                     emailRecipientRepository.SetEmailRecipientMeterEventPosition(emailRecipient.EmailAddress, maxMeterEventId.Value);
                 }
                 catch (MailerException e)
                 {
-                    logger.LogWarning(e, $"Failed sending email for new events to email recipient. Name:{emailRecipient.Name}, EmailAddress:{emailRecipient.EmailAddress}");
+                    logger.LogWarning(e, "Failed sending email for new events to email recipient. Name:{Name}, EmailAddress:{EmailAddress}", 
+                        emailRecipient.Name, emailRecipient.EmailAddress);
                 }
             }
         }

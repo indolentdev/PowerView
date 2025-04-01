@@ -36,13 +36,13 @@ public class DiffController : ControllerBase
         sw.Start();
         var lss = profileRepository.GetMonthProfileSet(from.AddHours(-12), from, to);
         sw.Stop();
-        if (logger.IsEnabled(LogLevel.Debug)) logger.LogDebug($"GetDiff timing - Get: {sw.ElapsedMilliseconds}ms");
+        if (logger.IsEnabled(LogLevel.Debug)) logger.LogDebug("GetDiff timing - Get: {Elapsed}ms", sw.ElapsedMilliseconds);
 
         var intervalGroup = new IntervalGroup(locationContext, from, "1-days", lss, Array.Empty<CostBreakdownGeneratorSeries>());
         sw.Restart();
         intervalGroup.Prepare();
         sw.Stop();
-        if (logger.IsEnabled(LogLevel.Debug)) logger.LogDebug($"GetDiff timing - Normalize, generate: {sw.ElapsedMilliseconds}ms");
+        if (logger.IsEnabled(LogLevel.Debug)) logger.LogDebug("GetDiff timing - Normalize, generate: {Elapsed}ms", sw.ElapsedMilliseconds);
 
         var registers = MapItems(intervalGroup.NormalizedDurationLabelSeriesSet).ToList();
         var r = new
@@ -59,7 +59,7 @@ public class DiffController : ControllerBase
         DateTime timestampParse;
         if (!DateTime.TryParse(queryParamValue, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out timestampParse) || timestampParse.Kind != DateTimeKind.Utc)
         {
-            logger.LogInformation($"Unable to parse query parameter {queryParamName} as UTC timestamp date time string:{queryParamValue}");
+            logger.LogInformation("Unable to parse query parameter {Name} as UTC timestamp date time string:{Value}", queryParamName, queryParamValue);
             return null;
         }
         else

@@ -24,7 +24,7 @@ namespace PowerView.Service.EventHub
 
         public async Task Import(IServiceScope serviceScope, DateTime dateTime)
         {
-            if (serviceScope == null) throw new ArgumentNullException(nameof(serviceScope));
+            ArgumentNullException.ThrowIfNull(serviceScope);
 
             if (!intervalTrigger.IsTriggerTime(dateTime))
             {

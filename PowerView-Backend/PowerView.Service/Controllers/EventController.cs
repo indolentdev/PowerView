@@ -45,7 +45,7 @@ public class EventController : ControllerBase
         return e;
     }
 
-    private object MapAmplification(IMeterEventAmplification amplification)
+    private static object MapAmplification(IMeterEventAmplification amplification)
     {
         const bool reduceUnit = true;
         var leakAmplification = amplification as LeakMeterEventAmplification;

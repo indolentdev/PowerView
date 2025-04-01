@@ -37,7 +37,8 @@ namespace PowerView.Service.EventHub
                 return;
             }
 
-            logger.LogInformation($"Fetched regional information from {uri} (time zone:{timeZoneId} and culture info:{cultureInfoName}). Saving to database.");
+            logger.LogInformation("Fetched regional information from {Uri} (time zone:{TimeZoneId} and culture info:{CultureInfoName}). Saving to database.", 
+                uri, timeZoneId, cultureInfoName);
 
             if (!string.IsNullOrEmpty(timeZoneId))
             {
@@ -85,12 +86,12 @@ namespace PowerView.Service.EventHub
             }
             catch (TaskCanceledException e)
             {
-                logger.LogInformation(e, $"Location resolve failed. Timeout. Request error. {request}");
+                logger.LogInformation(e, "Location resolve failed. Timeout. Request error:{Request}", request);
                 return null;
             }
             catch (HttpRequestException e)
             {
-                logger.LogInformation(e, $"Location resolve failed. Request error. {request}");
+                logger.LogInformation(e, "Location resolve failed. Request error. Request:{Request}", request);
                 return null;
             }
             catch (JsonException e)
@@ -101,7 +102,7 @@ namespace PowerView.Service.EventHub
 
             if (dto == null || !string.Equals(dto.status, "success", StringComparison.OrdinalIgnoreCase))
             {
-                logger.LogWarning($"Location resolve failed. Respnose error. {dto?.status}");
+                logger.LogWarning("Location resolve failed. Respnose error. Status:{Status}", dto?.status);
                 return null;
             }
 

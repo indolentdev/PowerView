@@ -109,7 +109,7 @@ namespace PowerView.Service.Mappers
                 return "currencyAmount";
             }
 
-            logger.LogInformation("Unable to map obis code {0} to graph y-axis", obisCode);
+            logger.LogInformation("Unable to map obis code {ObisCode} to graph y-axis", obisCode);
 
             return string.Empty;
         }

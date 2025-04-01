@@ -16,7 +16,8 @@ public class EnergiDataServiceClient : IEnergiDataServiceClient
 
     public EnergiDataServiceClient(IOptions<EnergiDataServiceClientOptions> options, IHttpClientFactory httpClientFactory)
     {
-        if (options == null) throw new ArgumentNullException(nameof(options));
+        ArgumentNullException.ThrowIfNull(options);
+
         this.httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
 
         if (options.Value == null) throw new ArgumentException("Options value must not be null", nameof(options));
@@ -28,8 +29,7 @@ public class EnergiDataServiceClient : IEnergiDataServiceClient
         ArgCheck.ThrowIfNotUtc(start);
         if (timeSpan <= TimeSpan.Zero) throw new ArgumentOutOfRangeException(nameof(timeSpan), "Must not be negative or zero");
         if (timeSpan > TimeSpan.FromDays(7)) throw new ArgumentOutOfRangeException(nameof(timeSpan), "Must not be greater than 7 days");
-        if (priceArea == null) throw new ArgumentNullException(nameof(priceArea));
-        if (string.IsNullOrEmpty(priceArea)) throw new ArgumentException(nameof(priceArea), "Must not be empty string");
+        ArgCheck.ThrowIfNullOrEmpty(priceArea);
 
         var dto = await GetElSpotPrices(start, timeSpan, priceArea);
         Validate(dto);
@@ -72,7 +72,7 @@ public class EnergiDataServiceClient : IEnergiDataServiceClient
         }
     }
 
-    private void Validate(ElSpotPricesDto dto)
+    private static void Validate(ElSpotPricesDto dto)
     {
         try
         {

@@ -62,7 +62,7 @@ public class SettingsImportsController : ControllerBase
         }
         catch (DataStoreUniqueConstraintException e)
         {
-            logger.LogWarning(e, $"Add import failed. Label:{dto.Label}");
+            logger.LogWarning(e, "Add import failed. Label:{}", dto.Label);
             return StatusCode(StatusCodes.Status409Conflict, "Import label already exists");
         }
 

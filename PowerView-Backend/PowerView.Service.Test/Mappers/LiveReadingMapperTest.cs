@@ -32,13 +32,13 @@ namespace PowerView.Service.Test.Mappers
 
             // Act & Assert
             Assert.That(() => target.MapPvOutputArgs(null, contentType, body, deviceLabel, sn, snParam, p23l1Param, p23l2Param, p23l3Param), Throws.TypeOf<ArgumentNullException>());
-            Assert.That(() => target.MapPvOutputArgs(uri, string.Empty, body, deviceLabel, sn, snParam, p23l1Param, p23l2Param, p23l3Param), Throws.TypeOf<ArgumentNullException>());
+            Assert.That(() => target.MapPvOutputArgs(uri, string.Empty, body, deviceLabel, sn, snParam, p23l1Param, p23l2Param, p23l3Param), Throws.TypeOf<ArgumentOutOfRangeException>());
             Assert.That(() => target.MapPvOutputArgs(uri, null, body, deviceLabel, sn, snParam, p23l1Param, p23l2Param, p23l3Param), Throws.TypeOf<ArgumentNullException>());
             Assert.That(() => target.MapPvOutputArgs(uri, contentType, null, deviceLabel, sn, snParam, p23l1Param, p23l2Param, p23l3Param), Throws.TypeOf<ArgumentNullException>());
-            Assert.That(() => target.MapPvOutputArgs(uri, contentType, body, string.Empty, sn, snParam, p23l1Param, p23l2Param, p23l3Param), Throws.TypeOf<ArgumentNullException>());
+            Assert.That(() => target.MapPvOutputArgs(uri, contentType, body, string.Empty, sn, snParam, p23l1Param, p23l2Param, p23l3Param), Throws.TypeOf<ArgumentOutOfRangeException>());
             Assert.That(() => target.MapPvOutputArgs(uri, contentType, body, null, sn, snParam, p23l1Param, p23l2Param, p23l3Param), Throws.TypeOf<ArgumentNullException>());
             Assert.That(() => target.MapPvOutputArgs(uri, contentType, body, deviceLabel, sn, null, p23l1Param, p23l2Param, p23l3Param), Throws.TypeOf<ArgumentNullException>());
-            Assert.That(() => target.MapPvOutputArgs(uri, contentType, body, deviceLabel, sn, string.Empty, p23l1Param, p23l2Param, p23l3Param), Throws.TypeOf<ArgumentNullException>());
+            Assert.That(() => target.MapPvOutputArgs(uri, contentType, body, deviceLabel, sn, string.Empty, p23l1Param, p23l2Param, p23l3Param), Throws.TypeOf<ArgumentOutOfRangeException>());
         }
 
         [Test]

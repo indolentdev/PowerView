@@ -23,15 +23,14 @@ public class ReadingAccepter : IReadingAccepter
         var liveReadingsToFilter = liveReadings.Except(liveReadingsOk).ToList();
 
         var liveReadingsFiltered = new List<Reading>();
-        if (liveReadingsToFilter.Any())
+        if (liveReadingsToFilter.Count != 0)
         {
             foreach (var liveReading in liveReadingsToFilter)
             {
                 var filteredRegisterValues = liveReading.GetRegisterValues().Where(RegisterValueOk).ToList();
-                if (!filteredRegisterValues.Any())
-                {
-                    continue;
-                }
+                
+                if (filteredRegisterValues.Count == 0) continue;
+
                 liveReadingsFiltered.Add(new Reading(liveReading.Label, liveReading.DeviceId, liveReading.Timestamp, filteredRegisterValues));
             }
             liveReadingsFiltered.AddRange(liveReadingsOk);
@@ -51,7 +50,7 @@ public class ReadingAccepter : IReadingAccepter
         return !rv.ObisCode.IsUtilitySpecific || rv.ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat;
     }
 
-    private bool SignalHub(IList<Reading> readings)
+    private static bool SignalHub(IList<Reading> readings)
     {
         return !readings.SelectMany(x => x.GetRegisterValues()).Any(x => x.ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat);
     }

@@ -92,7 +92,7 @@ public class SettingsProfileGraphsController : ControllerBase
         }
         catch (DataStoreUniqueConstraintException e)
         {
-            logger.LogWarning(e, $"Add profile graph failed. Period:{dto.Period}, Page:{dto.Page}, Title:{dto.Title}");
+            logger.LogWarning(e, "Add profile graph failed. Period:{Period}, Page:{Page}, Title:{Title}", dto.Period, dto.Page, dto.Title);
             return StatusCode(StatusCodes.Status409Conflict, "ProfileGraph [period, page, title] or [period, page, rank] already exists");
         }
 
@@ -115,7 +115,7 @@ public class SettingsProfileGraphsController : ControllerBase
         var success = profileGraphRepository.UpdateProfileGraph(period, page, title, profileGraph);
         if (!success)
         {
-            logger.LogWarning($"Update profile graph failed. Period:{period}, Page:{page}, Title:{title}. Does not exist.");
+            logger.LogWarning("Update profile graph failed. Period:{Period}, Page:{Page}, Title:{Title}. Does not exist.", period, page, title);
             return StatusCode(StatusCodes.Status409Conflict, new { Description = "ProfileGraph [period, page, title] does not exist" });
         }
 
@@ -149,7 +149,7 @@ public class SettingsProfileGraphsController : ControllerBase
         }
         catch (DataStoreUniqueConstraintException e)
         {
-            logger.LogWarning(e, $"Swap profile graph rank. Period:{period}, Page:{page}, Title1:{title1}, Title2:{title2}");
+            logger.LogWarning(e, "Swap profile graph rank. Period:{Period}, Page:{Page}, Title1:{Title1}, Title2:{Title2}", period, page, title1, title2);
             return StatusCode(StatusCodes.Status409Conflict, new { Description = "ProfileGraph [period, page, rank] already exists" });
         }
 

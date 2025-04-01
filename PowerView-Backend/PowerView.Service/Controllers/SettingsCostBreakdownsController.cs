@@ -76,7 +76,7 @@ public class SettingsCostBreakdownsController : ControllerBase
         }
         catch (DataStoreUniqueConstraintException e)
         {
-            logger.LogWarning(e, $"Add cost breakdown failed. Title:{dto.Title}");
+            logger.LogWarning(e, "Add cost breakdown failed. Title:{Title}", dto.Title);
             return StatusCode(StatusCodes.Status409Conflict, "CostBreakdown title already exists");
         }
 
@@ -109,12 +109,12 @@ public class SettingsCostBreakdownsController : ControllerBase
         }
         catch (DataStoreUniqueConstraintException e)
         {
-            logger.LogWarning(e, $"Add cost breakdown entry failed. Duplicate. Title:{title}, FromDate:{dto.FromDate.Value.ToString("O")}, ToDate:{dto.ToDate.Value.ToString("O")}, Name:{dto.Name}");
+            logger.LogWarning(e, "Add cost breakdown entry failed. Duplicate. Title:{Title}, FromDate:{FromDate}, ToDate:{ToDate}, Name:{Name}", title, dto.FromDate.Value.ToString("O"), dto.ToDate.Value.ToString("O"), dto.Name);
             return StatusCode(StatusCodes.Status409Conflict, "CostBreakdownEntry already exists");
         }
         catch (DataStoreException e)
         {
-            logger.LogWarning(e, $"Add cost breakdown entry failed. Title:{title}, FromDate:{dto.FromDate.Value.ToString("O")}, ToDate:{dto.ToDate.Value.ToString("O")}, Name:{dto.Name}");
+            logger.LogWarning(e, "Add cost breakdown entry failed. Title:{Title}, FromDate:{FromDate}, ToDate:{ToDate}, Name:{Name}", title, dto.FromDate.Value.ToString("O"), dto.ToDate.Value.ToString("O"), dto.Name);
             return StatusCode(StatusCodes.Status400BadRequest, "CostBreakdownEntry failed");
         }
 
@@ -140,12 +140,12 @@ public class SettingsCostBreakdownsController : ControllerBase
         }
         catch (DataStoreUniqueConstraintException e)
         {
-            logger.LogWarning(e, $"Add cost breakdown entry failed. Duplicate. Title:{title}, FromDate:{fromDate.Value.ToString("O")}, ToDate:{toDate.Value.ToString("O")}, Name:{name}");
+            logger.LogWarning(e, "Add cost breakdown entry failed. Duplicate. Title:{Title}, FromDate:{FromDate}, ToDate:{ToDate}, Name:{Name}", title, dto.FromDate.Value.ToString("O"), dto.ToDate.Value.ToString("O"), dto.Name);
             return StatusCode(StatusCodes.Status409Conflict, "CostBreakdownEntry already exists");
         }
         catch (DataStoreException e)
         {
-            logger.LogWarning(e, $"Add cost breakdown entry failed. Title:{title}, FromDate:{fromDate.Value.ToString("O")}, ToDate:{toDate.Value.ToString("O")}, Name:{name}");
+            logger.LogWarning(e, "Add cost breakdown entry failed. Title:{Title}, FromDate:{FromDate}, ToDate:{ToDate}, Name:{Name}", title, dto.FromDate.Value.ToString("O"), dto.ToDate.Value.ToString("O"), dto.Name);
             return StatusCode(StatusCodes.Status400BadRequest, "CostBreakdownEntry failed");
         }
 
@@ -167,7 +167,7 @@ public class SettingsCostBreakdownsController : ControllerBase
         }
         catch (DataStoreException e)
         {
-            logger.LogWarning(e, $"Delete cost breakdown entry failed. Title:{title}, FromDate:{fromDate.Value.ToString("O")}, ToDate:{toDate.Value.ToString("O")}, Name:{name}");
+            logger.LogWarning(e,  "Delete cost breakdown entry failed. Title:{Title}, FromDate:{FromDate}, ToDate:{ToDate}, Name:{Name}", title, fromDate.Value.ToString("O"), toDate.Value.ToString("O"), name);
             return StatusCode(StatusCodes.Status400BadRequest, "CostBreakdownEntry failed");
         }
 

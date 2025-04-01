@@ -7,6 +7,7 @@ using PowerView.Model.Repository;
 using PowerView.Model;
 using PowerView.Service.Dtos;
 using PowerView.Service.Mappers;
+using System.Globalization;
 
 namespace PowerView.Service.Controllers;
 
@@ -32,11 +33,11 @@ public class DeviceReadingController : ControllerBase
     {
         var liveReadings = liveReadingSetDto.Items
             .Select(x =>
-                new Reading(x.Label, x.DeviceId != null ? x.DeviceId : x.SerialNumber.ToString(), x.Timestamp.Value,
+                new Reading(x.Label, x.DeviceId != null ? x.DeviceId : x.SerialNumber?.ToString(CultureInfo.InvariantCulture), x.Timestamp.Value,
                     x.RegisterValues.Select(y => new RegisterValue(y.ObisCode, y.Value.Value, y.Scale.Value, y.Unit.Value))))
             .ToList();
 
-        logger.LogTrace($"Received {liveReadings.Sum(x => x.GetRegisterValues().Count)} values through device readings api");
+        logger.LogTrace("Received {Count} values through device readings api", liveReadings.Sum(x => x.GetRegisterValues().Count));
 
         var runAccept = true;
         var dataStoreBusyExceptionCount = 0;
@@ -58,13 +59,13 @@ public class DeviceReadingController : ControllerBase
                 else
                 {
                     var statusCode = StatusCodes.Status503ServiceUnavailable;
-                    var msg = $"Unable to add readings for label(s):{string.Join(",", liveReadings.Select(r => r.Label))}. Data store busy. Responding {statusCode}. {e.InnerException?.Message}";
                     Exception ex = null;
                     if (logger.IsEnabled(LogLevel.Debug))
                     {
                         ex = e;
                     }
-                    logger.LogInformation(ex, msg);
+                    logger.LogInformation(ex, "Unable to add readings for label(s):{Labels}. Data store busy. Responding status code:{StatusCode}. Inner exception message:{Message}", 
+                        string.Join(",", liveReadings.Select(r => r.Label)), statusCode, e.InnerException?.Message);
                     return StatusCode(statusCode, "Data store busy");
                 }
             }
@@ -84,7 +85,7 @@ public class DeviceReadingController : ControllerBase
         var reading = new Reading(labelRegisterValue.Label, labelRegisterValue.DeviceId, labelRegisterValue.Timestamp.Value,
           new[] { new RegisterValue(labelRegisterValue.ObisCode, labelRegisterValue.Value.Value, labelRegisterValue.Scale.Value, UnitMapper.Map(labelRegisterValue.Unit), RegisterValueTag.Manual) });
 
-        logger.LogTrace($"Received {reading.GetRegisterValues().Count} values through manual readings api");
+        logger.LogTrace("Received {Count} values through manual readings api", reading.GetRegisterValues().Count);
 
         try
         {
@@ -94,13 +95,12 @@ public class DeviceReadingController : ControllerBase
         catch (DataStoreUniqueConstraintException e)
         {
             var statusCode = StatusCodes.Status409Conflict;
-            var msg = $"Unable to add manual register for label:{reading.Label}. Duplicate entry. Responding {statusCode}";
             Exception ex = null;
             if (logger.IsEnabled(LogLevel.Debug))
             {
                 ex = e;
             }
-            logger.LogInformation(ex, msg);
+            logger.LogInformation(ex, "Unable to add manual register for label:{Label}. Duplicate entry. Responding status code:{StatusCode}", reading.Label, statusCode);
             return StatusCode(statusCode, "Conflict");
         }
 

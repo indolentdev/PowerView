@@ -82,13 +82,13 @@ namespace PowerView.Service.EventHub
             }
         }
 
-        private IEnumerable<MeterEvent> GetNewMeterEvents(MeterEvent[] meterEventCandidates, ICollection<MeterEvent> latestMeterEvents)
+        private static IEnumerable<MeterEvent> GetNewMeterEvents(MeterEvent[] meterEventCandidates, ICollection<MeterEvent> latestMeterEvents)
         {
             var latestMeterEventsByKey = latestMeterEvents.ToDictionary(me => GetKey(me), me => me);
             foreach (var meterEventCandidate in meterEventCandidates)
             {
                 var key = GetKey(meterEventCandidate);
-                if (!latestMeterEventsByKey.ContainsKey(key))
+                if (!latestMeterEventsByKey.TryGetValue(key, out var meterEvent))
                 {
                     if (meterEventCandidate.Flag == true)
                     {
@@ -97,7 +97,6 @@ namespace PowerView.Service.EventHub
                 }
                 else
                 {
-                    var meterEvent = latestMeterEventsByKey[key];
                     if (meterEventCandidate.DetectTimestamp > meterEvent.DetectTimestamp && meterEventCandidate.Flag != meterEvent.Flag)
                     {
                         yield return meterEventCandidate;

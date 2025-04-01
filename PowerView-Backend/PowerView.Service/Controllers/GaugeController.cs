@@ -56,7 +56,7 @@ public class GaugeController : ControllerBase
         return Ok(r);
     }
 
-    private DateTime GetTimestamp(DateTime? timestamp)
+    private static DateTime GetTimestamp(DateTime? timestamp)
     {
         return timestamp ?? DateTime.UtcNow;
     }

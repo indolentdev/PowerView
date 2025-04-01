@@ -52,7 +52,7 @@ public class SettingsEmailRecipientsController : ControllerBase
         }
         catch (DataStoreUniqueConstraintException e)
         {
-            logger.LogWarning(e, $"Add email recipient failed. Email address already exists. Name:{emailRecipientDto.Name}. EmailAddress:{emailRecipientDto.EmailAddress}");
+            logger.LogWarning(e, "Add email recipient failed. Email address already exists. Name:{Name}. EmailAddress:{EmailAddress}", emailRecipientDto.Name, emailRecipientDto.EmailAddress);
             return Conflict(new { Description = "EmailAddress already exists" });
         }
 
@@ -89,17 +89,17 @@ public class SettingsEmailRecipientsController : ControllerBase
         }
         catch (ConnectMailerException e)
         {
-            logger.LogWarning(e, $"Test email recipient failed. SMTP connection failed. EmailAddress:{emailAddress}");
+            logger.LogWarning(e, "Test email recipient failed. SMTP connection failed. EmailAddress:{EmailAddress}", emailAddress);
             return StatusCode(StatusCodes.Status504GatewayTimeout);
         }
         catch (AuthenticateMailerException e)
         {
-            logger.LogWarning(e, $"Test email recipient failed. SMTP user authentication failed. EmailAddress:{emailAddress}");
+            logger.LogWarning(e, "Test email recipient failed. SMTP user authentication failed. EmailAddress:{EmailAddress}", emailAddress);
             return StatusCode(567); // GatewayUnauthorized
         }
         catch (MailerException e)
         {
-            logger.LogWarning(e, $"Test email recipient failed. EmailAddress:{emailAddress}");
+            logger.LogWarning(e, "Test email recipient failed. EmailAddress:{EmailAddress}", emailAddress);
             return BadRequest();
         }
     }

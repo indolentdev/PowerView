@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Runtime.CompilerServices;
 
 namespace PowerView.Service;
@@ -11,6 +12,6 @@ public static class UrlHelper
             query.GetArguments()
                 .Select(a => Uri.EscapeDataString(a?.ToString() ?? ""))
                 .ToArray());
-        return new Uri(url, s.ToString());
+        return new Uri(url, s.ToString(CultureInfo.InvariantCulture));
     }
 }

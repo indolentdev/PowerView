@@ -74,7 +74,8 @@ public class SettingsSerieColorsController : ControllerBase
         {
             if (!SeriesColor.IsColorValid(seriesColorDto.Color))
             {
-                logger.LogInformation($"Skipping serie color item having invalid color format {seriesColorDto.Label} {seriesColorDto.ObisCode} {seriesColorDto.Color}");
+                logger.LogInformation("Skipping serie color item having invalid color format {Label} {ObisCode} {Color}", 
+                    seriesColorDto.Label, seriesColorDto.ObisCode, seriesColorDto.Color);
                 continue;
             }
 

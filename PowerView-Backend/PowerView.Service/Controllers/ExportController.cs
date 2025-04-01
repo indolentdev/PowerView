@@ -78,7 +78,7 @@ public class ExportController : ControllerBase
         return Ok(r);
     }
 
-    private static IList<object> GetExportDiffSeries(IList<ExportPeriod> periods, IEnumerable<IGrouping<SeriesName, NormalizedDurationRegisterValue>> seriesGroups)
+    private static List<object> GetExportDiffSeries(IList<ExportPeriod> periods, IEnumerable<IGrouping<SeriesName, NormalizedDurationRegisterValue>> seriesGroups)
     {
         var exportSeries = new List<object>(); // matches dto
 
@@ -156,7 +156,7 @@ public class ExportController : ControllerBase
         return Ok(r);
     }
 
-    private static IList<object> GetExportGaugeSeries(IList<DateTime> hours, IEnumerable<IGrouping<SeriesName, NormalizedTimeRegisterValue>> seriesGroups)
+    private static List<object> GetExportGaugeSeries(IList<DateTime> hours, IEnumerable<IGrouping<SeriesName, NormalizedTimeRegisterValue>> seriesGroups)
     {
         var exportSeries = new List<object>(); // matches dto
 
@@ -209,7 +209,7 @@ public class ExportController : ControllerBase
         DateTime timestampParse;
         if (!DateTime.TryParse(parameterValue, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out timestampParse) || timestampParse.Kind != DateTimeKind.Utc)
         {
-            logger.LogInformation($"Unable to parse query parameter {parameterName} as UTC timestamp date time string:{parameterValue}");
+            logger.LogInformation("Unable to parse query parameter {Name} as UTC timestamp date time string:{Value}", parameterName, parameterValue);
             return null;
         }
         else
