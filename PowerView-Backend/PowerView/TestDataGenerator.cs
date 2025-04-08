@@ -1,5 +1,7 @@
 ﻿#if DEBUG
 
+using System.Globalization;
+
 using PowerView.Model;
 using PowerView.Model.Repository;
 using Microsoft.Extensions.Logging;
@@ -11,7 +13,7 @@ using SumSG = PowerView.TestDataGenerator.SumSerieGenerator;
 
 namespace PowerView
 {
-    internal class TestDataGenerator
+    internal sealed class TestDataGenerator
     {
         private readonly ILogger logger;
 
@@ -68,7 +70,7 @@ namespace PowerView
             }
         }
 
-        private static IDictionary<string, SerieGenerator[]> GetSerieGenerators()
+        private static Dictionary<string, SerieGenerator[]> GetSerieGenerators()
         {
             var result = new Dictionary<string, SerieGenerator[]>();
 
@@ -165,7 +167,7 @@ namespace PowerView
             }
         }
 
-        private static IDictionary<string, EventGenerator[]> GetEventGenerators()
+        private static Dictionary<string, EventGenerator[]> GetEventGenerators()
         {
             var result = new Dictionary<string, EventGenerator[]>();
 
@@ -211,7 +213,7 @@ namespace PowerView
             public bool Flag { get; protected set; }
         }
 
-        internal class LeakEventGenerator : EventGenerator
+        internal sealed class LeakEventGenerator : EventGenerator
         {
             public Unit Unit { get; set; }
 
@@ -231,7 +233,7 @@ namespace PowerView
                 }
             }
 
-            private IMeterEventAmplification CreateAmplification(DateTime dt, double value)
+            private LeakMeterEventAmplification CreateAmplification(DateTime dt, double value)
             {
                 return new LeakMeterEventAmplification(dt, dt, new UnitValue(value, Unit));
             }
@@ -248,11 +250,11 @@ namespace PowerView
 
             public override string ToString()
             {
-                return string.Format("[Spec: Unit={0}, Scale={1}, ObisCode={2}]", Unit, Scale, ObisCode);
+                return string.Format(CultureInfo.InvariantCulture, "[Spec: Unit={0}, Scale={1}, ObisCode={2}]", Unit, Scale, ObisCode);
             }
         }
 
-        internal class ActualSerieGenerator : SerieGenerator
+        internal sealed class ActualSerieGenerator : SerieGenerator
         {
             public ActualSerieGenerator()
             {
@@ -316,7 +318,7 @@ namespace PowerView
             }
         }
 
-        internal class AccumulatingSerieGenerator : SerieGenerator
+        internal sealed class AccumulatingSerieGenerator : SerieGenerator
         {
             public SerieGenerator? BackingGenerator { get; set; }
 
@@ -349,7 +351,7 @@ namespace PowerView
             }
         }
 
-        internal class SumSerieGenerator : SerieGenerator
+        internal sealed class SumSerieGenerator : SerieGenerator
         {
             public SerieGenerator[]? BackingGenerators { get; set; }
 

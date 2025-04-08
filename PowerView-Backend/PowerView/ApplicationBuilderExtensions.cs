@@ -21,7 +21,7 @@ namespace PowerView
                     RequestPath = "/web",
                     OnPrepareResponse = ctx =>
                     {
-                        if (ctx.File.Name.Equals("index.html", StringComparison.InvariantCultureIgnoreCase))
+                        if (ctx.File.Name.Equals("index.html", StringComparison.OrdinalIgnoreCase))
                         {
                             ctx.Context.Response.Headers.Append("Cache-Control", "no-cache, no-store, must-revalidate");
                             ctx.Context.Response.Headers.Append("Pragma", "no-cache");
@@ -37,9 +37,9 @@ namespace PowerView
             {
                 if (string.Equals(env.EnvironmentName, "Production", StringComparison.OrdinalIgnoreCase))
                 {
-                    throw new ApplicationException($"WebRootPath does not exist. {env.WebRootPath}");
+                    throw new DirectoryNotFoundException($"WebRootPath does not exist. {env.WebRootPath}");
                 }
-                logger.LogWarning($"WebRootPath does not exist. Skipping spa main static files. {env.WebRootPath}");
+                logger.LogWarning("WebRootPath does not exist. Skipping spa main static files. {Path}", env.WebRootPath);
             }
 
             var assets = Path.Combine(env.WebRootPath, "assets");
@@ -59,9 +59,9 @@ namespace PowerView
             {
                 if (string.Equals(env.EnvironmentName, "Production", StringComparison.OrdinalIgnoreCase))
                 {
-                    throw new ApplicationException($"Web assets path does not exist. {assets}");
+                    throw new DirectoryNotFoundException($"Web assets path does not exist. {assets}");
                 }
-                logger.LogWarning($"Web assets path does not exist. Skipping spa assets static files. {assets}");
+                logger.LogWarning("Web assets path does not exist. Skipping spa assets static files. {Assets}", assets);
             }
 
 
@@ -78,7 +78,7 @@ namespace PowerView
 
         }
 
-        private class FaviconPhysicalFileProvider : IFileProvider
+        private sealed class FaviconPhysicalFileProvider : IFileProvider
         {
             private const string FileName = "favicon.ico";
             private readonly IFileProvider backing;

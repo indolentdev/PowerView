@@ -22,7 +22,7 @@ namespace PowerView
             {
                 var envRepository = scope.ServiceProvider.GetRequiredService<IEnvironmentRepository>();
                 var sqliteVersion = envRepository.GetSqliteVersion();
-                logger.LogInformation($"SQLite version:{sqliteVersion}");
+                logger.LogInformation("SQLite version:{Version}", sqliteVersion);
 
                 var dbCheck = scope.ServiceProvider.GetRequiredService<IDbCheck>();
                 dbCheck.CheckDatabase();
