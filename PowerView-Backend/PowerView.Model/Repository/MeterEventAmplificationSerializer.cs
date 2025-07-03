@@ -11,15 +11,15 @@ namespace PowerView.Model.Repository
     public static class MeterEventAmplificationSerializer
     {
 
-        public static string Serialize<T>(T amplification) where T : class, IMeterEventAmplification
+        public static string Serialize(IMeterEventAmplification amplification)
         {
             ArgumentNullException.ThrowIfNull(amplification);
 
             try
             {
-                var amplificationJson = JsonSerializer.Serialize<T>(amplification/*, options*/);
+                var amplificationJson = JsonSerializer.Serialize((object)amplification);
                 var envelope = new Envelope { TypeName = amplification.GetType().Name, Content = amplificationJson };
-                return JsonSerializer.Serialize(envelope/*, options*/);
+                return JsonSerializer.Serialize(envelope);
             }
             catch (Exception e) when (e is JsonException || e is NotSupportedException)
             {

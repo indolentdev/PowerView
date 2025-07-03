@@ -13,7 +13,7 @@ namespace PowerView.Model.Test.Repository
             // Arrange
 
             // Act
-            Assert.That(() => MeterEventAmplificationSerializer.Serialize<LeakMeterEventAmplification>(null), Throws.TypeOf<ArgumentNullException>());
+            Assert.That(() => MeterEventAmplificationSerializer.Serialize(null), Throws.TypeOf<ArgumentNullException>());
         }
 
         [Test]
