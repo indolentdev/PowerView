@@ -5,7 +5,7 @@ using PowerView.Model.Repository;
 
 namespace PowerView.Model.Test.Repository
 {
-    public class DbTestFixtureWithDbFile
+    public abstract class DbTestFixtureWithDbFile
     {
         public DbTestFixtureWithDbFile()
         {

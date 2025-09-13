@@ -4,7 +4,7 @@ using PowerView.Model.Repository;
 
 namespace PowerView.Model.Test.Repository
 {
-    public class DbTestFixture
+    public abstract class DbTestFixture
     {
         private DbContextFactory dbContextFactory;
 

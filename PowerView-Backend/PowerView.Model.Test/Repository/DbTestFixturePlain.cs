@@ -4,7 +4,7 @@ using PowerView.Model.Repository;
 
 namespace PowerView.Model.Test.Repository
 {
-    public class DbTestFixturePlain
+    public abstract class DbTestFixturePlain
     {
         protected SqliteConnection Connection { get; private set; }
 

@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 
 namespace PowerView.Model.Test.Repository
 {
-    public class DbTestFixtureWithSchema : DbTestFixture
+    public abstract class DbTestFixtureWithSchema : DbTestFixture
     {
         public override void SetUp()
         {

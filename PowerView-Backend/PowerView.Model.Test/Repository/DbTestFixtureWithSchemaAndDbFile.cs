@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 
 namespace PowerView.Model.Test.Repository
 {
-    public class DbTestFixtureWithSchemaAndDbFile
+    public abstract class DbTestFixtureWithSchemaAndDbFile
     {
         public DbTestFixtureWithSchemaAndDbFile()
         {
