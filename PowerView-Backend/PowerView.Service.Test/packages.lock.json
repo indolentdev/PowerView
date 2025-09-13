@@ -87,10 +87,10 @@
       },
       "MailKit": {
         "type": "Transitive",
-        "resolved": "4.11.0",
-        "contentHash": "JVoRxJ+QRqFMRtEM4veStj3pMLBPRulQGV+iZm6Tq1pnr66Dy6dFYOW9Uw02nxAVzdZAN8G+y3BsUPtgZcKXhA==",
+        "resolved": "4.13.0",
+        "contentHash": "GsepEHKkaQvbAuBizlhz93yc0ihJWzVCfoerfnpCeqiKLeS6gsTKInYy3/U2wqgkGE62TKs5OKS1a90pyc+j4g==",
         "dependencies": {
-          "MimeKit": "4.11.0",
+          "MimeKit": "4.13.0",
           "System.Formats.Asn1": "8.0.1"
         }
       },
@@ -218,8 +218,8 @@
       },
       "MimeKit": {
         "type": "Transitive",
-        "resolved": "4.11.0",
-        "contentHash": "6p0RC1qwBGBHxf7hvzuR1GngzigF+Q6HQUTbD2RbmDrnS2m1qO2rgqOhYtn8n8JH7WGZ+7RthS8lfMuMzeg8AA==",
+        "resolved": "4.13.0",
+        "contentHash": "oa4JuhAzJydHnPCc/XWeyBUGd3uiVyWW0NXqOVgkXEHjbHlPVBssklK3mpw9sokjzAaBGdj0bceFsr+NXvAukA==",
         "dependencies": {
           "BouncyCastle.Cryptography": "2.5.1",
           "System.Security.Cryptography.Pkcs": "8.0.1"
@@ -321,8 +321,8 @@
         "type": "Project",
         "dependencies": {
           "MQTTnet": "[5.0.1.1416, )",
-          "MailKit": "[4.11.0, )",
-          "PowerView.Model": "[1.3.0.2247, )"
+          "MailKit": "[4.13.0, )",
+          "PowerView.Model": "[1.3.0.4731, )"
         }
       }
     }
