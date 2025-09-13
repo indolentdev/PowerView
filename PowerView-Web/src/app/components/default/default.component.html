@@ -10,13 +10,15 @@
   {{ 'common.forExampleProfileGraph' | translate }}
 </div>
 
-<div *ngIf="applicationProperties !== undefined && applicationProperties != null" class="divCenterOuter">
-  <br/>
-  <br/>
-  <br/>
-  {{ 'common.serverVersion' | translate }} {{ applicationProperties.version }}
-  <br/>
-  {{ 'common.serverLanguage' | translate }} {{ applicationProperties.culture }}
-  <br/>
-  {{ 'common.serverTimeZone' | translate }} {{ applicationProperties.timeZone }}
-</div>
+@if (applicationProperties !== undefined && applicationProperties != null) {
+  <div class="divCenterOuter">
+    <br/>
+    <br/>
+    <br/>
+    {{ 'common.serverVersion' | translate }} {{ applicationProperties.version }}
+    <br/>
+    {{ 'common.serverLanguage' | translate }} {{ applicationProperties.culture }}
+    <br/>
+    {{ 'common.serverTimeZone' | translate }} {{ applicationProperties.timeZone }}
+  </div>
+}

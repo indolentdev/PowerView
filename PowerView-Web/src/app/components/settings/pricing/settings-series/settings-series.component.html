@@ -1,9 +1,9 @@
 <div>
-    <h2>{{ 'headings.series' | translate }}</h2>
+  <h2>{{ 'headings.series' | translate }}</h2>
 </div>
 
 <div class="divCenterOuter">
-    {{ 'headings.settingsSeriesInfo' | translate }}
+  {{ 'headings.settingsSeriesInfo' | translate }}
 </div>
 
 <br />
@@ -12,32 +12,46 @@
   <form #form="ngForm" [formGroup]="formGroup" (ngSubmit)="submitForm(formGroup.value)">
     <mat-form-field style="width:19em">
       <mat-select placeholder="{{ 'common.chooseSeries' | translate }}" formControlName="series" id="series" required>
-        <mat-option *ngFor="let opt of baseSeries" [value]="{ baseLabel:opt.baseLabel, baseObisCode:opt.baseObisCode, obisCode:opt.obisCode }">
-          {{ opt.serie }}
-        </mat-option>
+        @for (opt of baseSeries; track opt) {
+          <mat-option [value]="{ baseLabel:opt.baseLabel, baseObisCode:opt.baseObisCode, obisCode:opt.obisCode }">
+            {{ opt.serie }}
+          </mat-option>
+        }
       </mat-select>
       <mat-hint align="end">{{ 'forms.settings.pricing.series.hintSeries' | translate }}</mat-hint>
-      <mat-error *ngIf="hasError('series', 'required')">{{ 'forms.settings.pricing.series.valErrors.required' | translate }}</mat-error>
+      @if (hasError('series', 'required')) {
+        <mat-error>{{ 'forms.settings.pricing.series.valErrors.required' | translate }}</mat-error>
+      }
     </mat-form-field>
 
     <br/>
 
     <mat-form-field style="width:19em">
       <mat-select placeholder="{{ 'common.chooseCostBreakdown' | translate }}" formControlName="costBreakdown" id="costBreakdown" required>
-        <mat-option *ngFor="let opt of costBreakdowns" [value]="opt">{{ opt.title }}</mat-option>
+        @for (opt of costBreakdowns; track opt) {
+          <mat-option [value]="opt">{{ opt.title }}</mat-option>
+        }
       </mat-select>
       <mat-hint align="end">{{ 'forms.settings.pricing.series.hintCostBreakdown' | translate }}</mat-hint>
-      <mat-error *ngIf="hasError('costBreakdown', 'required')">{{ 'forms.settings.pricing.series.valErrors.required' | translate }}</mat-error>
+      @if (hasError('costBreakdown', 'required')) {
+        <mat-error>{{ 'forms.settings.pricing.series.valErrors.required' | translate }}</mat-error>
+      }
     </mat-form-field>
 
     <br/>
-    
+
     <mat-form-field style="width:19em">
       <input matInput type="text" placeholder="{{ 'common.chooseLabel' | translate }}" formControlName="label" id="label" required>
       <mat-hint align="end">{{ 'forms.settings.pricing.series.hintLabel' | translate }}</mat-hint>
-      <mat-error *ngIf="hasError('label', 'required')">{{ 'forms.settings.pricing.series.valErrors.required' | translate }}</mat-error>
-      <mat-error *ngIf="hasError('label', 'minlength')">{{ 'forms.settings.pricing.series.valErrors.minLength_1' | translate }}</mat-error>
-      <mat-error *ngIf="hasError('label', 'maxlength')">{{ 'forms.settings.pricing.series.valErrors.maxLength_25' | translate }}</mat-error>
+      @if (hasError('label', 'required')) {
+        <mat-error>{{ 'forms.settings.pricing.series.valErrors.required' | translate }}</mat-error>
+      }
+      @if (hasError('label', 'minlength')) {
+        <mat-error>{{ 'forms.settings.pricing.series.valErrors.minLength_1' | translate }}</mat-error>
+      }
+      @if (hasError('label', 'maxlength')) {
+        <mat-error>{{ 'forms.settings.pricing.series.valErrors.maxLength_25' | translate }}</mat-error>
+      }
     </mat-form-field>
 
     <br />

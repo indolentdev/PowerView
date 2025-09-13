@@ -5,17 +5,23 @@
 <div class="divCenterOuter">
   <div class="divCenterInner">
 
-    <div *ngIf="gaugeValueGroupSet !== undefined && gaugeValueGroupSet.groups.length == 0">
-      <h3>{{ 'common.noDataFound' | translate }}</h3>  
-    </div>
-
-    <div *ngIf="gaugeValueGroupSet !== undefined && gaugeValueGroupSet.groups.length > 0">
-      <div *ngFor="let group of gaugeValueGroupSet.groups">
-        <app-gauges-table [gaugeValueGroup]="group"></app-gauges-table>    
-        <br/>
-        <br/>
+    @if (gaugeValueGroupSet !== undefined && gaugeValueGroupSet.groups.length == 0) {
+      <div>
+        <h3>{{ 'common.noDataFound' | translate }}</h3>
       </div>
-    </div>
+    }
+
+    @if (gaugeValueGroupSet !== undefined && gaugeValueGroupSet.groups.length > 0) {
+      <div>
+        @for (group of gaugeValueGroupSet.groups; track group) {
+          <div>
+            <app-gauges-table [gaugeValueGroup]="group"></app-gauges-table>
+            <br/>
+            <br/>
+          </div>
+        }
+      </div>
+    }
 
   </div>
 </div>

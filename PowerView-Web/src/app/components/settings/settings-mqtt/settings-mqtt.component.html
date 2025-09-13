@@ -8,18 +8,30 @@
     <mat-form-field style="width:19em">
       <input matInput type="text" placeholder="{{ 'forms.settings.mqtt.placeholderServer' | translate }}" formControlName="server" id="server" required>
       <mat-hint align="end">{{ 'forms.settings.mqtt.hintServer' | translate }}</mat-hint>
-      <mat-error *ngIf="hasError('server', 'required')">{{ 'forms.settings.mqtt.valErrors.required' | translate }}</mat-error>
-      <mat-error *ngIf="hasError('server', 'minlength')">{{ 'forms.settings.mqtt.valErrors.minLength_7' | translate }}</mat-error>
-      <mat-error *ngIf="hasError('server', 'maxlength')">{{ 'forms.settings.mqtt.valErrors.maxLength_39' | translate }}</mat-error>
+      @if (hasError('server', 'required')) {
+        <mat-error>{{ 'forms.settings.mqtt.valErrors.required' | translate }}</mat-error>
+      }
+      @if (hasError('server', 'minlength')) {
+        <mat-error>{{ 'forms.settings.mqtt.valErrors.minLength_7' | translate }}</mat-error>
+      }
+      @if (hasError('server', 'maxlength')) {
+        <mat-error>{{ 'forms.settings.mqtt.valErrors.maxLength_39' | translate }}</mat-error>
+      }
     </mat-form-field>
     <br/>
     <br/>
     <mat-form-field style="width:19em">
       <input matInput type="number" placeholder="{{ 'forms.settings.mqtt.placeholderPort' | translate }}" formControlName="port" id="port" required>
       <mat-hint align="end">{{ 'forms.settings.mqtt.hintPort' | translate }}</mat-hint>
-      <mat-error *ngIf="hasError('port', 'required')">{{ 'forms.settings.mqtt.valErrors.required' | translate }}</mat-error>
-      <mat-error *ngIf="hasError('port', 'min')">{{ 'forms.settings.mqtt.valErrors.min_1' | translate }}</mat-error>
-      <mat-error *ngIf="hasError('port', 'max')">{{ 'forms.settings.mqtt.valErrors.max_65535' | translate }}</mat-error>
+      @if (hasError('port', 'required')) {
+        <mat-error>{{ 'forms.settings.mqtt.valErrors.required' | translate }}</mat-error>
+      }
+      @if (hasError('port', 'min')) {
+        <mat-error>{{ 'forms.settings.mqtt.valErrors.min_1' | translate }}</mat-error>
+      }
+      @if (hasError('port', 'max')) {
+        <mat-error>{{ 'forms.settings.mqtt.valErrors.max_65535' | translate }}</mat-error>
+      }
     </mat-form-field>
     <br/>
     <br/>
@@ -31,10 +43,18 @@
     <mat-form-field style="width:19em">
       <input matInput type="text" placeholder="{{ 'forms.settings.mqtt.placeholderClientId' | translate }}" formControlName="clientId" id="clientId" required>
       <mat-hint align="end">{{ 'forms.settings.mqtt.hintClientId' | translate }}</mat-hint>
-      <mat-error *ngIf="hasError('clientId', 'required')">{{ 'forms.settings.mqtt.valErrors.required' | translate }}</mat-error>
-      <mat-error *ngIf="hasError('clientId', 'minlength')">{{ 'forms.settings.mqtt.valErrors.minLength_1' | translate }}</mat-error>
-      <mat-error *ngIf="hasError('clientId', 'maxlength')">{{ 'forms.settings.mqtt.valErrors.maxLength_23' | translate }}</mat-error>
-      <mat-error *ngIf="hasError('clientId', 'pattern')">{{ 'forms.settings.mqtt.valErrors.invalidCharacters' | translate }}</mat-error>
+      @if (hasError('clientId', 'required')) {
+        <mat-error>{{ 'forms.settings.mqtt.valErrors.required' | translate }}</mat-error>
+      }
+      @if (hasError('clientId', 'minlength')) {
+        <mat-error>{{ 'forms.settings.mqtt.valErrors.minLength_1' | translate }}</mat-error>
+      }
+      @if (hasError('clientId', 'maxlength')) {
+        <mat-error>{{ 'forms.settings.mqtt.valErrors.maxLength_23' | translate }}</mat-error>
+      }
+      @if (hasError('clientId', 'pattern')) {
+        <mat-error>{{ 'forms.settings.mqtt.valErrors.invalidCharacters' | translate }}</mat-error>
+      }
     </mat-form-field>
 
     <br/>

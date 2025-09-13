@@ -1,4 +1,6 @@
-<h3 *ngIf="gaugeValueGroup != null">{{ 'headings.gauges.groupName.' + gaugeValueGroup.name | translate }}</h3>
+@if (gaugeValueGroup != null) {
+  <h3>{{ 'headings.gauges.groupName.' + gaugeValueGroup.name | translate }}</h3>
+}
 <table mat-table [dataSource]="dataSource" matSort class="center">
   <ng-container matColumnDef="serie">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'columns.serie' | translate }}</th>

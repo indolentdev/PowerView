@@ -1,9 +1,9 @@
 <div>
-    <h2>{{ 'headings.costBreakdown' | translate }}</h2>
+  <h2>{{ 'headings.costBreakdown' | translate }}</h2>
 </div>
 
 <div class="divCenterOuter">
-    {{ 'headings.costBreakdownInfo' | translate }}
+  {{ 'headings.costBreakdownInfo' | translate }}
 </div>
 
 <br />
@@ -13,23 +13,33 @@
     <mat-form-field style="width:19em">
       <input matInput type="text" placeholder="{{ 'forms.settings.pricing.costBreakdown.placeholderTitle' | translate }}" formControlName="title" id="title" required>
       <mat-hint align="end">{{ 'forms.settings.pricing.costBreakdown.hintTitle' | translate }}</mat-hint>
-      <mat-error *ngIf="hasError('title', 'required')">{{ 'forms.settings.pricing.costBreakdown.valErrors.required' | translate }}</mat-error>
-      <mat-error *ngIf="hasError('title', 'minlength')">{{ 'forms.settings.pricing.costBreakdown.valErrors.minLength_1' | translate }}</mat-error>
-      <mat-error *ngIf="hasError('title', 'maxlength')">{{ 'forms.settings.pricing.costBreakdown.valErrors.maxLength_30' | translate }}</mat-error>
+      @if (hasError('title', 'required')) {
+        <mat-error>{{ 'forms.settings.pricing.costBreakdown.valErrors.required' | translate }}</mat-error>
+      }
+      @if (hasError('title', 'minlength')) {
+        <mat-error>{{ 'forms.settings.pricing.costBreakdown.valErrors.minLength_1' | translate }}</mat-error>
+      }
+      @if (hasError('title', 'maxlength')) {
+        <mat-error>{{ 'forms.settings.pricing.costBreakdown.valErrors.maxLength_30' | translate }}</mat-error>
+      }
     </mat-form-field>
 
     <br/>
 
     <mat-form-field style="width:19em">
       <mat-select placeholder="{{ 'common.chooseCurrency' | translate }}" formControlName="currency" id="currency" required>
-        <mat-option *ngFor="let opt of currencies" [value]="opt">
-          {{ opt }}
-        </mat-option>
+        @for (opt of currencies; track opt) {
+          <mat-option [value]="opt">
+            {{ opt }}
+          </mat-option>
+        }
       </mat-select>
       <mat-hint align="end">{{ 'forms.settings.pricing.costBreakdown.hintCurrency' | translate }}</mat-hint>
-      <mat-error *ngIf="hasError('currency', 'required')">{{ 'forms.settings.pricing.costBreakdown.valErrors.required' | translate }}</mat-error>
+      @if (hasError('currency', 'required')) {
+        <mat-error>{{ 'forms.settings.pricing.costBreakdown.valErrors.required' | translate }}</mat-error>
+      }
     </mat-form-field>
-    
+
     <br />
 
     <mat-form-field style="width:19em">
@@ -38,9 +48,15 @@
         placeholder="{{ 'forms.settings.pricing.costBreakdown.placeholderVat' | translate }}"
         formControlName="vat" id="vat" required>
       <mat-hint align="end">{{ 'forms.settings.pricing.costBreakdown.hintVat' | translate }}</mat-hint>
-      <mat-error *ngIf="hasError('vat', 'required')">{{ 'forms.settings.pricing.costBreakdown.valErrors.required' | translate }}</mat-error>
-      <mat-error *ngIf="hasError('vat', 'min')">{{ 'forms.settings.pricing.costBreakdown.valErrors.min' | translate: ({minValue: 0}) }}</mat-error>
-      <mat-error *ngIf="hasError('vat', 'max')">{{ 'forms.settings.pricing.costBreakdown.valErrors.max' | translate: ({maxValue: 100}) }}</mat-error>
+      @if (hasError('vat', 'required')) {
+        <mat-error>{{ 'forms.settings.pricing.costBreakdown.valErrors.required' | translate }}</mat-error>
+      }
+      @if (hasError('vat', 'min')) {
+        <mat-error>{{ 'forms.settings.pricing.costBreakdown.valErrors.min' | translate: ({minValue: 0}) }}</mat-error>
+      }
+      @if (hasError('vat', 'max')) {
+        <mat-error>{{ 'forms.settings.pricing.costBreakdown.valErrors.max' | translate: ({maxValue: 100}) }}</mat-error>
+      }
     </mat-form-field>
 
     <br/>
@@ -54,47 +70,49 @@
 
 <div class="divCenterOuter">
   <div class="divCenterInner">
-    <div *ngIf="costBreakdowns !== undefined">
-      <app-settings-cost-breakdown-table
-        [costBreakdowns]="costBreakdowns" (selectCostBreakdown)="selectCostBreakdown($event)" (deleteCostBreakdown)="deleteCostBreakdown($event)">
-      </app-settings-cost-breakdown-table>
-
-      <br/>
-      <br/>
-    </div>
-  </div>
-</div>
-
-<div class="divCenterOuter">
-  <div class="divCenterInner">
-    <div *ngIf="selectedCostBreakdown !== undefined && selectedCostBreakdown != null">
-      <app-settings-cost-breakdown-entry [costBreakdownTitle]="selectedCostBreakdown.title" [costBreakdownCurrency]="selectedCostBreakdown.currency"
-        [createMode]="entryCreateMode" [editEntry]="costBreakdownEntryEdit" [clear]="entryClear" 
-        (addCostBreakdownEntry)="addCostBreakdownEntry($event)" (updateCostBreakdownEntry)="updateCostBreakdownEntry($event)">
-      </app-settings-cost-breakdown-entry>
-    
-      <br />
-    </div>
-  </div>
-</div>
-
-<div class="divCenterOuter">
-  <div class="divCenterInner">
-    <div *ngIf="selectedCostBreakdown !== undefined && selectedCostBreakdown != null">
-
-      <div *ngFor="let cbp of selectedCostBreakdown.entryPeriods">
-        <h2>{{ cbp.period.fromDate | date:'mediumDate' }} - {{ cbp.period.toDate | date:'mediumDate' }} ({{ cbp.entries.length }})</h2>
-
-        <app-settings-cost-breakdown-entry-table [costBreakdownEntries]="cbp.entries"
-          (editCostBreakdownEntry)="editCostBreakdownEntry($event)"
-          (deleteCostBreakdownEntry)="deleteCostBreakdownEntry($event)">
-        </app-settings-cost-breakdown-entry-table>
-
+    @if (costBreakdowns !== undefined) {
+      <div>
+        <app-settings-cost-breakdown-table
+          [costBreakdowns]="costBreakdowns" (selectCostBreakdown)="selectCostBreakdown($event)" (deleteCostBreakdown)="deleteCostBreakdown($event)">
+        </app-settings-cost-breakdown-table>
+        <br/>
         <br/>
       </div>
-    
-      <br />
-    </div>
+    }
+  </div>
+</div>
+
+<div class="divCenterOuter">
+  <div class="divCenterInner">
+    @if (selectedCostBreakdown !== undefined && selectedCostBreakdown != null) {
+      <div>
+        <app-settings-cost-breakdown-entry [costBreakdownTitle]="selectedCostBreakdown.title" [costBreakdownCurrency]="selectedCostBreakdown.currency"
+          [createMode]="entryCreateMode" [editEntry]="costBreakdownEntryEdit" [clear]="entryClear"
+          (addCostBreakdownEntry)="addCostBreakdownEntry($event)" (updateCostBreakdownEntry)="updateCostBreakdownEntry($event)">
+        </app-settings-cost-breakdown-entry>
+        <br />
+      </div>
+    }
+  </div>
+</div>
+
+<div class="divCenterOuter">
+  <div class="divCenterInner">
+    @if (selectedCostBreakdown !== undefined && selectedCostBreakdown != null) {
+      <div>
+        @for (cbp of selectedCostBreakdown.entryPeriods; track cbp) {
+          <div>
+            <h2>{{ cbp.period.fromDate | date:'mediumDate' }} - {{ cbp.period.toDate | date:'mediumDate' }} ({{ cbp.entries.length }})</h2>
+            <app-settings-cost-breakdown-entry-table [costBreakdownEntries]="cbp.entries"
+              (editCostBreakdownEntry)="editCostBreakdownEntry($event)"
+              (deleteCostBreakdownEntry)="deleteCostBreakdownEntry($event)">
+            </app-settings-cost-breakdown-entry-table>
+            <br/>
+          </div>
+        }
+        <br />
+      </div>
+    }
   </div>
 </div>
 
