@@ -2,15 +2,19 @@
   <h2>{{ 'headings.events' | translate }}</h2>
 </div>
 
-<div *ngIf="eventSet !== undefined && eventSet.items.length == 0">
-  <h3>{{ 'common.noDataFound' | translate }}</h3>  
-</div>
+@if (eventSet !== undefined && eventSet.items.length == 0) {
+  <div>
+    <h3>{{ 'common.noDataFound' | translate }}</h3>
+  </div>
+}
 
 <div class="divCenterOuter">
   <div class="divCenterInner">
-    <div *ngIf="eventSet !== undefined && eventSet.items.length > 0">
-      <br/>
-      <app-events-table [eventSet]="eventSet"></app-events-table>
-    </div>
+    @if (eventSet !== undefined && eventSet.items.length > 0) {
+      <div>
+        <br/>
+        <app-events-table [eventSet]="eventSet"></app-events-table>
+      </div>
+    }
   </div>
 </div>

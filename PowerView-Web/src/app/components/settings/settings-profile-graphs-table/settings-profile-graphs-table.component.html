@@ -1,10 +1,12 @@
-<div *ngIf="profileGraphs != null && profileGraphs.length > 0">
-    <h3>{{ 'headings.periodPage' | translate:{ 
-      period:'headings.period.' + profileGraphs[0].period | translate, 
-      page:(profileGraphs[0].page == '' ? ('menu.defaultPage' | translate) : profileGraphs[0].page) 
+@if (profileGraphs != null && profileGraphs.length > 0) {
+  <div>
+    <h3>{{ 'headings.periodPage' | translate:{
+      period:'headings.period.' + profileGraphs[0].period | translate,
+      page:(profileGraphs[0].page == '' ? ('menu.defaultPage' | translate) : profileGraphs[0].page)
     } }}</h3>
-</div>
-  
+  </div>
+}
+
 <table mat-table [dataSource]="dataSource" matSort class="center">
   <ng-container matColumnDef="title">
     <th mat-header-cell *matHeaderCellDef>{{ 'columns.title' | translate }}</th>
@@ -23,8 +25,12 @@
     <td mat-cell *matCellDef="let v">
       <button style="margin-left:3px;margin-right:3px" mat-raised-button type="button" (click)="editClick(v)">{{ 'forms.settings.profileGraphs.buttonActionEdit' | translate }}</button>
       <button style="margin-left:3px;margin-right:3px" mat-raised-button type="button" (click)="deleteClick(v)">{{ 'forms.settings.profileGraphs.buttonActionDelete' | translate }}</button>
-      <button *ngIf="v.isLast != undefined && !v.isLast" style="margin-left:3px;margin-right:3px" mat-raised-button type="button" (click)="downClick(v)">{{ 'forms.settings.profileGraphs.buttonActionDown' | translate }}</button>
-      <button *ngIf="v.isFirst != undefined && !v.isFirst" style="margin-left:3px;margin-right:3px" mat-raised-button type="button" (click)="upClick(v)">{{ 'forms.settings.profileGraphs.buttonActionUp' | translate }}</button>
+      @if (v.isLast != undefined && !v.isLast) {
+        <button style="margin-left:3px;margin-right:3px" mat-raised-button type="button" (click)="downClick(v)">{{ 'forms.settings.profileGraphs.buttonActionDown' | translate }}</button>
+      }
+      @if (v.isFirst != undefined && !v.isFirst) {
+        <button style="margin-left:3px;margin-right:3px" mat-raised-button type="button" (click)="upClick(v)">{{ 'forms.settings.profileGraphs.buttonActionUp' | translate }}</button>
+      }
     </td>
   </ng-container>
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

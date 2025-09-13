@@ -1,41 +1,45 @@
 <table mat-table [dataSource]="dataSource" matSort class="center">
-    <ng-container matColumnDef="timestamp">
-        <th mat-header-cell *matHeaderCellDef>{{ 'columns.timestamp' | translate }}</th>
-        <td mat-cell *matCellDef="let v">{{ v.timestamp | date:'medium' }}</td>
-    </ng-container>
-    <ng-container matColumnDef="register">
-        <th mat-header-cell *matHeaderCellDef>{{ 'columns.name' | translate }}</th>
-        <td mat-cell *matCellDef="let v">{{ v.register }}</td>
-    </ng-container>
-    <ng-container matColumnDef="value">
-        <th mat-header-cell *matHeaderCellDef>{{ 'columns.value' | translate }}</th>
-        <td mat-cell *matCellDef="let v">{{ v.value }}</td>
-    </ng-container>
-    <ng-container matColumnDef="scale">
-        <th mat-header-cell *matHeaderCellDef>{{ 'columns.scale' | translate }}</th>
-        <td mat-cell *matCellDef="let v">{{ v.scale | scaler }}</td>
-    </ng-container>
-    <ng-container matColumnDef="unit">
-        <th mat-header-cell *matHeaderCellDef>{{ 'columns.unit' | translate }}</th>
-        <td mat-cell *matCellDef="let v">{{ v.unit }}</td>
-    </ng-container>
-    <ng-container matColumnDef="deviceId">
-        <th mat-header-cell *matHeaderCellDef>{{ 'columns.deviceId' | translate }}</th>
-        <td mat-cell *matCellDef="let v">{{ v.deviceId }}</td>
-    </ng-container>
-    <ng-container matColumnDef="tags">
-        <th mat-header-cell *matHeaderCellDef>{{ 'columns.tags' | translate }}</th>
-        <td mat-cell *matCellDef="let v">
-            <span *ngFor="let tag of v.tags; let lastTag=last;">{{ 'forms.crudeData.tags.' + tag | translate }}<span *ngIf="!lastTag">, </span></span>
-        </td>
-    </ng-container>
-    <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef>{{ 'columns.actions' | translate }}</th>
-        <td mat-cell *matCellDef="let v">
-        <button style="margin-left:3px;margin-right:3px" mat-raised-button type="button" (click)="deleteClick(v)">{{ 'forms.crudeData.list.buttonActionDelete' | translate }}</button>
+  <ng-container matColumnDef="timestamp">
+    <th mat-header-cell *matHeaderCellDef>{{ 'columns.timestamp' | translate }}</th>
+    <td mat-cell *matCellDef="let v">{{ v.timestamp | date:'medium' }}</td>
+  </ng-container>
+  <ng-container matColumnDef="register">
+    <th mat-header-cell *matHeaderCellDef>{{ 'columns.name' | translate }}</th>
+    <td mat-cell *matCellDef="let v">{{ v.register }}</td>
+  </ng-container>
+  <ng-container matColumnDef="value">
+    <th mat-header-cell *matHeaderCellDef>{{ 'columns.value' | translate }}</th>
+    <td mat-cell *matCellDef="let v">{{ v.value }}</td>
+  </ng-container>
+  <ng-container matColumnDef="scale">
+    <th mat-header-cell *matHeaderCellDef>{{ 'columns.scale' | translate }}</th>
+    <td mat-cell *matCellDef="let v">{{ v.scale | scaler }}</td>
+  </ng-container>
+  <ng-container matColumnDef="unit">
+    <th mat-header-cell *matHeaderCellDef>{{ 'columns.unit' | translate }}</th>
+    <td mat-cell *matCellDef="let v">{{ v.unit }}</td>
+  </ng-container>
+  <ng-container matColumnDef="deviceId">
+    <th mat-header-cell *matHeaderCellDef>{{ 'columns.deviceId' | translate }}</th>
+    <td mat-cell *matCellDef="let v">{{ v.deviceId }}</td>
+  </ng-container>
+  <ng-container matColumnDef="tags">
+    <th mat-header-cell *matHeaderCellDef>{{ 'columns.tags' | translate }}</th>
+    <td mat-cell *matCellDef="let v">
+      @for (tag of v.tags; track tag; let lastTag = $last) {
+        <span>{{ 'forms.crudeData.tags.' + tag | translate }}@if (!lastTag) {
+          <span>, </span>
+        }</span>
+      }
     </td>
-</ng-container>
+  </ng-container>
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef>{{ 'columns.actions' | translate }}</th>
+    <td mat-cell *matCellDef="let v">
+      <button style="margin-left:3px;margin-right:3px" mat-raised-button type="button" (click)="deleteClick(v)">{{ 'forms.crudeData.list.buttonActionDelete' | translate }}</button>
+    </td>
+  </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 </table>

@@ -1,19 +1,27 @@
 <h2>{{ 'headings.historyStatus' | translate }}</h2>
 
 <div class="divCenterOuter">
-    <div class="divCenterInner">
-        <div *ngIf="historyStatusSet !== undefined && historyStatusSet.items.length > 0">
-            <div *ngFor="let historyStatus of historyStatusSet.items">
-                <h3>{{ 'headings.interval.' + historyStatus.interval | translate }}</h3>
-                <div *ngIf="historyStatus.labelTimestamps.length > 0">
-                    <app-history-status-table [historyStatus]="historyStatus"></app-history-status-table>
-                    <br />
-                    <br />
-                </div>
-                <div *ngIf="historyStatus.labelTimestamps.length == 0">
-                    <h3>{{ 'common.noDataFound' | translate }}</h3>
-                </div>
-            </div>
-        </div>
-    </div>
+  <div class="divCenterInner">
+    @if (historyStatusSet !== undefined && historyStatusSet.items.length > 0) {
+      <div>
+        @for (historyStatus of historyStatusSet.items; track historyStatus) {
+          <div>
+            <h3>{{ 'headings.interval.' + historyStatus.interval | translate }}</h3>
+            @if (historyStatus.labelTimestamps.length > 0) {
+              <div>
+                <app-history-status-table [historyStatus]="historyStatus"></app-history-status-table>
+                <br />
+                <br />
+              </div>
+            }
+            @if (historyStatus.labelTimestamps.length == 0) {
+              <div>
+                <h3>{{ 'common.noDataFound' | translate }}</h3>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+  </div>
 </div>

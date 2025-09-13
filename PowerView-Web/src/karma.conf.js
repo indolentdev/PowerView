@@ -11,7 +11,7 @@ module.exports = function (config) {
       require('karma-firefox-launcher'),
       require('karma-jasmine-html-reporter'),
       require('karma-coverage-istanbul-reporter'),
-      require('@angular-devkit/build-angular/plugins/karma')
+      
     ],
     client: {
       clearContext: true // leave Jasmine Spec Runner output visible in browser

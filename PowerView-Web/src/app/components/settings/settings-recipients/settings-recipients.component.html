@@ -18,21 +18,33 @@
     <mat-form-field style="width:19em">
       <input matInput type="text" placeholder="{{ 'forms.settings.emailRecipients.placeholderName' | translate }}" formControlName="name" id="name" required>
       <mat-hint align="end">{{ 'forms.settings.emailRecipients.hintName' | translate }}</mat-hint>
-      <mat-error *ngIf="hasError('name', 'required')">{{ 'forms.settings.emailRecipients.valErrors.required' | translate }}</mat-error>
-      <mat-error *ngIf="hasError('name', 'minlength')">{{ 'forms.settings.emailRecipients.valErrors.minLength_3' | translate }}</mat-error>
-      <mat-error *ngIf="hasError('name', 'maxlength')">{{ 'forms.settings.emailRecipients.valErrors.maxLength_39' | translate }}</mat-error>
+      @if (hasError('name', 'required')) {
+        <mat-error>{{ 'forms.settings.emailRecipients.valErrors.required' | translate }}</mat-error>
+      }
+      @if (hasError('name', 'minlength')) {
+        <mat-error>{{ 'forms.settings.emailRecipients.valErrors.minLength_3' | translate }}</mat-error>
+      }
+      @if (hasError('name', 'maxlength')) {
+        <mat-error>{{ 'forms.settings.emailRecipients.valErrors.maxLength_39' | translate }}</mat-error>
+      }
     </mat-form-field>
 
     <br/>
 
     <mat-form-field style="width:19em">
-        <input matInput type="text" placeholder="{{ 'forms.settings.emailRecipients.placeholderEmail' | translate }}" formControlName="emailAddress" id="emailAddress" required>
-        <mat-hint align="end">{{ 'forms.settings.emailRecipients.hintEmail' | translate }}</mat-hint>
-        <mat-error *ngIf="hasError('emailAddress', 'required')">{{ 'forms.settings.emailRecipients.valErrors.required' | translate }}</mat-error>
-        <mat-error *ngIf="hasError('emailAddress', 'minlength')">{{ 'forms.settings.emailRecipients.valErrors.minLength_3' | translate }}</mat-error>
-        <mat-error *ngIf="hasError('emailAddress', 'maxlength')">{{ 'forms.settings.emailRecipients.valErrors.maxLength_39' | translate }}</mat-error>
-      </mat-form-field>
-  
+      <input matInput type="text" placeholder="{{ 'forms.settings.emailRecipients.placeholderEmail' | translate }}" formControlName="emailAddress" id="emailAddress" required>
+      <mat-hint align="end">{{ 'forms.settings.emailRecipients.hintEmail' | translate }}</mat-hint>
+      @if (hasError('emailAddress', 'required')) {
+        <mat-error>{{ 'forms.settings.emailRecipients.valErrors.required' | translate }}</mat-error>
+      }
+      @if (hasError('emailAddress', 'minlength')) {
+        <mat-error>{{ 'forms.settings.emailRecipients.valErrors.minLength_3' | translate }}</mat-error>
+      }
+      @if (hasError('emailAddress', 'maxlength')) {
+        <mat-error>{{ 'forms.settings.emailRecipients.valErrors.maxLength_39' | translate }}</mat-error>
+      }
+    </mat-form-field>
+
     <br/>
 
     <button mat-raised-button style="margin:5px;" type="submit" [disabled]="!formGroup.valid">{{ 'forms.settings.emailRecipients.buttonAdd' | translate }}</button>
@@ -40,17 +52,19 @@
 
 </div>
 
-  <br />
-  <br />
-  
+<br />
+<br />
+
 <div class="divCenterOuter">
   <div class="divCenterInner">
 
-    <div *ngIf="emailRecipientSet !== undefined && emailRecipientSet.items.length > 0">
-      <app-settings-recipients-table [emailRecipientSet]="emailRecipientSet"
-        (deleteEmailRecipient)="deleteEmailRecipient($event)" (testEmailRecipient)="testEmailRecipient($event)">
-      </app-settings-recipients-table>
-    </div>
+    @if (emailRecipientSet !== undefined && emailRecipientSet.items.length > 0) {
+      <div>
+        <app-settings-recipients-table [emailRecipientSet]="emailRecipientSet"
+          (deleteEmailRecipient)="deleteEmailRecipient($event)" (testEmailRecipient)="testEmailRecipient($event)">
+        </app-settings-recipients-table>
+      </div>
+    }
 
   </div>
 </div>

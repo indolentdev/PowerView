@@ -1,48 +1,57 @@
 <div>
   <h2>
     {{ profileHeading | translate }}
-    <mat-icon *ngIf="autoRefresh != null" aria-hidden="true" aria-label="Autorefresh enabled" fontIcon="autorenew"></mat-icon>
+    @if (autoRefresh != null) {
+      <mat-icon aria-hidden="true" aria-label="Autorefresh enabled" fontIcon="autorenew"></mat-icon>
+    }
   </h2>
 </div>
 
-<div *ngIf="page != undefined && page != null && page != ''">
-  <h3>{{ page }}</h3>
-</div>
-
-<div class="divCenterOuter" *ngIf="dpShow">
-  <div class="divCenterInner">
-    <button mat-mini-fab matTooltip="{{ 'common.navPrevious' | translate }}" color="white" style="margin-right:12px" (click)="navigatePrevious()" [disabled]="previousDisabled()">
-      <mat-icon>navigate_before</mat-icon>
-    </button>
-
-    <mat-form-field>
-      <input matInput [matDatepickerFilter]="dpFilter" [min]="dpMinStartTime" [max]="dpMaxStartTime" [matDatepicker]="dp" placeholder="{{ dpChooseResource | translate }}" 
-        (dateChange)="startTimeChangeEvent($event)" [formControl]="fcStartTime" />
-      <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
-      <mat-datepicker #dp [startView]="dpStartView" (monthSelected)="monthSelected($event)" (yearSelected)="yearSelected($event)"></mat-datepicker>
-    </mat-form-field>
-
-    <button mat-mini-fab matTooltip="{{ 'common.navNext' | translate }}" color="white" style="margin-left:12px" (click)="navigateNext()" [disabled]="nextDisabled()">
-      <mat-icon>navigate_next</mat-icon>
-    </button>
-
-    <div *ngIf="profileSet !== undefined && profileSet.graphs.length == 0">
-      <h3>{{ 'common.noDataFound' | translate }}</h3>
-    </div>
-
-    <div *ngIf="profileTotalValues.length > 0">
-      <app-profile-total-table [profileTotalValues]="profileTotalValues"></app-profile-total-table>
-      <br />
-      <br />
-    </div>
-
+@if (page != undefined && page != null && page != '') {
+  <div>
+    <h3>{{ page }}</h3>
   </div>
-</div>
+}
 
-<div *ngIf="profileSet !== undefined && profileSet.graphs.length > 0">
-  <div *ngFor="let graph of profileSet.graphs">
-    <app-profile-graph [profileGraph]="graph" [timeFormat]="timeFormat"></app-profile-graph>
-    <br />
-    <br />
+@if (dpShow) {
+  <div class="divCenterOuter">
+    <div class="divCenterInner">
+      <button mat-mini-fab matTooltip="{{ 'common.navPrevious' | translate }}" color="white" style="margin-right:12px" (click)="navigatePrevious()" [disabled]="previousDisabled()">
+        <mat-icon>navigate_before</mat-icon>
+      </button>
+      <mat-form-field>
+        <input matInput [matDatepickerFilter]="dpFilter" [min]="dpMinStartTime" [max]="dpMaxStartTime" [matDatepicker]="dp" placeholder="{{ dpChooseResource | translate }}"
+          (dateChange)="startTimeChangeEvent($event)" [formControl]="fcStartTime" />
+        <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+        <mat-datepicker #dp [startView]="dpStartView" (monthSelected)="monthSelected($event)" (yearSelected)="yearSelected($event)"></mat-datepicker>
+      </mat-form-field>
+      <button mat-mini-fab matTooltip="{{ 'common.navNext' | translate }}" color="white" style="margin-left:12px" (click)="navigateNext()" [disabled]="nextDisabled()">
+        <mat-icon>navigate_next</mat-icon>
+      </button>
+      @if (profileSet !== undefined && profileSet.graphs.length == 0) {
+        <div>
+          <h3>{{ 'common.noDataFound' | translate }}</h3>
+        </div>
+      }
+      @if (profileTotalValues.length > 0) {
+        <div>
+          <app-profile-total-table [profileTotalValues]="profileTotalValues"></app-profile-total-table>
+          <br />
+          <br />
+        </div>
+      }
+    </div>
   </div>
-</div>
+}
+
+@if (profileSet !== undefined && profileSet.graphs.length > 0) {
+  <div>
+    @for (graph of profileSet.graphs; track graph) {
+      <div>
+        <app-profile-graph [profileGraph]="graph" [timeFormat]="timeFormat"></app-profile-graph>
+        <br />
+        <br />
+      </div>
+    }
+  </div>
+}

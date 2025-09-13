@@ -18,36 +18,48 @@
 
     <mat-form-field style="width:19em">
       <mat-select (selectionChange)="optionSelected($event)" placeholder="{{ 'forms.settings.relayControls.placeholderRelayName' | translate }}" formControlName="relayName" id="relayName" required>
-        <mat-option *ngFor="let opt of disconnectControlOptions" [value]="{ nameLabel:opt.label, nameObisCode:opt.obisCode }">
-          {{ opt.serie }}
-        </mat-option>
+        @for (opt of disconnectControlOptions; track opt) {
+          <mat-option [value]="{ nameLabel:opt.label, nameObisCode:opt.obisCode }">
+            {{ opt.serie }}
+          </mat-option>
+        }
       </mat-select>
       <mat-hint align="end">{{ 'forms.settings.relayControls.hintRelayName' | translate }}</mat-hint>
-      <mat-error *ngIf="hasError('relayName', 'required')">{{ 'forms.settings.relayControls.valErrors.required' | translate }}</mat-error>
+      @if (hasError('relayName', 'required')) {
+        <mat-error>{{ 'forms.settings.relayControls.valErrors.required' | translate }}</mat-error>
+      }
     </mat-form-field>
 
     <br/>
 
     <mat-form-field style="width:19em">
       <mat-select (selectionChange)="optionSelected($event)" placeholder="{{ 'forms.settings.relayControls.placeholderSerieName' | translate }}" formControlName="serieName" id="serieName" required>
-        <mat-option *ngFor="let opt of evaluationSerieOptions" [value]="{ evaluationLabel:opt.label, evaluationObisCode:opt.obisCode, unit:opt.unit }">
-          {{ opt.serie }}
-        </mat-option>
+        @for (opt of evaluationSerieOptions; track opt) {
+          <mat-option [value]="{ evaluationLabel:opt.label, evaluationObisCode:opt.obisCode, unit:opt.unit }">
+            {{ opt.serie }}
+          </mat-option>
+        }
       </mat-select>
       <mat-hint align="end">{{ 'forms.settings.relayControls.hintSerieName' | translate }}</mat-hint>
-      <mat-error *ngIf="hasError('serieName', 'required')">{{ 'forms.settings.relayControls.valErrors.required' | translate }}</mat-error>
+      @if (hasError('serieName', 'required')) {
+        <mat-error>{{ 'forms.settings.relayControls.valErrors.required' | translate }}</mat-error>
+      }
     </mat-form-field>
 
     <br/>
 
     <mat-form-field style="width:19em">
       <mat-select (selectionChange)="optionSelected($event)" placeholder="{{ 'forms.settings.relayControls.placeholderDuration' | translate }}" formControlName="durationMinutes" id="durationMinutes" required>
-        <mat-option *ngFor="let opt of durationMinuteOptions" [value]="opt">
-          {{ opt }} {{ 'forms.settings.relayControls.minutes' | translate }}
-        </mat-option>
+        @for (opt of durationMinuteOptions; track opt) {
+          <mat-option [value]="opt">
+            {{ opt }} {{ 'forms.settings.relayControls.minutes' | translate }}
+          </mat-option>
+        }
       </mat-select>
       <mat-hint align="end">{{ 'forms.settings.relayControls.hintDuration' | translate }}</mat-hint>
-      <mat-error *ngIf="hasError('durationMinutes', 'required')">{{ 'forms.settings.relayControls.valErrors.required' | translate }}</mat-error>
+      @if (hasError('durationMinutes', 'required')) {
+        <mat-error>{{ 'forms.settings.relayControls.valErrors.required' | translate }}</mat-error>
+      }
     </mat-form-field>
 
     <br/>
@@ -55,9 +67,15 @@
     <mat-form-field style="width:19em">
       <input matInput type="number" (change)="inputChanged($event)" (keyup)="inputChanged($event)" placeholder="{{ 'forms.settings.relayControls.placeholderDisconnectToConnectValue' | translate }}" formControlName="disconnectToConnectValue" id="disconnectToConnectValue" required>
       <mat-hint align="end">{{ 'forms.settings.relayControls.hintDisconnectToConnectValue' | translate }}</mat-hint>
-      <mat-error *ngIf="hasError('disconnectToConnectValue', 'required')">{{ 'forms.settings.relayControls.valErrors.required' | translate }}</mat-error>
-      <mat-error *ngIf="hasError('disconnectToConnectValue', 'min')">{{ 'forms.settings.relayControls.valErrors.min_1' | translate }}</mat-error>
-      <mat-error *ngIf="hasError('disconnectToConnectValue', 'max')">{{ 'forms.settings.relayControls.valErrors.max_65535' | translate }}</mat-error>
+      @if (hasError('disconnectToConnectValue', 'required')) {
+        <mat-error>{{ 'forms.settings.relayControls.valErrors.required' | translate }}</mat-error>
+      }
+      @if (hasError('disconnectToConnectValue', 'min')) {
+        <mat-error>{{ 'forms.settings.relayControls.valErrors.min_1' | translate }}</mat-error>
+      }
+      @if (hasError('disconnectToConnectValue', 'max')) {
+        <mat-error>{{ 'forms.settings.relayControls.valErrors.max_65535' | translate }}</mat-error>
+      }
     </mat-form-field>
 
     <br/>
@@ -65,10 +83,18 @@
     <mat-form-field style="width:19em">
       <input matInput type="number" [errorStateMatcher]="errorMatcher" (change)="inputChanged($event)" (keyup)="inputChanged($event)" placeholder="{{ 'forms.settings.relayControls.placeholderConnectToDisconnectValue' | translate }}" formControlName="connectToDisconnectValue" id="connectToDisconnectValue" required>
       <mat-hint align="end">{{ 'forms.settings.relayControls.hintConnectToDisconnectValue' | translate }}</mat-hint>
-      <mat-error *ngIf="hasError('connectToDisconnectValue', 'required')">{{ 'forms.settings.relayControls.valErrors.required' | translate }}</mat-error>
-      <mat-error *ngIf="hasError('connectToDisconnectValue', 'min')">{{ 'forms.settings.relayControls.valErrors.min_1' | translate }}</mat-error>
-      <mat-error *ngIf="hasError('connectToDisconnectValue', 'max')">{{ 'forms.settings.relayControls.valErrors.max_65535' | translate }}</mat-error>
-      <mat-error *ngIf="formGroup.hasError('valueGreaterThanOrEqual')">{{ 'forms.settings.relayControls.valErrors.mustBeLess' | translate }}</mat-error>
+      @if (hasError('connectToDisconnectValue', 'required')) {
+        <mat-error>{{ 'forms.settings.relayControls.valErrors.required' | translate }}</mat-error>
+      }
+      @if (hasError('connectToDisconnectValue', 'min')) {
+        <mat-error>{{ 'forms.settings.relayControls.valErrors.min_1' | translate }}</mat-error>
+      }
+      @if (hasError('connectToDisconnectValue', 'max')) {
+        <mat-error>{{ 'forms.settings.relayControls.valErrors.max_65535' | translate }}</mat-error>
+      }
+      @if (formGroup.hasError('valueGreaterThanOrEqual')) {
+        <mat-error>{{ 'forms.settings.relayControls.valErrors.mustBeLess' | translate }}</mat-error>
+      }
     </mat-form-field>
 
     <br/>
@@ -82,16 +108,18 @@
 
 </div>
 
-  <br />
-  <br />
+<br />
+<br />
 
 <div class="divCenterOuter">
   <div class="divCenterInner">
 
-    <div *ngIf="disconnectRuleSet !== undefined && disconnectRuleSet.items.length > 0">
-      <app-settings-relay-controls-table [disconnectRuleSet]="disconnectRuleSet"
+    @if (disconnectRuleSet !== undefined && disconnectRuleSet.items.length > 0) {
+      <div>
+        <app-settings-relay-controls-table [disconnectRuleSet]="disconnectRuleSet"
         (deleteDisconnectRule)="deleteDisconnectRule($event)"></app-settings-relay-controls-table>
-    </div>
+      </div>
+    }
 
   </div>
 </div>

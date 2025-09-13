@@ -1,7 +1,7 @@
 <div>
   <h2>{{ 'headings.profileGraphs' | translate }}</h2>
 </div>
-  
+
 <div class="divCenterOuter">
   {{ 'headings.profileGraphsInfo' | translate }}
 </div>
@@ -12,12 +12,16 @@
   <form #form="ngForm" [formGroup]="formGroup" (ngSubmit)="submitForm(formGroup.value)">
     <mat-form-field style="width:19em">
       <mat-select placeholder="{{ 'forms.settings.profileGraphs.placeholderPeriod' | translate }}" formControlName="period" id="period" required>
-        <mat-option *ngFor="let opt of profileGraphPeriods" [value]="opt">
-          {{ 'forms.settings.profileGraphs.periods.' + opt | translate }}
-        </mat-option>
+        @for (opt of profileGraphPeriods; track opt) {
+          <mat-option [value]="opt">
+            {{ 'forms.settings.profileGraphs.periods.' + opt | translate }}
+          </mat-option>
+        }
       </mat-select>
       <mat-hint align="end">{{ 'forms.settings.profileGraphs.hintPeriod' | translate }}</mat-hint>
-      <mat-error *ngIf="hasError('period', 'required')">{{ 'forms.settings.profileGraphs.valErrors.required' | translate }}</mat-error>
+      @if (hasError('period', 'required')) {
+        <mat-error>{{ 'forms.settings.profileGraphs.valErrors.required' | translate }}</mat-error>
+      }
     </mat-form-field>
 
     <br/>
@@ -25,7 +29,9 @@
     <mat-form-field style="width:19em">
       <input matInput type="text" placeholder="{{ 'forms.settings.profileGraphs.placeholderPage' | translate }}" formControlName="page" id="page">
       <mat-hint align="end">{{ 'forms.settings.profileGraphs.hintPage' | translate }}</mat-hint>
-      <mat-error *ngIf="hasError('page', 'maxlength')">{{ 'forms.settings.profileGraphs.valErrors.maxLength_25' | translate }}</mat-error>
+      @if (hasError('page', 'maxlength')) {
+        <mat-error>{{ 'forms.settings.profileGraphs.valErrors.maxLength_25' | translate }}</mat-error>
+      }
     </mat-form-field>
 
     <br/>
@@ -33,21 +39,31 @@
     <mat-form-field style="width:19em">
       <input matInput type="text" placeholder="{{ 'forms.settings.profileGraphs.placeholderTitle' | translate }}" formControlName="title" id="title" required>
       <mat-hint align="end">{{ 'forms.settings.profileGraphs.hintTitle' | translate }}</mat-hint>
-      <mat-error *ngIf="hasError('title', 'required')">{{ 'forms.settings.profileGraphs.valErrors.required' | translate }}</mat-error>
-      <mat-error *ngIf="hasError('title', 'minlength')">{{ 'forms.settings.profileGraphs.valErrors.minLength_1' | translate }}</mat-error>
-      <mat-error *ngIf="hasError('title', 'maxlength')">{{ 'forms.settings.profileGraphs.valErrors.maxLength_25' | translate }}</mat-error>
+      @if (hasError('title', 'required')) {
+        <mat-error>{{ 'forms.settings.profileGraphs.valErrors.required' | translate }}</mat-error>
+      }
+      @if (hasError('title', 'minlength')) {
+        <mat-error>{{ 'forms.settings.profileGraphs.valErrors.minLength_1' | translate }}</mat-error>
+      }
+      @if (hasError('title', 'maxlength')) {
+        <mat-error>{{ 'forms.settings.profileGraphs.valErrors.maxLength_25' | translate }}</mat-error>
+      }
     </mat-form-field>
 
     <br/>
 
     <mat-form-field style="width:19em">
       <mat-select placeholder="{{ 'forms.settings.profileGraphs.placeholderInterval' | translate }}" formControlName="interval" id="interval" required>
-        <mat-option *ngFor="let opt of profileGraphIntervals" [value]="opt.value">
-          {{ opt.intervalValue }} {{ 'forms.settings.profileGraphs.' + opt.intervalUnit | translate }}
-        </mat-option>
+        @for (opt of profileGraphIntervals; track opt) {
+          <mat-option [value]="opt.value">
+            {{ opt.intervalValue }} {{ 'forms.settings.profileGraphs.' + opt.intervalUnit | translate }}
+          </mat-option>
+        }
       </mat-select>
       <mat-hint align="end">{{ 'forms.settings.profileGraphs.hintInterval' | translate }}</mat-hint>
-      <mat-error *ngIf="hasError('interval', 'required')">{{ 'forms.settings.profileGraphs.valErrors.required' | translate }}</mat-error>
+      @if (hasError('interval', 'required')) {
+        <mat-error>{{ 'forms.settings.profileGraphs.valErrors.required' | translate }}</mat-error>
+      }
     </mat-form-field>
 
     <br/>
@@ -55,25 +71,37 @@
     <mat-form-field style="width:19em">
       <mat-select placeholder="{{ 'forms.settings.profileGraphs.placeholderSeries' | translate }}" formControlName="series" id="series" multiple required>
         <mat-select-trigger>
-          <span *ngIf="formGroup.controls['series'].value?.length === 1" class="example-additional-selection">
-            {{ formGroup.controls['series'].value[0].serie }}
-          </span>
-          <span *ngIf="formGroup.controls['series'].value?.length > 1" class="example-additional-selection">
-            {{ 'forms.settings.profileGraphs.multipleSeries' | translate:{value:formGroup.controls['series'].value.length} }}
-          </span>
+          @if (formGroup.controls['series'].value?.length === 1) {
+            <span class="example-additional-selection">
+              {{ formGroup.controls['series'].value[0].serie }}
+            </span>
+          }
+          @if (formGroup.controls['series'].value?.length > 1) {
+            <span class="example-additional-selection">
+              {{ 'forms.settings.profileGraphs.multipleSeries' | translate:{value:formGroup.controls['series'].value.length} }}
+            </span>
+          }
         </mat-select-trigger>
-        <mat-option *ngFor="let opt of profileGraphSeries" [value]="opt">
-          {{ opt.serie }}
-        </mat-option>
+        @for (opt of profileGraphSeries; track opt) {
+          <mat-option [value]="opt">
+            {{ opt.serie }}
+          </mat-option>
+        }
       </mat-select>
       <mat-hint align="end">{{ 'forms.settings.profileGraphs.hintSeries' | translate }}</mat-hint>
-      <mat-error *ngIf="hasError('series', 'required')">{{ 'forms.settings.profileGraphs.valErrors.required' | translate }}</mat-error>
+      @if (hasError('series', 'required')) {
+        <mat-error>{{ 'forms.settings.profileGraphs.valErrors.required' | translate }}</mat-error>
+      }
     </mat-form-field>
-  
+
     <br/>
 
-    <button *ngIf="createMode" mat-raised-button style="margin:5px;" type="submit" [disabled]="!formGroup.valid">{{ 'forms.settings.profileGraphs.buttonAdd' | translate }}</button>
-    <button *ngIf="!createMode" mat-raised-button style="margin:5px;" type="button" [disabled]="!formGroup.valid" (click)="updateClick()">{{ 'forms.settings.profileGraphs.buttonUpdate' | translate }}</button>
+    @if (createMode) {
+      <button mat-raised-button style="margin:5px;" type="submit" [disabled]="!formGroup.valid">{{ 'forms.settings.profileGraphs.buttonAdd' | translate }}</button>
+    }
+    @if (!createMode) {
+      <button mat-raised-button style="margin:5px;" type="button" [disabled]="!formGroup.valid" (click)="updateClick()">{{ 'forms.settings.profileGraphs.buttonUpdate' | translate }}</button>
+    }
   </form>
 </div>
 
@@ -82,11 +110,15 @@
 
 <div class="divCenterOuter">
   <div class="divCenterInner">
-    <div *ngIf="profileGraphGroups !== undefined">
-      <app-settings-profile-graphs-table *ngFor="let profileGraphGroup of profileGraphGroups"
-        [profileGraphs]="profileGraphGroup" (editProfileGraph)="editProfileGraph($event)"
-        (deleteProfileGraph)="deleteProfileGraph($event)"
-        (swapProfileGraphs)="swapProfileGraphs($event)"></app-settings-profile-graphs-table>
-    </div>
+    @if (profileGraphGroups !== undefined) {
+      <div>
+        @for (profileGraphGroup of profileGraphGroups; track profileGraphGroup) {
+          <app-settings-profile-graphs-table
+            [profileGraphs]="profileGraphGroup" (editProfileGraph)="editProfileGraph($event)"
+            (deleteProfileGraph)="deleteProfileGraph($event)"
+          (swapProfileGraphs)="swapProfileGraphs($event)"></app-settings-profile-graphs-table>
+        }
+      </div>
+    }
   </div>
 </div>

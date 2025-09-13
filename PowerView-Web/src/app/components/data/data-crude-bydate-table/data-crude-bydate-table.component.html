@@ -1,10 +1,13 @@
-<div *ngIf="crudeValueSet !== undefined && crudeValueSet.values.length == 0">
+@if (crudeValueSet !== undefined && crudeValueSet.values.length == 0) {
+  <div>
     <h3>{{ 'common.noDataFound' | translate }}</h3>
-</div>
+  </div>
+}
 
-<div *ngIf="crudeValueSet !== undefined && crudeValueSet.values.length > 0">
+@if (crudeValueSet !== undefined && crudeValueSet.values.length > 0) {
+  <div>
     <h4>{{ 'headings.crudeDataCounts' | translate : { count: crudeValueSet.values.length, total:
-        crudeValueSet.totalCount } }}</h4>
-
+    crudeValueSet.totalCount } }}</h4>
     <app-data-crude-table (deleteCrudeValue)="deleteCrudeValue($event)" [allowDelete]="true" [crudeValues]="crudeValueSet.values"></app-data-crude-table>
-</div>
+  </div>
+}
