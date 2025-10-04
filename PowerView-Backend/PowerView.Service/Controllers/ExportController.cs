@@ -42,16 +42,20 @@ public class ExportController : ControllerBase
         return Ok(r);
     }
 
-    [HttpGet("diffs/hourly")]
+    [HttpGet("diffs/{interval}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult GetHourlyDiffsExport(
+    public ActionResult GetDiffsExport(
+        string interval,
         [BindRequired, FromQuery, UtcDateTime] DateTime from,
         [BindRequired, FromQuery, UtcDateTime] DateTime to,
         [BindRequired, FromQuery, MinLength(1)] string[] label)
     {
+        interval = interval?.ToLowerInvariant();
+        if (interval != "quarterly" && interval != "hourly") return NotFound($"Unknown interval:{interval}");
         if (from >= to) return BadRequest("to must be greater than from");
         var labelSeriesSet = exportRepository.GetLiveCumulativeSeries(from, to, label);
-        var intervalGroup = new IntervalGroup(locationContext, from, "60-minutes", labelSeriesSet, Array.Empty<CostBreakdownGeneratorSeries>());
+        var interv = interval == "hourly" ? 60 : 15;
+        var intervalGroup = new IntervalGroup(locationContext, from, $"{interv}-minutes", labelSeriesSet, Array.Empty<CostBreakdownGeneratorSeries>());
         intervalGroup.Prepare();
 
         var falttened = intervalGroup.NormalizedDurationLabelSeriesSet
@@ -126,16 +130,20 @@ public class ExportController : ControllerBase
         return exportSeries;
     }
 
-    [HttpGet("gauges/hourly")]
+    [HttpGet("gauges/{interval}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult GetHourlyGaugesExport(
+    public ActionResult GetGaugesExport(
+        string interval,
         [BindRequired, FromQuery, UtcDateTime] DateTime from,
         [BindRequired, FromQuery, UtcDateTime] DateTime to,
         [BindRequired, FromQuery, MinLength(1)] string[] label)
     {
+        interval = interval?.ToLowerInvariant();
+        if (interval != "quarterly" && interval != "hourly") return NotFound($"Unknown interval:{interval}");
         if (from >= to) return BadRequest("to must be greater than from");
         var labelSeriesSet = exportRepository.GetLiveCumulativeSeries(from, to, label);
-        var intervalGroup = new IntervalGroup(locationContext, from, "60-minutes", labelSeriesSet, Array.Empty<CostBreakdownGeneratorSeries>());
+        var interv = interval == "hourly" ? 60 : 15;
+        var intervalGroup = new IntervalGroup(locationContext, from, $"{interv}-minutes", labelSeriesSet, Array.Empty<CostBreakdownGeneratorSeries>());
         intervalGroup.Prepare();
 
         var falttened = intervalGroup.NormalizedLabelSeriesSet

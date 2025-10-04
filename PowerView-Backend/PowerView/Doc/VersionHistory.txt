@@ -4,6 +4,7 @@ PowerView version 1.3.0 - October 2025
 - Profile views have previous and next buttons, next to the date picker.
 - Added support for Energi Data Service 15 min. day ahead prices
   As of October 1st 2025 Energi Data Service no longer provides the electiricy hourly spot price data set.
+- Added quarter of an hour exports; gauges, diffs and cost breakdown.
 
 PowerView version 1.2.0 - June 2024
 - Generate electricity pricing incl. vat from pricing excl. vat and cost breakdown

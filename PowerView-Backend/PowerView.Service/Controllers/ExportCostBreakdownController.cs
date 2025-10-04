@@ -35,20 +35,24 @@ public class ExportCostBreakdownController : ControllerBase
         return Ok(titles);
     }
 
-    [HttpGet("costbreakdown/hourly")]
+    [HttpGet("costbreakdown/{interval}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public ActionResult GetHourlyCostBreakdownExport(
+    public ActionResult GetCostBreakdownExport(
+        string interval,
         [BindRequired, FromQuery, UtcDateTime] DateTime from,
         [BindRequired, FromQuery, UtcDateTime] DateTime to,
         [BindRequired, FromQuery] string title)
     {
+        interval = interval?.ToLowerInvariant();
+        if (interval != "quarterly" && interval != "hourly") return NotFound($"Unknown interval:{interval}");
         if (from >= to) return BadRequest("to must be greater than from");
 
         var costBreakdown = costBreakdownRepository.GetCostBreakdown(title);
         if (costBreakdown == null) return NoContent();
 
-        var periods = GetPeriods(from, to);
+        var period = interval == "hourly" ? TimeSpan.FromHours(1) : TimeSpan.FromMinutes(15);
+        var periods = GetPeriods(from, to, period);
         var costBreakdownEntries = costBreakdown.Entries.Where(e => e.IntersectsWith(from, to)).ToList();
         var exportCostBreakdown = GetExportCostBreakdown(periods, costBreakdownEntries);
 
@@ -63,20 +67,19 @@ public class ExportCostBreakdownController : ControllerBase
         return Ok(r);
     }
 
-    private static List<ExportPeriod> GetPeriods(DateTime from, DateTime to)
+    private static List<ExportPeriod> GetPeriods(DateTime from, DateTime to, TimeSpan interval)
     {
-        var hours = new List<ExportPeriod>();
-        var hour = TimeSpan.FromHours(1);
-        var hourFrom = from;
-        var hourTo = from + hour;
-        while (hourTo <= to)
+        var periods = new List<ExportPeriod>();
+        var intervalFrom = from;
+        var intervalTo = from + interval;
+        while (intervalTo <= to)
         {
-            hours.Add(new ExportPeriod(hourFrom, hourTo));
-            hourFrom += hour;
-            hourTo += hour;
+            periods.Add(new ExportPeriod(intervalFrom, intervalTo));
+            intervalFrom += interval;
+            intervalTo += interval;
         }
 
-        return hours;
+        return periods;
     }
 
     private List<object> GetExportCostBreakdown(IList<ExportPeriod> periods, IReadOnlyList<CostBreakdownEntry> costBreakdownEntries)

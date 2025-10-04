@@ -78,7 +78,7 @@ public class ExportCostBreakdownControllerTest
     }
 
     [Test]
-    public async Task GetHourlyCostBreakdownExportFromAbsent()
+    public async Task GetCostBreakdownExportFromAbsent()
     {
         // Arrange
         var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
@@ -92,7 +92,7 @@ public class ExportCostBreakdownControllerTest
     }
 
     [Test]
-    public async Task GetHourlyCostBreakdownExportToAbsent()
+    public async Task GetCostBreakdownExportToAbsent()
     {
         // Arrange
         var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
@@ -106,7 +106,7 @@ public class ExportCostBreakdownControllerTest
     }
 
     [Test]
-    public async Task GetHourlyCostBreakdownExportFromEqualToTo()
+    public async Task GetCostBreakdownExportFromEqualToTo()
     {
         // Arrange
         var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
@@ -120,7 +120,7 @@ public class ExportCostBreakdownControllerTest
     }
 
     [Test]
-    public async Task GetHourlyCostBreakdownExportFromGreaterThanTo()
+    public async Task GetCostBreakdownExportFromGreaterThanTo()
     {
         // Arrange
         var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
@@ -135,7 +135,7 @@ public class ExportCostBreakdownControllerTest
 
 
     [Test]
-    public async Task GetHourlyCostBreakdownExportTitleAbsent()
+    public async Task GetCostBreakdownExportTitleAbsent()
     {
         // Arrange
         var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
@@ -149,7 +149,7 @@ public class ExportCostBreakdownControllerTest
     }
 
     [Test]
-    public async Task GetHourlyCostBreakdownExportFromBadFormat()
+    public async Task GetCostBreakdownExportFromBadFormat()
     {
         // Arrange
         var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
@@ -163,7 +163,7 @@ public class ExportCostBreakdownControllerTest
     }
 
     [Test]
-    public async Task GetHourlyCostBreakdownExportToBadFormat()
+    public async Task GetCostBreakdownExportToBadFormat()
     {
         // Arrange
         var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
@@ -177,7 +177,7 @@ public class ExportCostBreakdownControllerTest
     }
 
     [Test]
-    public async Task GetHourlyCostBreakdownExportFromNotUtc()
+    public async Task GetCostBreakdownExportFromNotUtc()
     {
         // Arrange
         var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
@@ -192,7 +192,7 @@ public class ExportCostBreakdownControllerTest
     }
 
     [Test]
-    public async Task GetHourlyCostBreakdownExportToNotUtc()
+    public async Task GetCostBreakdownExportToNotUtc()
     {
         // Arrange
         var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
@@ -207,7 +207,7 @@ public class ExportCostBreakdownControllerTest
     }
 
     [Test]
-    public async Task GetHourlyCostBreakdownExportFromToLabelsPresent()
+    public async Task GetCostBreakdownExportFromToLabelsPresent()
     {
         // Arrange
         var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
@@ -224,7 +224,7 @@ public class ExportCostBreakdownControllerTest
     }
 
     [Test]
-    public async Task GetHourlyCostBreakdownExportAbsent()
+    public async Task GetCostBreakdownExportAbsent()
     {
         // Arrange
         var today = new DateTime(2023, 9, 16, 22, 0, 0, DateTimeKind.Utc);
@@ -239,7 +239,7 @@ public class ExportCostBreakdownControllerTest
     }
 
     [Test]
-    public async Task GetHourlyCostBreakdownExportOneEntry()
+    public async Task GetCostBreakdownExportOneEntry()
     {
         // Arrange
         var today = new DateTime(2023, 9, 16, 22, 0, 0, DateTimeKind.Utc);
@@ -278,7 +278,7 @@ public class ExportCostBreakdownControllerTest
     }
 
     [Test]
-    public async Task GetHourlyCostBreakdownExportTwoEntries()
+    public async Task GetCostBreakdownExportTwoEntries()
     {
         // Arrange
         var today = new DateTime(2023, 9, 16, 22, 0, 0, DateTimeKind.Utc);

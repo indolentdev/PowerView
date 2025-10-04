@@ -71,7 +71,9 @@ import { HelpSeriesDescriptionsComponent } from './components/help/help-series-d
 import { HelpSeriesDescriptionsTableComponent } from './components/help/help-series-descriptions-table/help-series-descriptions-table.component';
 import { SeriesMeasureKindsTableComponent } from './components/help/series-measure-kinds-table/series-measure-kinds-table.component';
 import { ExportComponent } from './components/export/export/export.component';
+import { ExportGaugesQuarterlyComponent } from './components/export/export-gauges-quarterly/export-gauges-quarterly.component';
 import { ExportGaugesHourlyComponent } from './components/export/export-gauges-hourly/export-gauges-hourly.component';
+import { ExportDiffsQuarterlyComponent } from './components/export/export-diffs-quarterly/export-diffs-quarterly.component';
 import { ExportDiffsHourlyComponent } from './components/export/export-diffs-hourly/export-diffs-hourly.component';
 import { DataCrudeTableComponent } from './components/data/data-crude-table/data-crude-table.component';
 import { DataCrudeByDateComponent } from './components/data/data-crude-bydate/data-crude-bydate.component';
@@ -83,6 +85,7 @@ import { SettingsCostBreakdownComponent } from './components/settings/pricing/se
 import { SettingsCostBreakdownTableComponent } from './components/settings/pricing/settings-cost-breakdown-table/settings-cost-breakdown-table.component';
 import { SettingsCostBreakdownEntryComponent } from './components/settings/pricing/settings-cost-breakdown-entry/settings-cost-breakdown-entry.component';
 import { SettingsCostBreakdownEntryTableComponent } from './components/settings/pricing/settings-cost-breakdown-entry-table/settings-cost-breakdown-entry-table.component';
+import { ExportCostBreakdownQuarterlyComponent } from './components/export/export-cost-breakdown-quarterly/export-cost-breakdown-quarterly.component';
 import { ExportCostBreakdownHourlyComponent } from './components/export/export-cost-breakdown-hourly/export-cost-breakdown-hourly.component';
 import { ExportCostBreakdownComponent } from './components/export/export-cost-breakdown/export-cost-breakdown.component';
 import { SettingsImportComponent } from './components/settings/pricing/settings-import/settings-import.component';
@@ -161,7 +164,9 @@ if (environment.useMockBackend == true) {
     HelpSeriesDescriptionsTableComponent,
     SeriesMeasureKindsTableComponent,
     ExportComponent,
+    ExportGaugesQuarterlyComponent,
     ExportGaugesHourlyComponent,
+    ExportDiffsQuarterlyComponent,
     ExportDiffsHourlyComponent,
     DataCrudeTableComponent,
     DataCrudeByDateComponent,
@@ -173,6 +178,7 @@ if (environment.useMockBackend == true) {
     SettingsCostBreakdownTableComponent,
     SettingsCostBreakdownEntryComponent,
     SettingsCostBreakdownEntryTableComponent,
+    ExportCostBreakdownQuarterlyComponent,
     ExportCostBreakdownHourlyComponent,
     ExportCostBreakdownComponent,
     SettingsImportComponent,

@@ -130,12 +130,15 @@
     <button mat-menu-item [matMenuTriggerFor]="exportCostBreakdownsMenu">{{ 'menu.costBreakdown' | translate }}</button>
   </mat-menu>
   <mat-menu #exportGaugesMenu="matMenu">
+    <button mat-menu-item [routerLink] ="['/export/gauges/quarterly']" >{{ 'menu.quarterly' | translate }}</button>
     <button mat-menu-item [routerLink] ="['/export/gauges/hourly']" >{{ 'menu.hourly' | translate }}</button>
   </mat-menu>
   <mat-menu #exportDiffsMenu="matMenu">
+    <button mat-menu-item [routerLink] ="['/export/diffs/quarterly']" >{{ 'menu.quarterly' | translate }}</button>
     <button mat-menu-item [routerLink] ="['/export/diffs/hourly']" >{{ 'menu.hourly' | translate }}</button>
   </mat-menu>
   <mat-menu #exportCostBreakdownsMenu="matMenu">
+    <button mat-menu-item [routerLink]="['/export/costbreakdowns/quarterly']">{{ 'menu.quarterly' | translate }}</button>
     <button mat-menu-item [routerLink]="['/export/costbreakdowns/hourly']">{{ 'menu.hourly' | translate }}</button>
   </mat-menu>
 

@@ -113,7 +113,7 @@ public class ExportControllerTest
     }
 
     [Test]
-    public async Task GetHourlyDiffExportFromAbsent()
+    public async Task GetDiffExportFromAbsent()
     {
         // Arrange
         var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
@@ -127,7 +127,7 @@ public class ExportControllerTest
     }
 
     [Test]
-    public async Task GetHourlyDiffExportToAbsent()
+    public async Task GetDiffExportToAbsent()
     {
         // Arrange
         var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
@@ -141,7 +141,7 @@ public class ExportControllerTest
     }
 
     [Test]
-    public async Task GetHourlyDiffExportFromEqualToTo()
+    public async Task GetDiffExportFromEqualToTo()
     {
         // Arrange
         var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
@@ -155,7 +155,7 @@ public class ExportControllerTest
     }
 
     [Test]
-    public async Task GetHourlyDiffExportFromGreaterThanTo()
+    public async Task GetDiffExportFromGreaterThanTo()
     {
         // Arrange
         var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
@@ -169,7 +169,7 @@ public class ExportControllerTest
     }
 
     [Test]
-    public async Task GetHourlyDiffExportLabelAbsent()
+    public async Task GetDiffExportLabelAbsent()
     {
         // Arrange
         var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
@@ -183,7 +183,7 @@ public class ExportControllerTest
     }
 
     [Test]
-    public async Task GetHourlyDiffExportFromBadFormat()
+    public async Task GetDiffExportFromBadFormat()
     {
         // Arrange
         var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
@@ -197,7 +197,7 @@ public class ExportControllerTest
     }
 
     [Test]
-    public async Task GetHourlyDiffExportToBadFormat()
+    public async Task GetDiffExportToBadFormat()
     {
         // Arrange
         var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
@@ -211,7 +211,7 @@ public class ExportControllerTest
     }
 
     [Test]
-    public async Task GetHourlyDiffExportFromNotUtc()
+    public async Task GetDiffExportFromNotUtc()
     {
         // Arrange
         var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
@@ -226,7 +226,7 @@ public class ExportControllerTest
     }
 
     [Test]
-    public async Task GetHourlyDiffExportToNotUtc()
+    public async Task GetDiffExportToNotUtc()
     {
         // Arrange
         var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
@@ -241,7 +241,7 @@ public class ExportControllerTest
     }
 
     [Test]
-    public async Task GetHourlyDiffExportFromToLabelsPresent()
+    public async Task GetDiffExportFromToLabelsPresent()
     {
         // Arrange
         var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
@@ -260,7 +260,9 @@ public class ExportControllerTest
     }
 
     [Test]
-    public async Task GetHourlyDiffExportOneSeries()
+    [TestCase("hourly")]
+    [TestCase("quarterly")]
+    public async Task GetDiffExportOneSeries(string interval)
     {
         // Arrange
         var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
@@ -279,7 +281,7 @@ public class ExportControllerTest
         exportRepository.Setup(er => er.GetLiveCumulativeSeries(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<IList<string>>())).Returns(lss);
 
         // Act
-        var response = await httpClient.GetAsync($"api/export/diffs/hourly?from={today.AddHours(-5).ToString("o")}&to={today.ToString("o")}&label={ls.Label}");
+        var response = await httpClient.GetAsync($"api/export/diffs/{interval}?from={today.AddHours(-5).ToString("o")}&to={today.ToString("o")}&label={ls.Label}");
 
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
@@ -295,7 +297,9 @@ public class ExportControllerTest
     }
 
     [Test]
-    public async Task GetHourlyDiffExportTwoSeriesOneLabel()
+    [TestCase("hourly")]
+    [TestCase("quarterly")]
+    public async Task GetDiffExportTwoSeriesOneLabel(string interval)
     {
         // Arrange
         var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
@@ -328,7 +332,7 @@ public class ExportControllerTest
         exportRepository.Setup(er => er.GetLiveCumulativeSeries(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<IList<string>>())).Returns(lss);
 
         // Act
-        var response = await httpClient.GetAsync($"api/export/diffs/hourly?from={today.AddHours(-5).ToString("o")}&to={today.ToString("o")}&label={ls1.Label}");
+        var response = await httpClient.GetAsync($"api/export/diffs/{interval}?from={today.AddHours(-5).ToString("o")}&to={today.ToString("o")}&label={ls1.Label}");
 
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
@@ -359,7 +363,7 @@ public class ExportControllerTest
     }
 
     [Test]
-    public async Task GetHourlyDiffExportTwoSeriesTwoLabels()
+    public async Task GetDiffExportTwoSeriesTwoLabels()
     {
         // Arrange
         var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
@@ -400,7 +404,7 @@ public class ExportControllerTest
     }
 
     [Test]
-    public async Task GetHourlyDiffExportDiffValueAbsentWhenDeviceIdChanges()
+    public async Task GetDiffExportDiffValueAbsentWhenDeviceIdChanges()
     {
         // Arrange
         var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
@@ -436,7 +440,7 @@ public class ExportControllerTest
     }
 
     [Test]
-    public async Task GetHourlyGaugesExportFromAbsent()
+    public async Task GetGaugesExportFromAbsent()
     {
         // Arrange
         var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
@@ -450,7 +454,7 @@ public class ExportControllerTest
     }
 
     [Test]
-    public async Task GetHourlyGaugesExportToAbsent()
+    public async Task GetGaugesExportToAbsent()
     {
         // Arrange
         var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
@@ -464,7 +468,7 @@ public class ExportControllerTest
     }
 
     [Test]
-    public async Task GetHourlyGaugesExportFromEqualToTo()
+    public async Task GetGaugesExportFromEqualToTo()
     {
         // Arrange
         var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
@@ -478,7 +482,7 @@ public class ExportControllerTest
     }
 
     [Test]
-    public async Task GetHourlyDiffGaugesFromGreaterThanTo()
+    public async Task GetDiffGaugesFromGreaterThanTo()
     {
         // Arrange
         var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
@@ -492,7 +496,7 @@ public class ExportControllerTest
     }
 
     [Test]
-    public async Task GetHourlyGaugesExportLabelAbsent()
+    public async Task GetGaugesExportLabelAbsent()
     {
         // Arrange
         var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
@@ -506,7 +510,7 @@ public class ExportControllerTest
     }
 
     [Test]
-    public async Task GetHourlyGaugesExportFromBadFormat()
+    public async Task GetGaugesExportFromBadFormat()
     {
         // Arrange
         var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
@@ -520,7 +524,7 @@ public class ExportControllerTest
     }
 
     [Test]
-    public async Task GetHourlyGaugesExportToBadFormat()
+    public async Task GetGaugesExportToBadFormat()
     {
         // Arrange
         var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
@@ -534,7 +538,7 @@ public class ExportControllerTest
     }
 
     [Test]
-    public async Task GetHourlyGaugesExportFromNotUtc()
+    public async Task GetGaugesExportFromNotUtc()
     {
         // Arrange
         var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
@@ -549,7 +553,7 @@ public class ExportControllerTest
     }
 
     [Test]
-    public async Task GetHourlyGaugesExportToNotUtc()
+    public async Task GetGaugesExportToNotUtc()
     {
         // Arrange
         var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
@@ -564,7 +568,7 @@ public class ExportControllerTest
     }
 
     [Test]
-    public async Task GetHourlyGaugesExportFromToLabelsPresent()
+    public async Task GetGaugesExportFromToLabelsPresent()
     {
         // Arrange
         var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
@@ -583,7 +587,9 @@ public class ExportControllerTest
     }
 
     [Test]
-    public async Task GetHourlyGaugesExportOneSeries()
+    [TestCase("hourly")]
+    [TestCase("quarterly")]
+    public async Task GetGaugesExportOneSeries(string interval)
     {
         // Arrange
         var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
@@ -602,7 +608,7 @@ public class ExportControllerTest
         exportRepository.Setup(er => er.GetLiveCumulativeSeries(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<IList<string>>())).Returns(lss);
 
         // Act
-        var response = await httpClient.GetAsync($"api/export/gauges/hourly?from={today.AddHours(-5).ToString("o")}&to={today.ToString("o")}&label={ls.Label}");
+        var response = await httpClient.GetAsync($"api/export/gauges/{interval}?from={today.AddHours(-5).ToString("o")}&to={today.ToString("o")}&label={ls.Label}");
 
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
@@ -619,7 +625,9 @@ public class ExportControllerTest
     }
 
     [Test]
-    public async Task GetHourlyGaugesExportTwoSeriesOneLabel()
+    [TestCase("hourly")]
+    [TestCase("quarterly")]
+    public async Task GetGaugesExportTwoSeriesOneLabel(string interval)
     {
         // Arrange
         var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
@@ -649,7 +657,7 @@ public class ExportControllerTest
         exportRepository.Setup(er => er.GetLiveCumulativeSeries(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<IList<string>>())).Returns(lss);
 
         // Act
-        var response = await httpClient.GetAsync($"api/export/gauges/hourly?from={today.AddHours(-5).ToString("o")}&to={today.ToString("o")}&label={ls1.Label}");
+        var response = await httpClient.GetAsync($"api/export/gauges/{interval}?from={today.AddHours(-5).ToString("o")}&to={today.ToString("o")}&label={ls1.Label}");
 
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
@@ -669,7 +677,7 @@ public class ExportControllerTest
     }
 
     [Test]
-    public async Task GetHourlyGaugesExportTwoSeriesTwoLabels()
+    public async Task GetGaugesExportTwoSeriesTwoLabels()
     {
         // Arrange
         var today = TimeZoneHelper.GetDenmarkTodayAsUtc();
@@ -712,7 +720,7 @@ public class ExportControllerTest
     }
 
     [Test]
-    public async Task GetHourlyGaugesExportValueAbsent()
+    public async Task GetGaugesExportValueAbsent()
     {
         // Arrange
         var today = TimeZoneHelper.GetDenmarkTodayAsUtc();

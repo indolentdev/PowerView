@@ -15,8 +15,11 @@ import { GaugesBydateComponent } from './components/gauges/gauges-bydate/gauges-
 import { EventsLatestComponent } from './components/events/events-latest/events-latest.component';
 import { DataCrudeAddComponent } from './components/data/data-crude-add/data-crude-add.component';
 import { DataCrudeByDateComponent } from './components/data/data-crude-bydate/data-crude-bydate.component';
+import { ExportDiffsQuarterlyComponent } from './components/export/export-diffs-quarterly/export-diffs-quarterly.component';
 import { ExportDiffsHourlyComponent } from './components/export/export-diffs-hourly/export-diffs-hourly.component';
+import { ExportGaugesQuarterlyComponent } from './components/export/export-gauges-quarterly/export-gauges-quarterly.component';
 import { ExportGaugesHourlyComponent } from './components/export/export-gauges-hourly/export-gauges-hourly.component';
+import { ExportCostBreakdownQuarterlyComponent } from './components/export/export-cost-breakdown-quarterly/export-cost-breakdown-quarterly.component';
 import { ExportCostBreakdownHourlyComponent } from './components/export/export-cost-breakdown-hourly/export-cost-breakdown-hourly.component';
 import { HistoryStatusComponent } from './components/data/history-status/history-status.component';
 import { SettingsSeriesColorsComponent } from './components/settings/settings-series-colors/settings-series-colors.component';
@@ -46,8 +49,11 @@ const routes: Routes = [
   { path: 'data/crude/add', component: DataCrudeAddComponent },
   { path: 'data/crude/bydate', component: DataCrudeByDateComponent },
   { path: 'data/history/status', component: HistoryStatusComponent },
+  { path: 'export/diffs/quarterly', component: ExportDiffsQuarterlyComponent },
   { path: 'export/diffs/hourly', component: ExportDiffsHourlyComponent },
+  { path: 'export/gauges/quarterly', component: ExportGaugesQuarterlyComponent },
   { path: 'export/gauges/hourly', component: ExportGaugesHourlyComponent },
+  { path: 'export/costbreakdowns/quarterly', component: ExportCostBreakdownQuarterlyComponent },
   { path: 'export/costbreakdowns/hourly', component: ExportCostBreakdownHourlyComponent },
   { path: 'settings/seriescolors', component: SettingsSeriesColorsComponent },
   { path: 'settings/profilegraphs', component: SettingsProfileGraphsComponent },
