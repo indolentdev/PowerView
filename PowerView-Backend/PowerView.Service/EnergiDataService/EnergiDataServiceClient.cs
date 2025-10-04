@@ -31,21 +31,26 @@ public class EnergiDataServiceClient : IEnergiDataServiceClient
         if (timeSpan > TimeSpan.FromDays(7)) throw new ArgumentOutOfRangeException(nameof(timeSpan), "Must not be greater than 7 days");
         ArgCheck.ThrowIfNullOrEmpty(priceArea);
 
-        var dto = await GetElSpotPrices(start, timeSpan, priceArea);
-        Validate(dto);
-        var result = dto.Records.Select(x => x.GetKwhAmount()).ToList();
+        var result = await GetKwhAmounts(start, timeSpan, priceArea);
         return result;
     }
 
-    private async Task<ElSpotPricesDto> GetElSpotPrices(DateTime start, TimeSpan timeSpan, string priceArea)
+    private async Task<IList<KwhAmount>> GetKwhAmounts(DateTime start, TimeSpan timeSpan, string priceArea)
     {
+        var useDayAheadPrices = start >= new DateTime(2025, 9, 30, 22, 0, 0, DateTimeKind.Utc); // 1st of October 2025 00:00 DK (summer) time.
+        var dataSet = "dayaheadprices";
+        if (!useDayAheadPrices)
+        {
+            dataSet = "elspotprices";
+        }
+
         var format = "yyyy-MM-ddTHH:mm";
         var periodStart = start.ToString(format, CultureInfo.InvariantCulture);
         var periodEnd = (start + timeSpan).ToString(format, CultureInfo.InvariantCulture);
         var filter = "{\"PriceArea\":[\"%PriceArea%\"]}".Replace("%PriceArea%", priceArea);
         const string timezone = "UTC";
-        const string sort = "HourUTC";
-        var url = UrlHelper.EncodeUrlParameters(options.BaseUrl, $"elspotprices?start={periodStart}&end={periodEnd}&filter={filter}&timezone={timezone}&sort={sort}");
+        var url = UrlHelper.EncodeUrlParameters(options.BaseUrl, $"{dataSet}?start={periodStart}&end={periodEnd}&filter={filter}&timezone={timezone}");
+
         using (var httpClient = httpClientFactory.CreateClient())
         {
             httpClient.Timeout = options.RequestTimeout;
@@ -55,7 +60,18 @@ public class EnergiDataServiceClient : IEnergiDataServiceClient
                 using var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
                 response.EnsureSuccessStatusCode();
 
-                return await response.Content.ReadFromJsonAsync<ElSpotPricesDto>();
+                if (useDayAheadPrices)
+                {
+                    var prices = await response.Content.ReadFromJsonAsync<DayAheadPricesDto>();
+                    Validate(prices);
+                    return prices.Records.OrderBy(x => x.TimeUtc).Select(x => x.GetKwhAmount()).ToList();
+                }
+                else
+                {
+                    var prices = await response.Content.ReadFromJsonAsync<ElSpotPricesDto>();
+                    Validate(prices);
+                    return prices.Records.OrderBy(x => x.HourUtc).Select(x => x.GetKwhAmount()).ToList();
+                }
             }
             catch (TaskCanceledException e)
             {
@@ -69,6 +85,22 @@ public class EnergiDataServiceClient : IEnergiDataServiceClient
             {
                 throw new EnergiDataServiceClientException($"Energi Data Service response deserialization failed. {request}", e);
             }
+        }
+    }
+
+    private static void Validate(DayAheadPricesDto dto)
+    {
+        try
+        {
+            Validator.ValidateObject(dto, new ValidationContext(dto), true);
+            foreach (var record in dto.Records)
+            {
+                Validator.ValidateObject(record, new ValidationContext(record), true);
+            }
+        }
+        catch (ValidationException e)
+        {
+            throw new EnergiDataServiceClientException("Energi Data Service response validation failed.", e);
         }
     }
 

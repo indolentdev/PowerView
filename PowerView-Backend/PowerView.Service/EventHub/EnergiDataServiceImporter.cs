@@ -60,7 +60,17 @@ namespace PowerView.Service.EventHub
 
                 foreach (var import in importGroup.Imports)
                 {
-                    var amountReadings = ToReadings(kwhAmounts, import.Label, "EnergiDataService", import.Currency);
+                    List<Reading> amountReadings;
+                    try
+                    {
+                        amountReadings = ToReadings(kwhAmounts, import.Label, "EnergiDataService", import.Currency);
+                    }
+                    catch (ModelException e)
+                    {
+                        logger.LogInformation(e, "Unable to add imported readings for label:{Label}. Conversion to reading failed", import.Label);
+                        return;
+                    }
+
                     try
                     {
                         logger.LogDebug("Importing {Count} values from Energi Data Service for label {Label}", amountReadings.Sum(x => x.GetRegisterValues().Count), import.Label);
@@ -76,7 +86,8 @@ namespace PowerView.Service.EventHub
                         logger.LogInformation(ex, "Unable to add imported readings for label:{Label}. Data store busy. Going to retry on next trigger.", import.Label);
                         return;
                     }
-                    importRepository.SetCurrentTimestamp(import.Label, kwhAmounts.Select(x => x.Start).Max().AddHours(1));
+                    var lastKwhAmount = kwhAmounts.OrderBy(x => x.Start).Last();
+                    importRepository.SetCurrentTimestamp(import.Label, lastKwhAmount.Start + lastKwhAmount.Duration);
                 }
             }
         }
@@ -129,8 +140,9 @@ namespace PowerView.Service.EventHub
             }
 
             var (value, scale) = LossyToRegisterValue(amount);
+            var obisCode = GetObisCode(kwhAmount);
 
-            return new RegisterValue(ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat, value, scale, currency, RegisterValueTag.Import);
+            return new RegisterValue(obisCode, value, scale, currency, RegisterValueTag.Import);
         }
 
         internal static (int Value, short Scale) LossyToRegisterValue(double amount)
@@ -148,6 +160,21 @@ namespace PowerView.Service.EventHub
                 amountDecimal = amountDecimal - decimalDigit;
             }
             return (amountIntegral, (short)(iterations * -1));
+        }
+
+        internal static ObisCode GetObisCode(KwhAmount kwhAmount)
+        {
+            switch (kwhAmount.Duration)
+            {
+                case var d when d == TimeSpan.FromHours(1):
+                    return ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVatH;
+
+                case var d when d == TimeSpan.FromMinutes(15):
+                    return ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVatQ;
+
+                default:
+                    throw new  ModelException($"Cannot convert KwhAmount duration to obis code. Duration was:{kwhAmount.Duration}");
+            }
         }
 
         private class ImportGroup

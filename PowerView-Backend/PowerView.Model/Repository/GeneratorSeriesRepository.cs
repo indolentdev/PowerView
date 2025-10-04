@@ -66,14 +66,15 @@ JOIN Obis bo ON gs.BaseObisId = bo.Id;";
 
         public ICollection<(SeriesName BaseSeries, DateTime LatestTimestamp)> GetBaseSeries()
         {
-            long obisCode = ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat;
+            long obisCodeQ = ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVatQ;
+            long obisCodeH = ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVatH;
 
             var rows = DbContext.QueryTransaction<RowLocal>(@"
       SELECT l.LabelName AS Label, oc.ObisCode, lol.LatestTimestamp
       FROM LabelObisLive lol
       JOIN Label l ON lol.LabelId=l.Id
       JOIN Obis oc ON lol.ObisId=oc.Id
-      WHERE oc.ObisCode=@obisCode;", new { obisCode });
+      WHERE oc.ObisCode=@obisCodeQ OR oc.ObisCode=@obisCodeH;", new { obisCodeQ, obisCodeH });
 
             return ToSeriesAndTimestamp(rows).ToList();
         }

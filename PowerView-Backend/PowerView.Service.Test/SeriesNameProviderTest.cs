@@ -83,13 +83,13 @@ public class SeriesNameProviderTest
     }
 
     [Test]
-    [TestCase(Unit.Dkk)]
-    [TestCase(Unit.Eur)]
-    public void GetSeriesNamesAddCostBreakdownGeneratorSeriesObisCode(Unit unit)
+    [TestCase("1.68.25.67.0.255", "1.69.25.67.0.255", Unit.Dkk)]
+    [TestCase("1.68.25.68.0.255", "1.69.25.68.0.255", Unit.Eur)]
+    public void GetSeriesNamesAddCostBreakdownGeneratorSeriesObisCode(string obisCode, string genObisCode, Unit unit)
     {
         // Arrange
         const string label = "lbl1";
-        var seriesNames = new[] { new SeriesName(label, ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat) };
+        var seriesNames = new[] { new SeriesName(label, obisCode) };
         seriesNameRepository.Setup(x => x.GetSeriesNames()).Returns(seriesNames);
         var utcNow = DateTime.UtcNow;
         var costBreakdownGeneratorSeries = new CostBreakdownGeneratorSeries(
@@ -97,7 +97,7 @@ public class SeriesNameProviderTest
             {
                 new CostBreakdownEntry(utcNow - TimeSpan.FromDays(2), utcNow + TimeSpan.FromDays(2), "entry name", 0, 23, 2)
             }),
-            new GeneratorSeries(new SeriesName(label, ObisCode.ElectrActiveEnergyKwhIncomeExpenseInclVat), new SeriesName(label, ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat), "CbTitle")
+            new GeneratorSeries(new SeriesName(label, genObisCode), new SeriesName(label, obisCode), "CbTitle")
         );
         costBreakdownGeneratorSeriesRepository.Setup(x => x.GetCostBreakdownGeneratorSeries()).Returns(new[] { costBreakdownGeneratorSeries });
 
@@ -106,8 +106,8 @@ public class SeriesNameProviderTest
 
         // Assert
         Assert.That(serieNames.Count, Is.EqualTo(2));
-        Assert.That(serieNames.Count(sc => sc.Label == label && sc.ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat), Is.EqualTo(1));
-        Assert.That(serieNames.Count(sc => sc.Label == label && sc.ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpenseInclVat), Is.EqualTo(1));
+        Assert.That(serieNames.Count(sc => sc.Label == label && sc.ObisCode == obisCode), Is.EqualTo(1));
+        Assert.That(serieNames.Count(sc => sc.Label == label && sc.ObisCode == genObisCode), Is.EqualTo(1));
     }
 
 }

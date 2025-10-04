@@ -36,6 +36,9 @@ namespace PowerView.Service.Test.Mappers
         [TestCase("1.0.1.7.0.255")]
         [TestCase("1.0.2.7.0.255")]
         [TestCase("1.68.25.67.0.255")]
+        [TestCase("1.69.25.67.0.255")]
+        [TestCase("1.68.25.68.0.255")]
+        [TestCase("1.69.25.68.0.255")]
         [TestCase("1.2.3.4.5.6")]
         public void MapToSerieTypeSpline(string obisCode)
         {
@@ -260,6 +263,8 @@ namespace PowerView.Service.Test.Mappers
         [Test]
         [TestCase("1.68.25.67.0.255")]
         [TestCase("1.69.25.67.0.255")]
+        [TestCase("1.68.25.68.0.255")]
+        [TestCase("1.69.25.68.0.255")]
         public void MapToSerieYAxisCurrencyAmount(string obisCode)
         {
             // Arrange

@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using NUnit.Framework;
 
 namespace PowerView.Model.Test
@@ -13,8 +11,8 @@ namespace PowerView.Model.Test
         public void ConstructorThrows()
         {
             // Arrange
-            var series = new SeriesName("lbl1", ObisCode.ElectrActiveEnergyKwhIncomeExpenseInclVat);
-            var baseSeries = new SeriesName("lbl2", ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat);
+            var series = new SeriesName("lbl1", ObisCode.ElectrActiveEnergyKwhIncomeExpenseInclVatH);
+            var baseSeries = new SeriesName("lbl2", ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVatH);
             const string costBreakdownTitle = "cbTitle";
 
             // Act & Assert
@@ -28,8 +26,8 @@ namespace PowerView.Model.Test
         public void ConstructorAndProperties()
         {
             // Arrange
-            var series = new SeriesName("lbl1", ObisCode.ElectrActiveEnergyKwhIncomeExpenseInclVat);
-            var baseSeries = new SeriesName("lbl2", ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat);
+            var series = new SeriesName("lbl1", ObisCode.ElectrActiveEnergyKwhIncomeExpenseInclVatH);
+            var baseSeries = new SeriesName("lbl2", ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVatH);
             const string costBreakdownTitle = "cbTitle";
 
             // Act
@@ -45,11 +43,11 @@ namespace PowerView.Model.Test
         public void EqualsAndHashCode()
         {
             // Arrange
-            var t1 = new GeneratorSeries(new SeriesName("lbl", ObisCode.ElectrActiveEnergyKwhIncomeExpenseInclVat), new SeriesName("lbl2", ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat), "CbTitle");
-            var t2 = new GeneratorSeries(new SeriesName("lbl", ObisCode.ElectrActiveEnergyKwhIncomeExpenseInclVat), new SeriesName("lbl2", ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat), "CbTitle");
-            var t3 = new GeneratorSeries(new SeriesName("zzz", ObisCode.ElectrActiveEnergyKwhIncomeExpenseInclVat), new SeriesName("lbl2", ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat), "CbTitle");
-            var t4 = new GeneratorSeries(new SeriesName("lbl", ObisCode.ElectrActiveEnergyKwhIncomeExpenseInclVat), new SeriesName("zzz", ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat), "CbTitle");
-            var t5 = new GeneratorSeries(new SeriesName("lbl", ObisCode.ElectrActiveEnergyKwhIncomeExpenseInclVat), new SeriesName("lbl2", ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat), "zzz");
+            var t1 = new GeneratorSeries(new SeriesName("lbl", ObisCode.ElectrActiveEnergyKwhIncomeExpenseInclVatH), new SeriesName("lbl2", ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVatH), "CbTitle");
+            var t2 = new GeneratorSeries(new SeriesName("lbl", ObisCode.ElectrActiveEnergyKwhIncomeExpenseInclVatH), new SeriesName("lbl2", ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVatH), "CbTitle");
+            var t3 = new GeneratorSeries(new SeriesName("zzz", ObisCode.ElectrActiveEnergyKwhIncomeExpenseInclVatH), new SeriesName("lbl2", ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVatH), "CbTitle");
+            var t4 = new GeneratorSeries(new SeriesName("lbl", ObisCode.ElectrActiveEnergyKwhIncomeExpenseInclVatH), new SeriesName("zzz", ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVatH), "CbTitle");
+            var t5 = new GeneratorSeries(new SeriesName("lbl", ObisCode.ElectrActiveEnergyKwhIncomeExpenseInclVatH), new SeriesName("lbl2", ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVatH), "zzz");
 
             // Act & Assert
             Assert.That(t1, Is.EqualTo(t2));
@@ -67,6 +65,7 @@ namespace PowerView.Model.Test
 
         [Test]
         [TestCase("1.69.25.67.0.255", "1.68.25.67.0.255", "60-minutes", true)]
+        [TestCase("1.69.25.68.0.255", "1.68.25.68.0.255", "15-minutes", true)]
         [TestCase("1.69.25.67.0.255", "1.68.25.67.0.255", "30-minutes", false)]
         [TestCase("1.69.25.67.0.255", "1.70.25.67.0.255", "60-minutes", false)]
         [TestCase("1.70.25.67.0.255", "1.68.25.67.0.255", "60-minutes", false)]
@@ -83,17 +82,18 @@ namespace PowerView.Model.Test
         }
 
         [Test]
-        [TestCase("1.69.25.67.0.255", "1.68.25.67.0.255", "60-minutes", "2024-05-12T20:00:00Z", true)]
-        [TestCase("1.69.25.67.0.255", "1.68.25.67.99.255", "60-minutes", "2024-05-12T20:00:00Z", false)]
-        [TestCase("1.69.25.67.0.255", "1.68.25.67.0.255", "60-minutes", "2024-05-12T20:00:01Z", false)]
-        public void SupportsDurations(string obisCode, string baseObisCode, string interval, string timestampString, bool expected)
+        [TestCase("1.69.25.67.0.255", "1.68.25.67.0.255", "60-minutes", "2024-05-12T20:00:00Z", 60, true)]
+        [TestCase("1.69.25.68.0.255", "1.68.25.68.0.255", "15-minutes", "2024-05-12T20:00:00Z", 15, true)]
+        [TestCase("1.69.25.67.0.255", "1.68.25.67.99.255", "60-minutes", "2024-05-12T20:00:00Z", 60, false)]
+        [TestCase("1.69.25.67.0.255", "1.68.25.67.0.255", "60-minutes", "2024-05-12T20:00:01Z", 60, false)]
+        public void SupportsDurations(string obisCode, string baseObisCode, string interval, string timestampString, int minutes, bool expected)
         {
             // Arrange
             var target = new GeneratorSeries(new SeriesName("lbl", obisCode), new SeriesName("lbl", baseObisCode), "cbTitle");
             var timestamp = DateTime.Parse(timestampString, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
             var values = new[] { new NormalizedDurationRegisterValue(
-            timestamp, timestamp.AddMinutes(60),
-            timestamp, timestamp.AddMinutes(60),
+            timestamp, timestamp.AddMinutes(minutes),
+            timestamp, timestamp.AddMinutes(minutes),
             new UnitValue(12.34, Unit.Eur), "EnergiDataService" ) };
 
             // Act

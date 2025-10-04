@@ -152,8 +152,10 @@ namespace PowerView.Model.Test
             Assert.That(ObisCode.ElectrActualPowerP23L1, Is.EqualTo(new byte[] { 1, 0, 22, 7, 0, 255 }));
             Assert.That(ObisCode.ElectrActualPowerP23L2, Is.EqualTo(new byte[] { 1, 0, 42, 7, 0, 255 }));
             Assert.That(ObisCode.ElectrActualPowerP23L3, Is.EqualTo(new byte[] { 1, 0, 62, 7, 0, 255 }));
-            Assert.That(ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat, Is.EqualTo(new byte[] { 1, 68, 25, 67, 0, 255 }));
-            Assert.That(ObisCode.ElectrActiveEnergyKwhIncomeExpenseInclVat, Is.EqualTo(new byte[] { 1, 69, 25, 67, 0, 255 }));
+            Assert.That(ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVatH, Is.EqualTo(new byte[] { 1, 68, 25, 67, 0, 255 }));
+            Assert.That(ObisCode.ElectrActiveEnergyKwhIncomeExpenseInclVatH, Is.EqualTo(new byte[] { 1, 69, 25, 67, 0, 255 }));
+            Assert.That(ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVatQ, Is.EqualTo(new byte[] { 1, 68, 25, 68, 0, 255 }));
+            Assert.That(ObisCode.ElectrActiveEnergyKwhIncomeExpenseInclVatQ, Is.EqualTo(new byte[] { 1, 69, 25, 68, 0, 255 }));
         }
 
         [Test]
@@ -477,6 +479,9 @@ namespace PowerView.Model.Test
         [TestCase("1.67.1.7.0.255")]
         [TestCase("1.65.1.1.1.1")]
         [TestCase("1.68.25.67.0.255")]
+        [TestCase("1.69.25.67.0.255")]
+        [TestCase("1.68.25.68.0.255")]
+        [TestCase("1.69.25.68.0.255")]
         [TestCase("1.127.1.1.1.1")]
         public void IsUtilitySpecific(string obisCode)
         {
@@ -553,7 +558,7 @@ namespace PowerView.Model.Test
             var definedObisCodes = ObisCode.GetDefined();
 
             // Assert
-            Assert.That(definedObisCodes.Count(), Is.EqualTo(44));
+            Assert.That(definedObisCodes.Count(), Is.EqualTo(46));
         }
     }
 }

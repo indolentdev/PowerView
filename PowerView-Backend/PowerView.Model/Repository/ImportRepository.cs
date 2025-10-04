@@ -39,7 +39,7 @@ FROM Import i;";
             try
             {
                 var labelObisCodes = DbContext.Connection.Query<long>("SELECT oc.ObisCode FROM LabelObisLive lol JOIN Label lbl ON lol.LabelId=lbl.Id JOIN Obis oc ON lol.ObisId=oc.Id WHERE lbl.LabelName=@Label;", import, transaction).Select(x => (ObisCode)x).ToList();
-                if (labelObisCodes.Any(x => x != ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat))
+                if (labelObisCodes.Any(x => x != ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVatH && x != ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVatQ))
                 {
                     throw new DataStoreUniqueConstraintException($"Label '{import.Label}' already alotted for other and non compatible obis codes:{string.Join(", ", labelObisCodes)}");
                 }

@@ -199,11 +199,13 @@ public class SettingsGeneratorsSeriesControllerTest
     }
 
     [Test]
-    public async Task GetBaseSeries()
+    [TestCase("1.68.25.67.0.255", "1.69.25.67.0.255")]
+    [TestCase("1.68.25.68.0.255", "1.69.25.68.0.255")]
+    public async Task GetBaseSeries(string obisCode, string genObisCode)
     {
         // Arrange
         var dateTime = DateTime.UtcNow;
-        var baseSeries = (new SeriesName("b", "6.5.4.3.2.1"), dateTime);
+        var baseSeries = (new SeriesName("b", obisCode), dateTime);
         generatorSeriesRepository.Setup(x => x.GetBaseSeries()).Returns(new[] { baseSeries });
 
         // Act
@@ -214,9 +216,9 @@ public class SettingsGeneratorsSeriesControllerTest
         var json = await response.Content.ReadFromJsonAsync<TestBasesSeriesSetDto>();
         Assert.That(json.items, Is.Not.Null);
         Assert.That(json.items.Length, Is.EqualTo(1));
-        Assert.That(json.items.First().obisCode, Is.EqualTo(ObisCode.ElectrActiveEnergyKwhIncomeExpenseInclVat.ToString()));
+        Assert.That(json.items.First().obisCode, Is.EqualTo(genObisCode));
         Assert.That(json.items.First().baseLabel, Is.EqualTo("b"));
-        Assert.That(json.items.First().baseObisCode, Is.EqualTo("6.5.4.3.2.1"));
+        Assert.That(json.items.First().baseObisCode, Is.EqualTo(obisCode));
         Assert.That(json.items.First().latestTimestamp, Is.EqualTo(dateTime.ToString("o")));
     }
 

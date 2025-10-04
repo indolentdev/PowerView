@@ -43,7 +43,8 @@ namespace PowerView.Model.Repository
                 {
                     var dbLabelObisCodes = DbContext.Connection.Query<long>("SELECT oc.ObisCode FROM LabelObisLive lol JOIN Label lbl ON lol.LabelId=lbl.Id JOIN Obis oc ON lol.ObisId=oc.Id WHERE lbl.LabelName=@Label;", readingItem.Value).Select(x => (ObisCode)x).ToList();
                     var readingObisCodes = readingItem.Value.GetRegisterValues().Select(x => x.ObisCode).ToList();
-                    if (dbLabelObisCodes.Count > 0 && readingObisCodes.Count > 0 && dbLabelObisCodes.Contains(ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat) != readingObisCodes.Contains(ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat))
+                    if (dbLabelObisCodes.Count > 0 && readingObisCodes.Count > 0 &&
+                      (dbLabelObisCodes.Contains(ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVatQ) || dbLabelObisCodes.Contains(ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVatH)) != (readingObisCodes.Contains(ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVatQ) || readingObisCodes.Contains(ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVatH)))
                     {
                         throw new SqliteException($"Unsupported obis code combination for label '{readingItem.Value.Label}'. Db ObisCodes:{string.Join(", ", dbLabelObisCodes)}. Reading obis codes:{string.Join(", ", readingObisCodes)}", 28); // 28: SQLITE Warning
                     }

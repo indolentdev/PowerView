@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using PowerView.Model;
+﻿using PowerView.Model;
 using Microsoft.Extensions.Logging;
 
 namespace PowerView.Service.Mappers
@@ -104,7 +103,8 @@ namespace PowerView.Service.Mappers
                 return "dcOutputStatusHiddenYAxis";
             }
 
-            if (obisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat || obisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpenseInclVat)
+            if (obisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVatQ || obisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpenseInclVatQ ||
+                obisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVatH || obisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpenseInclVatH)
             {
                 return "currencyAmount";
             }

@@ -18,7 +18,12 @@ namespace PowerView.Model
 
         public bool SupportsInterval(string interval)
         {
-            if (BaseSeries.ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat && Series.ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpenseInclVat &&
+            if (BaseSeries.ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVatQ && Series.ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpenseInclVatQ &&
+              interval == "15-minutes")
+            {
+                return true;
+            }
+            if (BaseSeries.ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVatH && Series.ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpenseInclVatH &&
               interval == "60-minutes")
             {
                 return true;
@@ -29,13 +34,23 @@ namespace PowerView.Model
 
         public bool SupportsDurations(IEnumerable<NormalizedDurationRegisterValue> values)
         {
-            if (BaseSeries.ObisCode != ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat) return false;
+            if (BaseSeries.ObisCode != ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVatQ && BaseSeries.ObisCode != ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVatH) return false;
+
+            var minutes = new List<int>();
+            minutes.Add(0);
+
+            if (BaseSeries.ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVatQ)
+            {
+                minutes.Add(15);
+                minutes.Add(30);
+                minutes.Add(45);
+            }
 
             foreach (var value in values)
-            {
-                var timestamp = value.Start;
-                if (timestamp.Minute != 0 || timestamp.Second != 0) return false;
-            }
+                {
+                    var timestamp = value.Start;
+                    if (!minutes.Contains(timestamp.Minute) || timestamp.Second != 0) return false;
+                }
             return true;
         }
 

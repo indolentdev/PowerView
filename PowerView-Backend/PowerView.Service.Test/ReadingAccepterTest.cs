@@ -45,6 +45,7 @@ public class ReadingAccepterTest
 
     [Test]
     [TestCase("1.68.25.67.0.255")] // Electricity Income/expense amount
+    [TestCase("1.68.25.68.0.255")] // Electricity Income/expense amount
     public void AcceptButSkipHubSignal(string obisCode)
     {
         // Arrange
@@ -103,6 +104,5 @@ public class ReadingAccepterTest
         liveReadingRepository.Verify(lrr => lrr.Add(It.Is<IList<Reading>>(p => p.Count == 1 && p.First().GetRegisterValues().Count == 1 && p.First().GetRegisterValues().First().ObisCode == ObisCode.ElectrActiveEnergyA14)));
         hub.Verify(h => h.Signal(It.Is<IList<Reading>>(p => p.Count == 1 && p.First().GetRegisterValues().Count == 1 && p.First().GetRegisterValues().First().ObisCode == ObisCode.ElectrActiveEnergyA14)));
     }
-
 
 }

@@ -201,7 +201,9 @@ public class EnergiDataServiceImporterTest
     }
 
     [Test]
-    public async Task ImportDkkAmounts()
+    [TestCase(15*60, "1.68.25.68.0.255")]
+    [TestCase(60*60, "1.68.25.67.0.255")]
+    public async Task ImportDkkAmounts(int durationSeconds, string obisCodeString)
     {
         // Arrange
         var dateTime = new DateTime(2023, 2, 28, 23, 0, 0, DateTimeKind.Utc);
@@ -211,8 +213,8 @@ public class EnergiDataServiceImporterTest
         var dateTime1 = new DateTime(2023, 5, 15, 21, 29, 0, DateTimeKind.Utc);
         var dateTime2 = dateTime1.AddHours(1);
         SetUpEnergiDataServiceClientGetElectricityAmounts(
-            new KwhAmount { Start = dateTime1, AmountDkk = 12 },
-            new KwhAmount { Start = dateTime2, AmountDkk = 15 });
+            new KwhAmount { Start = dateTime1, AmountDkk = 12, Duration = TimeSpan.FromSeconds(durationSeconds) },
+            new KwhAmount { Start = dateTime2, AmountDkk = 15, Duration = TimeSpan.FromSeconds(durationSeconds) });
         var target = CreateTarget();
 
         // Act
@@ -222,18 +224,20 @@ public class EnergiDataServiceImporterTest
         readingAccepter.Verify(x => x.Accept(It.Is<IList<Reading>>(p => p.Count == 2 &&
           p.First().Label == import.Label && p.First().DeviceId == "EnergiDataService" && p.First().Timestamp == dateTime1 && p.First().Timestamp.Kind == dateTime1.Kind &&
           p.First().GetRegisterValues().Count == 1 && p.First().GetRegisterValues().First().Value == 12 && p.First().GetRegisterValues().First().Scale == 0 &&
-          p.First().GetRegisterValues().First().Unit == Unit.Dkk && p.First().GetRegisterValues().First().ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat &&
+          p.First().GetRegisterValues().First().Unit == Unit.Dkk && p.First().GetRegisterValues().First().ObisCode == obisCodeString &&
           p.First().GetRegisterValues().First().Tag == RegisterValueTag.Import &&
           p.Last().Label == import.Label && p.Last().DeviceId == "EnergiDataService" && p.Last().Timestamp == dateTime2 && p.Last().Timestamp.Kind == dateTime2.Kind &&
           p.Last().GetRegisterValues().Count == 1 && p.Last().GetRegisterValues().First().Value == 15 && p.Last().GetRegisterValues().First().Scale == 0 &&
-          p.Last().GetRegisterValues().Last().Unit == Unit.Dkk && p.Last().GetRegisterValues().First().ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat &&
+          p.Last().GetRegisterValues().Last().Unit == Unit.Dkk && p.Last().GetRegisterValues().First().ObisCode == obisCodeString &&
           p.Last().GetRegisterValues().Last().Tag == RegisterValueTag.Import)));
 
-        importRepository.Verify(x => x.SetCurrentTimestamp(It.Is<string>(p => p == import.Label), It.Is<DateTime>(p => p == dateTime2.AddHours(1) && p.Kind == dateTime2.Kind)));
+        importRepository.Verify(x => x.SetCurrentTimestamp(It.Is<string>(p => p == import.Label), It.Is<DateTime>(p => p == dateTime2.AddSeconds(durationSeconds) && p.Kind == dateTime2.Kind)));
     }
 
     [Test]
-    public async Task ImportEurAmounts()
+    [TestCase(15*60, "1.68.25.68.0.255")]
+    [TestCase(60*60, "1.68.25.67.0.255")]
+    public async Task ImportEurAmounts(int durationSeconds, string obisCodeString)
     {
         // Arrange
         var dateTime = new DateTime(2023, 2, 28, 23, 0, 0, DateTimeKind.Utc);
@@ -243,8 +247,8 @@ public class EnergiDataServiceImporterTest
         var dateTime1 = new DateTime(2023, 5, 15, 21, 29, 0, DateTimeKind.Utc);
         var dateTime2 = dateTime1.AddHours(1);
         SetUpEnergiDataServiceClientGetElectricityAmounts(
-            new KwhAmount { Start = dateTime1, AmountEur = 12 },
-            new KwhAmount { Start = dateTime2, AmountEur = 15 });
+            new KwhAmount { Start = dateTime1, AmountEur = 12, Duration = TimeSpan.FromSeconds(durationSeconds) },
+            new KwhAmount { Start = dateTime2, AmountEur = 15, Duration = TimeSpan.FromSeconds(durationSeconds) });
         var target = CreateTarget();
 
         // Act
@@ -254,14 +258,32 @@ public class EnergiDataServiceImporterTest
         readingAccepter.Verify(x => x.Accept(It.Is<IList<Reading>>(p => p.Count == 2 &&
           p.First().Label == import.Label && p.First().DeviceId == "EnergiDataService" && p.First().Timestamp == dateTime1 && p.First().Timestamp.Kind == dateTime1.Kind &&
           p.First().GetRegisterValues().Count == 1 && p.First().GetRegisterValues().First().Value == 12 && p.First().GetRegisterValues().First().Scale == 0 &&
-          p.First().GetRegisterValues().First().Unit == Unit.Eur && p.First().GetRegisterValues().First().ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat &&
+          p.First().GetRegisterValues().First().Unit == Unit.Eur && p.First().GetRegisterValues().First().ObisCode == obisCodeString &&
           p.First().GetRegisterValues().First().Tag == RegisterValueTag.Import &&
           p.Last().Label == import.Label && p.Last().DeviceId == "EnergiDataService" && p.Last().Timestamp == dateTime2 && p.Last().Timestamp.Kind == dateTime2.Kind &&
           p.Last().GetRegisterValues().Count == 1 && p.Last().GetRegisterValues().First().Value == 15 && p.Last().GetRegisterValues().First().Scale == 0 &&
-          p.Last().GetRegisterValues().Last().Unit == Unit.Eur && p.Last().GetRegisterValues().First().ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat &&
+          p.Last().GetRegisterValues().Last().Unit == Unit.Eur && p.Last().GetRegisterValues().First().ObisCode == obisCodeString &&
           p.Last().GetRegisterValues().Last().Tag == RegisterValueTag.Import)));
 
-        importRepository.Verify(x => x.SetCurrentTimestamp(It.Is<string>(p => p == import.Label), It.Is<DateTime>(p => p == dateTime2.AddHours(1) && p.Kind == dateTime2.Kind)));
+        importRepository.Verify(x => x.SetCurrentTimestamp(It.Is<string>(p => p == import.Label), It.Is<DateTime>(p => p == dateTime2.AddSeconds(durationSeconds) && p.Kind == dateTime2.Kind)));
+    }
+
+    [Test]
+    public async Task UnsupportedDuration()
+    {
+        // Arrange
+        var dateTime = new DateTime(2023, 2, 28, 23, 0, 0, DateTimeKind.Utc);
+        var import = new Import("label", "channel", Unit.Eur, dateTime, null, true);
+        SetupImportRepositoryGetImports(import);
+        SetUpEnergiDataServiceClientGetElectricityAmounts(new KwhAmount { Start = new DateTime(2023, 5, 15, 21, 29, 0, DateTimeKind.Utc), AmountDkk = 13, Duration = TimeSpan.FromMinutes(3) });
+        var target = CreateTarget();
+
+        // Act
+        await target.Import(DateTime.UtcNow);
+
+        // Assert
+        readingAccepter.Verify(x => x.Accept(It.IsAny<IList<Reading>>()), Times.Never);
+        importRepository.Verify(x => x.SetCurrentTimestamp(It.IsAny<string>(), It.IsAny<DateTime>()), Times.Never);
     }
 
     [Test]

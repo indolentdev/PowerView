@@ -90,14 +90,39 @@ public class SettingsGeneratorsSeriesController : ControllerBase
             Items = baseSeries
                 .Select(bs => new
                 {
-                    ObisCode = ObisCode.ElectrActiveEnergyKwhIncomeExpenseInclVat.ToString(),
-                    BaseLabel = bs.BaseSeries.Label,
-                    BaseObisCode = bs.BaseSeries.ObisCode.ToString(),
-                    LatestTimestamp = bs.LatestTimestamp.ToString("o")
+                    BaseSeries = bs,
+                    HasGeneratorObisCode = TryGetGeneratorObisCode(bs.BaseSeries.ObisCode, out var genObisCode),
+                    GeneratorObisCode = genObisCode
+                })
+                .Where(x => x.HasGeneratorObisCode)
+                .Select(x => new
+                {
+                    ObisCode = x.GeneratorObisCode.ToString(),
+                    BaseLabel = x.BaseSeries.BaseSeries.Label,
+                    BaseObisCode = x.BaseSeries.BaseSeries.ObisCode.ToString(),
+                    LatestTimestamp = x.BaseSeries.LatestTimestamp.ToString("o")
                 })
                 .ToList()
         };
 
         return Ok(r);
+    }
+
+    private static bool TryGetGeneratorObisCode(ObisCode obisCode, out ObisCode genObisCode)
+    {
+        if (obisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVatH)
+        {
+            genObisCode = ObisCode.ElectrActiveEnergyKwhIncomeExpenseInclVatH;
+            return true;
+        }
+
+        if (obisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVatQ)
+        {
+            genObisCode = ObisCode.ElectrActiveEnergyKwhIncomeExpenseInclVatQ;
+            return true;
+        }
+
+        genObisCode = new ObisCode();
+        return false;
     }
 }

@@ -47,12 +47,17 @@ public class ReadingAccepter : IReadingAccepter
 
     private bool RegisterValueOk(RegisterValue rv)
     {
-        return !rv.ObisCode.IsUtilitySpecific || rv.ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat;
+        return !rv.ObisCode.IsUtilitySpecific ||
+        rv.ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVatH ||
+        rv.ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVatQ;
     }
 
     private static bool SignalHub(IList<Reading> readings)
     {
-        return !readings.SelectMany(x => x.GetRegisterValues()).Any(x => x.ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat);
+        return !readings.SelectMany(x => x.GetRegisterValues()).Any(x =>
+        x.ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVatH ||
+        x.ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVatQ
+        );
     }
 
 }

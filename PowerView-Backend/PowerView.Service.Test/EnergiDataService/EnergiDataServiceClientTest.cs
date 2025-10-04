@@ -55,7 +55,29 @@ public class EnergiDataServiceClientTest
     }
 
     [Test]
-    public async Task GetElectricityAmountsRequestQuery()
+    public async Task GetElectricityAmountsRequestQueryDayAhead()
+    {
+        // Arrange
+        var dateTime = new DateTime(2025, 9, 30, 22, 00, 00, DateTimeKind.Utc);
+        var timeSpan = TimeSpan.FromHours(3);
+        const string priceArea = "DK9";
+        var (handler, _) = SetupHttpClientFactory("{\"records\":[]}");
+
+        var target = CreateTarget();
+
+        // Act
+        await target.GetElectricityAmounts(dateTime, timeSpan, priceArea);
+
+        // Assert
+        handler.Verify(x => x(It.Is<HttpRequestMessage>(a => a.RequestUri.AbsolutePath == "/dataset/dayaheadprices"), It.IsAny<CancellationToken>()));
+        handler.Verify(x => x(It.Is<HttpRequestMessage>(a => a.RequestUri.Query.Contains("start=2025-09-30T22%3A00")), It.IsAny<CancellationToken>()));
+        handler.Verify(x => x(It.Is<HttpRequestMessage>(a => a.RequestUri.Query.Contains("end=2025-10-01T01%3A00")), It.IsAny<CancellationToken>()));
+        handler.Verify(x => x(It.Is<HttpRequestMessage>(a => a.RequestUri.Query.Contains("filter=%7B%22PriceArea%22%3A%5B%22DK9%22%5D%7D")), It.IsAny<CancellationToken>()));
+        handler.Verify(x => x(It.Is<HttpRequestMessage>(a => a.RequestUri.Query.Contains("timezone=UTC")), It.IsAny<CancellationToken>()));
+    }
+
+    [Test]
+    public async Task GetElectricityAmountsRequestQueryElSpot()
     {
         // Arrange
         var dateTime = new DateTime(2023, 04, 18, 22, 13, 22, DateTimeKind.Utc);
@@ -77,7 +99,25 @@ public class EnergiDataServiceClientTest
     }
 
     [Test]
-    public async Task GetElectricityAmountsRecordsEmpty()
+    public async Task GetElectricityAmountsRecordsEmptyDayAhead()
+    {
+        // Arrange
+        var dateTime = new DateTime(2025, 09, 30, 22, 00, 00, DateTimeKind.Utc);
+        var timeSpan = TimeSpan.FromHours(3);
+        const string priceArea = "DK9";
+        var handler = SetupHttpClientFactory("{\"records\":[]}");
+
+        var target = CreateTarget();
+
+        // Act
+        var amounts = await target.GetElectricityAmounts(dateTime, timeSpan, priceArea);
+
+        // Assert
+        Assert.That(amounts, Is.Empty);
+    }
+
+    [Test]
+    public async Task GetElectricityAmountsRecordsEmptyElSpot()
     {
         // Arrange
         var dateTime = new DateTime(2023, 04, 18, 22, 13, 22, DateTimeKind.Utc);
@@ -95,7 +135,25 @@ public class EnergiDataServiceClientTest
     }
 
     [Test]
-    public async Task GetElectricityAmountsRequestTimeout()
+    public async Task GetElectricityAmountsRequestTimeoutDayAhead()
+    {
+        // Arrange
+        var dateTime = new DateTime(2025, 09, 30, 22, 00, 00, DateTimeKind.Utc);
+        var timeSpan = TimeSpan.FromHours(3);
+        const string priceArea = "DK9";
+        var (handler, httpClient) = SetupHttpClientFactory("{\"records\":[]}");
+
+        var target = CreateTarget();
+
+        // Act
+        var amounts = await target.GetElectricityAmounts(dateTime, timeSpan, priceArea);
+
+        // Assert
+        Assert.That(httpClient.Timeout, Is.EqualTo(options.RequestTimeout));
+    }
+
+    [Test]
+    public async Task GetElectricityAmountsRequestTimeoutElSpot()
     {
         // Arrange
         var dateTime = new DateTime(2023, 04, 18, 22, 13, 22, DateTimeKind.Utc);
@@ -113,7 +171,30 @@ public class EnergiDataServiceClientTest
     }
 
     [Test]
-    public async Task GetElectricityAmountsRecords()
+    public async Task GetElectricityAmountsRecordsDayAhead()
+    {
+        // Arrange
+        var dateTime = new DateTime(2025, 09, 30, 22, 00, 00, DateTimeKind.Utc);
+        var timeSpan = TimeSpan.FromHours(3);
+        const string priceArea = "DK9";
+        var handler = SetupHttpClientFactory("{\"total\": 54,\"records\":[{\"TimeUTC\": \"2025-09-30T22:00:00\",\"TimeDK\": \"2025-10-01T00:00:00\",\"PriceArea\": \"DK2\",\"DayAheadPriceEUR\": 122.82,\"DayAheadPriceDKK\": 915.02002}]}");
+
+        var target = CreateTarget();
+
+        // Act
+        var amounts = await target.GetElectricityAmounts(dateTime, timeSpan, priceArea);
+
+        // Assert
+        Assert.That(amounts.Count, Is.EqualTo(1));
+        Assert.That(amounts[0].Start, Is.EqualTo(new DateTime(2025, 9, 30, 22, 0, 0)));
+        Assert.That(amounts[0].Start.Kind, Is.EqualTo(DateTimeKind.Utc));
+        Assert.That(amounts[0].Duration, Is.EqualTo(TimeSpan.FromMinutes(15)));
+        Assert.That(amounts[0].AmountDkk, Is.EqualTo(0.91502002));
+        Assert.That(amounts[0].AmountEur, Is.EqualTo(0.12282));
+    }
+
+    [Test]
+    public async Task GetElectricityAmountsRecordsElSpot()
     {
         // Arrange
         var dateTime = new DateTime(2023, 04, 18, 22, 13, 22, DateTimeKind.Utc);
@@ -139,7 +220,7 @@ public class EnergiDataServiceClientTest
     public void GetElectricityAmountsRecordsHttpErrorThrows()
     {
         // Arrange
-        var dateTime = new DateTime(2023, 04, 18, 22, 13, 22, DateTimeKind.Utc);
+        var dateTime = new DateTime(2025, 09, 30, 22, 00, 00, DateTimeKind.Utc);
         var timeSpan = TimeSpan.FromHours(3);
         const string priceArea = "DK9";
         var handler = SetupHttpClientFactory(new HttpRequestException("Drugs are bad. M'kay"));
@@ -154,7 +235,7 @@ public class EnergiDataServiceClientTest
     public void GetElectricityAmountsRecordsBadJsonThrows()
     {
         // Arrange
-        var dateTime = new DateTime(2023, 04, 18, 22, 13, 22, DateTimeKind.Utc);
+        var dateTime = new DateTime(2025, 09, 30, 22, 00, 00, DateTimeKind.Utc);
         var timeSpan = TimeSpan.FromHours(3);
         const string priceArea = "DK9";
         var handler = SetupHttpClientFactory("BAD JSON");

@@ -175,29 +175,30 @@ namespace PowerView.Model.Test
         }
 
         [Test]
-        [TestCase("label")]
-        [TestCase("otherLabel")]
-        public void Prepare_GeneratesFromCostBreakdownGeneratorSeries(string genLabel)
+        [TestCase(60, "1.68.25.67.0.255", "label", "1.69.25.67.0.255")]
+        [TestCase(60, "1.68.25.67.0.255", "otherlabel", "1.69.25.67.0.255")]
+        [TestCase(15, "1.68.25.68.0.255", "label", "1.69.25.68.0.255")]
+        [TestCase(15, "1.68.25.68.0.255", "otherlabel", "1.69.25.68.0.255")]
+        public void Prepare_GeneratesFromCostBreakdownGeneratorSeries(int interval, string obisCode, string genLabel, string genObisCode)
         {
             // Arrange
             const string label = "label";
-            const string interval = "60-minutes";
             var locationContext = TimeZoneHelper.GetDenmarkLocationContext();
 
             var start = DateTime.Today.ToUniversalTime();
             var end = start.AddDays(1);
             var labelSeriesSet = new TimeRegisterValueLabelSeriesSet(start, end, new[] {
-        new TimeRegisterValueLabelSeries(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat, new[] {
-        new TimeRegisterValue("EnergiDataService", start.AddHours(1), 12.34, Unit.Dkk), new TimeRegisterValue("EnergiDataService", start.AddHours(2), 23.45, Unit.Dkk) } } })
+        new TimeRegisterValueLabelSeries(label, new Dictionary<ObisCode, IEnumerable<TimeRegisterValue>> { { obisCode, new[] {
+        new TimeRegisterValue("EnergiDataService", start.AddMinutes(interval), 12.34, Unit.Dkk), new TimeRegisterValue("EnergiDataService", start.AddMinutes(interval*2), 23.45, Unit.Dkk) } } })
       });
 
             var entry = new CostBreakdownEntry(new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc), new DateTime(4444, 1, 1, 0, 0, 0, DateTimeKind.Utc), "entry", 0, 23, 12.34);
             var costBreakdown = new CostBreakdown("theTitle", Unit.Dkk, 25, new[] { entry });
-            var generatorSeries = new GeneratorSeries(new SeriesName(genLabel, ObisCode.ElectrActiveEnergyKwhIncomeExpenseInclVat),
-              new SeriesName(label, ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVat), costBreakdown.Title);
+            var generatorSeries = new GeneratorSeries(new SeriesName(genLabel, genObisCode),
+              new SeriesName(label, obisCode), costBreakdown.Title);
 
             var costBreakdownGeneratorSeries = new List<CostBreakdownGeneratorSeries> { new CostBreakdownGeneratorSeries(costBreakdown, generatorSeries) };
-            var target = new IntervalGroup(locationContext, start, interval, labelSeriesSet, costBreakdownGeneratorSeries);
+            var target = new IntervalGroup(locationContext, start, $"{interval}-minutes", labelSeriesSet, costBreakdownGeneratorSeries);
 
             // Act
             target.Prepare();

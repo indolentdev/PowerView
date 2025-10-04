@@ -47,10 +47,17 @@ namespace PowerView.Service
                 seriesNamesUnits.TryAdd(seriesName, Unit.Joule);
             }
 
+            // Ish.. how to get the interval in a reliable and compatible manner..
+            var interval = 60;
+            if (costBreakdownGeneratorSeries.Any(x => x.GeneratorSeries.BaseSeries.ObisCode == ObisCode.ElectrActiveEnergyKwhIncomeExpenseExclVatQ))
+            {
+                interval = 15;
+            }
+
             var nowLocal = locationcontext.ConvertTimeFromUtc(DateTime.UtcNow);
             var midnight = new DateTime(nowLocal.Year, nowLocal.Month, nowLocal.Day, 0, 0, 0, nowLocal.Kind).ToUniversalTime();
             var dt1 = midnight;
-            var dt2 = midnight.AddMinutes(60);
+            var dt2 = midnight.AddMinutes(interval);
 
             var labelGroups = seriesNames.GroupBy(x => (string)x.Label, x => (ObisCode)(long)x.ObisCode);
             var labelSeries = new List<TimeRegisterValueLabelSeries>(8);
@@ -64,7 +71,7 @@ namespace PowerView.Service
                 labelSeries.Add(labelS);
             }
             var labelSeriesSet = new TimeRegisterValueLabelSeriesSet(dt1, dt2, labelSeries);
-            var intervalGroup = new IntervalGroup(locationcontext, midnight, "60-minutes", labelSeriesSet, costBreakdownGeneratorSeries);
+            var intervalGroup = new IntervalGroup(locationcontext, midnight, $"{interval}-minutes", labelSeriesSet, costBreakdownGeneratorSeries);
 
             return intervalGroup;
         }
