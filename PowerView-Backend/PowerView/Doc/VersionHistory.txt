@@ -1,6 +1,6 @@
-PowerView version 1.3.0 - Xxxx 202x
-- Upgraded to .NET 8 (On Raspberry Pi use InstallDotNet.sh).
-- Profile graphs inlcudes estimated deviation
+PowerView version 1.3.0 - October 2025
+- Upgraded to .NET 8. Install .NET 8 prior to upgrading PowerView. (On Raspberry Pi use InstallDotNet.sh).
+- Profile graphs inlcudes an estimated deviation
 - Profile views have previous and next buttons, next to the date picker.
 - Added support for Energi Data Service 15 min. day ahead prices
   As of October 1st 2025 Energi Data Service no longer provides the electiricy hourly spot price data set.
