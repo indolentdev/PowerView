@@ -110,7 +110,7 @@
     },
     "import": "Import",
     "imports": "Imports",
-    "importInfo": "Import of crude electricity hourly market prices excl. VAT from Energi Data Service",
+    "importInfo": "Import of crude electricity market prices excl. VAT from Energi Data Service",
     "interval": {
       "Day": "Day Interval",
       "Month": "Month Interval",

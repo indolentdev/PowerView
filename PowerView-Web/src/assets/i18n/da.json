@@ -110,7 +110,7 @@
     },
     "import": "Import",
     "imports": "Importer",
-    "importInfo": "Import af el time markedspriser ekskl. moms fra Energi Data Service",
+    "importInfo": "Import af el markedspriser ekskl. moms fra Energi Data Service",
     "interval": {
       "Day": "Dagsinterval",
       "Month": "Månedsinterval",
