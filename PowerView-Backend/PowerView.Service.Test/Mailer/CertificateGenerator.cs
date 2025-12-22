@@ -6,7 +6,7 @@ namespace PowerView.Service.Test.Mailer
 {
     internal class CertificateGenerator
     {
-        public byte[] GenerateCertificateForPersonalFileExchange(string siteName, string pfxPassword)
+        public byte[] GenerateCertificateForPkcs12(string siteName, string password)
         {
             using (var rsa = RSA.Create(2048))
             {
@@ -27,10 +27,10 @@ namespace PowerView.Service.Test.Mailer
                 // Create the self-signed certificate
                 using var certificate = request.CreateSelfSigned(DateTimeOffset.UtcNow.AddDays(-1), DateTimeOffset.UtcNow.AddDays(1));
 
-                // Export the certificate as a PFX file
-                var pfxBytes = certificate.Export(X509ContentType.Pfx, pfxPassword);
+                // Export the certificate as a pkcs12 file
+                var bytes = certificate.Export(X509ContentType.Pkcs12, password);
 
-                return pfxBytes;
+                return bytes;
             }
         }
     }

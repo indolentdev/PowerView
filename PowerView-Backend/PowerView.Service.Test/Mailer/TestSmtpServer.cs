@@ -56,8 +56,8 @@ namespace PowerView.Service.Test.Mailer
         {
             var password = "123456789";
             var certificateGenerator = new CertificateGenerator();
-            var pfxCertificateBytes = certificateGenerator.GenerateCertificateForPersonalFileExchange(siteName, password);
-            certificate = new X509Certificate2(pfxCertificateBytes, password);
+            var pkcs12CertificateBytes = certificateGenerator.GenerateCertificateForPkcs12(siteName, password);
+            certificate = X509CertificateLoader.LoadPkcs12(pkcs12CertificateBytes, password);
         }
 
         public void RequireUser(string user, string password)

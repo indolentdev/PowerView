@@ -1,3 +1,6 @@
+PowerView version 1.4.0 - xxxx 2026
+- Upgraded to .NET 10. Install .NET 10 prior to upgrading PowerView. (On Raspberry Pi use InstallDotNet.sh).
+
 PowerView version 1.3.0 - October 2025
 - Upgraded to .NET 8. Install .NET 8 prior to upgrading PowerView. (On Raspberry Pi use InstallDotNet.sh).
 - Profile graphs inlcudes an estimated deviation

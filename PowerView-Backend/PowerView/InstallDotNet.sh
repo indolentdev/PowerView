@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo -e "\e[1m----------------------------------------"
-echo -e "\e[1m       ASP.NET Runtime 8 Installer"
+echo -e "\e[1m       ASP.NET Runtime 10 Installer"
 echo -e "\e[1m----------------------------------------"
 echo ""
 echo -e "\e[1mInstall scipt made based on work of Pete Codes / PJG Creations 2021"
@@ -52,7 +52,7 @@ fi
 #echo -e "\e[0m"
 
 
-dotnetver=8.0
+dotnetver=10.0
 
 #sdkfile=/tmp/dotnetsdk.tar.gz
 aspnetfile=/tmp/aspnetcore.tar.gz

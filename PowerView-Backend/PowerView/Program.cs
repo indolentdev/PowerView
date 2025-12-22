@@ -17,7 +17,7 @@ var logger = logSetup.GetLogger("PowerView.Program");
 var logConfigWatcher = new FileSystemWatcher { Filter = "NLog.config", Path = exeDir, IncludeSubdirectories = false, EnableRaisingEvents = true };
 logConfigWatcher.Changed += (sender, args) =>
 {
-    LogManager.Configuration = LogManager.Configuration.Reload();
+    LogManager.Configuration = LogManager.Configuration?.Reload();
     LogManager.ReconfigExistingLoggers();
 };
 

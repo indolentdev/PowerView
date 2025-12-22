@@ -1,0 +1,8 @@
+<Solution>
+  <Project Path="PowerView.Model.Test/PowerView.Model.Test.csproj" />
+  <Project Path="PowerView.Model/PowerView.Model.csproj" />
+  <Project Path="PowerView.Service.IntegrationTest/PowerView.Service.IntegrationTest.csproj" />
+  <Project Path="PowerView.Service.Test/PowerView.Service.Test.csproj" />
+  <Project Path="PowerView.Service/PowerView.Service.csproj" />
+  <Project Path="PowerView/PowerView.csproj" />
+</Solution>

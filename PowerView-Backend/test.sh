@@ -1,5 +1,5 @@
 #!/bin/bash
-dotnet test PowerView.sln -c Debug
+dotnet test PowerView.slnx -c Debug
 if [ $? -eq 0 ]
 then
   echo "Success: All tests passed"
