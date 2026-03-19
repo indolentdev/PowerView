@@ -101,7 +101,7 @@ namespace PowerView.Service.Test.Translations
                     var res = target.Get(resId);
 
                     // Assert
-                    Assert.That(res, Is.Not.Null.Or.Empty, cultureInfoName + " : " + resId);
+                    Assert.That(res, Is.Not.Null.And.Not.Empty, cultureInfoName + " : " + resId);
                 }
             }
         }
