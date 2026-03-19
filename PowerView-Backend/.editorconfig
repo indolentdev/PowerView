@@ -18,3 +18,4 @@ tab_width = 4
 #### Diagnostic configuration ####
 dotnet_diagnostic.CA1716.severity = none
 dotnet_diagnostic.CA1848.severity = none
+dotnet_diagnostic.CA1873.severity = none

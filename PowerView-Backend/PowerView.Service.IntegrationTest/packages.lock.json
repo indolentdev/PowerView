@@ -61,8 +61,8 @@
       },
       "BouncyCastle.Cryptography": {
         "type": "Transitive",
-        "resolved": "2.6.1",
-        "contentHash": "vZsG2YILhthgRqO+ZVgRff4ZFKKTl0v7kqaVBLCtRvpREhfBP33pcWrdA3PRYgWuFL1RxiUFvjMUHTdBZlJcoA=="
+        "resolved": "2.6.2",
+        "contentHash": "7oWOcvnntmMKNzDLsdxAYqApt+AjpRpP2CShjMfIa3umZ42UQMvH0tl1qAliYPNYO6vTdcGMqnRrCPmsfzTI1w=="
       },
       "Castle.Core": {
         "type": "Transitive",
@@ -76,10 +76,10 @@
       },
       "MailKit": {
         "type": "Transitive",
-        "resolved": "4.14.1",
-        "contentHash": "Rawu+h3lSSjKra0AxR+IUB99VQ7jWI+MvxThekqLhf+ic7VQ7a69lmPFW+LXuRYHla4ADcn3x16Gsvju3LTq9w==",
+        "resolved": "4.15.1",
+        "contentHash": "4mLbqTbH3ctd0NlukHjVQbU3ZnNDuCtB6ttNZDLPZLWMA2Dr31rh/eCSTqOwDojUX8zfDOVaxstMgJTE9PwZNA==",
         "dependencies": {
-          "MimeKit": "4.14.0"
+          "MimeKit": "4.15.1"
         }
       },
       "Microsoft.ApplicationInsights": {
@@ -183,11 +183,11 @@
       },
       "MimeKit": {
         "type": "Transitive",
-        "resolved": "4.14.0",
-        "contentHash": "g0LtsMC8DCTkc030C3UgVqbltOJmV5cz4AX8ASowz2ZA+lxopXSYtC1XXYmenxy606aWFLwi5Xy4cC/zyYjbjQ==",
+        "resolved": "4.15.1",
+        "contentHash": "cxCcQhD0zhboFoG136jJuJtQjNRDJ+BxBm3f2vWn+53bff/CRo+K1mAkWjsW4Wuyy5O22F40MdMG2nRzQu1cJw==",
         "dependencies": {
-          "BouncyCastle.Cryptography": "2.6.1",
-          "System.Security.Cryptography.Pkcs": "8.0.1"
+          "BouncyCastle.Cryptography": "2.6.2",
+          "System.Security.Cryptography.Pkcs": "10.0.0"
         }
       },
       "MQTTnet": {
@@ -229,8 +229,8 @@
       },
       "System.Security.Cryptography.Pkcs": {
         "type": "Transitive",
-        "resolved": "8.0.1",
-        "contentHash": "CoCRHFym33aUSf/NtWSVSZa99dkd0Hm7OCZUxORBjRB16LNhIEOf8THPqzIYlvKM0nNDAPTRBa1FxEECrgaxxA=="
+        "resolved": "10.0.0",
+        "contentHash": "UPWqLSygJlFerRi9XNIuM0a1VC8gHUIufyP24xQ0sc+XimqUAEcjpOz9DhKpyDjH+5B/wO3RpC0KpkEeDj/ddg=="
       },
       "powerview.model": {
         "type": "Project",
@@ -243,8 +243,8 @@
         "type": "Project",
         "dependencies": {
           "MQTTnet": "[5.0.1.1416, )",
-          "MailKit": "[4.14.1, )",
-          "PowerView.Model": "[1.3.0.8155, )"
+          "MailKit": "[4.15.1, )",
+          "PowerView.Model": "[1.4.0.5116, )"
         }
       }
     }
